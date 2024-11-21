@@ -1,0 +1,22 @@
+{
+    "Dashboard": "Panelim",
+    "Profile": "Profil",
+    "Language": "Dil Seçimi",
+    "English": "İngilizce",
+    "Türkçe": "Türkçe",
+    "tagline": "Akluma, Akıllı Kumbaran",
+    "Email": "E-postan",
+    "Password": "Şifren",
+    "Remember me": "Bilgilerimi kaydet",
+    "Name": "İsmin",
+    "Confirm Password": "Şifreni Tekrar Gir",
+    "Already registered?": "Daha önceden kaydolduysan buraya tıkla",
+    "Register": "Kaydol",
+    "Forgot your password?": "Şifremi unuttum",
+    "Log in": "Giriş yap",
+    "project_name": "Akluma",
+    "Welcome": "Hoşgeldin Sayfası",
+    "Log Out": "Çıkış Yap",
+    "update_profile_information": "Profil bilgilerini ve eposta adresini güncelle.",
+    "Save": "Kaydet"
+}
