@@ -42,20 +42,15 @@
                         </x-dropdown-link>
 
                         <!-- Language Switch -->
-{{--                        <div class="border-t border-gray-100"></div>--}}
-{{--                        <div class="px-4 py-2 text-gray-400">--}}
-{{--                            {{ __('Language') }}--}}
-{{--                        </div>--}}
-{{--                        <x-dropdown-link :href="route('change.language', ['locale' => 'en'])" :class="App::getLocale() == 'en' ? 'font-bold text-gray-900' : ''">--}}
-{{--                            {{ __('English') }}--}}
-{{--                        </x-dropdown-link>--}}
-{{--                        <x-dropdown-link :href="route('change.language', ['locale' => 'tr'])" :class="App::getLocale() == 'tr' ? 'font-bold text-gray-900' : ''">--}}
-{{--                            {{ __('Türkçe') }}--}}
-{{--                        </x-dropdown-link>--}}
-{{--                        <div>Current Locale: {{ App::getLocale() }}</div> <!-- Debug statement -->--}}
-{{--                        <div>Session Locale: {{ session('locale') }}</div> <!-- Debug statement -->--}}
-
-
+                        <div class="border-t border-gray-100"></div>
+                        <div class="px-4 py-2 text-gray-400">
+                            {{ __('Language') }}
+                        </div>
+                        @foreach (config('app.available_languages') as $language => $locale)
+                            <x-dropdown-link :href="route('language.switch', ['locale' => $locale])" :class="App::getLocale() == $locale ? 'font-bold text-gray-900' : ''">
+                                {{ __($language) }}
+                            </x-dropdown-link>
+                        @endforeach
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
@@ -105,6 +100,17 @@
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
+
+                <!-- Language Switch -->
+                <div class="border-t border-gray-200"></div>
+                <div class="px-4 py-2 text-gray-400">
+                    {{ __('Language') }}
+                </div>
+                @foreach (config('app.available_languages') as $language => $locale)
+                    <x-responsive-nav-link :href="route('language.switch', ['locale' => $locale])" :class="App::getLocale() == $locale ? 'font-bold text-gray-900' : ''">
+                        {{ __($language) }}
+                    </x-responsive-nav-link>
+                @endforeach
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
