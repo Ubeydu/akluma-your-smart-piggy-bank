@@ -42,15 +42,7 @@
                         </x-dropdown-link>
 
                         <!-- Language Switch -->
-                        <div class="border-t border-gray-100"></div>
-                        <div class="px-4 py-2 text-gray-400">
-                            {{ __('Language') }}
-                        </div>
-                        @foreach (config('app.available_languages') as $language => $locale)
-                            <x-dropdown-link :href="route('language.switch', ['locale' => $locale])" :class="App::getLocale() == $locale ? 'font-bold text-gray-900' : ''">
-                                {{ __($language) }}
-                            </x-dropdown-link>
-                        @endforeach
+                        <x-language-dropdown />
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
@@ -102,15 +94,26 @@
                 </x-responsive-nav-link>
 
                 <!-- Language Switch -->
-                <div class="border-t border-gray-200"></div>
-                <div class="px-4 py-2 text-gray-400">
-                    {{ __('Language') }}
-                </div>
-                @foreach (config('app.available_languages') as $language => $locale)
-                    <x-responsive-nav-link :href="route('language.switch', ['locale' => $locale])" :class="App::getLocale() == $locale ? 'font-bold text-gray-900' : ''">
-                        {{ __($language) }}
-                    </x-responsive-nav-link>
-                @endforeach
+                <x-dropdown align="left" width="48">
+                    <x-slot name="trigger">
+                        <div class="px-4 py-2 text-gray-500 cursor-pointer flex justify-between items-center">
+                            <span>{{ __('Language') }}</span>
+                            <svg class="h-4 w-4 transition-transform" :class="{ 'rotate-180': open }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.23 7.23a.75.75 0 011.06 0L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </x-slot>
+
+                    <x-slot name="content">
+                        @foreach (config('app.available_languages') as $language => $locale)
+                            <x-responsive-nav-link :href="route('language.switch', ['locale' => $locale])"
+                                                   :class="App::getLocale() == $locale ? 'font-bold text-gray-900' : ''">
+                                {{ __($language) }}
+                            </x-responsive-nav-link>
+                        @endforeach
+                    </x-slot>
+                </x-dropdown>
+
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
