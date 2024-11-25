@@ -14,6 +14,8 @@
 │   │   │   │   ├── RegisteredUserController.php
 │   │   │   │   └── VerifyEmailController.php
 │   │   │   ├── Controller.php
+│   │   │   ├── DashboardController.php
+│   │   │   ├── PiggyBankController.php
 │   │   │   └── ProfileController.php
 │   │   ├── Middleware
 │   │   │   └── LanguageSwitcher.php
@@ -66,6 +68,7 @@
 │   │   ├── passwords.php
 │   │   └── validation.php
 │   ├── en.json
+│   ├── fr.json
 │   ├── tr
 │   │   ├── auth.php
 │   │   ├── pagination.php
@@ -123,6 +126,8 @@
 │       │   ├── app.blade.php
 │       │   ├── guest.blade.php
 │       │   └── navigation.blade.php
+│       ├── piggy-banks
+│       │   └── index.blade.php
 │       ├── profile
 │       │   ├── edit.blade.php
 │       │   └── partials
@@ -153,4 +158,4 @@
 │       └── ExampleTest.php
 └── vite.config.js
 
-39 directories, 115 files
+40 directories, 119 files
