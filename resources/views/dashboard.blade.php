@@ -5,12 +5,32 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-4 px-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
-                </div>
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+                    <div class="py-4 px-4">
+                        <h1 class="text-lg font-semibold">{{ __('My Piggy Banks') }}</h1>
+
+                        {{-- Include the list of piggy banks --}}
+                        <div class="mt-4">
+                            @if($piggyBanks->isEmpty())
+                                {{-- Empty state component --}}
+                                <x-empty-state
+                                    title="No Piggy Banks Yet"
+                                    message="Start saving for your goals today by creating your first piggy bank!"
+                                    buttonText="Create Your Piggy Bank"
+                                    buttonLink="{{ route('piggy-banks.create') }}"
+                                />
+                            @else
+                                {{-- Loop through and display piggy bank cards --}}
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    @foreach($piggyBanks as $piggyBank)
+                                        <x-piggy-bank-card :piggyBank="$piggyBank" />
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    </div>
             </div>
         </div>
     </div>

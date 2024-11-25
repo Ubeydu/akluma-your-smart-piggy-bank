@@ -79,6 +79,7 @@ return [
     'available_languages' => [
         'Turkish' => 'tr',
         'English' => 'en',
+        'French' => 'fr',
     ],
 
 

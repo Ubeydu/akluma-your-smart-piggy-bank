@@ -15,6 +15,8 @@
 │   │   │   │   └── VerifyEmailController.php
 │   │   │   ├── Controller.php
 │   │   │   └── ProfileController.php
+│   │   ├── Middleware
+│   │   │   └── LanguageSwitcher.php
 │   │   └── Requests
 │   │       ├── Auth
 │   │       │   └── LoginRequest.php
@@ -26,7 +28,8 @@
 │   └── View
 │       └── Components
 │           ├── AppLayout.php
-│           └── GuestLayout.php
+│           ├── GuestLayout.php
+│           └── LanguageDropdown.php
 ├── artisan
 ├── bootstrap
 │   ├── app.php
@@ -56,6 +59,19 @@
 │   │   └── 0001_01_01_000002_create_jobs_table.php
 │   └── seeders
 │       └── DatabaseSeeder.php
+├── lang
+│   ├── en
+│   │   ├── auth.php
+│   │   ├── pagination.php
+│   │   ├── passwords.php
+│   │   └── validation.php
+│   ├── en.json
+│   ├── tr
+│   │   ├── auth.php
+│   │   ├── pagination.php
+│   │   ├── passwords.php
+│   │   └── validation.php
+│   └── tr.json
 ├── package-lock.json
 ├── package.json
 ├── phpunit.xml
@@ -64,8 +80,8 @@
 ├── public
 │   ├── build
 │   │   ├── assets
-│   │   │   ├── app-BZE5VnyZ.css
-│   │   │   └── app-BjCBnTiP.js
+│   │   │   ├── app-BjCBnTiP.js
+│   │   │   └── app-CJyi1hHn.css
 │   │   └── manifest.json
 │   ├── favicon.ico
 │   ├── hot
@@ -91,10 +107,13 @@
 │       │   ├── danger-button.blade.php
 │       │   ├── dropdown-link.blade.php
 │       │   ├── dropdown.blade.php
+│       │   ├── empty-state.blade.php
 │       │   ├── input-error.blade.php
 │       │   ├── input-label.blade.php
+│       │   ├── language-dropdown.blade.php
 │       │   ├── modal.blade.php
 │       │   ├── nav-link.blade.php
+│       │   ├── piggy-bank-card.blade.php
 │       │   ├── primary-button.blade.php
 │       │   ├── responsive-nav-link.blade.php
 │       │   ├── secondary-button.blade.php
@@ -110,6 +129,7 @@
 │       │       ├── delete-user-form.blade.php
 │       │       ├── update-password-form.blade.php
 │       │       └── update-profile-information-form.blade.php
+│       ├── views_dir_structure.txt
 │       └── welcome.blade.php
 ├── routes
 │   ├── auth.php
@@ -133,4 +153,4 @@
 │       └── ExampleTest.php
 └── vite.config.js
 
-35 directories, 99 files
+39 directories, 115 files
