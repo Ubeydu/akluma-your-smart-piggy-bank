@@ -1,6 +1,6 @@
 {
     "Already registered?": "Daha önceden kaydolduysan buraya tıkla",
-    "Confirm Password": "Şifreni Tekrar Gir",
+    "Confirm Password": "Yeni Şifreni Tekrar Gir",
     "Dashboard": "Panelim",
     "Email": "E-postan",
     "English": "İngilizce",
@@ -24,5 +24,15 @@
     "starting_amount": "Başlangıç miktarı",
     "remaining_amount": "Kalan miktar",
     "purchase_date": "Satın alma tarihi",
-    "French": "Fransızca"
+    "French": "Fransızca",
+    "Profile Information": "Profil Bilgisi",
+    "Update Password": "Şifre Değiştirme",
+    "Ensure your account is using a long, random password to stay secure.": "Hesabının güvenliği için uzun ve zor tahmin edilebilir bir şifre belirle.",
+    "Current Password": "Şu Anki Şifren",
+    "New Password": "Yeni Şifren",
+    "Delete Account": "Hesabını Sil",
+    "Are you sure you want to delete your account?": "Hesabını silmek istediğinden emin misin?",
+    "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.": "Hesabını sildiğinde bütün bilgilerin geri dönülemez bir şekilde silinir. İşlemi onaylamak için şifreni tekrar gir.",
+    "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.": "Hesabını sildiğinde bütün bilgilerin geri dönülemez bir şekilde silinir.",
+    "Cancel": "Vazgeç"
 }
