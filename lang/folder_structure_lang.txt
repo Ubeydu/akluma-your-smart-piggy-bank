@@ -1,0 +1,17 @@
+.
+├── en
+│   ├── auth.php
+│   ├── pagination.php
+│   ├── passwords.php
+│   └── validation.php
+├── en.json
+├── folder_structure_lang.txt
+├── fr.json
+├── tr
+│   ├── auth.php
+│   ├── pagination.php
+│   ├── passwords.php
+│   └── validation.php
+└── tr.json
+
+3 directories, 12 files

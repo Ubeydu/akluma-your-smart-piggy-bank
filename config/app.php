@@ -78,8 +78,23 @@ return [
 
     'available_languages' => [
         'Turkish' => 'tr',
-        'English' => 'en',
+        'English (US)' => 'en_US',
+        'English (UK)' => 'en_GB',
         'French' => 'fr',
+    ],
+
+    'currencies' => [
+      'TRY' => 'Turkish Lira',
+      'USD' => 'US Dollar',
+      'GBP' => 'British Pound',
+      'EUR' => 'Euro',
+    ],
+
+    'language_currency_map' => [
+      'tr' => 'TRY',
+      'en_US' => 'USD',
+      'en_GB' => 'GBP',
+      'fr' => 'EUR',
     ],
 
 

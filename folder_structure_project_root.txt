@@ -58,9 +58,11 @@
 │   ├── migrations
 │   │   ├── 0001_01_01_000000_create_users_table.php
 │   │   ├── 0001_01_01_000001_create_cache_table.php
-│   │   └── 0001_01_01_000002_create_jobs_table.php
+│   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   └── 2024_11_26_140543_create_piggy_banks_table.php
 │   └── seeders
 │       └── DatabaseSeeder.php
+├── folder_structure_project_root.txt
 ├── lang
 │   ├── en
 │   │   ├── auth.php
@@ -79,7 +81,6 @@
 ├── package.json
 ├── phpunit.xml
 ├── postcss.config.js
-├── project_structure_NBSP.txt
 ├── public
 │   ├── build
 │   │   ├── assets
@@ -93,6 +94,7 @@
 ├── resources
 │   ├── css
 │   │   └── app.css
+│   ├── folder_structure_resources.txt
 │   ├── js
 │   │   ├── app.js
 │   │   └── bootstrap.js
@@ -158,4 +160,4 @@
 │       └── ExampleTest.php
 └── vite.config.js
 
-40 directories, 119 files
+40 directories, 121 files
