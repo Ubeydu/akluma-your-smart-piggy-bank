@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
                         {{ __('Welcome') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('piggy-banks.index')" :active="request()->routeIs('piggy-banks.index')">
+                        {{ __('My Piggy Banks') }}
+                    </x-nav-link>
                 </div>
             </div>
 
