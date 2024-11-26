@@ -15,11 +15,11 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
-                        {{ __('Welcome') }}
-                    </x-nav-link>
                     <x-nav-link :href="route('piggy-banks.index')" :active="request()->routeIs('piggy-banks.index')">
                         {{ __('My Piggy Banks') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
+                        {{ __('Welcome') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -40,6 +40,7 @@
                     </x-slot>
 
                     <x-slot name="content">
+
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
@@ -78,6 +79,9 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('piggy-banks.index')" :active="request()->routeIs('piggy-banks.index')">
+                {{ __('My Piggy Banks') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
                 {{ __('Welcome') }}
