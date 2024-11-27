@@ -34,5 +34,15 @@
     "Are you sure you want to delete your account?": "Hesabını silmek istediğinden emin misin?",
     "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.": "Hesabını sildiğinde bütün bilgilerin geri dönülemez bir şekilde silinir. İşlemi onaylamak için şifreni tekrar gir.",
     "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.": "Hesabını sildiğinde bütün bilgilerin geri dönülemez bir şekilde silinir.",
-    "Cancel": "Vazgeç"
+    "Cancel": "Vazgeç",
+    "Create New Piggy Bank": "Yeni Kumbara Oluştur",
+    "Step 1 of 3": "Adım 1 - 3",
+    "Provide information about your goal": "Lütfen kumbaranı oluşturmak için bazı bilgiler gir",
+    "1. I am saving for a (required field)": "1. Ne almak için para biriktiriyorsun? (zorunlu bilgi)",
+    "2. Price of the item (required field)": "2. Almak istediğin şeyin fiyatını paylaş (zorunlu bilgi)",
+    "3. Product link (optional)": "3. Ürün linki (opsiyonel bilgi)",
+    "4. Details (optional)": "4. Başka detaylar girmek istersen (opsiyonel bilgi)",
+    "5. I already saved some money (optional)": "5. Kumbarana önden biraz para koymak istersen (opsiyonel bilgi)",
+    "Are you sure you want to cancel?": "İşlemi iptal etmek istediğinden emin misin?",
+    "Next": "Sonraki adım"
 }

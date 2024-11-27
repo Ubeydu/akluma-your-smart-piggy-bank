@@ -12,26 +12,31 @@
 │   ├── danger-button.blade.php
 │   ├── dropdown-link.blade.php
 │   ├── dropdown.blade.php
+│   ├── empty-state.blade.php
 │   ├── input-error.blade.php
 │   ├── input-label.blade.php
+│   ├── language-dropdown.blade.php
 │   ├── modal.blade.php
 │   ├── nav-link.blade.php
+│   ├── piggy-bank-card.blade.php
 │   ├── primary-button.blade.php
 │   ├── responsive-nav-link.blade.php
 │   ├── secondary-button.blade.php
 │   └── text-input.blade.php
 ├── dashboard.blade.php
+├── folder_structure_views.txt
 ├── layouts
 │   ├── app.blade.php
 │   ├── guest.blade.php
 │   └── navigation.blade.php
+├── piggy-banks
+│   └── index.blade.php
 ├── profile
 │   ├── edit.blade.php
 │   └── partials
 │       ├── delete-user-form.blade.php
 │       ├── update-password-form.blade.php
 │       └── update-profile-information-form.blade.php
-├── views_dir_structure.txt
 └── welcome.blade.php
 
-6 directories, 29 files
+7 directories, 33 files

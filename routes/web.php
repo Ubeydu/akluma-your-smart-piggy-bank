@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PickDateStrategyController;
 use App\Http\Controllers\PiggyBankController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,16 @@ Route::get('/language/{locale}', function ($locale) {
 
 Route::get('/current-locale', function () {
     dd(app()->getLocale());
+});
+
+// Pick date strategy: Create piggy bank route group
+Route::middleware(['auth', 'verified'])->group(function () {
+   Route::prefix('create-piggy-bank/pick-date')->name('create-piggy-bank.pick-date.')->group(function () {
+       Route::get('/step-1', [PickDateStrategyController::class, 'step1'])->name('step-1');
+       Route::post('/step-2', [PickDateStrategyController::class, 'step2'])->name('step-2');
+       Route::post('/step-3', [PickDateStrategyController::class, 'step3'])->name('step-3');
+       Route::post('/save', [PickDateStrategyController::class, 'save'])->name('save');
+   });
 });
 
 require __DIR__.'/auth.php';
