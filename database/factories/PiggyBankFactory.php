@@ -35,7 +35,7 @@ class PiggyBankFactory extends Factory
             'image' => 'images/piggy_banks/default_piggy_bank.png',
             'currency' => 'TRY',
             'balance' => fn (array $attributes) => $attributes['starting_amount'],
-            'date' => $this->faker->date('Y-m-d', '+1 year'),
+            'purchase_date' => fn (array $attributes) => $this->faker->dateTimeBetween($attributes['created_at'] ?? '-1 week', '+1 year')->format('Y-m-d'),
             'status' => $this->faker->randomElement(['active', 'paused', 'done', 'cancelled']),
         ];
     }
