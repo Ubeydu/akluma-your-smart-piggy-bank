@@ -83,18 +83,13 @@ return [
         'French' => 'fr',
     ],
 
+    'default_currency' => env('APP_DEFAULT_CURRENCY', 'TRY'),
+
     'currencies' => [
       'TRY' => 'Turkish Lira',
       'USD' => 'US Dollar',
       'GBP' => 'British Pound',
       'EUR' => 'Euro',
-    ],
-
-    'language_currency_map' => [
-      'tr' => 'TRY',
-      'en_US' => 'USD',
-      'en_GB' => 'GBP',
-      'fr' => 'EUR',
     ],
 
 

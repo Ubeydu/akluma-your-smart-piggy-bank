@@ -44,5 +44,14 @@
     "4. Details (optional)": "4. Başka detaylar girmek istersen (opsiyonel bilgi)",
     "5. I already saved some money (optional)": "5. Kumbarana önden biraz para koymak istersen (opsiyonel bilgi)",
     "Are you sure you want to cancel?": "İşlemi iptal etmek istediğinden emin misin?",
-    "Next": "Sonraki adım"
+    "Next": "Sonraki adım",
+    "Currency": "Para Birimi",
+    "Turkish Lira": "Türk Lirası",
+    "US Dollar": "ABD Doları",
+    "British Pound": "İngiliz Sterlini",
+    "Euro": "Avro",
+    "English (US)": "İngilizce (ABD)",
+    "English (UK)": "İngilizce (BK)",
+    "You switched the currency to :currency": ":currency para birimine geçtin.",
+    "Invalid currency selected.": "Geçersiz para birimi seçtin."
 }

@@ -35,9 +35,34 @@ Route::get('/language/{locale}', function ($locale) {
     return redirect()->back();
 })->name('language.switch');
 
-Route::get('/current-locale', function () {
-    dd(app()->getLocale());
+//Route::get('/current-locale', function () {
+//    dd(app()->getLocale());
+//});
+
+
+Route::get('currency/switch/{currency}', function ($currency) {
+    $availableCurrencies = config('app.currencies', []);
+
+
+    if (array_key_exists($currency, $availableCurrencies)) {
+        session(['currency' => $currency]);
+        $currencyName = __($availableCurrencies[$currency]);
+
+
+        session()->flash('success', __('You switched the currency to :currency', ['currency' => $currencyName]));
+    } else {
+        session()->flash('error', __('Invalid currency selected.'));
+    }
+
+    return redirect()->back();
+})->name('currency.switch');
+
+// Debug route for currency
+// visit this to test: http://127.0.0.1:8000/current-currency
+Route::get('/current-currency', function () {
+    dd(session('currency', config('app.default_currency')));
 });
+
 
 // Pick date strategy: Create piggy bank route group
 Route::middleware(['auth', 'verified'])->group(function () {
