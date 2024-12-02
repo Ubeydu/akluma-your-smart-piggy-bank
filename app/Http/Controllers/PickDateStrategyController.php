@@ -25,18 +25,20 @@ class PickDateStrategyController extends Controller
      */
     public function step2(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'currency' => 'required|string|in:' . implode(',', array_keys(config('app.currencies'))),
-            'link' => 'nullable|url|max:255',
-            'details' => 'nullable|string|max:5000',
-            'starting_amount' => 'nullable|numeric|min:0',
-        ]);
 
-        $request->session()->put('pick_date_step1', $validated);
-
-        return view('create_piggy_bank.pick_date.step2');
+        dd($request->all());
+//        $validated = $request->validate([
+//            'name' => 'required|string|max:255',
+//            'price' => 'required|numeric|min:0',
+//            'currency' => 'required|string|in:' . implode(',', array_keys(config('app.currencies'))),
+//            'link' => 'nullable|url|max:255',
+//            'details' => 'nullable|string|max:5000',
+//            'starting_amount' => 'nullable|numeric|min:0',
+//        ]);
+//
+//        $request->session()->put('pick_date_step1', $validated);
+//
+//        return view('create_piggy_bank.pick_date.step2');
     }
 
     /**

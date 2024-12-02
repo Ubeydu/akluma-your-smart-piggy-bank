@@ -17,38 +17,157 @@
 
                         <!-- Name -->
                         <div class="mb-4">
-                            <x-input-label for="name" :value="__('1. I am saving for a (required field)')" />
-                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required maxlength="255" />
+                            <x-input-label for="name">
+                                {!! __('1. I am saving for a (required field)') !!}
+                            </x-input-label>
+                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required maxlength="255" autocomplete="on" />
                             <p id="name-count" class="text-gray-500 text-sm mt-1">0 / 255</p>
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
 
                         <!-- Price -->
                         <div class="mb-4">
-                            <x-input-label for="price" :value="__('2. Price of the item (required field)')" />
-                            <x-text-input id="price" name="price" type="number" step="0.01" class="mt-1 block w-full" required />
-                            <x-input-error :messages="$errors->get('price')" class="mt-2" />
+                            <x-input-label for="price_whole"> {!! __('2. Price of the item (required field)') !!} </x-input-label>
+                            <div class="flex gap-2 items-start mt-1">
+                                <!-- Whole number part -->
+                                <div class="flex-1 min-w-0">
+                                    <x-text-input
+                                        id="price_whole"
+                                        name="price_whole"
+                                        type="text"
+                                        inputmode="numeric"
+                                        pattern="[1-9][0-9]{0,14}"
+                                        onkeypress="return function(e) {
+                                            const value = e.target.value;
+                                            return /[0-9]/.test(e.key) && !(value === '' && e.key === '0') && value.length < 15;
+                                        }(event)"
+                                        class="block w-full"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="flex items-center mt-2">
+                                    <span class="text-lg">.</span>
+                                </div>
+
+                                <!-- Decimal/cents part -->
+                                <div class="w-12">
+                                    <x-text-input
+                                        id="price_cents"
+                                        name="price_cents"
+                                        type="text"
+                                        inputmode="numeric"
+                                        pattern="\d{1,2}"
+                                        onfocus="this.dataset.cleared = 'false';"
+                                        oninput="this.value = this.value.replace(/\D/g, '').slice(0, 2);"
+                                        onblur="if (this.value === '') this.value = '00';"
+                                        value="00"
+                                        class="block w-full"
+                                        required
+                                    />
+                                </div>
+
+                                <!-- Currency -->
+                                <select
+                                    id="currency"
+                                    name="currency"
+                                    class="block w-24 text-center border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                    onchange="window.location.href = '{{ url('currency/switch') }}/' + this.value;"
+                                >
+                                    @foreach(config('app.currencies') as $code => $name)
+                                        <option
+                                            value="{{ $code }}"
+                                            {{ session('currency') === $code ? 'selected' : '' }}
+                                        >
+                                            {{ $code }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+
+                            <!-- Error messages -->
+                            <div class="mt-2">
+                                <x-input-error :messages="$errors->get('price_whole')" />
+                                <x-input-error :messages="$errors->get('price_cents')" />
+                            </div>
                         </div>
 
                         <!-- Link (Optional) -->
                         <div class="mb-4">
                             <x-input-label for="link" :value="__('3. Product link (optional)')" />
-                            <x-text-input id="link" name="link" type="url" class="mt-1 block w-full" />
+                            <x-text-input id="link" name="link" type="url" class="mt-1 block w-full" maxlength="1000" />
+                            <p id="link-count" class="text-gray-500 text-sm mt-1">0 / 1000</p>
                             <x-input-error :messages="$errors->get('link')" class="mt-2" />
                         </div>
 
                         <!-- Details (Optional) -->
                         <div class="mb-4">
                             <x-input-label for="details" :value="__('4. Details (optional)')" />
-                            <textarea id="details" name="details" rows="4" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:ring focus:ring-opacity-50"></textarea>
+                            <textarea id="details" name="details" rows="4" maxlength="5000" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:ring focus:ring-opacity-50"></textarea>
+                            <p id="details-count" class="text-gray-500 text-sm mt-1">0 / 5000</p>
                             <x-input-error :messages="$errors->get('details')" class="mt-2" />
                         </div>
 
+
                         <!-- Starting Amount (Optional) -->
                         <div class="mb-4">
-                            <x-input-label for="starting_amount" :value="__('5. I already saved some money (optional)')" />
-                            <x-text-input id="starting_amount" name="starting_amount" type="number" step="0.01" class="mt-1 block w-full" />
-                            <x-input-error :messages="$errors->get('starting_amount')" class="mt-2" />
+                            <x-input-label for="starting_amount_whole" :value="__('5. I already saved some money (optional)')" />
+                            <div class="flex gap-2 items-start mt-1">
+                                <!-- Whole number part -->
+                                <div class="flex-1 min-w-0">
+                                    <x-text-input
+                                        id="starting_amount_whole"
+                                        name="starting_amount_whole"
+                                        type="text"
+                                        inputmode="numeric"
+                                        pattern="[1-9][0-9]{0,14}"
+                                        onkeypress="return function(e) {
+                                            const value = e.target.value;
+                                            return /[0-9]/.test(e.key) && !(value === '' && e.key === '0') && value.length < 15;
+                                        }(event)"
+                                        oninput="document.getElementById('starting_amount_cents').value = (this.value === '' || this.value === '0') ? '' : '00';"
+                                        class="block w-full"
+                                    />
+                                </div>
+
+                                <div class="flex items-center mt-2">
+                                    <span class="text-lg">.</span>
+                                </div>
+
+                                <!-- Decimal/cents part -->
+                                <div class="w-12">
+                                    <x-text-input
+                                        id="starting_amount_cents"
+                                        name="starting_amount_cents"
+                                        type="text"
+                                        inputmode="numeric"
+                                        pattern="\d{1,2}"
+                                        oninput="this.value = this.value.replace(/\D/g, '').slice(0, 2);"
+                                        placeholder="00"
+                                        class="block w-full"
+                                    />
+                                </div>
+
+                                <!-- Currency -->
+                                <div class="w-24">
+                                    <x-text-input
+                                        id="starting_amount_currency"
+                                        type="text"
+                                        class="block w-full text-center"
+                                        readonly
+                                        value="{{ session('currency') }}"
+                                    />
+                                </div>
+
+
+                            </div>
+
+                            <!-- Error messages -->
+                            <div class="mt-2">
+                                <x-input-error :messages="$errors->get('price_whole')" />
+                                <x-input-error :messages="$errors->get('price_cents')" />
+                            </div>
                         </div>
 
                         <!-- Action Buttons -->
@@ -66,33 +185,6 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Enable/disable Next button based on form input validation
-            const form = document.querySelector('form');
-            const nextButton = document.getElementById('nextButton');
+    @vite(['resources/js/create-piggy.js'])
 
-            form.addEventListener('input', function () {
-                const isValid = form.checkValidity();
-                nextButton.disabled = !isValid;
-            });
-
-            // Character count logic
-            const fields = [
-                { id: 'name', max: 255 },
-                { id: 'link', max: 255 },
-                { id: 'details', max: 5000 },
-            ];
-
-            fields.forEach(field => {
-                const input = document.getElementById(field.id);
-                const countDisplay = document.getElementById(`${field.id}-count`);
-
-                input.addEventListener('input', function () {
-                    const length = input.value.length;
-                    countDisplay.textContent = `${length} / ${field.max}`;
-                });
-            });
-        });
-    </script>
 </x-app-layout>

@@ -28,7 +28,7 @@ class MoneyCast implements CastsAttributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): Money
     {
-        $currencyCode = $attributes['currency'] ?? 'TRY';
+        $currencyCode = $attributes['currency'];
 
         if ($value === null) {
             throw new InvalidArgumentException('Null value cannot be cast to Money.');
@@ -53,7 +53,7 @@ class MoneyCast implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): array
     {
-        $currencyCode = $attributes['currency'] ?? 'TRY';
+        $currencyCode = $attributes['currency'];
 
         if ($value === null) {
             throw new InvalidArgumentException('Money value cannot be null.');
