@@ -12,7 +12,7 @@
                     <h1 class="text-lg font-semibold mb-4">{{ __('Step 1 of 3') }}</h1>
                     <p class="text-gray-600 mb-6">{{ __('Provide information about your goal') }}</p>
 
-                    <form method="POST" action="{{ route('create-piggy-bank.pick-date.step-2') }}">
+                    <form method="POST" action="{{ route('create-piggy-bank.step-2') }}">
                         @csrf
 
                         <!-- Name -->
@@ -20,7 +20,7 @@
                             <x-input-label for="name">
                                 {!! __('1. I am saving for a (required field)') !!}
                             </x-input-label>
-                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required maxlength="255" autocomplete="on" />
+                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required maxlength="255" autocomplete="on" :value="session('pick_date_step1.name')" />
                             <p id="name-count" class="text-gray-500 text-sm mt-1">0 / 255</p>
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
@@ -37,6 +37,7 @@
                                         type="text"
                                         inputmode="numeric"
                                         pattern="[1-9][0-9]{0,14}"
+                                        :value="session('pick_date_step1.price') ? explode('.', session('pick_date_step1.price')->getAmount())[0] : ''"
                                         onkeypress="return function(e) {
                                             const value = e.target.value;
                                             return /[0-9]/.test(e.key) && !(value === '' && e.key === '0') && value.length < 15;
@@ -61,7 +62,7 @@
                                         onfocus="this.dataset.cleared = 'false';"
                                         oninput="this.value = this.value.replace(/\D/g, '').slice(0, 2);"
                                         onblur="if (this.value === '') this.value = '00';"
-                                        value="00"
+                                        :value="session('pick_date_step1.price') ? (explode('.', session('pick_date_step1.price')->getAmount())[1] ?? '00') : '00'"
                                         class="block w-full"
                                         required
                                     />
@@ -96,7 +97,7 @@
                         <!-- Link (Optional) -->
                         <div class="mb-4">
                             <x-input-label for="link" :value="__('3. Product link (optional)')" />
-                            <x-text-input id="link" name="link" type="url" class="mt-1 block w-full" maxlength="1000" />
+                            <x-text-input id="link" name="link" type="url" class="mt-1 block w-full" maxlength="1000" :value="session('pick_date_step1.link')" />
                             <p id="link-count" class="text-gray-500 text-sm mt-1">0 / 1000</p>
                             <x-input-error :messages="$errors->get('link')" class="mt-2" />
                         </div>
@@ -104,7 +105,7 @@
                         <!-- Details (Optional) -->
                         <div class="mb-4">
                             <x-input-label for="details" :value="__('4. Details (optional)')" />
-                            <textarea id="details" name="details" rows="4" maxlength="5000" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:ring focus:ring-opacity-50"></textarea>
+                            <textarea id="details" name="details" rows="4" maxlength="5000" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:ring focus:ring-opacity-50">{{ session('pick_date_step1.details') }}</textarea>
                             <p id="details-count" class="text-gray-500 text-sm mt-1">0 / 5000</p>
                             <x-input-error :messages="$errors->get('details')" class="mt-2" />
                         </div>
@@ -122,6 +123,7 @@
                                         type="text"
                                         inputmode="numeric"
                                         pattern="[1-9][0-9]{0,14}"
+                                        :value="session('pick_date_step1.starting_amount') ? explode('.', session('pick_date_step1.starting_amount')->getAmount())[0] : ''"
                                         onkeypress="return function(e) {
                                             const value = e.target.value;
                                             return /[0-9]/.test(e.key) && !(value === '' && e.key === '0') && value.length < 15;
@@ -143,8 +145,8 @@
                                         type="text"
                                         inputmode="numeric"
                                         pattern="\d{1,2}"
+                                        :value="session('pick_date_step1.starting_amount') ? (explode('.', session('pick_date_step1.starting_amount')->getAmount())[1] ?? '00') : ''"
                                         oninput="this.value = this.value.replace(/\D/g, '').slice(0, 2);"
-                                        placeholder="00"
                                         class="block w-full"
                                     />
                                 </div>
@@ -170,9 +172,10 @@
                             </div>
                         </div>
 
+
                         <!-- Action Buttons -->
                         <div class="flex justify-between mt-6">
-                            <x-danger-button type="button" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('dashboard') }}'; }">
+                            <x-danger-button type="button" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('piggy-banks.index') }}'; }">
                                 {{ __('Cancel') }}
                             </x-danger-button>
                             <x-primary-button id="nextButton" type="submit" disabled>
