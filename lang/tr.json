@@ -61,5 +61,7 @@
     "enter_saving_amount_strategy_definition": "Düzenli olarak kenara ayırmak istediğin miktarı belirle. Biz de buna göre ne zaman istediğin ürünü alabileceğini hesaplayalım.",
     "Pick Date": "Tarih Belirle",
     "Enter Saving Amount" : "Düzenli Birikim Miktarı Belirle",
-    "Previous": "Önceki Sayfa"
+    "Previous": "Önceki Sayfa",
+    "Please pick a valid future date.": "Lütfen geçerli bir tarih seçin.",
+    "You picked": "Seçtiğin tarih"
 }

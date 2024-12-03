@@ -197,26 +197,9 @@ class PiggyBankCreateController extends Controller
 
 
     /**
-     * Step 3: Handle strategy choice and render appropriate view.
+     * Handle POST request for Step 2: Validate and store the chosen strategy.
      */
-    public function step3(Request $request)
-    {
-        // Get the chosen strategy from the session
-        $strategy = $request->session()->get('chosen_strategy');
-
-        if ($strategy === 'pick-date') {
-            return view('create-piggy-bank.pick-date.step-3');
-        } elseif ($strategy === 'enter-saving-amount') {
-            return view('create-piggy-bank.enter-saving-amount.step-3');
-        }
-
-        return redirect()->route('create-piggy-bank.step-1')->with('error', 'Invalid strategy chosen.');
-    }
-
-    /**
-     * Step 2 POST: Store the chosen strategy and redirect to the appropriate Step 3.
-     */
-    public function chooseStrategy(Request $request)
+    public function storeStrategySelection(Request $request)
     {
         // Validate strategy selection
         $validated = $request->validate([
@@ -232,6 +215,23 @@ class PiggyBankCreateController extends Controller
         } elseif ($validated['strategy'] === 'enter-saving-amount') {
             return redirect()->route('create-piggy-bank.enter-saving-amount.step-3');
         }
+    }
+
+    /**
+     * Render the view for the chosen strategy's next step (Step 3).
+     */
+    public function renderStrategyView(Request $request)
+    {
+        // Get the chosen strategy from the session
+        $strategy = $request->session()->get('chosen_strategy');
+
+        if ($strategy === 'pick-date') {
+            return view('create-piggy-bank.pick-date.step-3');
+        } elseif ($strategy === 'enter-saving-amount') {
+            return view('create-piggy-bank.enter-saving-amount.step-3');
+        }
+
+        return redirect()->route('create-piggy-bank.step-1')->with('error', 'Invalid strategy chosen.');
     }
 
 

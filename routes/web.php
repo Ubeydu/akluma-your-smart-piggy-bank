@@ -5,6 +5,7 @@ use App\Http\Controllers\PiggyBankCreateController;
 use App\Http\Controllers\PiggyBankController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
@@ -73,13 +74,39 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
     Route::post('/step-2', [PiggyBankCreateController::class, 'step2'])->name('step-2');
 
     // Strategy-specific Step 3 routes
-    Route::post('/choose-strategy', [PiggyBankCreateController::class, 'chooseStrategy'])->name('choose-strategy');
+    Route::post('/choose-strategy', [PiggyBankCreateController::class, 'storeStrategySelection'])->name('choose-strategy');
     Route::prefix('pick-date')->name('pick-date.')->group(function () {
-        Route::get('/step-3', [PiggyBankCreateController::class, 'step3'])->name('step-3');
+        Route::get('/step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
     });
     Route::prefix('enter-saving-amount')->name('enter-saving-amount.')->group(function () {
-        Route::get('/step-3', [PiggyBankCreateController::class, 'step3'])->name('step-3');
+        Route::get('/step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
     });
+});
+
+Route::get('/format-date', function (Request $request) {
+    $date = $request->query('date'); // Correct usage of query() method
+
+    if (!$date) {
+        return response()->json(['error' => 'Invalid date'], 400);
+    }
+
+    try {
+        // Parse the date into a DateTime object
+        $dateObject = new DateTime($date);
+
+        // Format the date based on the app's current locale
+        $locale = app()->getLocale(); // Get the current locale
+        $formatter = new IntlDateFormatter(
+            $locale, // Locale, e.g., 'en_US', 'fr', 'tr'
+            IntlDateFormatter::LONG, // Use a long date format
+            IntlDateFormatter::NONE // No time format
+        );
+        $formattedDate = $formatter->format($dateObject);
+
+        return response()->json(['formatted_date' => $formattedDate]);
+    } catch (Exception $e) {
+        return response()->json(['error' => 'Date formatting failed'], 500);
+    }
 });
 
 
