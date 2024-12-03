@@ -14,7 +14,7 @@ class PiggyBankCreateController extends Controller
     public function step1(Request $request)
     {
 //        \Log::info('Session data in step1:', $request->session()->get('pick_date_step1', []));
-        return view('create-piggy-bank.pick-date.step-1');
+        return view('create-piggy-bank.common.step-1');
     }
 
     /**
@@ -91,13 +91,13 @@ class PiggyBankCreateController extends Controller
 //        \Log::info('Session data stored:', $request->session()->get('pick_date_step1', []));
 
 
-        return view('create-piggy-bank.pick-date.step-2');
+        return view('create-piggy-bank.common.step-2');
     }
 
     public function showStep2()
     {
         // Load any necessary data from session or database if needed
-        return view('create-piggy-bank.pick-date.step-2');
+        return view('create-piggy-bank.common.step-2');
     }
 
 
