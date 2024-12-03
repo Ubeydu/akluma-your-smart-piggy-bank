@@ -1,3 +1,16 @@
+<?php
+$placeholders = [
+'tr' => 'gg.aa.yyyy',
+'en_US' => 'mm/dd/yyyy',
+'en_GB' => 'dd/mm/yyyy',
+'fr' => 'jj/mm/aaaa',
+];
+
+// Get the current language
+$language = app()->getLocale(); // Gets the current locale, e.g., 'tr', 'en_US', etc.
+$currentPlaceholder = $placeholders[$language];
+?>
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-900 leading-tight">
@@ -12,7 +25,53 @@
                     <h1 class="text-lg font-semibold mb-4">{{ __('Step 3 of 3') }}</h1>
 
 
-                    <p>Pick date Step 3</p>
+                    <div class="mb-6">
+                        <label for="saving_date" class="block text-gray-700 font-medium mb-2">
+                            {{ __('Pick Date') }}
+                        </label>
+                        <input type="date" id="saving_date" name="saving_date"
+                               class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                               min="{{ \Carbon\Carbon::now()->addDay()->format('Y-m-d') }}" />
+                        <p id="dateDisplay" class="text-gray-700 font-medium mt-2 hidden" data-message="{{ __('You picked') }}"></p>
+                        <p id="dateError" class="text-red-500 text-sm mt-1 hidden">
+                            {{ __('Please pick a valid future date.') }}
+                        </p>
+                    </div>
+
+                    <script>
+                        // Set placeholder dynamically for unsupported browsers
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const dateInput = document.getElementById("saving_date");
+
+                            // Browser fallback for unsupported date placeholders
+                            if (!dateInput.placeholder) {
+                                dateInput.setAttribute("placeholder", "{{ $currentPlaceholder }}");
+                            }
+                        });
+
+                        // Handle date input changes and display the formatted date
+                        const dateInput = document.getElementById("saving_date");
+                        const dateDisplay = document.getElementById("dateDisplay");
+
+                        dateInput.addEventListener("input", async function () {
+                            if (dateInput.value) {
+                                try {
+                                    const response = await fetch(`/format-date?date=${dateInput.value}`);
+                                    if (response.ok) {
+                                        const data = await response.json();
+                                        const message = dateDisplay.getAttribute("data-message");
+                                        dateDisplay.textContent = `${message} ${data.formatted_date}`;
+                                        dateDisplay.classList.remove("hidden");
+                                    }
+                                } catch (error) {
+                                    console.error("Error fetching formatted date:", error);
+                                }
+                            } else {
+                                dateDisplay.classList.add("hidden");
+                            }
+                        });
+                    </script>
+
 
                     <!-- Action Buttons -->
                     <div class="flex justify-between mt-6">

@@ -1,11 +1,12 @@
 .
+├── common
+│   ├── step-1.blade.php
+│   └── step-2.blade.php
 ├── enter-saving-amount
 │   └── step-3.blade.php
 ├── folder_structure_create-piggy-bank.txt
 └── pick-date
-    ├── step-1.blade.php
-    ├── step-2.blade.php
     ├── step-3.blade.php
     └── summary.blade.php
 
-3 directories, 6 files
+4 directories, 6 files
