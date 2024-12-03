@@ -18,10 +18,10 @@ class LanguageSwitcher
         $availableLanguages = config('app.available_languages', []);
         $locale = \Session::get('locale');
 
-        \Log::info('Debugging Locale Check:', [
-            'locale' => $locale,
-            'availableLanguages' => $availableLanguages
-        ]);
+//        \Log::info('Debugging Locale Check:', [
+//            'locale' => $locale,
+//            'availableLanguages' => $availableLanguages
+//        ]);
 
         if ($locale && in_array($locale, $availableLanguages)) {
             \App::setLocale($locale);

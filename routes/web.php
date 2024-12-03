@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PickDateStrategyController;
+use App\Http\Controllers\PiggyBankCreateController;
 use App\Http\Controllers\PiggyBankController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -64,14 +64,23 @@ Route::get('/current-currency', function () {
 });
 
 
-// Pick date strategy: Create piggy bank route group
-Route::middleware(['auth', 'verified'])->group(function () {
-   Route::prefix('create-piggy-bank/pick-date')->name('create-piggy-bank.pick-date.')->group(function () {
-       Route::get('/step-1', [PickDateStrategyController::class, 'step1'])->name('step-1');
-       Route::post('/step-2', [PickDateStrategyController::class, 'step2'])->name('step-2');
-       Route::post('/step-3', [PickDateStrategyController::class, 'step3'])->name('step-3');
-       Route::post('/save', [PickDateStrategyController::class, 'save'])->name('save');
-   });
+// Create piggy bank routes
+Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('create-piggy-bank.')->group(function () {
+    Route::get('/step-1', [PiggyBankCreateController::class, 'step1'])->name('step-1');
+
+    Route::get('/step-2', [PiggyBankCreateController::class, 'showStep2'])->name('step-2.get');
+
+    Route::post('/step-2', [PiggyBankCreateController::class, 'step2'])->name('step-2');
+
+    // Strategy-specific Step 3 routes
+    Route::post('/choose-strategy', [PiggyBankCreateController::class, 'chooseStrategy'])->name('choose-strategy');
+    Route::prefix('pick-date')->name('pick-date.')->group(function () {
+        Route::get('/step-3', [PiggyBankCreateController::class, 'step3'])->name('step-3');
+    });
+    Route::prefix('enter-saving-amount')->name('enter-saving-amount.')->group(function () {
+        Route::get('/step-3', [PiggyBankCreateController::class, 'step3'])->name('step-3');
+    });
 });
+
 
 require __DIR__.'/auth.php';

@@ -37,6 +37,8 @@
     "Cancel": "Vazgeç",
     "Create New Piggy Bank": "Yeni Kumbara Oluştur",
     "Step 1 of 3": "Adım 1 - 3",
+    "Step 2 of 3": "Adım 2 - 3",
+    "Step 3 of 3": "Adım 3 - 3",
     "Provide information about your goal": "Lütfen kumbaranı oluşturmak için bazı bilgiler gir",
     "1. I am saving for a (required field)": "1. Ne almak için para biriktiriyorsun? <span class='text-red-500'>(zorunlu bilgi)</span>",
     "2. Price of the item (required field)": "2. Almak istediğin şeyin fiyatını paylaş <span class='text-red-500'>(zorunlu bilgi)</span>",
@@ -53,5 +55,11 @@
     "English (US)": "İngilizce (ABD)",
     "English (UK)": "İngilizce (BK)",
     "You switched the currency to :currency": ":currency para birimine geçtin.",
-    "Invalid currency selected.": "Geçersiz para birimi seçtin."
+    "Invalid currency selected.": "Geçersiz para birimi seçtin.",
+    "Choose your strategy" : "Para biriktirme yönteminizi seçin",
+    "pick_date_strategy_definition": "Kumbaranı açıp, ürünü almak istediğin tarihi belirle. Biz de buna göre her hafta ya da her ay ne kadar para kenara ayırman gerektiğini belirleyelim.",
+    "enter_saving_amount_strategy_definition": "Düzenli olarak kenara ayırmak istediğin miktarı belirle. Biz de buna göre ne zaman istediğin ürünü alabileceğini hesaplayalım.",
+    "Pick Date": "Tarih Belirle",
+    "Enter Saving Amount" : "Düzenli Birikim Miktarı Belirle",
+    "Previous": "Önceki Sayfa"
 }

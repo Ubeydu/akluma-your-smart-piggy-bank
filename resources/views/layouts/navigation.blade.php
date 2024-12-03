@@ -21,8 +21,8 @@
                                 :active="request()->routeIs('piggy-banks.index')">
                         {{ __('My Piggy Banks') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('create-piggy-bank.pick-date.step-1')"
-                                :active="request()->routeIs('create-piggy-bank.pick-date.step-1')">
+                    <x-nav-link :href="route('create-piggy-bank.step-1')"
+                                :active="request()->routeIs('create-piggy-bank.step-1')">
                         {{ __('Create New Piggy Bank') }}
                     </x-nav-link>
                     <x-nav-link :href="route('welcome')"

@@ -17,7 +17,7 @@
                                 title="No Piggy Banks Yet"
                                 message="Start saving for your goals today by creating your first piggy bank!"
                                 buttonText="Create Your Piggy Bank"
-                                buttonLink="{{ route('piggy-banks.create') }}"
+                                buttonLink="{{ route('piggy-banks.index') }}"
                             />
                         @else
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

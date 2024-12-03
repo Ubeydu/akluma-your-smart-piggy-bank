@@ -25,5 +25,7 @@
     "remaining_amount": "Remaining amount",
     "purchase_date": "Purchase date",
     "French": "French",
-    "Profile Information": "Profile Information"
+    "Profile Information": "Profile Information",
+    "pick_date_strategy_definition": "Set a date for when you want to save enough for your item, and we’ll calculate how much you need to save regularly to hit your goal.",
+    "enter_saving_amount_strategy_definition": "Enter the amount you want to put aside each time, then we will show you the date when you will reach your saving goal."
 }
