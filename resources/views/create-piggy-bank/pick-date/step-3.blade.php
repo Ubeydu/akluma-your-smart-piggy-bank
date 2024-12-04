@@ -41,12 +41,18 @@ $currentPlaceholder = $placeholders[$language];
 
                     </div>
 
+                    <div id="frequencyOptions" class="mt-8 hidden">
+                        <h2 class="text-lg font-semibold mb-4">{{ __('Select Your Saving Frequency') }}</h2>
+                        <div class="space-y-4">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
                     <script>
                         document.addEventListener("DOMContentLoaded", function () {
                             const dateInput = document.getElementById("saving_date");
                             const dateLabel = document.getElementById("saving_date_label");
                             const dateDisplay = document.getElementById("dateDisplay");
-
 
                             // Handle date input changes and display the formatted date
                             dateInput.addEventListener("input", async function () {
@@ -56,6 +62,7 @@ $currentPlaceholder = $placeholders[$language];
                                         const response = await fetch(`/format-date?date=${dateInput.value}`);
                                         if (response.ok) {
                                             const data = await response.json();
+                                            console.log('Date format response:', data);
                                             const message = dateDisplay.getAttribute("data-message");
                                             dateDisplay.textContent = `${message} ${data.formatted_date}`;
                                             dateDisplay.classList.remove("hidden");
@@ -68,7 +75,83 @@ $currentPlaceholder = $placeholders[$language];
                                     dateDisplay.classList.add("hidden");
                                 }
                             });
+
+                            dateInput.addEventListener("change", async function() {
+                                if (this.value) {
+                                    try {
+                                        const response = await fetch('{{ route("create-piggy-bank.pick-date.calculate-frequencies") }}', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                            },
+                                            body: JSON.stringify({ purchase_date: this.value })
+                                        });
+
+                                        if (response.ok) {
+                                            const data = await response.json();
+                                            const container = document.querySelector('#frequencyOptions .space-y-4');
+                                            container.innerHTML = '';
+
+                                            Object.entries(data).forEach(([type, option]) => {
+                                                console.log('Processing type:', type);
+                                                console.log('Option data:', option);
+                                                console.log('amount:', option.amount.amount);
+
+                                                if (option.amount.amount !== null) {
+                                                    container.innerHTML += `
+    <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50">
+        <div class="flex items-center h-5">
+            <input type="radio" name="frequency" value="${type}"
+                class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+        </div>
+        <div class="ml-3">
+            <label class="text-sm font-medium text-gray-700">
+                I want to put aside
+                <span class="font-semibold">
+                    ${Math.floor(option.amount.amount)} whole, ${(option.amount.amount % 1 * 100).toFixed(0)} cents
+                </span>
+                each time, for
+                <span class="font-semibold">${option.frequency}</span>
+                ${type}
+            </label>
+        </div>
+    </div>
+`;
+                                                }
+                                            });
+
+                                            document.getElementById('frequencyOptions').classList.remove('hidden');
+                                        }
+                                    } catch (error) {
+                                        console.error('Error calculating frequencies:', error);
+                                    }
+                                }
+                            });
+
+                            document.querySelector('#frequencyOptions').addEventListener('change', async function(e) {
+                                if (e.target.type === 'radio') {
+                                    try {
+                                        const response = await fetch('{{ route("create-piggy-bank.pick-date.store-frequency") }}', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                            },
+                                            body: JSON.stringify({ frequency_type: e.target.value })
+                                        });
+
+                                        if (response.ok) {
+                                            document.getElementById('nextButton').classList.remove('hidden');
+                                        }
+                                    } catch (error) {
+                                        console.error('Error storing frequency:', error);
+                                    }
+                                }
+                            });
                         });
+
+
                     </script>
 
 
@@ -80,9 +163,9 @@ $currentPlaceholder = $placeholders[$language];
                         <x-secondary-button type="button" onclick="window.location='{{ route('create-piggy-bank.step-2.get') }}'">
                             {{ __('Previous') }}
                         </x-secondary-button>
-{{--                        <x-primary-button id="nextButton" type="submit">--}}
-{{--                            {{ __('Next') }}--}}
-{{--                        </x-primary-button>--}}
+                        <x-primary-button id="nextButton" type="button" class="hidden">
+                            {{ __('Next') }}
+                        </x-primary-button>
                     </div>
 
                 </div>

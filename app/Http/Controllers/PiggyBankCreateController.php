@@ -3,11 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\PiggyBank;
+use App\Services\PickDateCalculationService;
 use Brick\Money\Money;
 use Illuminate\Http\Request;
 
 class PiggyBankCreateController extends Controller
 {
+    protected PickDateCalculationService $pickDateCalculationService;
+
+    public function __construct(PickDateCalculationService $pickDateCalculationService)
+    {
+        $this->pickDateCalculationService = $pickDateCalculationService;
+    }
+
+
     /**
      * Step 1: Display the initial form (Screen 1).
      */
@@ -101,99 +110,7 @@ class PiggyBankCreateController extends Controller
     }
 
 
-//    /**
-//     * Step 3: Handle strategy choice and render appropriate view.
-//     */
-//    public function step3(Request $request)
-//    {
-//        $strategy = $request->session()->get('chosen_strategy');
-//
-//        if (!$strategy) {
-//            return redirect()->route('create-piggy-bank.step-1')->with('error', 'No strategy selected.');
-//        }
-//
-//        if ($strategy === 'pick-date') {
-//            // Handle Pick Date Strategy logic (as previously discussed)
-//
-//            $step1Data = $request->session()->get('pick_date_step1');
-//            if (!$step1Data) {
-//                \Log::warning('Step 1 data missing in session');
-//                return redirect()->route('create-piggy-bank.step-1')->with('error', 'Please complete Step 1 first.');
-//            }
-//
-//            $validated = $request->validate([
-//                'date' => 'required|date|after:today',
-//                'frequency' => 'required|in:daily,weekly,monthly,yearly',
-//            ]);
-//
-//            $price = $step1Data['price'];
-//            $startingAmount = $step1Data['starting_amount'] ?? 0;
-//            $remainingAmount = $price - $startingAmount;
-//
-//            $frequency = $validated['frequency'];
-//            $targetDate = \Carbon\Carbon::parse($validated['date']);
-//
-//            $now = \Carbon\Carbon::now();
-//            $intervals = match ($frequency) {
-//                'daily' => $now->diffInDays($targetDate),
-//                'weekly' => $now->diffInWeeks($targetDate),
-//                'monthly' => $now->diffInMonths($targetDate),
-//                'yearly' => $now->diffInYears($targetDate),
-//            };
-//
-//            if ($intervals <= 0) {
-//                return redirect()->back()->with('error', 'The selected date must be far enough in the future to calculate periodic savings.');
-//            }
-//
-//            $periodicSavingAmount = $remainingAmount / $intervals;
-//
-//            $request->session()->put('pick_date_step3', array_merge($validated, [
-//                'periodicSavingAmount' => $periodicSavingAmount,
-//                'remainingAmount' => $remainingAmount,
-//                'intervals' => $intervals,
-//            ]));
-//
-//            return view('create-piggy-bank.pick-date.summary', [
-//                'step1Data' => $step1Data,
-//                'step3Data' => $request->session()->get('pick_date_step3'),
-//            ]);
-//
-//        } elseif ($strategy === 'enter-saving-amount') {
-//            // Handle Enter Saving Amount Strategy logic
-//
-//            $step1Data = $request->session()->get('pick_date_step1');
-//            if (!$step1Data) {
-//                \Log::warning('Step 1 data missing in session');
-//                return redirect()->route('create-piggy-bank.step-1')->with('error', 'Please complete Step 1 first.');
-//            }
-//
-//            // Example: Validation for `Enter Saving Amount Strategy`
-//            $validated = $request->validate([
-//                'saving_amount' => 'required|numeric|min:1',
-//                'frequency' => 'required|in:daily,weekly,monthly,yearly',
-//            ]);
-//
-//            $price = $step1Data['price'];
-//            $startingAmount = $step1Data['starting_amount'] ?? 0;
-//            $remainingAmount = $price - $startingAmount;
-//            $savingAmount = $validated['saving_amount'];
-//
-//            // Calculate the number of intervals required
-//            $intervals = ceil($remainingAmount / $savingAmount);
-//
-//            $request->session()->put('enter_saving_step3', array_merge($validated, [
-//                'remainingAmount' => $remainingAmount,
-//                'intervals' => $intervals,
-//            ]));
-//
-//            return view('create-piggy-bank.enter-saving-amount.summary', [
-//                'step1Data' => $step1Data,
-//                'step3Data' => $request->session()->get('enter_saving_step3'),
-//            ]);
-//        }
-//
-//        return redirect()->route('create-piggy-bank.step-1')->with('error', 'Invalid strategy chosen.');
-//    }
+
 
 
     /**
@@ -234,7 +151,55 @@ class PiggyBankCreateController extends Controller
         return redirect()->route('create-piggy-bank.step-1')->with('error', 'Invalid strategy chosen.');
     }
 
+    /**
+     * Calculate frequency options for the pick-date strategy.
+     */
+    public function calculateFrequencyOptions(Request $request)
+    {
+        $request->validate([
+            'purchase_date' => 'required|date|after:today',
+        ]);
 
+        $step1Data = $request->session()->get('pick_date_step1');
+        if (!$step1Data) {
+            return response()->json(['error' => 'Missing step 1 data'], 400);
+        }
+
+        $calculations = $this->pickDateCalculationService->calculateAllFrequencyOptions(
+            $step1Data['price'],
+            $step1Data['starting_amount'],
+            $request->purchase_date
+        );
+
+        // Store calculations in session for next step
+        $request->session()->put('pick_date_step3', [
+            'date' => $request->purchase_date,
+            'calculations' => $calculations
+        ]);
+
+        return response()->json($calculations);
+    }
+
+    /**
+     * Store the selected frequency option.
+     */
+    public function storeSelectedFrequency(Request $request)
+    {
+        $request->validate([
+            'frequency_type' => 'required|in:minutes,hours,days,weeks,months,years',
+        ]);
+
+        $step3Data = $request->session()->get('pick_date_step3');
+        if (!$step3Data) {
+            return response()->json(['error' => 'Missing calculation data'], 400);
+        }
+
+        // Update the step3 data with selected frequency
+        $step3Data['selected_frequency'] = $request->frequency_type;
+        $request->session()->put('pick_date_step3', $step3Data);
+
+        return response()->json(['success' => true]);
+    }
 
     /**
      * Finalize piggy bank creation and save to the database.
