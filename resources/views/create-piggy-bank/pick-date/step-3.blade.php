@@ -26,7 +26,7 @@ $currentPlaceholder = $placeholders[$language];
 
 
                     <div class="mb-6">
-                        <label for="saving_date" class="block text-gray-700 font-medium mb-2">
+                        <label id="saving_date_label" for="saving_date" class="block text-gray-700 font-medium mb-2">
                             {{ __('Pick Date') }}
                         </label>
                         <input type="date" id="saving_date" name="saving_date"
@@ -36,39 +36,38 @@ $currentPlaceholder = $placeholders[$language];
                         <p id="dateError" class="text-red-500 text-sm mt-1 hidden">
                             {{ __('Please pick a valid future date.') }}
                         </p>
+
+                        <div class="hidden text-gray-400"></div>
+
                     </div>
 
                     <script>
-                        // Set placeholder dynamically for unsupported browsers
                         document.addEventListener("DOMContentLoaded", function () {
                             const dateInput = document.getElementById("saving_date");
+                            const dateLabel = document.getElementById("saving_date_label");
+                            const dateDisplay = document.getElementById("dateDisplay");
 
-                            // Browser fallback for unsupported date placeholders
-                            if (!dateInput.placeholder) {
-                                dateInput.setAttribute("placeholder", "{{ $currentPlaceholder }}");
-                            }
-                        });
 
-                        // Handle date input changes and display the formatted date
-                        const dateInput = document.getElementById("saving_date");
-                        const dateDisplay = document.getElementById("dateDisplay");
-
-                        dateInput.addEventListener("input", async function () {
-                            if (dateInput.value) {
-                                try {
-                                    const response = await fetch(`/format-date?date=${dateInput.value}`);
-                                    if (response.ok) {
-                                        const data = await response.json();
-                                        const message = dateDisplay.getAttribute("data-message");
-                                        dateDisplay.textContent = `${message} ${data.formatted_date}`;
-                                        dateDisplay.classList.remove("hidden");
+                            // Handle date input changes and display the formatted date
+                            dateInput.addEventListener("input", async function () {
+                                if (dateInput instanceof HTMLInputElement && dateLabel && dateInput.value) {
+                                    dateLabel.classList.add("visibility-hidden");
+                                    try {
+                                        const response = await fetch(`/format-date?date=${dateInput.value}`);
+                                        if (response.ok) {
+                                            const data = await response.json();
+                                            const message = dateDisplay.getAttribute("data-message");
+                                            dateDisplay.textContent = `${message} ${data.formatted_date}`;
+                                            dateDisplay.classList.remove("hidden");
+                                        }
+                                    } catch (error) {
+                                        console.error("Error fetching formatted date:", error);
                                     }
-                                } catch (error) {
-                                    console.error("Error fetching formatted date:", error);
+                                } else if (dateLabel) {
+                                    dateLabel.classList.remove("visibility-hidden");
+                                    dateDisplay.classList.add("hidden");
                                 }
-                            } else {
-                                dateDisplay.classList.add("hidden");
-                            }
+                            });
                         });
                     </script>
 
@@ -85,7 +84,6 @@ $currentPlaceholder = $placeholders[$language];
 {{--                            {{ __('Next') }}--}}
 {{--                        </x-primary-button>--}}
                     </div>
-
 
                 </div>
             </div>

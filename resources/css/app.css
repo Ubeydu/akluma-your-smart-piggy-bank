@@ -7,3 +7,8 @@
         @apply text-black/50 text-base;
     }
 }
+
+.visibility-hidden {
+    visibility: hidden; /* Keeps the space reserved */
+}
+
