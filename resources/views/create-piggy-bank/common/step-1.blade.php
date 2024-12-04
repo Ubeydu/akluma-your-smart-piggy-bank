@@ -169,6 +169,9 @@
                             <div class="mt-2">
                                 <x-input-error :messages="$errors->get('price_whole')" />
                                 <x-input-error :messages="$errors->get('price_cents')" />
+                                <p id="amount-warning" class="text-red-500 text-sm mt-2 hidden">
+                                    {{ __('Starting amount cannot be greater than or equal to the price. Please put a smaller amount.') }}
+                                </p>
                             </div>
                         </div>
 
@@ -178,7 +181,7 @@
                             <x-danger-button type="button" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('piggy-banks.index') }}'; }">
                                 {{ __('Cancel') }}
                             </x-danger-button>
-                            <x-primary-button id="nextButton" type="submit" disabled>
+                            <x-primary-button id="nextButton" type="submit" disabled class="disabled:bg-gray-300 disabled:cursor-not-allowed">
                                 {{ __('Next') }}
                             </x-primary-button>
                         </div>
