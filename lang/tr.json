@@ -63,5 +63,6 @@
     "Enter Saving Amount" : "Düzenli Birikim Miktarı Belirle",
     "Previous": "Önceki Sayfa",
     "Please pick a valid future date.": "Lütfen geçerli bir tarih seçin.",
-    "You picked": "Seçtiğin tarih"
+    "You picked": "Seçtiğin tarih",
+    "Starting amount cannot be greater than or equal to the price. Please put a smaller amount.": "Kumbarana önden koyacağın miktar, almak istediğin şeyin fiyatına eşit ya da ondan fazla olmamalı. Daha küçük bir miktar gir."
 }

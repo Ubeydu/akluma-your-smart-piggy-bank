@@ -67,14 +67,14 @@ class PiggyBankCreateController extends Controller
             }
         }
 
-//        \Log::info('Values to be stored in database:', [
-//            'name' => $validated['name'],
-//            'price_in_cents' => (int)$price->getMinorAmount()->toInt(), // Get amount in minor units (cents)
-//            'currency' => $validated['currency'],
-//            'link' => $validated['link'],
-//            'details' => $validated['details'],
-//            'starting_amount_in_cents' => (int) $startingAmount?->getMinorAmount()->toInt(),
-//        ]);
+        \Log::info('Values to be stored in database:', [
+            'name' => $validated['name'],
+            'price_in_cents' => (int)$price->getMinorAmount()->toInt(), // Get amount in minor units (cents)
+            'currency' => $validated['currency'],
+            'link' => $validated['link'],
+            'details' => $validated['details'],
+            'starting_amount_in_cents' => (int) $startingAmount?->getMinorAmount()->toInt(),
+        ]);
 
         // Store step 1 data in session
         $request->session()->put('pick_date_step1', [
