@@ -43,7 +43,7 @@ $currentPlaceholder = $placeholders[$language];
 
                     {{-- Frequency Options Container --}}
                     <div id="frequencyOptions" class="mt-8 hidden"> <!-- Container starts hidden -->
-                        <h2 class="text-lg font-semibold mb-6">{{ __('Select Your Saving Frequency') }}</h2>
+                        <h2 id="frequencyTitle" class="text-lg font-semibold mb-6">{{ __('Select Your Saving Frequency') }}</h2>
                         <div class="space-y-6">
                             <!-- Will be populated by JavaScript -->
                         </div>
@@ -115,26 +115,45 @@ $currentPlaceholder = $placeholders[$language];
                                     const shortTermPeriods = ['minutes', 'hours', 'days'];
                                     const longTermPeriods = ['weeks', 'months', 'years'];
 
-                                    // Create short-term options container
-                                    if (shortTermPeriods.some(period => data[period]?.amount)) {
-                                        container.innerHTML += `
-                <div class="mb-4">
-                    <h3 class="text-sm font-semibold text-gray-500 mb-3"
-                        data-translate="short-term-options">Short-term Saving Options</h3>
-                    <div class="space-y-3" id="shortTermOptions"></div>
-                </div>
-            `;
+                                    const hasShortTermOptions = shortTermPeriods.some(period => data[period]?.amount);
+                                    const hasLongTermOptions = longTermPeriods.some(period => data[period]?.amount);
+
+                                    document.getElementById('frequencyOptions').classList.remove('hidden');
+
+// If no options available, show error message and return
+                                    if (!hasShortTermOptions && !hasLongTermOptions) {
+                                        document.getElementById('frequencyTitle').classList.add('hidden');
+                                        container.innerHTML = `
+        <div class="p-4 border rounded-lg bg-gray-50">
+            <p class="text-sm text-gray-700">Sorry. We weren't able to create a saving plan for you. Try with a different price or date.</p>
+        </div>
+    `;
+                                        return;
                                     }
 
-                                    // Create long-term options container
-                                    if (longTermPeriods.some(period => data[period]?.amount)) {
+// Show the title if we have options
+                                    document.getElementById('frequencyTitle').classList.remove('hidden');
+
+                                    // Create short-term options container
+                                    if (hasShortTermOptions) {  // Using the variable we already calculated
                                         container.innerHTML += `
-                <div class="mt-6">
-                    <h3 class="text-sm font-semibold text-gray-500 mb-3"
-                        data-translate="long-term-options">Long-term Saving Options</h3>
-                    <div class="space-y-3" id="longTermOptions"></div>
-                </div>
-            `;
+        <div class="mb-4">
+            <h3 class="text-sm font-semibold text-gray-500 mb-3"
+                data-translate="short-term-options">Short-term Saving Options</h3>
+            <div class="space-y-3" id="shortTermOptions"></div>
+        </div>
+    `;
+                                    }
+
+// Create long-term options container
+                                    if (hasLongTermOptions) {  // Using the variable we already calculated
+                                        container.innerHTML += `
+        <div class="mt-6">
+            <h3 class="text-sm font-semibold text-gray-500 mb-3"
+                data-translate="long-term-options">Long-term Saving Options</h3>
+            <div class="space-y-3" id="longTermOptions"></div>
+        </div>
+    `;
                                     }
 
                                     // Process each saving option
@@ -155,10 +174,10 @@ $currentPlaceholder = $placeholders[$language];
                                             );
                                             if (container) {
                                                 container.innerHTML += `
-                        <div class="p-4 border rounded-lg bg-gray-50">
-                            <p class="text-sm text-gray-700">${option.message}</p>
-                        </div>
-                    `;
+                                                    <div class="p-4 border rounded-lg bg-gray-50">
+                                                        <p class="text-sm text-gray-700">${option.message}</p>
+                                                    </div>
+                                                `;
                                             }
                                             return;
                                         }
@@ -201,6 +220,22 @@ $currentPlaceholder = $placeholders[$language];
                                             }
                                         }
                                     });
+
+                                        // Check if containers are empty after rendering options
+                                        const shortTermContainer = document.querySelector('#shortTermOptions');
+                                        const longTermContainer = document.querySelector('#longTermOptions');
+
+// Remove short-term section if no options were rendered
+                                        if (shortTermContainer && !shortTermContainer.hasChildNodes()) {
+                                            shortTermContainer.closest('.mb-4')?.remove();
+                                        }
+
+// Remove long-term section if no options were rendered
+                                        if (longTermContainer && !longTermContainer.hasChildNodes()) {
+                                            longTermContainer.closest('.mt-6')?.remove();
+                                        }
+
+
 
                                     document.getElementById('frequencyOptions').classList.remove('hidden');
                                 } catch (error) {
