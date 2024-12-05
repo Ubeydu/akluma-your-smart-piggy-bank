@@ -65,5 +65,8 @@
     "Please pick a valid future date.": "Lütfen geçerli bir tarih seçin.",
     "You picked": "Seçtiğin tarih",
     "Starting amount cannot be greater than or equal to the price. Please put a smaller amount.": "Kumbarana önden koyacağın miktar, almak istediğin şeyin fiyatına eşit ya da ondan fazla olmamalı. Daha küçük bir miktar gir.",
-    "Select Your Saving Frequency": ""
+    "Select your saving frequency": "Kumbarana hangi sıklıkta para koymak istersin?",
+    "Short-term Saving Options": "Kısa Vadeli Birikim Seçenekleri",
+    "Long-term Saving Options": "Uzun Vadeli Birikim Seçenekleri",
+    "Sorry. We weren't able to create a saving plan for you. Try with a different price or date.": "Sana bir birikim planı oluşturamadık. Lütfen başka bir tarih seç, ya da geri dön ve birikim hedefini değiştir."
 }

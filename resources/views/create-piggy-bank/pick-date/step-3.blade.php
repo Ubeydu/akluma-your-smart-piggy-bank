@@ -43,13 +43,18 @@ $currentPlaceholder = $placeholders[$language];
 
                     {{-- Frequency Options Container --}}
                     <div id="frequencyOptions" class="mt-8 hidden"> <!-- Container starts hidden -->
-                        <h2 id="frequencyTitle" class="text-lg font-semibold mb-6">{{ __('Select Your Saving Frequency') }}</h2>
+                        <h2 id="frequencyTitle" class="text-lg font-semibold mb-6">{{ __('Select your saving frequency') }}</h2>
                         <div class="space-y-6">
                             <!-- Will be populated by JavaScript -->
                         </div>
                     </div>
 
                     <script>
+                        window.Laravel = {
+                            locale: "{{ app()->getLocale() }}",
+                            translations: @json(trans()->getLoader()->load(app()->getLocale(), '*', '*'))
+                        }
+
                         document.addEventListener("DOMContentLoaded", function () {
                             const dateInput = document.getElementById("saving_date");
                             const dateLabel = document.getElementById("saving_date_label");
@@ -125,7 +130,7 @@ $currentPlaceholder = $placeholders[$language];
                                         document.getElementById('frequencyTitle').classList.add('hidden');
                                         container.innerHTML = `
         <div class="p-4 border rounded-lg bg-gray-50">
-            <p class="text-sm text-gray-700">Sorry. We weren't able to create a saving plan for you. Try with a different price or date.</p>
+            <p class="text-sm text-gray-700">${window.Laravel.translations['Sorry. We weren\'t able to create a saving plan for you. Try with a different price or date.']}</p>
         </div>
     `;
                                         return;
@@ -139,7 +144,7 @@ $currentPlaceholder = $placeholders[$language];
                                         container.innerHTML += `
         <div class="mb-4">
             <h3 class="text-sm font-semibold text-gray-500 mb-3"
-                data-translate="short-term-options">Short-term Saving Options</h3>
+                data-translate="short-term-options">${window.Laravel.translations['Short-term Saving Options']}</h3>
             <div class="space-y-3" id="shortTermOptions"></div>
         </div>
     `;
@@ -150,7 +155,7 @@ $currentPlaceholder = $placeholders[$language];
                                         container.innerHTML += `
         <div class="mt-6">
             <h3 class="text-sm font-semibold text-gray-500 mb-3"
-                data-translate="long-term-options">Long-term Saving Options</h3>
+                data-translate="long-term-options">${window.Laravel.translations['Long-term Saving Options']}</h3>
             <div class="space-y-3" id="longTermOptions"></div>
         </div>
     `;
