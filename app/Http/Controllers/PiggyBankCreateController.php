@@ -6,6 +6,7 @@ use App\Models\PiggyBank;
 use App\Services\PickDateCalculationService;
 use Brick\Money\Money;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PiggyBankCreateController extends Controller
 {
@@ -164,6 +165,13 @@ class PiggyBankCreateController extends Controller
         if (!$step1Data) {
             return response()->json(['error' => 'Missing step 1 data'], 400);
         }
+
+        // Log the values for debugging
+        Log::info('Calculating frequency options', [
+            'price' => $step1Data['price'] ?? 'Not set',
+            'starting_amount' => $step1Data['starting_amount'] ?? 'Not set',
+            'purchase_date' => $request->purchase_date
+        ]);
 
         $calculations = $this->pickDateCalculationService->calculateAllFrequencyOptions(
             $step1Data['price'],

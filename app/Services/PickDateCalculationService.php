@@ -13,50 +13,53 @@ class PickDateCalculationService
     public function calculateAllFrequencyOptions(Money $price, ?Money $startingAmount, string $purchaseDate): array
     {
         try {
+            // Calculate the target amount, considering any starting amount
             $targetAmount = !$startingAmount ? $price : $price->minus($startingAmount);
         } catch (MathException|MoneyMismatchException $e) {
             \Log::error('Error calculating target amount: ' . $e->getMessage());
-            // Return a fallback array with an error indicator or default values
             return [
                 'success' => false,
                 'error' => 'There was an issue calculating the target amount. Please try again.',
             ];
         }
+
         $today = Carbon::now();
         $purchaseDateTime = Carbon::parse($purchaseDate);
 
-        $diffInMinutes = $today->diffInMinutes($purchaseDateTime);
-        $diffInHours = $today->diffInHours($purchaseDateTime);
-        $diffInDays = $today->diffInDays($purchaseDateTime);
-        $diffInWeeks = ceil($today->diffInDays($purchaseDateTime) / 7);
-        $diffInMonths = $today->diffInMonths($purchaseDateTime);
-        $diffInYears = $today->diffInYears($purchaseDateTime);
+        // Calculate time differences and round up to ensure we always give enough time
+        // We use ceil() because we want to round up partial periods to the next whole number
+        $diffInMinutes = (int)ceil($today->diffInMinutes($purchaseDateTime));
+        $diffInHours = (int)ceil($today->diffInHours($purchaseDateTime));
+        $diffInDays = (int)ceil($today->diffInDays($purchaseDateTime));
+        $diffInWeeks = (int)ceil($today->diffInDays($purchaseDateTime) / 7);
+        $diffInMonths = (int)ceil($today->diffInMonths($purchaseDateTime));
+        $diffInYears = (int)ceil($today->diffInYears($purchaseDateTime));
 
+        // Create a helper function to handle both the frequency calculation and zero-value cases
+        $calculateFrequencyOption = function(int $timeDiff, string $period) use ($targetAmount) {
+            if ($timeDiff <= 0) {
+                return [
+                    'amount' => null,
+                    'frequency' => 0,
+                    'message' => "You need less than a $period to reach your saving goal."
+                ];
+            }
+
+            return [
+                'amount' => $targetAmount->dividedBy($timeDiff, RoundingMode::CEILING),
+                'frequency' => $timeDiff,
+                'message' => null
+            ];
+        };
+
+        // Return the calculated options for each time period
         return [
-            'minutes' => [
-                'amount' => $diffInMinutes > 0 ? $targetAmount->dividedBy($diffInMinutes, RoundingMode::UP) : null,
-                'frequency' => (int)$diffInMinutes  // Cast to integer
-            ],
-            'hours' => [
-                'amount' => $diffInHours > 0 ? $targetAmount->dividedBy($diffInHours, RoundingMode::UP) : null,
-                'frequency' => (int)$diffInHours    // Cast to integer
-            ],
-            'days' => [
-                'amount' => $diffInDays > 0 ? $targetAmount->dividedBy($diffInDays, RoundingMode::UP) : null,
-                'frequency' => (int)$diffInDays     // Cast to integer
-            ],
-            'weeks' => [
-                'amount' => $diffInWeeks > 0 ? $targetAmount->dividedBy($diffInWeeks, RoundingMode::UP) : null,
-                'frequency' => (int)$diffInWeeks    // Cast to integer
-            ],
-            'months' => [
-                'amount' => $diffInMonths > 0 ? $targetAmount->dividedBy($diffInMonths, RoundingMode::UP) : null,
-                'frequency' => (int)$diffInMonths   // Cast to integer
-            ],
-            'years' => [
-                'amount' => $diffInYears > 0 ? $targetAmount->dividedBy($diffInYears, RoundingMode::UP) : null,
-                'frequency' => (int)$diffInYears    // Cast to integer
-            ]
+            'minutes' => $calculateFrequencyOption($diffInMinutes, 'minute'),
+            'hours' => $calculateFrequencyOption($diffInHours, 'hour'),
+            'days' => $calculateFrequencyOption($diffInDays, 'day'),
+            'weeks' => $calculateFrequencyOption($diffInWeeks, 'week'),
+            'months' => $calculateFrequencyOption($diffInMonths, 'month'),
+            'years' => $calculateFrequencyOption($diffInYears, 'year')
         ];
     }
 }

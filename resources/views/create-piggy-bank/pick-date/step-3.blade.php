@@ -41,6 +41,7 @@ $currentPlaceholder = $placeholders[$language];
 
                     </div>
 
+                    {{-- Frequency Options Container --}}
                     <div id="frequencyOptions" class="mt-8 hidden">
                         <h2 class="text-lg font-semibold mb-4">{{ __('Select Your Saving Frequency') }}</h2>
                         <div class="space-y-4">
@@ -76,79 +77,106 @@ $currentPlaceholder = $placeholders[$language];
                                 }
                             });
 
+                            // Function to handle date input changes
                             dateInput.addEventListener("change", async function() {
-                                if (this.value) {
-                                    try {
-                                        const response = await fetch('{{ route("create-piggy-bank.pick-date.calculate-frequencies") }}', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                                            },
-                                            body: JSON.stringify({ purchase_date: this.value })
-                                        });
+                                if (!this.value) return;
 
-                                        if (response.ok) {
-                                            const data = await response.json();
-                                            const container = document.querySelector('#frequencyOptions .space-y-4');
-                                            container.innerHTML = '';
+                                try {
+                                    const response = await fetch('{{ route("create-piggy-bank.pick-date.calculate-frequencies") }}', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                        },
+                                        body: JSON.stringify({ purchase_date: this.value })
+                                    });
 
-                                            Object.entries(data).forEach(([type, option]) => {
-                                                console.log('Processing type:', type);
-                                                console.log('Option data:', option);
-                                                console.log('amount:', option.amount.amount);
-
-                                                if (option.amount.amount !== null) {
-                                                    container.innerHTML += `
-    <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50">
-        <div class="flex items-center h-5">
-            <input type="radio" name="frequency" value="${type}"
-                class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-        </div>
-        <div class="ml-3">
-            <label class="text-sm font-medium text-gray-700">
-                I want to put aside
-                <span class="font-semibold">
-                    ${Math.floor(option.amount.amount)} whole, ${(option.amount.amount % 1 * 100).toFixed(0)} cents
-                </span>
-                each time, for
-                <span class="font-semibold">${option.frequency}</span>
-                ${type}
-            </label>
-        </div>
-    </div>
-`;
-                                                }
-                                            });
-
-                                            document.getElementById('frequencyOptions').classList.remove('hidden');
-                                        }
-                                    } catch (error) {
-                                        console.error('Error calculating frequencies:', error);
+                                    if (!response.ok) {
+                                        console.error('Server responded with error:', response.status);
+                                        return;
                                     }
+
+                                    const data = await response.json();
+                                    const container = document.querySelector('#frequencyOptions .space-y-4');
+                                    container.innerHTML = '';
+
+                                    // Helper function to format currency amounts
+                                    const formatAmount = (amount) => {
+                                        const whole = Math.floor(amount);
+                                        const cents = (amount % 1 * 100).toFixed(0);
+
+                                        return `
+            <div class="inline-flex items-center gap-1">
+                <div class="bg-gray-200 px-2 py-1 rounded font-mono">${whole}</div>
+                <div class="bg-gray-200 px-2 py-1 rounded font-mono">${cents.padStart(2, '0')}</div>
+                <div class="text-gray-600">TRY</div>
+            </div>
+        `;
+                                    };
+
+                                    Object.entries(data).forEach(([type, option]) => {
+                                        // If we have a message (for periods less than 1 unit)
+                                        if (option.message) {
+                                            container.innerHTML += `
+                    <div class="p-4 border rounded-lg bg-gray-50">
+                        <p class="text-sm text-gray-700">${option.message}</p>
+                    </div>
+                `;
+                                            return;
+                                        }
+
+                                        // If we have a valid saving option
+                                        if (option.amount && option.amount.amount !== null) {
+                                            container.innerHTML += `
+                    <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50">
+            <div class="flex items-center h-5">
+                <input type="radio"
+                       name="frequency"
+                       value="${type}"
+                       class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+            </div>
+            <div class="ml-3">
+                <label class="text-sm font-medium text-gray-700">
+                    I want to put aside
+                    ${formatAmount(option.amount.amount)}
+                    each time, for
+                    <span class="font-semibold">${option.frequency} ${type}</span>
+                </label>
+            </div>
+        </div>
+                `;
+                                        }
+                                    });
+
+                                    document.getElementById('frequencyOptions').classList.remove('hidden');
+                                } catch (error) {
+                                    console.error('Error calculating frequencies:', error);
                                 }
                             });
 
+// Event listener for frequency selection
                             document.querySelector('#frequencyOptions').addEventListener('change', async function(e) {
-                                if (e.target.type === 'radio') {
-                                    try {
-                                        const response = await fetch('{{ route("create-piggy-bank.pick-date.store-frequency") }}', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                                            },
-                                            body: JSON.stringify({ frequency_type: e.target.value })
-                                        });
+                                if (e.target.type !== 'radio') return;
 
-                                        if (response.ok) {
-                                            document.getElementById('nextButton').classList.remove('hidden');
-                                        }
-                                    } catch (error) {
-                                        console.error('Error storing frequency:', error);
+                                try {
+                                    const response = await fetch('{{ route("create-piggy-bank.pick-date.store-frequency") }}', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                        },
+                                        body: JSON.stringify({ frequency_type: e.target.value })
+                                    });
+
+                                    if (response.ok) {
+                                        document.getElementById('nextButton').classList.remove('hidden');
                                     }
+                                } catch (error) {
+                                    console.error('Error storing frequency:', error);
                                 }
                             });
+
+
                         });
 
 
