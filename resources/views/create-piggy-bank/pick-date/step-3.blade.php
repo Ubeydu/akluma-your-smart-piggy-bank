@@ -42,9 +42,9 @@ $currentPlaceholder = $placeholders[$language];
                     </div>
 
                     {{-- Frequency Options Container --}}
-                    <div id="frequencyOptions" class="mt-8 hidden">
-                        <h2 class="text-lg font-semibold mb-4">{{ __('Select Your Saving Frequency') }}</h2>
-                        <div class="space-y-4">
+                    <div id="frequencyOptions" class="mt-8 hidden"> <!-- Container starts hidden -->
+                        <h2 class="text-lg font-semibold mb-6">{{ __('Select Your Saving Frequency') }}</h2>
+                        <div class="space-y-6">
                             <!-- Will be populated by JavaScript -->
                         </div>
                     </div>
@@ -97,54 +97,100 @@ $currentPlaceholder = $placeholders[$language];
                                     }
 
                                     const data = await response.json();
-                                    const container = document.querySelector('#frequencyOptions .space-y-4');
+                                    const container = document.querySelector('#frequencyOptions .space-y-6');
                                     container.innerHTML = '';
 
-                                    // Helper function to format currency amounts
-                                    const formatAmount = (amount) => {
-                                        const whole = Math.floor(amount);
-                                        const cents = (amount % 1 * 100).toFixed(0);
-
-                                        return `
+                                    // Helper function to format currency amounts - simple display of Laravel-formatted values
+                                    const formatAmount = (formattedAmount, currency) => `
             <div class="inline-flex items-center gap-1">
-                <div class="bg-gray-200 px-2 py-1 rounded font-mono">${whole}</div>
-                <div class="bg-gray-200 px-2 py-1 rounded font-mono">${cents.padStart(2, '0')}</div>
-                <div class="text-gray-600">TRY</div>
+                <div class="bg-gray-50 px-3 py-1.5 rounded font-mono text-lg">${formattedAmount}</div>
+                <div class="text-gray-600">${currency}</div>
             </div>
         `;
-                                    };
 
+                                    // Helper function for proper period labels
+                                    const formatPeriodLabel = (frequency, type) =>
+                                        frequency === 1 ? type : type + 's';
+
+                                    const shortTermPeriods = ['minutes', 'hours', 'days'];
+                                    const longTermPeriods = ['weeks', 'months', 'years'];
+
+                                    // Create short-term options container
+                                    if (shortTermPeriods.some(period => data[period]?.amount)) {
+                                        container.innerHTML += `
+                <div class="mb-4">
+                    <h3 class="text-sm font-semibold text-gray-500 mb-3"
+                        data-translate="short-term-options">Short-term Saving Options</h3>
+                    <div class="space-y-3" id="shortTermOptions"></div>
+                </div>
+            `;
+                                    }
+
+                                    // Create long-term options container
+                                    if (longTermPeriods.some(period => data[period]?.amount)) {
+                                        container.innerHTML += `
+                <div class="mt-6">
+                    <h3 class="text-sm font-semibold text-gray-500 mb-3"
+                        data-translate="long-term-options">Long-term Saving Options</h3>
+                    <div class="space-y-3" id="longTermOptions"></div>
+                </div>
+            `;
+                                    }
+
+                                    // Process each saving option
                                     Object.entries(data).forEach(([type, option]) => {
-                                        // If we have a message (for periods less than 1 unit)
+                                        // Handle message-only options
                                         if (option.message) {
-                                            container.innerHTML += `
-                    <div class="p-4 border rounded-lg bg-gray-50">
-                        <p class="text-sm text-gray-700">${option.message}</p>
-                    </div>
-                `;
+                                            const isShortTerm = shortTermPeriods.includes(type);
+                                            const container = document.querySelector(
+                                                isShortTerm ? '#shortTermOptions' : '#longTermOptions'
+                                            );
+                                            if (container) {
+                                                container.innerHTML += `
+                        <div class="p-4 border rounded-lg bg-gray-50">
+                            <p class="text-sm text-gray-700">${option.message}</p>
+                        </div>
+                    `;
+                                            }
                                             return;
                                         }
 
-                                        // If we have a valid saving option
+                                        // Handle valid saving options
                                         if (option.amount && option.amount.amount !== null) {
-                                            container.innerHTML += `
-                    <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50">
-            <div class="flex items-center h-5">
-                <input type="radio"
-                       name="frequency"
-                       value="${type}"
-                       class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-            </div>
-            <div class="ml-3">
-                <label class="text-sm font-medium text-gray-700">
-                    I want to put aside
-                    ${formatAmount(option.amount.amount)}
-                    each time, for
-                    <span class="font-semibold">${option.frequency} ${type}</span>
-                </label>
-            </div>
-        </div>
-                `;
+                                            const isShortTerm = shortTermPeriods.includes(type);
+                                            const container = document.querySelector(
+                                                isShortTerm ? '#shortTermOptions' : '#longTermOptions'
+                                            );
+
+                                            if (container) {
+                                                const baseType = type.slice(0, -1);
+                                                const periodLabel = formatPeriodLabel(option.frequency, baseType);
+
+                                                container.innerHTML += `
+                        <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50">
+                            <div class="flex items-center h-5">
+                                <input type="radio"
+                                       name="frequency"
+                                       value="${type}"
+                                       class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                            </div>
+                            <div class="ml-3">
+                                <label class="text-sm font-medium text-gray-700">
+                                    I want to put aside
+                                    ${formatAmount(option.amount.formatted_amount, option.amount.currency)}
+                                    each time, for ${option.frequency} ${periodLabel}
+                                </label>
+                                ${option.extra_savings ? `
+                                    <p class="text-xs text-green-600 mt-1">
+                                        You'll save an extra
+                                        ${formatAmount(option.extra_savings.formatted_amount, option.extra_savings.currency)}
+                                        in total
+                                    </p>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                                            }
                                         }
                                     });
 
@@ -154,7 +200,7 @@ $currentPlaceholder = $placeholders[$language];
                                 }
                             });
 
-// Event listener for frequency selection
+// Frequency selection handler
                             document.querySelector('#frequencyOptions').addEventListener('change', async function(e) {
                                 if (e.target.type !== 'radio') return;
 
