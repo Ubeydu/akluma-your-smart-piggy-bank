@@ -139,6 +139,14 @@ $currentPlaceholder = $placeholders[$language];
 
                                     // Process each saving option
                                     Object.entries(data).forEach(([type, option]) => {
+                                        // Simpler check that only looks at frequency
+                                        const isSinglePayment = option.frequency === 1 && option.amount; // ensure we have amount data
+
+                                        // Skip rendering for single payment options
+                                        if (isSinglePayment) {
+                                            return; // Skip this iteration
+                                        }
+
                                         // Handle message-only options
                                         if (option.message) {
                                             const isShortTerm = shortTermPeriods.includes(type);
