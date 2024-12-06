@@ -36,7 +36,8 @@
                                         name="price_whole"
                                         type="text"
                                         inputmode="numeric"
-                                        pattern="[1-9][0-9]{0,14}"
+                                        pattern="[1-9][0-9]{2,14}"
+                                        min="100"
                                         :value="session('pick_date_step1.price') ? explode('.', session('pick_date_step1.price')->getAmount())[0] : ''"
                                         onkeypress="return (function(evt) {
                                             const value = this.value;
@@ -85,7 +86,9 @@
                                     @endforeach
                                 </select>
 
+
                             </div>
+                            <p class="text-gray-500 text-sm mt-1">{{ __('minimum amount 100') }}</p>
 
                             <!-- Error messages -->
                             <div class="mt-2">
