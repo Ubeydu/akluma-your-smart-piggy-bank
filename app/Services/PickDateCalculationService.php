@@ -240,6 +240,11 @@ class PickDateCalculationService
                     'value' => $totalSavings->getAmount()->__toString(),
                     'formatted_amount' => number_format((float)$totalSavings->getAmount()->__toString(), 0),
                     'currency' => $totalSavings->getCurrency()->getCurrencyCode()
+                ],
+                'target_amount' => [
+                    'value' => $targetAmount->getAmount()->__toString(),
+                    'formatted_amount' => number_format((float)$targetAmount->getAmount()->__toString(), 0),
+                    'currency' => $targetAmount->getCurrency()->getCurrencyCode()
                 ]
             ];
         } catch (MathException|MoneyMismatchException $e) {
