@@ -1,11 +1,30 @@
-// Add this at the top of the file
+/**
+ * @typedef {Object} DatePickerElements
+ * @property {HTMLInputElement} dateInput - The date input field
+ * @property {HTMLElement} dateLabel - Label for the date input
+ * @property {HTMLElement} dateDisplay - Element to display formatted date
+ */
+
+/**
+ * DOM elements used for date picking functionality
+ * @type {HTMLInputElement} dateInput - Input element for selecting date
+ * @type {HTMLElement} dateLabel - Label element for the date input
+ * @type {HTMLElement} dateDisplay - Element that shows the formatted date
+ */
 const dateInput = document.getElementById("saving_date");
 const dateLabel = document.getElementById("saving_date_label");
 const dateDisplay = document.getElementById("dateDisplay");
 
-
+/**
+ * Main initialization function that sets up all event listeners and handlers
+ * for the piggy bank date and frequency selection functionality
+ */
     document.addEventListener("DOMContentLoaded", function () {
-        // Handle date input changes and display the formatted date
+        /**
+         * Handles changes to the date input field, formatting and displaying the selected date
+         * @async
+         * @listens input
+         */
         dateInput.addEventListener("input", async function () {
             if (dateInput instanceof HTMLInputElement && dateLabel && dateInput.value) {
                 dateLabel.classList.add("visibility-hidden");
@@ -26,7 +45,28 @@ const dateDisplay = document.getElementById("dateDisplay");
             }
         });
 
-    // Function to handle date input changes
+
+
+        /**
+         * @typedef {Object} Amount
+         * @property {number} amount - The numerical amount
+         * @property {string} formatted_amount - Formatted string representation of the amount
+         * @property {string} currency - Currency code
+         */
+
+        /**
+         * @typedef {Object} FrequencyOption
+         * @property {number} frequency - Number of periods
+         * @property {Amount} [amount] - Amount to save per period
+         * @property {Amount} [extra_savings] - Additional savings possible
+         * @property {string} [message] - Optional message to display
+         */
+
+        /**
+         * Handles date selection changes and calculates saving frequency options
+         * @async
+         * @listens change
+         */
     dateInput.addEventListener("change", async function() {
     if (!this.value) return;
 
@@ -49,7 +89,12 @@ const dateDisplay = document.getElementById("dateDisplay");
     const container = document.querySelector('#frequencyOptions .space-y-6');
     container.innerHTML = '';
 
-    // Helper function to format currency amounts - simple display of Laravel-formatted values
+        /**
+         * Formats currency amount with proper styling
+         * @param {string} formattedAmount - Pre-formatted amount string from server
+         * @param {string} currency - Currency code
+         * @returns {string} HTML string for displaying amount
+         */
     const formatAmount = (formattedAmount, currency) => `
             <div class="inline-flex items-center gap-1">
                 <div class="bg-gray-50 px-3 py-1.5 rounded font-mono text-lg">${formattedAmount}</div>
@@ -57,10 +102,19 @@ const dateDisplay = document.getElementById("dateDisplay");
             </div>
         `;
 
-    // Helper function for proper period labels
+        /**
+         * Creates proper period label based on frequency
+         * @param {number} frequency - Number of periods
+         * @param {string} type - Type of period (day, week, month, etc.)
+         * @returns {string} Properly pluralized period label
+         */
     const formatPeriodLabel = (frequency, type) =>
     frequency === 1 ? type : type + 's';
 
+        /**
+         * Predefined period types for grouping saving options
+         * @type {string[]}
+         */
     const shortTermPeriods = ['minutes', 'hours', 'days'];
     const longTermPeriods = ['weeks', 'months', 'years'];
 
@@ -192,7 +246,12 @@ const dateDisplay = document.getElementById("dateDisplay");
 }
 });
 
-// Frequency selection handler
+        /**
+         * Handles frequency selection changes and stores the selected frequency
+         * @async
+         * @param {Event} e - Change event from radio button selection
+         * @listens change
+         */
     document.querySelector('#frequencyOptions').addEventListener('change', async function(e) {
     if (e.target.type !== 'radio') return;
 
