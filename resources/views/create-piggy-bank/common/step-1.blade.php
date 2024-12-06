@@ -181,6 +181,9 @@
                             <x-danger-button type="button" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('piggy-banks.index') }}'; }">
                                 {{ __('Cancel') }}
                             </x-danger-button>
+                            <x-secondary-button type="button" class="mx-2" data-action="clear-form">
+                                {{ __('Clear') }}
+                            </x-secondary-button>
                             <x-primary-button id="nextButton" type="submit" disabled class="disabled:bg-gray-300 disabled:cursor-not-allowed">
                                 {{ __('Next') }}
                             </x-primary-button>
