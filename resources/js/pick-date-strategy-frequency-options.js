@@ -103,13 +103,32 @@ const dateDisplay = document.getElementById("dateDisplay");
         `;
 
         /**
-         * Creates proper period label based on frequency
-         * @param {number} frequency - Number of periods
-         * @param {string} type - Type of period (day, week, month, etc.)
-         * @returns {string} Properly pluralized period label
+         * Maps period types to their translation keys
+         * Always uses plural form for simplicity across languages
+         * @param {string} type - Base period type (minute, hour, day, etc.)
+         * @returns {string} Translation key for the period
          */
-    const formatPeriodLabel = (frequency, type) =>
-    frequency === 1 ? type : type + 's';
+        const periodToTranslationKey = (type) => {
+            const translationMap = {
+                'minute': 'minutes',
+                'hour': 'hours',
+                'day': 'days',
+                'week': 'weeks',
+                'month': 'months',
+                'year': 'years'
+            };
+            return translationMap[type] || type;
+        };
+
+        /**
+         * Gets translated period label
+         * @param {string} type - Type of period (day, week, month, etc.)
+         * @returns {string} Translated period label
+         */
+        const formatPeriodLabel = (type) => {
+            const translationKey = periodToTranslationKey(type);
+            return window.Laravel.translations[translationKey];
+        };
 
         /**
          * Predefined period types for grouping saving options
@@ -194,32 +213,43 @@ const dateDisplay = document.getElementById("dateDisplay");
 
     if (container) {
     const baseType = type.slice(0, -1);
-    const periodLabel = formatPeriodLabel(option.frequency, baseType);
+        const periodLabel = formatPeriodLabel(baseType);
 
-    container.innerHTML += `
-                        <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50 mb-2">
-                            <div class="flex items-center h-5">
-                                <input type="radio"
-                                       name="frequency"
-                                       value="${type}"
-                                       class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-                            </div>
-                            <div class="ml-3">
-                                <label class="text-sm font-medium text-gray-700">
-                                    I want to put aside
-                                    ${formatAmount(option.amount.formatted_amount, option.amount.currency)}
-                                    each time, for ${option.frequency} ${periodLabel}
-                                </label>
-                                ${option.extra_savings ? `
-                                    <p class="text-xs text-green-600 mt-1">
-                                        You'll save an extra
-                                        ${formatAmount(option.extra_savings.formatted_amount, option.extra_savings.currency)}
-                                        in total
-                                    </p>
-                                ` : ''}
-                            </div>
-                        </div>
-                    `;
+        container.innerHTML += `
+    <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50 mb-2">
+        <div class="flex items-center h-5">
+            <input type="radio"
+                   name="frequency"
+                   value="${type}"
+                   class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+        </div>
+        <div class="ml-3">
+            <div class="text-sm font-medium text-gray-700 flex flex-wrap gap-2">
+                <span data-translate="savings-plan">${window.Laravel.translations['Savings plan']}:</span>
+                <span class="font-semibold">${formatAmount(option.amount.formatted_amount, option.amount.currency)}</span>
+                <span>×</span>
+                <span>${option.frequency} ${periodLabel}</span>
+            </div>
+            ${option.extra_savings ? `
+                <div class="text-xs text-gray-600 mt-2 space-y-1">
+                    <div class="flex justify-between">
+                        <span data-translate="target-amount">${window.Laravel.translations['Target']}:</span>
+                        <span>${formatAmount(option.target_amount.formatted_amount, option.target_amount.currency)}</span>
+                    </div>
+                    <div class="flex justify-between text-green-600">
+                        <span data-translate="extra-savings">${window.Laravel.translations['Extra']}:</span>
+                        <span>+${formatAmount(option.extra_savings.formatted_amount, option.extra_savings.currency)}</span>
+                    </div>
+                    <div class="flex justify-between font-semibold">
+                        <span data-translate="total-savings">${window.Laravel.translations['Total']}:</span>
+                        <span>${formatAmount(option.total_savings.formatted_amount, option.total_savings.currency)}</span>
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+    </div>
+`;
+
 }
 }
 });

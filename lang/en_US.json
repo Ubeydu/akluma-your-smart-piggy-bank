@@ -25,5 +25,15 @@
     "remaining_amount": "Remaining amount",
     "purchase_date": "Purchase date",
     "French": "French",
-    "Profile Information": "Profile Information"
+    "Profile Information": "Profile Information",
+    "Savings plan": "Savings plan",
+    "Target": "Target",
+    "Extra": "Extra",
+    "Total": "Total",
+    "minutes": "minutes",
+    "hours": "hours",
+    "days": "days",
+    "weeks": "weeks",
+    "months": "months",
+    "years": "years"
 }
