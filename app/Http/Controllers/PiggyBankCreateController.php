@@ -119,9 +119,6 @@ class PiggyBankCreateController extends Controller
     }
 
 
-
-
-
     /**
      * Handle POST request for Step 2: Validate and store the chosen strategy.
      */
@@ -217,6 +214,19 @@ class PiggyBankCreateController extends Controller
         $request->session()->put('pick_date_step3', $step3Data);
 
         return response()->json(['success' => true]);
+    }
+
+    public function showSummary(Request $request)
+    {
+        // Get all relevant session data
+        $summary = [
+            'pick_date_step1' => $request->session()->get('pick_date_step1'),
+            'pick_date_step2' => $request->session()->get('pick_date_step2'),
+            'pick_date_step3' => $request->session()->get('pick_date_step3')
+        ];
+
+        $request->session()->put('debug_summary', $summary);
+        return redirect()->back();
     }
 
     /**
