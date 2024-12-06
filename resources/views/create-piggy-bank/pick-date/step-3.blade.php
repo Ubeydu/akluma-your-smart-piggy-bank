@@ -68,7 +68,6 @@ $currentPlaceholder = $placeholders[$language];
                                         const response = await fetch(`/format-date?date=${dateInput.value}`);
                                         if (response.ok) {
                                             const data = await response.json();
-                                            console.log('Date format response:', data);
                                             const message = dateDisplay.getAttribute("data-message");
                                             dateDisplay.textContent = `${message} ${data.formatted_date}`;
                                             dateDisplay.classList.remove("hidden");
