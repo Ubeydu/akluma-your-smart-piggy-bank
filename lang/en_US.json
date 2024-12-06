@@ -35,5 +35,12 @@
     "days": "days",
     "weeks": "weeks",
     "months": "months",
-    "years": "years"
+    "years": "years",
+    "Summary": "Summary",
+    "Item Price": "Price  of the item you want to buy",
+    "Initial Deposit": "Initial Deposit",
+    "Short-term Saving Options": "Short-term Saving Options",
+    "Long-term Saving Options": "Long-term Saving Options",
+    "pick_date_strategy_definition": "Decide the date you want to reach your saving goal. Then, we will show you how much money you need to put aside on a regular basis to reach that goal.",
+    "enter_saving_amount_strategy_definition": "Or, tell us how much money you want to put aside regularly, then we will tell you when you will reach that goal."
 }

@@ -79,5 +79,8 @@
     "days": "gün",
     "weeks": "hafta",
     "months": "ay",
-    "years": "yıl"
+    "years": "yıl",
+    "Summary": "Özet",
+    "Item Price": "Alacağın şeyin fiyatı",
+    "Initial Deposit": "Kumbarana önden koyduğun paranın miktarı"
 }

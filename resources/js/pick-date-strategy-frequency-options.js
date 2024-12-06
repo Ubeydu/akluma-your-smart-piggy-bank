@@ -12,8 +12,8 @@
  * @type {HTMLElement} dateDisplay - Element that shows the formatted date
  */
 const dateInput = document.getElementById("saving_date");
-const dateLabel = document.getElementById("saving_date_label");
-const dateDisplay = document.getElementById("dateDisplay");
+// const dateLabel = document.getElementById("saving_date_label");
+// const dateDisplay = document.getElementById("dateDisplay");
 
 /**
  * Main initialization function that sets up all event listeners and handlers
@@ -25,25 +25,25 @@ const dateDisplay = document.getElementById("dateDisplay");
          * @async
          * @listens input
          */
-        dateInput.addEventListener("input", async function () {
-            if (dateInput instanceof HTMLInputElement && dateLabel && dateInput.value) {
-                dateLabel.classList.add("visibility-hidden");
-                try {
-                    const response = await fetch(`/format-date?date=${dateInput.value}`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        const message = dateDisplay.getAttribute("data-message");
-                        dateDisplay.textContent = `${message} ${data.formatted_date}`;
-                        dateDisplay.classList.remove("hidden");
-                    }
-                } catch (error) {
-                    console.error("Error fetching formatted date:", error);
-                }
-            } else if (dateLabel) {
-                dateLabel.classList.remove("visibility-hidden");
-                dateDisplay.classList.add("hidden");
-            }
-        });
+        // dateInput.addEventListener("input", async function () {
+        //     if (dateInput instanceof HTMLInputElement && dateLabel && dateInput.value) {
+        //         dateLabel.classList.add("visibility-hidden");
+        //         try {
+        //             const response = await fetch(`/format-date?date=${dateInput.value}`);
+        //             if (response.ok) {
+        //                 const data = await response.json();
+        //                 const message = dateDisplay.getAttribute("data-message");
+        //                 dateDisplay.textContent = `${message} ${data.formatted_date}`;
+        //                 dateDisplay.classList.remove("hidden");
+        //             }
+        //         } catch (error) {
+        //             console.error("Error fetching formatted date:", error);
+        //         }
+        //     } else if (dateLabel) {
+        //         dateLabel.classList.remove("visibility-hidden");
+        //         dateDisplay.classList.add("hidden");
+        //     }
+        // });
 
 
 

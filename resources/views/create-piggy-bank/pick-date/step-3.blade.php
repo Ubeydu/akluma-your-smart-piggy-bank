@@ -32,7 +32,6 @@ $currentPlaceholder = $placeholders[$language];
                         <input type="date" id="saving_date" name="saving_date"
                                class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                min="{{ \Carbon\Carbon::now()->addDay()->format('Y-m-d') }}" />
-                        <p id="dateDisplay" class="text-gray-700 font-medium mt-2 hidden" data-message="{{ __('You picked') }}"></p>
                         <p id="dateError" class="text-red-500 text-sm mt-1 hidden">
                             {{ __('Please pick a valid future date.') }}
                         </p>
@@ -40,6 +39,33 @@ $currentPlaceholder = $placeholders[$language];
                         <div class="hidden text-gray-400"></div>
 
                     </div>
+
+                    <div class="mb-8 bg-gray-50 p-6 rounded-lg border border-gray-200">
+
+                        <div class="space-y-4">
+                            <!-- Price Display -->
+                            <div class="flex justify-between items-baseline">
+                                <span class="text-gray-700 break-normal">{{ __('Item Price') }}:</span>
+                                <div class="flex items-baseline gap-2 text-right flex-wrap justify-end min-w-[120px]">
+                                    <span>{{ number_format((float)session('pick_date_step1.price')->getAmount()->__toString(), 0) }}</span>
+                                    <span>{{ session('pick_date_step1.currency') }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Starting Amount Display (only shown if exists) -->
+                            @if(session('pick_date_step1.starting_amount'))
+                                <div class="flex justify-between items-baseline">
+                                    <span class="text-gray-700 break-normal">{{ __('Initial Deposit') }}:</span>
+                                    <div class="flex items-baseline gap-2 text-right flex-wrap justify-end min-w-[120px]">
+                                        <span>{{ number_format((float)session('pick_date_step1.starting_amount')->getAmount()->__toString(), 0) }}</span>
+                                        <span>{{ session('pick_date_step1.currency') }}</span>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Frequency Options Container --}}
 
                     {{-- Frequency Options Container --}}
                     <div id="frequencyOptions" class="mt-8 hidden"> <!-- Container starts hidden -->

@@ -32,11 +32,11 @@ class PiggyBankCreateController extends Controller
      */
     public function step2(Request $request)
     {
-//        \Log::info('Request data:', [
-//            'starting_amount_whole' => $request->input('starting_amount_whole'),
-//            'starting_amount_cents' => $request->input('starting_amount_cents'),
-//            'all_data' => $request->all()
-//        ]);
+        \Log::info('Request data:', [
+            'starting_amount_whole' => $request->input('starting_amount_whole'),
+            'starting_amount_cents' => $request->input('starting_amount_cents'),
+            'all_data' => $request->all()
+        ]);
 
 
         $request->merge([
@@ -77,14 +77,14 @@ class PiggyBankCreateController extends Controller
             }
         }
 
-//        \Log::info('Values to be stored in database:', [
-//            'name' => $validated['name'],
-//            'price_in_cents' => (int)$price->getMinorAmount()->toInt(), // Get amount in minor units (cents)
-//            'currency' => $validated['currency'],
-//            'link' => $validated['link'],
-//            'details' => $validated['details'],
-//            'starting_amount_in_cents' => (int) $startingAmount?->getMinorAmount()->toInt(),
-//        ]);
+        \Log::info('Values to be stored in database:', [
+            'name' => $validated['name'],
+            'price_in_cents' => (int)$price->getMinorAmount()->toInt(), // Get amount in minor units (cents)
+            'currency' => $validated['currency'],
+            'link' => $validated['link'],
+            'details' => $validated['details'],
+            'starting_amount_in_cents' => (int) $startingAmount?->getMinorAmount()->toInt(),
+        ]);
 
         // Store step 1 data in session
         $request->session()->put('pick_date_step1', [
@@ -98,7 +98,7 @@ class PiggyBankCreateController extends Controller
 
 
 
-//        \Log::info('Session data stored:', $request->session()->get('pick_date_step1', []));
+        \Log::info('Session data stored:', $request->session()->get('pick_date_step1', []));
 
 
         return view('create-piggy-bank.common.step-2');
