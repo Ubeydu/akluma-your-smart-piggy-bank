@@ -197,7 +197,7 @@ const dateDisplay = document.getElementById("dateDisplay");
     const periodLabel = formatPeriodLabel(option.frequency, baseType);
 
     container.innerHTML += `
-                        <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50">
+                        <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50 mb-2">
                             <div class="flex items-center h-5">
                                 <input type="radio"
                                        name="frequency"
