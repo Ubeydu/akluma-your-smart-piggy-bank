@@ -107,7 +107,7 @@ Route::get('/format-date', function (Request $request) {
 
         return response()->json(['formatted_date' => $formattedDate]);
     } catch (Exception $e) {
-        return response()->json(['error' => 'Date formatting failed'], 500);
+        return response()->json(['error' => 'Date formatting failed: ' . $e->getMessage()], 500);
     }
 });
 

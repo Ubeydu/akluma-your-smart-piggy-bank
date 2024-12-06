@@ -38,10 +38,10 @@
                                         inputmode="numeric"
                                         pattern="[1-9][0-9]{0,14}"
                                         :value="session('pick_date_step1.price') ? explode('.', session('pick_date_step1.price')->getAmount())[0] : ''"
-                                        onkeypress="return function(e) {
-                                            const value = e.target.value;
-                                            return /[0-9]/.test(e.key) && !(value === '' && e.key === '0') && value.length < 15;
-                                        }(event)"
+                                        onkeypress="return (function(evt) {
+                                            const value = this.value;
+                                            return /[0-9]/.test(evt.key) && !(value === '' && evt.key === '0') && value.length < 15;
+                                        }).call(this, window.event || arguments[0])"
                                         class="block w-full"
                                         required
                                     />
@@ -124,10 +124,10 @@
                                         inputmode="numeric"
                                         pattern="[1-9][0-9]{0,14}"
                                         :value="session('pick_date_step1.starting_amount') ? explode('.', session('pick_date_step1.starting_amount')->getAmount())[0] : ''"
-                                        onkeypress="return function(e) {
-                                            const value = e.target.value;
-                                            return /[0-9]/.test(e.key) && !(value === '' && e.key === '0') && value.length < 15;
-                                        }(event)"
+                                        onkeypress="return (function(evt) {
+                                            const value = this.value;
+                                            return /[0-9]/.test(evt.key) && !(value === '' && evt.key === '0') && value.length < 15;
+                                        }).call(this, window.event || arguments[0])"
                                         oninput="document.getElementById('starting_amount_cents').value = (this.value === '' || this.value === '0') ? '' : '00';"
                                         class="block w-full"
                                     />

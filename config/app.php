@@ -90,6 +90,7 @@ return [
       'USD' => 'US Dollar',
       'GBP' => 'British Pound',
       'EUR' => 'Euro',
+      'XOF' => 'West African CFA franc',
     ],
 
 
