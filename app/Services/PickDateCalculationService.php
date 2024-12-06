@@ -125,14 +125,14 @@ class PickDateCalculationService
         ];
 
         // Right after getting the target amount
-        Log::info('Initial target amount float:', ['targetAmountFloat' => $targetAmountFloat]);
+//        Log::info('Initial target amount float:', ['targetAmountFloat' => $targetAmountFloat]);
 
 // Just before our single payment condition
-        Log::info('Checking single payment condition:', [
-            'timeDiff' => $timeDiff,
-            'period' => $period,
-            'threshold' => $singlePaymentThresholds[$period] ?? PHP_FLOAT_MAX
-        ]);
+//        Log::info('Checking single payment condition:', [
+//            'timeDiff' => $timeDiff,
+//            'period' => $period,
+//            'threshold' => $singlePaymentThresholds[$period] ?? PHP_FLOAT_MAX
+//        ]);
 
         // Check if we can and should achieve the target in one payment
         if ($timeDiff == 1 ||
