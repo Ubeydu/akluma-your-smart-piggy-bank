@@ -12,7 +12,7 @@
                     <h1 class="text-lg font-semibold mb-4">{{ __('Step 1 of 3') }}</h1>
                     <p class="text-gray-600 mb-6">{{ __('Provide information about your goal') }}</p>
 
-                    <form id="mainForm" method="POST" action="{{ route('create-piggy-bank.step-2') }}">
+                    <form novalidate id="mainForm" method="POST" action="{{ route('create-piggy-bank.step-2') }}">
                         @csrf
 
                         <!-- Name -->
@@ -170,8 +170,8 @@
 
                             <!-- Error messages -->
                             <div class="mt-2">
-                                <x-input-error :messages="$errors->get('price_whole')" />
-                                <x-input-error :messages="$errors->get('price_cents')" />
+                                <x-input-error :messages="$errors->get('starting_amount_whole')" />
+                                <x-input-error :messages="$errors->get('starting_amount_cents')" />
                                 <p id="amount-warning" class="text-red-500 text-sm mt-2 hidden">
                                     {{ __('Starting amount cannot be greater than or equal to the price. Please put a smaller amount.') }}
                                 </p>
@@ -181,57 +181,45 @@
 
 
                     <div class="flex justify-between mt-6">
-                        <!-- Cancel button with confirmation dialog -->
+
                         <div x-data="{ showConfirmCancel: false }">
-                            <!-- The Cancel button -->
+                            <!-- Cancel button -->
                             <x-danger-button @click="showConfirmCancel = true">
                                 {{ __('Cancel') }}
                             </x-danger-button>
 
-                            <!-- The confirmation dialog that appears when Cancel is clicked -->
-                            <div
-                                x-show="showConfirmCancel"
-                                x-cloak
-                                class="fixed inset-0 z-50 overflow-y-auto"
-                                role="dialog"
-                            >
-                                <!-- Dark overlay behind the dialog -->
-                                <div class="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:p-0">
-                                    <!-- Semi-transparent backdrop -->
-                                    <div
-                                        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-                                        @click="showConfirmCancel = false"
-                                    ></div>
+                            <!-- Confirmation dialog component -->
+                            <x-confirmation-dialog>
+                                <x-slot:title>
+                                    {{ __('Are you sure you want to cancel?') }}
+                                </x-slot>
 
-                                    <!-- The actual dialog box -->
-                                    <div class="relative inline-block transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
-                                        <!-- Dialog content -->
-                                        <div class="sm:flex sm:items-start">
-                                            <div class="mt-3 text-center sm:mt-0 sm:text-left">
-                                                <h3 class="text-lg font-medium leading-6 text-gray-900">
-                                                    {{ __('Are you sure you want to cancel?') }}
-                                                </h3>
-                                            </div>
-                                        </div>
+                                <x-slot:actions>
 
-                                        <!-- Dialog buttons -->
-                                        <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                                            <!-- Yes, cancel button (submits the form) -->
-                                            <form action="{{ route('create-piggy-bank.cancel') }}" method="POST" class="inline">
-                                                @csrf
-                                                <x-danger-button type="submit" class="ml-3">
-                                                    {{ __('Yes, cancel') }}
-                                                </x-danger-button>
-                                            </form>
-                                            <!-- No, continue button (closes the dialog) -->
-                                            <x-secondary-button @click="showConfirmCancel = false">
-                                                {{ __('No, continue') }}
-                                            </x-secondary-button>
-                                        </div>
+                                    <div class="flex flex-row items-stretch gap-3 justify-end">
+                                        <form action="{{ route('create-piggy-bank.cancel') }}" method="POST" class="block">
+                                            @csrf
+                                            <x-danger-button type="submit" class="justify-center">
+                                                {{ __('Yes, cancel') }}
+                                            </x-danger-button>
+                                        </form>
+
+                                        <x-secondary-button
+                                            @click="showConfirmCancel = false"
+                                            class="justify-center"
+                                        >
+                                            {{ __('No, continue') }}
+                                        </x-secondary-button>
                                     </div>
-                                </div>
-                            </div>
+
+                                </x-slot:actions>
+
+                            </x-confirmation-dialog>
+
+
                         </div>
+
+
 
                         <!-- Clear form - completely separate from main form -->
                         <form action="{{ route('create-piggy-bank.clear') }}" method="POST">

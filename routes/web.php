@@ -132,7 +132,7 @@ Route::get('/format-date', function (Request $request) {
         // Format the date based on the app's current locale
         $locale = app()->getLocale(); // Get the current locale
         $formatter = new IntlDateFormatter(
-            $locale, // Locale, e.g., 'en_US', 'fr', 'tr'
+            $locale, // Locale, e.g., 'en', 'fr', 'tr'
             IntlDateFormatter::LONG, // Use a long date format
             IntlDateFormatter::NONE // No time format
         );

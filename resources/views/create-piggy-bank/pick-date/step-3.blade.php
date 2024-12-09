@@ -1,13 +1,12 @@
 <?php
 $placeholders = [
 'tr' => 'gg.aa.yyyy',
-'en_US' => 'mm/dd/yyyy',
-'en_GB' => 'dd/mm/yyyy',
+'en' => 'mm/dd/yyyy',
 'fr' => 'jj/mm/aaaa',
 ];
 
 // Get the current language
-$language = app()->getLocale(); // Gets the current locale, e.g., 'tr', 'en_US', etc.
+$language = app()->getLocale(); // Gets the current locale, e.g., 'tr', 'en', etc.
 $currentPlaceholder = $placeholders[$language];
 ?>
 

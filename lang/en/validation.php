@@ -189,6 +189,15 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'name' => 'name',
+        'price_whole' => 'price',
+        'price_cents' => 'cents',
+        'starting_amount_whole' => 'starting amount',
+        'starting_amount_cents' => 'starting cents',
+        'currency' => 'currency',
+        'link' => 'link',
+        'details' => 'details',
+    ],
 
 ];

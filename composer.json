@@ -9,6 +9,7 @@
         "php": "^8.2",
         "ext-intl": "*",
         "brick/money": "^0.10.0",
+        "laravel-lang/lang": "^15.9",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9",
         "tightenco/ziggy": "^2.4"

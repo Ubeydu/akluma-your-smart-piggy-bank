@@ -189,6 +189,15 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'name' => 'Almak istediğin şeyin adı',
+        'price_whole' => 'Fiyat bilgisi',
+        'price_cents' => 'kuruş',
+        'starting_amount_whole' => 'başlangıç miktarı',
+        'starting_amount_cents' => 'başlangıç kuruşu',
+        'currency' => 'para birimi',
+        'link' => 'bağlantı',
+        'details' => 'detaylar',
+    ],
 
 ];

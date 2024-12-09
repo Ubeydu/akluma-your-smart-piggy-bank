@@ -32,12 +32,17 @@ class PiggyBankCreateController extends Controller
      */
     public function step2(Request $request)
     {
-        \Log::info('Request data:', [
-            'starting_amount_whole' => $request->input('starting_amount_whole'),
-            'starting_amount_cents' => $request->input('starting_amount_cents'),
-            'all_data' => $request->all()
-        ]);
+//        \Log::info('Request data:', [
+//            'starting_amount_whole' => $request->input('starting_amount_whole'),
+//            'starting_amount_cents' => $request->input('starting_amount_cents'),
+//            'all_data' => $request->all()
+//        ]);
 
+        \Log::info('Current Application Locale:', [
+            'app_locale' => app()->getLocale(),
+            'fallback_locale' => config('app.fallback_locale'),
+            'session_locale' => session('locale')
+        ]);
 
         $request->merge([
             'price_cents' => (int) $request->input('price_cents'),
