@@ -56,40 +56,4 @@ document.addEventListener('DOMContentLoaded', function () {
     priceWholeInput.addEventListener('input', validateAmounts);
     startingAmountWholeInput.addEventListener('input', validateAmounts);
 
-    const clearButton = document.querySelector('[data-action="clear-form"]');
-    clearButton.addEventListener('click', clearForm);
-
-    function clearForm() {
-        // Clear all form fields
-        document.getElementById('name').value = '';
-        document.getElementById('price_whole').value = '';
-        document.getElementById('price_cents').value = '00';
-        document.getElementById('link').value = '';
-        document.getElementById('details').value = '';
-        document.getElementById('starting_amount_whole').value = '';
-        document.getElementById('starting_amount_cents').value = '';
-
-        // Reset character counters
-        document.getElementById('name-count').textContent = '0 / 255';
-        document.getElementById('link-count').textContent = '0 / 1000';
-        document.getElementById('details-count').textContent = '0 / 5000';
-
-        // Clear session data via AJAX using the named route
-        fetch(route('create-piggy-bank.clear'), {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json',
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Optionally show a success message
-                    console.log('Form and session cleared successfully');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
 });

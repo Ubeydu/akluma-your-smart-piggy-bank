@@ -41,21 +41,41 @@ Route::get('/language/{locale}', function ($locale) {
 //});
 
 
+//Route::get('currency/switch/{currency}', function ($currency) {
+//    $availableCurrencies = config('app.currencies', []);
+//
+//
+//    if (array_key_exists($currency, $availableCurrencies)) {
+//        session(['currency' => $currency]);
+//        $currencyName = __($availableCurrencies[$currency]);
+//
+//
+//        session()->flash('success', __('You switched the currency to :currency', ['currency' => $currencyName]));
+//    } else {
+//        session()->flash('error', __('Invalid currency selected.'));
+//    }
+//
+//    return redirect()->back();
+//})->name('currency.switch');
+
 Route::get('currency/switch/{currency}', function ($currency) {
-    $availableCurrencies = config('app.currencies', []);
+    try {
+//        // Force an error by trying to access a non-existent key. Uncomment this to test the error message for translations.
+//        $forceError = config('app.currencies')['NON_EXISTENT_KEY_TO_FORCE_ERROR'];
 
-
-    if (array_key_exists($currency, $availableCurrencies)) {
+        // Store the currency in session
         session(['currency' => $currency]);
-        $currencyName = __($availableCurrencies[$currency]);
-
+        $currencyName = __(config('app.currencies')[$currency]);
 
         session()->flash('success', __('You switched the currency to :currency', ['currency' => $currencyName]));
-    } else {
-        session()->flash('error', __('Invalid currency selected.'));
-    }
 
-    return redirect()->back();
+        return redirect()->back();
+    } catch (\Exception $e) {
+        // If anything goes wrong with session storage or currency retrieval
+        session()->flash('error', __('There was a problem setting currency. Please reload the page and try again.'));
+
+        return redirect()->back();
+    }
 })->name('currency.switch');
 
 // Debug route for currency
@@ -68,7 +88,35 @@ Route::get('/current-currency', function () {
 // Create piggy bank routes
 Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('create-piggy-bank.')->group(function () {
     Route::get('/step-1', [PiggyBankCreateController::class, 'step1'])->name('step-1');
-    Route::post('/clear', [PiggyBankCreateController::class, 'clearForm'])->name('clear');
+
+    Route::post('/clear', function() {
+
+//        // Simulate a random error 50% of the time for testing . Uncomment this to test the error message for translations.
+//        if (rand(0, 1) === 1) {
+//            session()->flash('error', __('There was an error during clearing the form. Refresh the page and try again.'));
+//            return redirect()->back();
+//        }
+
+        try {
+        // Clear all step 1 session data
+        session()->forget([
+            'pick_date_step1.name',
+            'pick_date_step1.price',
+            'pick_date_step1.link',
+            'pick_date_step1.details',
+            'pick_date_step1.starting_amount'
+        ]);
+
+        session()->flash('success', __('You cleared the form.'));
+
+    } catch (\Exception $e) {
+        // If anything goes wrong, set error message
+        session()->flash('error', __('There was an error during clearing the form. Refresh the page and try again.'));
+    }
+
+        return redirect()->back();
+    })->name('clear');
+
     Route::get('/step-2', [PiggyBankCreateController::class, 'showStep2'])->name('step-2.get');
     Route::post('/step-2', [PiggyBankCreateController::class, 'step2'])->name('step-2');
 

@@ -12,7 +12,12 @@
                     <h1 class="text-lg font-semibold mb-4">{{ __('Step 1 of 3') }}</h1>
                     <p class="text-gray-600 mb-6">{{ __('Provide information about your goal') }}</p>
 
-                    <form method="POST" action="{{ route('create-piggy-bank.step-2') }}">
+
+
+
+
+
+                    <form id="mainForm" method="POST" action="{{ route('create-piggy-bank.step-2') }}">
                         @csrf
 
                         <!-- Name -->
@@ -177,24 +182,36 @@
                                 </p>
                             </div>
                         </div>
+                    </form>
 
 
-                        <!-- Action Buttons -->
-                        <div class="flex justify-between mt-6">
+                    <div class="flex justify-between mt-6">
+                        <!-- Cancel "form" (not really a form, just a button) -->
+                        <div>
                             <x-danger-button type="button" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('piggy-banks.index') }}'; }">
                                 {{ __('Cancel') }}
                             </x-danger-button>
-                            <x-secondary-button type="button" class="mx-2" data-action="clear-form">
+                        </div>
+
+                        <!-- Clear form - completely separate from main form -->
+                        <form action="{{ route('create-piggy-bank.clear') }}" method="POST">
+                            @csrf
+                            <x-secondary-button type="submit">
                                 {{ __('Clear') }}
                             </x-secondary-button>
-                            <x-primary-button id="nextButton" type="submit" disabled class="disabled:bg-gray-300 disabled:cursor-not-allowed">
-                                {{ __('Next') }}
-                            </x-primary-button>
-                        </div>
-                    </form>
+                        </form>
+
+                        <!-- Next button that belongs to the main form -->
+                        <x-primary-button form="mainForm" type="submit" id="nextButton" disabled class="disabled:bg-gray-300 disabled:cursor-not-allowed">
+                            {{ __('Next') }}
+                        </x-primary-button>
+                    </div>
+
+
+                    </div>
                 </div>
             </div>
-        </div>
+
     </div>
 
     @vite(['resources/js/create-piggy.js'])
