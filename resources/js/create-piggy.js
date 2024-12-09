@@ -56,4 +56,10 @@ document.addEventListener('DOMContentLoaded', function () {
     priceWholeInput.addEventListener('input', validateAmounts);
     startingAmountWholeInput.addEventListener('input', validateAmounts);
 
+
+
+    window.Alpine.data('cancelConfirmation', () => ({
+        showConfirmCancel: false
+    }));
+
 });

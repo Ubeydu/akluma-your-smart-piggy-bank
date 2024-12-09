@@ -12,11 +12,6 @@
                     <h1 class="text-lg font-semibold mb-4">{{ __('Step 1 of 3') }}</h1>
                     <p class="text-gray-600 mb-6">{{ __('Provide information about your goal') }}</p>
 
-
-
-
-
-
                     <form id="mainForm" method="POST" action="{{ route('create-piggy-bank.step-2') }}">
                         @csrf
 
@@ -186,11 +181,56 @@
 
 
                     <div class="flex justify-between mt-6">
-                        <!-- Cancel "form" (not really a form, just a button) -->
-                        <div>
-                            <x-danger-button type="button" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('piggy-banks.index') }}'; }">
+                        <!-- Cancel button with confirmation dialog -->
+                        <div x-data="{ showConfirmCancel: false }">
+                            <!-- The Cancel button -->
+                            <x-danger-button @click="showConfirmCancel = true">
                                 {{ __('Cancel') }}
                             </x-danger-button>
+
+                            <!-- The confirmation dialog that appears when Cancel is clicked -->
+                            <div
+                                x-show="showConfirmCancel"
+                                x-cloak
+                                class="fixed inset-0 z-50 overflow-y-auto"
+                                role="dialog"
+                            >
+                                <!-- Dark overlay behind the dialog -->
+                                <div class="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:p-0">
+                                    <!-- Semi-transparent backdrop -->
+                                    <div
+                                        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                                        @click="showConfirmCancel = false"
+                                    ></div>
+
+                                    <!-- The actual dialog box -->
+                                    <div class="relative inline-block transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                                        <!-- Dialog content -->
+                                        <div class="sm:flex sm:items-start">
+                                            <div class="mt-3 text-center sm:mt-0 sm:text-left">
+                                                <h3 class="text-lg font-medium leading-6 text-gray-900">
+                                                    {{ __('Are you sure you want to cancel?') }}
+                                                </h3>
+                                            </div>
+                                        </div>
+
+                                        <!-- Dialog buttons -->
+                                        <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                                            <!-- Yes, cancel button (submits the form) -->
+                                            <form action="{{ route('create-piggy-bank.cancel') }}" method="POST" class="inline">
+                                                @csrf
+                                                <x-danger-button type="submit" class="ml-3">
+                                                    {{ __('Yes, cancel') }}
+                                                </x-danger-button>
+                                            </form>
+                                            <!-- No, continue button (closes the dialog) -->
+                                            <x-secondary-button @click="showConfirmCancel = false">
+                                                {{ __('No, continue') }}
+                                            </x-secondary-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Clear form - completely separate from main form -->

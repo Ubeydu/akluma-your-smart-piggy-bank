@@ -293,4 +293,39 @@ class PiggyBankCreateController extends Controller
 
         return redirect()->route('piggy-banks.index')->with('success', 'Your piggy bank has been created successfully!');
     }
+
+
+    /**
+     * Handle cancellation from any step of the piggy bank creation process.
+     * This method needs to clear both common step data and strategy-specific data.
+     */
+    public function cancelCreation(Request $request)
+    {
+        try {
+            // Clear common step data
+            $request->session()->forget('pick_date_step1');
+
+            // Clear strategy selection
+            $request->session()->forget('chosen_strategy');
+
+            // Clear strategy-specific data
+            $request->session()->forget(['pick_date_step3', 'enter_saving_step3']);
+
+            // Add an informative flash message
+            return redirect()
+                ->route('piggy-banks.index')
+                ->with('warning', __('You cancelled creating your piggy bank.'));
+
+        } catch (\Exception $e) {
+            Log::error('Error during piggy bank creation cancellation:', [
+                'error' => $e->getMessage()
+            ]);
+
+            return redirect()
+                ->back()
+                ->with('error', __('There was an error cancelling the process. Please try again.'));
+        }
+    }
+
+
 }

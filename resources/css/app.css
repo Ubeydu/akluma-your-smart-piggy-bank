@@ -8,6 +8,10 @@
     }
 }
 
+[x-cloak] {
+    display: none !important;
+}
+
 .visibility-hidden {
     visibility: hidden; /* Keeps the space reserved */
 }

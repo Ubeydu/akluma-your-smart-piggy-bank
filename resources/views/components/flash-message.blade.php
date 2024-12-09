@@ -1,12 +1,13 @@
 @php
     $successMessage = session('success');
     $errorMessage = session('error');
-    if ($successMessage || $errorMessage) {
-        session()->forget(['success', 'error']);
+    $warningMessage = session('warning');
+    if ($successMessage || $errorMessage || $warningMessage) {
+        session()->forget(['success', 'error', 'warning']);
     }
 @endphp
 
-@if ($successMessage || $errorMessage)
+@if ($successMessage || $errorMessage || $warningMessage)
     <div
         x-data="{
             show: true,
@@ -52,5 +53,22 @@
                     </p>
                 </div>
         @endif
+
+            @if ($warningMessage)
+                <div class="relative rounded-md bg-yellow-100 border border-yellow-200 p-4 shadow-md">
+                    <button
+                        @click="show = false"
+                        class="absolute top-2 right-2 text-yellow-600 hover:text-yellow-800"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    <p class="text-yellow-800 text-sm font-medium pr-6">
+                        {{ $warningMessage }}
+                    </p>
+                </div>
+            @endif
+
     </div>
 @endif

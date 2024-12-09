@@ -40,24 +40,6 @@ Route::get('/language/{locale}', function ($locale) {
 //    dd(app()->getLocale());
 //});
 
-
-//Route::get('currency/switch/{currency}', function ($currency) {
-//    $availableCurrencies = config('app.currencies', []);
-//
-//
-//    if (array_key_exists($currency, $availableCurrencies)) {
-//        session(['currency' => $currency]);
-//        $currencyName = __($availableCurrencies[$currency]);
-//
-//
-//        session()->flash('success', __('You switched the currency to :currency', ['currency' => $currencyName]));
-//    } else {
-//        session()->flash('error', __('Invalid currency selected.'));
-//    }
-//
-//    return redirect()->back();
-//})->name('currency.switch');
-
 Route::get('currency/switch/{currency}', function ($currency) {
     try {
 //        // Force an error by trying to access a non-existent key. Uncomment this to test the error message for translations.
@@ -116,6 +98,9 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
 
         return redirect()->back();
     })->name('clear');
+
+    Route::post('/cancel', [PiggyBankCreateController::class, 'cancelCreation'])
+        ->name('cancel');
 
     Route::get('/step-2', [PiggyBankCreateController::class, 'showStep2'])->name('step-2.get');
     Route::post('/step-2', [PiggyBankCreateController::class, 'step2'])->name('step-2');

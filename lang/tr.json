@@ -86,5 +86,9 @@
     "Clear": "Sil",
     "minimum amount 100": "min. 100",
     "You cleared the form.": "Formu temizledin.",
-    "There was an error during clearing the form. Refresh the page and try again.": "Formu temizlerken bir hata oluştu. Sayfayı yeniden yükle ve tekrar dene."
+    "There was an error during clearing the form. Refresh the page and try again.": "Formu temizlerken bir hata oluştu. Sayfayı yeniden yükle ve tekrar dene.",
+    "You cancelled creating your piggy bank.": "Kumbara oluşturma işlemini iptal ettin.",
+    "There was an error cancelling the process. Please try again.": "İşlem iptal edilirken bir hata oluştu. Lütfen tekrar dene.",
+    "Yes, cancel": "Evet",
+    "No, continue": "Hayır"
 }
