@@ -112,6 +112,7 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
         Route::post('/calculate-frequencies', [PiggyBankCreateController::class, 'calculateFrequencyOptions'])->name('calculate-frequencies');
         Route::post('/store-frequency', [PiggyBankCreateController::class, 'storeSelectedFrequency'])->name('store-frequency');
         Route::post('/show-summary', [PiggyBankCreateController::class, 'showSummary'])->name('show-summary');
+        Route::get('/summary', [PiggyBankCreateController::class, 'showSummary'])->name('summary');
     });
     Route::prefix('enter-saving-amount')->name('enter-saving-amount.')->group(function () {
         Route::get('/step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');

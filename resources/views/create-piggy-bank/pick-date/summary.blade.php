@@ -19,7 +19,7 @@
                         <x-danger-button type="button" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('dashboard') }}'; }">
                             {{ __('Cancel') }}
                         </x-danger-button>
-                        <x-secondary-button type="button" onclick="window.location='{{ route('create-piggy-bank.pick-date.step-1') }}'">
+                        <x-secondary-button type="button" onclick="window.location='{{ route('create-piggy-bank.pick-date.step-3') }}'">
                             {{ __('Previous') }}
                         </x-secondary-button>
                     </div>

@@ -231,7 +231,16 @@ class PiggyBankCreateController extends Controller
         ];
 
         $request->session()->put('debug_summary', $summary);
-        return redirect()->back();
+
+        if ($request->isMethod('post')) {
+            // If it's a POST request, store the data and redirect to GET route
+            return redirect()->route('create-piggy-bank.pick-date.summary');
+        }
+
+        // If it's a GET request, show the view
+        return view('create-piggy-bank.pick-date.summary', [
+            'summary' => $summary
+        ]);
     }
 
     /**
