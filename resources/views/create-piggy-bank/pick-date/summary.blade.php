@@ -67,6 +67,12 @@
                                                         <p>Extra Savings: {{ $selectedCalculation['extra_savings']['formatted_amount'] }} {{ $selectedCalculation['extra_savings']['currency'] }}</p>
                                                         <p>Total Savings: {{ $selectedCalculation['total_savings']['formatted_amount'] }} {{ $selectedCalculation['total_savings']['currency'] }}</p>
 
+                                                        @if(isset($dateMessage))
+                                                            <div class="mt-4 p-4 bg-blue-50 text-blue-700 rounded-lg">
+                                                                {{ $dateMessage }}
+                                                            </div>
+                                                        @endif
+
                                                         @if(isset($paymentSchedule))
                                                             <div class="mt-6">
                                                                 <h4 class="font-medium text-lg mb-3">{{ __('Payment Schedule') }}</h4>
