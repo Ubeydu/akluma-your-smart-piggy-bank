@@ -45,6 +45,7 @@
                                         }).call(this, window.event || arguments[0])"
                                         class="block w-full"
                                         required
+                                        oninput="updateFormattedPrice(this.value, 'formatted_price');"
                                     />
                                 </div>
 
@@ -88,7 +89,11 @@
 
 
                             </div>
-                            <p class="text-gray-500 text-sm mt-1">{{ __('minimum amount 100') }}</p>
+
+                            <div class="flex items-center gap-4 mt-1">
+                                <p class="text-gray-500 text-sm">{{ __('minimum amount 100') }},</p>
+                                <p id="formatted_price" class="text-gray-500 text-sm italic"></p>
+                            </div>
 
                             <!-- Error messages -->
                             <div class="mt-2">
@@ -99,7 +104,7 @@
 
                         <!-- Link (Optional) -->
                         <div class="mb-4">
-                            <x-input-label for="link" :value="__('3. Product link (optional)')" />
+                            <x-input-label for="link" :value="__('3. Product link')" />
                             <x-text-input id="link" name="link" type="url" class="mt-1 block w-full" maxlength="1000" :value="old('link', session('pick_date_step1.link'))" />
                             <p id="link-count" class="text-gray-500 text-sm mt-1">0 / 1000</p>
                             <x-input-error :messages="$errors->get('link')" class="mt-2" />
@@ -107,7 +112,7 @@
 
                         <!-- Details (Optional) -->
                         <div class="mb-4">
-                            <x-input-label for="details" :value="__('4. Details (optional)')" />
+                            <x-input-label for="details" :value="__('4. Details')" />
                             <textarea id="details" name="details" rows="4" maxlength="5000" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:ring focus:ring-opacity-50">{{ old('details', session('pick_date_step1.details')) }}</textarea>
                             <p id="details-count" class="text-gray-500 text-sm mt-1">0 / 5000</p>
                             <x-input-error :messages="$errors->get('details')" class="mt-2" />
@@ -116,7 +121,7 @@
 
                         <!-- Starting Amount (Optional) -->
                         <div class="mb-4">
-                            <x-input-label for="starting_amount_whole" :value="__('5. I already saved some money (optional)')" />
+                            <x-input-label for="starting_amount_whole" :value="__('5. I already saved some money')" />
                             <div class="flex gap-2 items-start mt-1">
                                 <!-- Whole number part -->
                                 <div class="flex-1 min-w-0">
@@ -131,7 +136,7 @@
                                             const value = this.value;
                                             return /[0-9]/.test(evt.key) && !(value === '' && evt.key === '0') && value.length < 15;
                                         }).call(this, window.event || arguments[0])"
-                                        oninput="document.getElementById('starting_amount_cents').value = (this.value === '' || this.value === '0') ? '' : '00';"
+                                        oninput="document.getElementById('starting_amount_cents').value = (this.value === '' || this.value === '0') ? '' : '00'; updateFormattedPrice(this.value, 'formatted_starting_amount_whole');"
                                         class="block w-full"
                                     />
                                 </div>
@@ -165,8 +170,13 @@
                                     />
                                 </div>
 
-
                             </div>
+
+
+
+                            <p id="formatted_starting_amount_whole" class="text-gray-500 text-sm italic"></p>
+
+
 
                             <!-- Error messages -->
                             <div class="mt-2">
@@ -240,6 +250,13 @@
             </div>
 
     </div>
+
+    <script>
+        const translations = {
+            formattedPrice: @json(__('formatted: :value'))
+        };
+    </script>
+
 
     @vite(['resources/js/create-piggy.js'])
 

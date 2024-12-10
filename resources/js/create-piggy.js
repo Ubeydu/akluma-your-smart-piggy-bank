@@ -1,7 +1,12 @@
+/* global translations */
+/**
+ * @typedef {Object} Translations
+ * @property {string} formattedPrice
+ */
+
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('form');
     const nextButton = document.getElementById('nextButton');
-    const inputs = document.getElementsByTagName('input');
 
     // Required field validation logic
     const requiredFields = form.querySelectorAll('[required]');
@@ -66,5 +71,18 @@ document.addEventListener('DOMContentLoaded', function () {
     window.Alpine.data('cancelConfirmation', () => ({
         showConfirmCancel: false
     }));
+
+
+    window.updateFormattedPrice = function(value, elementId) {
+        const formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add a thousand separators
+        const targetElement = document.getElementById(elementId);
+
+        if (targetElement) {
+            targetElement.textContent = formattedValue
+                ? translations.formattedPrice.replace(':value', formattedValue)
+                : '';
+        }
+    };
+
 
 });
