@@ -66,6 +66,47 @@
                                                         <p>Target Amount: {{ $selectedCalculation['target_amount']['formatted_amount'] }} {{ $selectedCalculation['target_amount']['currency'] }}</p>
                                                         <p>Extra Savings: {{ $selectedCalculation['extra_savings']['formatted_amount'] }} {{ $selectedCalculation['extra_savings']['currency'] }}</p>
                                                         <p>Total Savings: {{ $selectedCalculation['total_savings']['formatted_amount'] }} {{ $selectedCalculation['total_savings']['currency'] }}</p>
+
+                                                        @if(isset($paymentSchedule))
+                                                            <div class="mt-6">
+                                                                <h4 class="font-medium text-lg mb-3">{{ __('Payment Schedule') }}</h4>
+                                                                <div class="overflow-x-auto">
+                                                                    <table class="min-w-full divide-y divide-gray-200">
+                                                                        <thead class="bg-gray-50">
+                                                                        <tr>
+                                                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                                                {{ __('Payment #') }}
+                                                                            </th>
+                                                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                                                {{ __('Date') }}
+                                                                            </th>
+                                                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                                                {{ __('Amount') }}
+                                                                            </th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody class="bg-white divide-y divide-gray-200">
+                                                                        @foreach($paymentSchedule as $payment)
+                                                                            <tr>
+                                                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                                                    {{ $payment['payment_number'] }}
+                                                                                </td>
+                                                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                                                    {{ $payment['formatted_date'] }}
+                                                                                </td>
+                                                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                                                    {{ $payment['amount'] }}
+                                                                                </td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+
+
+
                                                     </div>
                                                 </div>
                                             </div>

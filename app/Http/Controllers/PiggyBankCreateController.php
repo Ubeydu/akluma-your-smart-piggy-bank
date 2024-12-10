@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PiggyBank;
+use App\Services\PaymentScheduleService;
 use App\Services\PickDateCalculationService;
 use Brick\Money\Money;
 use Illuminate\Http\Request;
@@ -237,9 +238,27 @@ class PiggyBankCreateController extends Controller
             return redirect()->route('create-piggy-bank.pick-date.summary');
         }
 
-        // If it's a GET request, show the view
+        // Now, let's generate the payment schedule before returning the view
+        // First, we get the necessary data from the summary
+        $selectedFrequency = $summary['pick_date_step3']['selected_frequency'];
+        $calculations = $summary['pick_date_step3']['calculations'][$selectedFrequency];
+
+        // Create an instance of our new PaymentScheduleService
+        $scheduleService = new PaymentScheduleService();
+
+        // Generate the payment schedule using the service
+        // Note how we pass in all the required parameters from our existing data
+        $paymentSchedule = $scheduleService->generateSchedule(
+            $summary['pick_date_step3']['date'],  // The target date from step 3
+            $calculations['frequency'],            // How many payments are needed
+            $selectedFrequency,                    // The period type (days, weeks, etc.)
+            $calculations['amount']                // The amount details for each payment
+        );
+
+        // Return the view with both the summary and the payment schedule
         return view('create-piggy-bank.pick-date.summary', [
-            'summary' => $summary
+            'summary' => $summary,
+            'paymentSchedule' => $paymentSchedule  // Add this new data to the view
         ]);
     }
 
