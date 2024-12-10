@@ -42,13 +42,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const priceWhole = parseInt(priceWholeInput.value, 10) || 0;
         const startingAmountWhole = parseInt(startingAmountWholeInput.value, 10) || 0;
 
-        if (startingAmountWhole >= priceWhole) {
+        // Only compare if at least one field has a value
+        if (priceWholeInput.value.trim() === '' && startingAmountWholeInput.value.trim() === '') {
+            amountWarning.classList.add('hidden');
+            const allValid = Array.from(requiredFields).every(f => f.checkValidity());
+            nextButton.disabled = !allValid;
+        } else if (startingAmountWhole >= priceWhole) {
             nextButton.disabled = true;
-            amountWarning.classList.remove('hidden'); // Show the warning
+            amountWarning.classList.remove('hidden');
         } else {
             const allValid = Array.from(requiredFields).every(f => f.checkValidity());
             nextButton.disabled = !allValid;
-            amountWarning.classList.add('hidden'); // Hide the warning
+            amountWarning.classList.add('hidden');
         }
     }
 
