@@ -182,6 +182,7 @@
 
                     <div class="flex justify-between mt-6">
 
+
                         <div x-data="{ showConfirmCancel: false }">
                             <!-- Cancel button -->
                             <x-danger-button @click="showConfirmCancel = true">
@@ -215,8 +216,6 @@
                                 </x-slot:actions>
 
                             </x-confirmation-dialog>
-
-
                         </div>
 
 

@@ -37,13 +37,50 @@
 
                     <!-- Action Buttons -->
                     <div class="flex justify-between mt-6">
-                        <x-danger-button type="button" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('dashboard') }}'; }">
-                            {{ __('Cancel') }}
-                        </x-danger-button>
+
+
+                        <div x-data="{ showConfirmCancel: false }">
+                            <!-- Cancel button -->
+                            <x-danger-button @click="showConfirmCancel = true">
+                                {{ __('Cancel') }}
+                            </x-danger-button>
+
+                            <!-- Confirmation dialog component -->
+                            <x-confirmation-dialog>
+                                <x-slot:title>
+                                    {{ __('Are you sure you want to cancel?') }}
+                                </x-slot>
+
+                                <x-slot:actions>
+
+                                    <div class="flex flex-row items-stretch gap-3 justify-end">
+                                        <form action="{{ route('create-piggy-bank.cancel') }}" method="POST" class="block">
+                                            @csrf
+                                            <x-danger-button type="submit" class="justify-center">
+                                                {{ __('Yes, cancel') }}
+                                            </x-danger-button>
+                                        </form>
+
+                                        <x-secondary-button
+                                            @click="showConfirmCancel = false"
+                                            class="justify-center"
+                                        >
+                                            {{ __('No, continue') }}
+                                        </x-secondary-button>
+                                    </div>
+
+                                </x-slot:actions>
+
+                            </x-confirmation-dialog>
+                        </div>
+
+
                         <x-secondary-button type="button" onclick="window.location='{{ route('create-piggy-bank.step-1') }}'">
                             {{ __('Previous') }}
                         </x-secondary-button>
                     </div>
+
+
                 </div>
             </div>
         </div>
