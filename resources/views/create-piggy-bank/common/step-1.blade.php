@@ -12,7 +12,7 @@
                     <h1 class="text-lg font-semibold mb-4">{{ __('Step 1 of 3') }}</h1>
                     <p class="text-gray-600 mb-6">{{ __('Provide information about your goal') }}</p>
 
-                    <form novalidate id="mainForm" method="POST" action="{{ route('create-piggy-bank.step-2') }}">
+                    <form  id="mainForm" method="POST" action="{{ route('create-piggy-bank.step-2') }}">
                         @csrf
 
                         <!-- Name -->
@@ -20,7 +20,7 @@
                             <x-input-label for="name">
                                 {!! __('1. I am saving for a (required field)') !!}
                             </x-input-label>
-                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required maxlength="255" autocomplete="on" :value="session('pick_date_step1.name')" />
+                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required maxlength="255" autocomplete="on" :value="old('name', session('pick_date_step1.name'))" />
                             <p id="name-count" class="text-gray-500 text-sm mt-1">0 / 255</p>
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
@@ -38,7 +38,7 @@
                                         inputmode="numeric"
                                         pattern="[1-9][0-9]{2,14}"
                                         min="100"
-                                        :value="session('pick_date_step1.price') ? explode('.', session('pick_date_step1.price')->getAmount())[0] : ''"
+                                        :value="old('price_whole', session('pick_date_step1.price') ? explode('.', session('pick_date_step1.price')->getAmount())[0] : '')"
                                         onkeypress="return (function(evt) {
                                             const value = this.value;
                                             return /[0-9]/.test(evt.key) && !(value === '' && evt.key === '0') && value.length < 15;
@@ -100,7 +100,7 @@
                         <!-- Link (Optional) -->
                         <div class="mb-4">
                             <x-input-label for="link" :value="__('3. Product link (optional)')" />
-                            <x-text-input id="link" name="link" type="url" class="mt-1 block w-full" maxlength="1000" :value="session('pick_date_step1.link')" />
+                            <x-text-input id="link" name="link" type="url" class="mt-1 block w-full" maxlength="1000" :value="old('link', session('pick_date_step1.link'))" />
                             <p id="link-count" class="text-gray-500 text-sm mt-1">0 / 1000</p>
                             <x-input-error :messages="$errors->get('link')" class="mt-2" />
                         </div>
@@ -108,7 +108,7 @@
                         <!-- Details (Optional) -->
                         <div class="mb-4">
                             <x-input-label for="details" :value="__('4. Details (optional)')" />
-                            <textarea id="details" name="details" rows="4" maxlength="5000" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:ring focus:ring-opacity-50">{{ session('pick_date_step1.details') }}</textarea>
+                            <textarea id="details" name="details" rows="4" maxlength="5000" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:ring focus:ring-opacity-50">{{ old('details', session('pick_date_step1.details')) }}</textarea>
                             <p id="details-count" class="text-gray-500 text-sm mt-1">0 / 5000</p>
                             <x-input-error :messages="$errors->get('details')" class="mt-2" />
                         </div>
@@ -126,7 +126,7 @@
                                         type="text"
                                         inputmode="numeric"
                                         pattern="[1-9][0-9]{0,14}"
-                                        :value="session('pick_date_step1.starting_amount') ? explode('.', session('pick_date_step1.starting_amount')->getAmount())[0] : ''"
+                                        :value="old('starting_amount_whole', session('pick_date_step1.starting_amount') ? explode('.', session('pick_date_step1.starting_amount')->getAmount())[0] : '')"
                                         onkeypress="return (function(evt) {
                                             const value = this.value;
                                             return /[0-9]/.test(evt.key) && !(value === '' && evt.key === '0') && value.length < 15;
