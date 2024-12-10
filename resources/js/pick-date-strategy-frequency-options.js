@@ -25,26 +25,6 @@ const dateInput = document.getElementById("saving_date");
          * @async
          * @listens input
          */
-        // dateInput.addEventListener("input", async function () {
-        //     if (dateInput instanceof HTMLInputElement && dateLabel && dateInput.value) {
-        //         dateLabel.classList.add("visibility-hidden");
-        //         try {
-        //             const response = await fetch(`/format-date?date=${dateInput.value}`);
-        //             if (response.ok) {
-        //                 const data = await response.json();
-        //                 const message = dateDisplay.getAttribute("data-message");
-        //                 dateDisplay.textContent = `${message} ${data.formatted_date}`;
-        //                 dateDisplay.classList.remove("hidden");
-        //             }
-        //         } catch (error) {
-        //             console.error("Error fetching formatted date:", error);
-        //         }
-        //     } else if (dateLabel) {
-        //         dateLabel.classList.remove("visibility-hidden");
-        //         dateDisplay.classList.add("hidden");
-        //     }
-        // });
-
 
 
         /**
@@ -296,7 +276,8 @@ const dateInput = document.getElementById("saving_date");
 });
 
     if (response.ok) {
-    document.getElementById('nextButton').classList.remove('hidden');
+        const nextButton = document.getElementById('nextButton');
+        nextButton.disabled = false;
 }
 } catch (error) {
     console.error('Error storing frequency:', error);

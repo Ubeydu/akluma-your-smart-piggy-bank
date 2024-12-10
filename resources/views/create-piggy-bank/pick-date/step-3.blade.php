@@ -64,7 +64,6 @@ $currentPlaceholder = $placeholders[$language];
                         </div>
                     </div>
 
-                    {{-- Frequency Options Container --}}
 
                     {{-- Frequency Options Container --}}
                     <div id="frequencyOptions" class="mt-8 hidden"> <!-- Container starts hidden -->
@@ -138,7 +137,7 @@ $currentPlaceholder = $placeholders[$language];
 {{--                        </x-primary-button>--}}
                         <form method="POST" action="{{ route('create-piggy-bank.pick-date.show-summary') }}">
                             @csrf
-                            <x-primary-button type="submit" id="nextButton" class="hidden">
+                            <x-primary-button type="submit" id="nextButton" disabled>
                                 {{ __('Next') }}
                             </x-primary-button>
                         </form>
@@ -146,65 +145,10 @@ $currentPlaceholder = $placeholders[$language];
 
 
 {{--                    @if(session('debug_summary'))--}}
-{{--                        <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">--}}
-{{--                            <div class="font-mono text-sm">--}}
-{{--                                @php--}}
-{{--                                    function displayValue($value, $indent = 0) {--}}
-{{--                                        if (is_object($value)) {--}}
-{{--                                            $reflection = new ReflectionObject($value);--}}
-{{--                                            $properties = $reflection->getProperties();--}}
-{{--                                            $result = get_class($value) . " Object\n";--}}
-{{--                                            $result .= str_repeat("    ", $indent) . "(\n";--}}
-{{--                                            foreach ($properties as $property) {--}}
-{{--                                                $property->setAccessible(true);--}}
-{{--                                                $propValue = $property->getValue($value);--}}
-{{--                                                $result .= str_repeat("    ", $indent + 1) .--}}
-{{--                                                         "[" . $property->getName() . "] => " .--}}
-{{--                                                         displayValue($propValue, $indent + 1);--}}
-{{--                                            }--}}
-{{--                                            $result .= str_repeat("    ", $indent) . ")\n";--}}
-{{--                                            return $result;--}}
-{{--                                        }--}}
-
-{{--                                        if (is_array($value)) {--}}
-{{--                                            if (empty($value)) {--}}
-{{--                                                return "Array()\n";--}}
-{{--                                            }--}}
-{{--                                            $result = "Array\n";--}}
-{{--                                            $result .= str_repeat("    ", $indent) . "(\n";--}}
-{{--                                            foreach ($value as $key => $v) {--}}
-{{--                                                $result .= str_repeat("    ", $indent + 1) .--}}
-{{--                                                         "[" . $key . "] => " .--}}
-{{--                                                         displayValue($v, $indent + 1);--}}
-{{--                                            }--}}
-{{--                                            $result .= str_repeat("    ", $indent) . ")\n";--}}
-{{--                                            return $result;--}}
-{{--                                        }--}}
-
-{{--                                        if (is_null($value)) {--}}
-{{--                                            return "null\n";--}}
-{{--                                        }--}}
-
-{{--                                        if (is_bool($value)) {--}}
-{{--                                            return ($value ? "true" : "false") . "\n";--}}
-{{--                                        }--}}
-
-{{--                                        return (string)$value . "\n";--}}
-{{--                                    }--}}
-{{--                                @endphp--}}
-
-{{--                                <pre class="whitespace-pre overflow-x-auto p-4" style="color: #2d3748; line-height: 1.5;">--}}
-{{--@foreach(session('debug_summary') as $key => $value)--}}
-{{--                                        [{{ $key }}] => {!! displayValue($value) !!}@endforeach</pre>--}}
-{{--                            </div>--}}
+{{--                        <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200 font-mono">--}}
+{{--                            <pre class="whitespace-pre-wrap">{{ print_r(session('debug_summary'), true) }}</pre>--}}
 {{--                        </div>--}}
 {{--                    @endif--}}
-
-                    @if(session('debug_summary'))
-                        <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200 font-mono">
-                            <pre class="whitespace-pre-wrap">{{ print_r(session('debug_summary'), true) }}</pre>
-                        </div>
-                    @endif
 
 
                 </div>
