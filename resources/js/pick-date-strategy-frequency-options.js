@@ -85,12 +85,11 @@ const dateInput = document.getElementById("saving_date");
         /**
          * Maps period types to their translation keys
          * Always uses plural form for simplicity across languages
-         * @param {string} type - Base period type (minute, hour, day, etc.)
+         * @param {string} type - Base period type (hour, day, etc.)
          * @returns {string} Translation key for the period
          */
         const periodToTranslationKey = (type) => {
             const translationMap = {
-                'minute': 'minutes',
                 'hour': 'hours',
                 'day': 'days',
                 'week': 'weeks',
@@ -114,7 +113,7 @@ const dateInput = document.getElementById("saving_date");
          * Predefined period types for grouping saving options
          * @type {string[]}
          */
-    const shortTermPeriods = ['minutes', 'hours', 'days'];
+    const shortTermPeriods = ['hours', 'days'];
     const longTermPeriods = ['weeks', 'months', 'years'];
 
     const hasShortTermOptions = shortTermPeriods.some(period => data[period]?.amount);

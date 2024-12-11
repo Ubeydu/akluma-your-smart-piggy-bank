@@ -91,5 +91,6 @@
     "There was an error cancelling the process. Please try again.": "İşlem iptal edilirken bir hata oluştu. Lütfen tekrar dene.",
     "Yes, cancel": "Evet",
     "No, continue": "Hayır",
-    "formatted: :value": "biçimlendirilmiş: :value"
+    "formatted: :value": "biçimlendirilmiş: :value",
+    "The difference between starting amount and price cannot be less than 100. Please check.": "Kumbarana önden koyacağın miktarla, almak istediğin şeyin fiyatı arasındaki fark 100'den az olamaz."
 }

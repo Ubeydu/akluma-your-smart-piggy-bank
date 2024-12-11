@@ -16,7 +16,7 @@ use InvalidArgumentException;
 class PickDateCalculationService
 {
     // Constants to help us identify which group a time period belongs to
-    private const SHORT_TERM_PERIODS = ['minute', 'hour', 'day'];
+    private const SHORT_TERM_PERIODS = ['hour', 'day'];
     private const LONG_TERM_PERIODS = ['week', 'month', 'year'];
 
     /**
@@ -30,11 +30,6 @@ class PickDateCalculationService
         }
 
         switch ($period) {
-            case 'minute':
-                if ($amount < 1) return 1.0;  // Minimum 1 TRY per minute
-                if ($amount < 10) return ceil($amount);  // Use 1 TRY increments
-                if ($amount < 50) return ceil($amount / 5) * 5;  // Use 5 TRY increments
-                return ceil($amount / 10) * 10;  // Use 10 TRY increments
 
             case 'hour':
                 if ($amount < 50) return ceil($amount / 5) * 5;  // 5 TRY increments
@@ -116,7 +111,6 @@ class PickDateCalculationService
 
 // Define single payment thresholds for each period
         $singlePaymentThresholds = [
-            'minute' => 10,    // If target is <= 10 TRY, consider single payment for minutes
             'hour' => 20,     // If target is <= 20 TRY, consider single payment for hours
             'day' => 50,     // If target is <= 50 TRY, consider single payment for days
             'week' => 200,    // If target is <= 200 TRY, consider single payment for weeks
@@ -278,11 +272,6 @@ class PickDateCalculationService
         // Calculate time differences - now separated by group for better handling
         return [
             // Short-term options
-            'minutes' => $this->calculateFrequencyOption(
-                (int)ceil($today->diffInMinutes($purchaseDateTime)),
-                'minute',
-                $targetAmount
-            ),
             'hours' => $this->calculateFrequencyOption(
                 (int)ceil($today->diffInHours($purchaseDateTime)),
                 'hour',
@@ -296,7 +285,7 @@ class PickDateCalculationService
 
             // Long-term options
             'weeks' => $this->calculateFrequencyOption(
-                (int)ceil($today->diffInDays($purchaseDateTime) / 7),
+                (int)ceil(Carbon::tomorrow()->startOfDay()->diffInDays($purchaseDateTime->endOfDay()) / 7),
                 'week',
                 $targetAmount
             ),

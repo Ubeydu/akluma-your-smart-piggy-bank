@@ -185,6 +185,9 @@
                                 <p id="amount-warning" class="text-red-500 text-sm mt-2 hidden">
                                     {{ __('Starting amount cannot be greater than or equal to the price. Please put a smaller amount.') }}
                                 </p>
+                                <p id="difference-amount-warning" class="text-red-500 text-sm mt-2 hidden">
+                                    {{ __('The difference between starting amount and price cannot be less than 100. Please check.') }}
+                                </p>
                             </div>
                         </div>
                     </form>

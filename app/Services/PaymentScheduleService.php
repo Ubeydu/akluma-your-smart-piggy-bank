@@ -16,7 +16,6 @@ class PaymentScheduleService
      * @param array  $amountDetails  Amount details from calculation service
      * @return array                 Array of scheduled payments with dates and amounts
      */
-    // In PaymentScheduleService.php, update the generateSchedule method parameters and initial logic:
 
     public function generateSchedule(
         string $targetDate,    // Renamed from startDate to make it clear this is the end date
@@ -24,34 +23,63 @@ class PaymentScheduleService
         string $periodType,
         array $amountDetails
     ): array {
-        $validPeriods = ['days', 'weeks', 'months', 'years'];
+        $validPeriods = ['hours', 'days', 'weeks', 'months', 'years'];
         if (!in_array($periodType, $validPeriods)) {
-            throw new InvalidArgumentException("Invalid period type: {$periodType}");
+            throw new InvalidArgumentException("Invalid period type: $periodType");
         }
 
         // Start from tomorrow
         $startDate = Carbon::tomorrow();
-        $targetDateTime = Carbon::parse($targetDate);
+
+        if ($periodType === 'hours') {
+            $startDate->setTime(11, 0, 0);  // Set start time to 11:00 AM
+        }
 
         $schedule = [];
         $amount = $amountDetails['formatted_amount'] . ' ' . $amountDetails['currency'];
 
-        // Calculate the interval between payments by determining the total period
-        $totalDays = $startDate->diffInDays($targetDateTime);
-        $intervalDays = (int) ceil($totalDays / $frequency);
-
         $currentDate = $startDate;
 
         for ($i = 0; $i < $frequency; $i++) {
-            $schedule[] = [
-                'payment_number' => $i + 1,
-                'date' => $currentDate->format('Y-m-d'),
-                'amount' => $amount,
-                'formatted_date' => $currentDate->format('d.m.Y')
-            ];
+            if ($periodType === 'hours') {
+                $schedule[] = [
+                    'payment_number' => $i + 1,
+                    'date' => $currentDate->format('Y-m-d H:i:s'),
+                    'amount' => $amount,
+                    'formatted_date' => $currentDate->format('d.m.Y H:i')  // Show hours and minutes for hourly frequency
+                ];
+            } else {
+                // For all other frequencies, set time to 10:00
+                $currentDate->setTime(10, 0, 0);
+                $schedule[] = [
+                    'payment_number' => $i + 1,
+                    'date' => $currentDate->format('Y-m-d H:i:s'),
+                    'amount' => $amount,
+                    'formatted_date' => $currentDate->format('d.m.Y')  // Keep just the date for daily and longer frequencies
+                ];
+            }
 
-            // Add the calculated interval
-            $currentDate->addDays($intervalDays);
+//            // Add the calculated interval
+//            $currentDate->addDays($intervalDays);
+
+            switch ($periodType) {
+                case 'hours':
+                    $currentDate->addHour();
+                    break;
+                case 'weeks':
+                    $currentDate->addWeek();
+                    break;
+                case 'days':
+                    $currentDate->addDay();
+                    break;
+                case 'months':
+                    $currentDate->addMonth();
+                    break;
+                case 'years':
+                    $currentDate->addYear();
+                    break;
+            }
+
         }
 
         return $schedule;

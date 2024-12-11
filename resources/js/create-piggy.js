@@ -42,23 +42,37 @@ document.addEventListener('DOMContentLoaded', function () {
     const priceWholeInput = document.getElementById('price_whole');
     const startingAmountWholeInput = document.getElementById('starting_amount_whole');
     const amountWarning = document.getElementById('amount-warning'); // Reference to the warning message
+    const differenceAmountWarning = document.getElementById('difference-amount-warning');
+
+
 
     function validateAmounts() {
         const priceWhole = parseInt(priceWholeInput.value, 10) || 0;
         const startingAmountWhole = parseInt(startingAmountWholeInput.value, 10) || 0;
 
-        // Only compare if at least one field has a value
-        if (priceWholeInput.value.trim() === '' && startingAmountWholeInput.value.trim() === '') {
+        // First, check if either field is empty
+        if (priceWholeInput.value.trim() === '' || startingAmountWholeInput.value.trim() === '') {
             amountWarning.classList.add('hidden');
+            differenceAmountWarning.classList.add('hidden');
             const allValid = Array.from(requiredFields).every(f => f.checkValidity());
             nextButton.disabled = !allValid;
-        } else if (startingAmountWhole >= priceWhole) {
+            return; // Exit the function here if either field is empty
+        }
+
+        // If we get here, both fields have values, so perform the validation
+        if (startingAmountWhole >= priceWhole) {
             nextButton.disabled = true;
             amountWarning.classList.remove('hidden');
+            differenceAmountWarning.classList.add('hidden');
+        } else if ((priceWhole - startingAmountWhole) < 100) {
+            nextButton.disabled = true;
+            differenceAmountWarning.classList.remove('hidden');
+            amountWarning.classList.add('hidden');
         } else {
             const allValid = Array.from(requiredFields).every(f => f.checkValidity());
             nextButton.disabled = !allValid;
             amountWarning.classList.add('hidden');
+            differenceAmountWarning.classList.add('hidden');
         }
     }
 
