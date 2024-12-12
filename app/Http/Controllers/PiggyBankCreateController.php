@@ -68,11 +68,15 @@ class PiggyBankCreateController extends Controller
             'starting_amount_cents' => 'nullable|integer|min:0|max:99',
         ]);
 
-//        \Log::info('Validation passed, creating money objects:', [
-//            'validated_data' => $validated,
-//        ]);
+        \Log::info('Validated Request Data', [
+            'validated_data' => $validated,
+        ]);
 
-        // Replace it with this updated code:
+        \Log::info('Link Preview Input', [
+            'link' => $validated['link'] ?? 'No link provided',
+        ]);
+
+
         $preview = null;
         if (!empty($validated['link'])) {
             try {
@@ -105,9 +109,14 @@ class PiggyBankCreateController extends Controller
             ];
         }
 
-        // Add this new code right after:
         if ($preview && !filter_var($preview['image'], FILTER_VALIDATE_URL)) {
             $preview['image'] = url($preview['image']);
+
+            \Log::info('Preview Image URL', [
+                'original_image' => $preview['image'] ?? 'No image',
+                'full_url' => $preview['image'] ?? 'No URL generated'
+            ]);
+
         }
 
 
@@ -136,6 +145,12 @@ class PiggyBankCreateController extends Controller
             'link' => $validated['link'],
             'details' => $validated['details'],
             'starting_amount_in_cents' => (int) $startingAmount?->getMinorAmount()->toInt(),
+        ]);
+
+        \Log::info('Preview Data Before Session Storage', [
+            'preview_full_details' => $preview,
+            'preview_image_url' => $preview['image'] ?? 'No image URL',
+            'preview_original_link' => $preview['url'] ?? 'No original link'
         ]);
 
         // Store step 1 data in session

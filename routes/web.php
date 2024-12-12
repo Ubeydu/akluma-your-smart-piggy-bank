@@ -86,7 +86,9 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
             'pick_date_step1.price',
             'pick_date_step1.link',
             'pick_date_step1.details',
-            'pick_date_step1.starting_amount'
+            'pick_date_step1.starting_amount',
+            'pick_date_step1.preview',
+            'pick_date_step1.currency',
         ]);
 
         session()->flash('success', __('You cleared the form.'));
