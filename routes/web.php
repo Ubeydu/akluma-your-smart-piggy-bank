@@ -99,6 +99,10 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
         return redirect()->back();
     })->name('clear');
 
+    Route::post('/api/link-preview', [PiggyBankCreateController::class, 'fetchLinkPreview'])
+        ->name('api.link-preview');
+
+
     Route::post('/cancel', [PiggyBankCreateController::class, 'cancelCreation'])
         ->name('cancel');
 

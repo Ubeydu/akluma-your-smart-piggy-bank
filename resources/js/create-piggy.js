@@ -99,4 +99,46 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
 
+    // Dynamic image preview loading
+    const linkInput = document.getElementById('link');
+    const previewImage = document.getElementById('preview-image');
+    let debounceTimer;
+
+    linkInput.addEventListener('input', function() {
+        // Clear the existing timer
+        clearTimeout(debounceTimer);
+
+        // Set a new timer to wait for user to finish typing
+        debounceTimer = setTimeout(() => {
+            const url = this.value.trim();
+
+            if (url) {
+                // Make an AJAX request to fetch preview
+                fetch(linkPreviewUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ url: url })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.preview && data.preview.image) {
+                            previewImage.src = data.preview.image;
+                        } else {
+                            previewImage.src = '/images/default_piggy_bank.png';
+                        }
+                    })
+                    .catch(() => {
+                        previewImage.src = '/images/default_piggy_bank.png';
+                    });
+            } else {
+                // If URL is empty, show default image
+                previewImage.src = '/images/default_piggy_bank.png';
+            }
+        }, 500); // Wait 500ms after user stops typing
+    });
+
+
 });

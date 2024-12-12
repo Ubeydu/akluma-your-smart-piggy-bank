@@ -3,22 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\PiggyBank;
+use App\Services\LinkPreviewService;
 use App\Services\PaymentScheduleService;
 use App\Services\PickDateCalculationService;
 use Brick\Money\Money;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class PiggyBankCreateController extends Controller
 {
-    protected PickDateCalculationService $pickDateCalculationService;
+    private LinkPreviewService $linkPreviewService;
+    private PickDateCalculationService $pickDateCalculationService;
 
-    public function __construct(PickDateCalculationService $pickDateCalculationService)
-    {
+    public function __construct(
+        PickDateCalculationService $pickDateCalculationService,
+        LinkPreviewService $linkPreviewService
+    ) {
+        // Store both services in their respective properties
         $this->pickDateCalculationService = $pickDateCalculationService;
+        $this->linkPreviewService = $linkPreviewService;
     }
-
 
     /**
      * Step 1: Display the initial form (Screen 1).
@@ -66,6 +72,45 @@ class PiggyBankCreateController extends Controller
 //            'validated_data' => $validated,
 //        ]);
 
+        // Replace it with this updated code:
+        $preview = null;
+        if (!empty($validated['link'])) {
+            try {
+                $preview = $this->linkPreviewService->getPreviewData($validated['link']);
+
+                \Log::info('Link preview fetched:', [
+                    'url' => $validated['link'],
+                    'preview_data' => $preview,
+                ]);
+
+            } catch (\Exception $e) {
+                \Log::warning('Failed to fetch link preview:', [
+                    'url' => $validated['link'],
+                    'error' => $e->getMessage(),
+                ]);
+
+                $preview = [
+                    'title' => null,
+                    'description' => null,
+                    'image' => '/images/default_piggy_bank.png',
+                    'url' => $validated['link']
+                ];
+            }
+        } else {
+            $preview = [
+                'title' => null,
+                'description' => null,
+                'image' => '/images/default_piggy_bank.png',
+                'url' => null
+            ];
+        }
+
+        // Add this new code right after:
+        if ($preview && !filter_var($preview['image'], FILTER_VALIDATE_URL)) {
+            $preview['image'] = url($preview['image']);
+        }
+
+
         // Create Money objects
         $price = Money::of($validated['price_whole'] . '.' . str_pad($validated['price_cents'], 2, '0', STR_PAD_LEFT), $validated['currency']);
 
@@ -101,6 +146,7 @@ class PiggyBankCreateController extends Controller
             'link' => $validated['link'],
             'details' => $validated['details'],
             'starting_amount' => $startingAmount,
+            'preview' => $preview ?? null,
         ]);
 
 
@@ -110,6 +156,69 @@ class PiggyBankCreateController extends Controller
 
         return view('create-piggy-bank.common.step-2');
     }
+
+    /**
+     * Fetch preview data for a URL via AJAX request.
+     * This method handles the dynamic link preview functionality for step 1 of piggy bank creation.
+     * When users enter a URL, it attempts to fetch preview data including an image.
+     * If anything fails, it gracefully falls back to default values.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function fetchLinkPreview(Request $request): JsonResponse
+    {
+        // First, validate the incoming URL
+        $validated = $request->validate([
+            'url' => 'required|url|max:1000'
+        ]);
+
+        try {
+            // Attempt to fetch the preview data using our LinkPreviewService
+            $preview = $this->linkPreviewService->getPreviewData($validated['url']);
+
+            // If the preview fetch failed completely, set up a default response
+            if (!$preview) {
+                $preview = [
+                    'title' => null,
+                    'description' => null,
+                    'image' => '/images/default_piggy_bank.png',
+                    'url' => $validated['url']
+                ];
+            }
+
+            // Ensure the image URL is an absolute URL, not a relative path
+            if ($preview['image'] && !filter_var($preview['image'], FILTER_VALIDATE_URL)) {
+                $preview['image'] = url($preview['image']);
+            }
+
+            // Return successful response with preview data
+            return response()->json([
+                'success' => true,
+                'preview' => $preview
+            ]);
+
+        } catch (\Exception $e) {
+            // Log the error for debugging purposes
+            \Log::error('Error fetching link preview:', [
+                'url' => $validated['url'],
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Return a fallback response with default values
+            return response()->json([
+                'success' => false,
+                'preview' => [
+                    'title' => null,
+                    'description' => null,
+                    'image' => url('/images/default_piggy_bank.png'),
+                    'url' => $validated['url']
+                ]
+            ]);
+        }
+    }
+
 
     public function clearForm(Request $request)
     {
