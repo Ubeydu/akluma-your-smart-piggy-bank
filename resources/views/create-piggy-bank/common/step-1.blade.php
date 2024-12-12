@@ -105,9 +105,64 @@
                         <!-- Link (Optional) -->
                         <div class="mb-4">
                             <x-input-label for="link" :value="__('3. Product link')" />
-                            <x-text-input id="link" name="link" type="url" class="mt-1 block w-full" maxlength="1000" :value="old('link', session('pick_date_step1.link'))" />
-                            <p id="link-count" class="text-gray-500 text-sm mt-1">0 / 1000</p>
-                            <x-input-error :messages="$errors->get('link')" class="mt-2" />
+                            <div class="flex flex-col md:flex-row gap-4">
+                                <div class="flex-grow">
+                                    <x-text-input
+                                        id="link"
+                                        name="link"
+                                        type="url"
+                                        class="mt-1 block w-full"
+                                        maxlength="1000"
+                                        :value="old('link', session('pick_date_step1.link'))"
+                                    />
+                                    <p id="link-count" class="text-gray-500 text-sm mt-1">0 / 1000</p>
+                                    <x-input-error :messages="$errors->get('link')" class="mt-2" />
+                                </div>
+
+                                <div class="w-full md:w-48 mt-1">
+                                    @php
+                                        $preview = session('pick_date_step1.preview');
+                                        $imageUrl = $preview['image'] ?? '/images/default_piggy_bank.png';
+                                    @endphp
+                                    <div class="aspect-square md:aspect-auto md:h-48 relative overflow-hidden rounded-lg shadow-sm bg-gray-50">
+                                        <!-- Loading spinner overlay -->
+                                        <div
+                                            id="preview-loading"
+                                            class="absolute inset-0 bg-white/80 flex items-center justify-center opacity-0 invisible transition-all duration-300 z-20"
+                                        >
+                                            <div class="animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
+                                        </div>
+
+                                        <!-- Error message overlay -->
+                                        <div
+                                            id="preview-error"
+                                            class="absolute inset-0 bg-white/80 flex items-center justify-center opacity-0 invisible transition-all duration-300 z-20"
+                                        >
+                                            <span class="text-red-500 text-sm px-4 text-center">
+                                                {{ __('Could not load image preview') }}
+                                            </span>
+                                        </div>
+
+                                        <!-- Image container -->
+                                        <div class="relative w-full h-full">
+                                            <img
+                                                id="preview-image-current"
+                                                src="{{ $imageUrl }}"
+                                                alt="Current preview"
+                                                class="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
+                                            />
+                                            <img
+                                                id="preview-image-next"
+                                                src="{{ $imageUrl }}"
+                                                alt="Next preview"
+                                                class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-500"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
                         </div>
 
                         <!-- Details (Optional) -->
@@ -258,6 +313,8 @@
         const translations = {
             formattedPrice: @json(__('formatted: :value'))
         };
+
+        const linkPreviewUrl = '{{ route('create-piggy-bank.api.link-preview') }}';
     </script>
 
 

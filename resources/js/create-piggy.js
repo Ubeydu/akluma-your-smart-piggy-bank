@@ -99,4 +99,199 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
 
+    // Dynamic image preview loading
+    const linkInput = document.getElementById('link');
+    const currentImage = document.getElementById('preview-image-current');
+    const nextImage = document.getElementById('preview-image-next');
+    const loadingElement = document.getElementById('preview-loading');
+    const errorElement = document.getElementById('preview-error');
+    let debounceTimer;
+
+// Add debugging to help us understand what's happening
+    console.log('Elements found:', {
+        linkInput,
+        currentImage,
+        nextImage,
+        loadingElement,
+        errorElement
+    });
+
+    console.log('Link Input:', linkInput);
+    console.log('Loading Element:', loadingElement);
+    console.log('Error Element:', errorElement);
+
+    // Helper functions to manage UI states
+    function showLoading() {
+        console.log('Showing loading state');
+        if (loadingElement) loadingElement.classList.remove('opacity-0', 'invisible');
+        if (currentImage) currentImage.classList.add('opacity-50');
+        if (nextImage) nextImage.classList.add('opacity-0');
+        if (errorElement) errorElement.classList.add('opacity-0', 'invisible');
+    }
+
+    function hideLoading() {
+        console.log('Hiding loading state');
+        if (loadingElement) loadingElement.classList.add('opacity-0', 'invisible');
+        if (currentImage) currentImage.classList.remove('opacity-50');
+    }
+
+    function showError() {
+        console.log('Showing error state');
+        if (errorElement) errorElement.classList.remove('opacity-0', 'invisible');
+        if (currentImage) currentImage.classList.add('opacity-50');
+        if (nextImage) nextImage.classList.add('opacity-0');
+    }
+
+    function hideError() {
+        console.log('Hiding error state');
+        if (errorElement) errorElement.classList.add('opacity-0', 'invisible');
+        if (currentImage) currentImage.classList.remove('opacity-50');
+    }
+
+    function updatePreviewImage(newImageUrl) {
+        // Create a new image object to preload
+        const tempImage = new Image();
+
+        tempImage.onload = function() {
+            // Once new image is loaded, perform the transition
+            nextImage.src = newImageUrl;
+
+            // Wait a tiny bit for the new image to be ready in the DOM
+            setTimeout(() => {
+                // Fade out current image, fade in next image
+                currentImage.classList.add('opacity-0');
+                nextImage.classList.remove('opacity-0');
+
+                // After transition completes, swap the images and reset
+                setTimeout(() => {
+                    // Swap the sources
+                    currentImage.src = newImageUrl;
+                    currentImage.classList.remove('opacity-0');
+                    nextImage.classList.add('opacity-0');
+                    hideLoading();
+                    hideError();
+                }, 500); // This should match the duration in the CSS transition
+            }, 50);
+        };
+
+        tempImage.onerror = function() {
+            showError();
+            updatePreviewImage('/images/default_piggy_bank.png');
+            hideLoading();
+        };
+
+        // Start loading the new image
+        tempImage.src = newImageUrl;
+    }
+
+
+    if (linkInput) {
+        linkInput.addEventListener('input', function() {
+            console.log('Input event triggered');
+            clearTimeout(debounceTimer);
+
+            const url = this.value.trim();
+            console.log('URL:', url);
+
+            if (!url) {
+                console.log('Empty URL, resetting to default');
+                hideLoading();
+                hideError();
+                currentImage.src = '/images/default_piggy_bank.png';
+                nextImage.src = '/images/default_piggy_bank.png';
+                return;
+            }
+
+            showLoading();
+
+            debounceTimer = setTimeout(() => {
+                console.log('Making fetch request');
+                fetch('/create-piggy-bank/api/link-preview', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ url: url })
+                })
+                    .then(response => {
+                        console.log('Response received:', response);
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Preview data:', data);
+                        if (data.preview && data.preview.image) {
+                            // Use the new function instead of directly setting src
+                            updatePreviewImage(data.preview.image);
+                        } else {
+                            throw new Error('No preview image available');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        showError();
+                        updatePreviewImage('/images/default_piggy_bank.png');
+                    })
+            }, 500);
+        });
+    } else {
+        console.error('Could not find link input element');
+    }
+
+
+    // linkInput.addEventListener('input', function() {
+    //     // Clear any pending debounce timer
+    //     clearTimeout(debounceTimer);
+    //
+    //     const url = this.value.trim();
+    //
+    //     // Handle empty URL field
+    //     if (!url) {
+    //         hideLoading();
+    //         hideError();
+    //         previewImage.src = '/images/default_piggy_bank.png';
+    //         return;
+    //     }
+    //
+    //     // Show loading state while we process
+    //     showLoading();
+    //
+    //     // Wait for user to stop typing before making request
+    //     debounceTimer = setTimeout(() => {
+    //         fetch('/create-piggy-bank/api/link-preview', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+    //             },
+    //             body: JSON.stringify({ url: url })
+    //         })
+    //             .then(response => {
+    //                 if (!response.ok) {
+    //                     throw new Error('Network response was not ok');
+    //                 }
+    //                 return response.json();
+    //             })
+    //             .then(data => {
+    //                 if (data.preview && data.preview.image) {
+    //                     previewImage.src = data.preview.image;
+    //                     hideError();
+    //                 } else {
+    //                     throw new Error('No preview image available');
+    //                 }
+    //             })
+    //             .catch(() => {
+    //                 showError();
+    //                 previewImage.src = '/images/default_piggy_bank.png';
+    //             })
+    //             .finally(() => {
+    //                 hideLoading();
+    //             });
+    //     }, 500); // Wait 500ms after user stops typing before making request
+    // });
+
+
 });
