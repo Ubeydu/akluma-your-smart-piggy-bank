@@ -124,15 +124,44 @@
                                         $preview = session('pick_date_step1.preview');
                                         $imageUrl = $preview['image'] ?? '/images/default_piggy_bank.png';
                                     @endphp
-                                    <div class="aspect-square md:aspect-auto md:h-48 relative overflow-hidden rounded-lg shadow-sm">
-                                        <img
-                                            id="preview-image"
-                                            src="{{ $imageUrl }}"
-                                            alt="Product preview"
-                                            class="absolute inset-0 w-full h-full object-contain bg-gray-50"
-                                        />
+                                    <div class="aspect-square md:aspect-auto md:h-48 relative overflow-hidden rounded-lg shadow-sm bg-gray-50">
+                                        <!-- Loading spinner overlay -->
+                                        <div
+                                            id="preview-loading"
+                                            class="absolute inset-0 bg-white/80 flex items-center justify-center opacity-0 invisible transition-all duration-300 z-20"
+                                        >
+                                            <div class="animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
+                                        </div>
+
+                                        <!-- Error message overlay -->
+                                        <div
+                                            id="preview-error"
+                                            class="absolute inset-0 bg-white/80 flex items-center justify-center opacity-0 invisible transition-all duration-300 z-20"
+                                        >
+                                            <span class="text-red-500 text-sm px-4 text-center">
+                                                {{ __('Could not load image preview') }}
+                                            </span>
+                                        </div>
+
+                                        <!-- Image container -->
+                                        <div class="relative w-full h-full">
+                                            <img
+                                                id="preview-image-current"
+                                                src="{{ $imageUrl }}"
+                                                alt="Current preview"
+                                                class="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
+                                            />
+                                            <img
+                                                id="preview-image-next"
+                                                src="{{ $imageUrl }}"
+                                                alt="Next preview"
+                                                class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-500"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
+
+
                             </div>
                         </div>
 
