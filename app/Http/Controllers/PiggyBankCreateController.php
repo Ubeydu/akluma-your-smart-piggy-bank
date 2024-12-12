@@ -234,15 +234,6 @@ class PiggyBankCreateController extends Controller
         }
     }
 
-
-    public function clearForm(Request $request)
-    {
-        // clear the session data for step 1
-        $request->session()->forget('pick_date_step1');
-
-        return response()->json(['success' => true]);
-    }
-
     public function showStep2()
     {
         // Load any necessary data from session or database if needed

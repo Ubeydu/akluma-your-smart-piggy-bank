@@ -41,12 +41,39 @@
                                         :value="old('price_whole', session('pick_date_step1.price') ? explode('.', session('pick_date_step1.price')->getAmount())[0] : '')"
                                         onkeypress="return (function(evt) {
                                             const value = this.value;
-                                            return /[0-9]/.test(evt.key) && !(value === '' && evt.key === '0') && value.length < 15;
+                                            const isValid = /[0-9]/.test(evt.key) && !(value === '' && evt.key === '0') && value.length < 15;
+                                            if (!isValid) {
+                                                const errorDiv = document.getElementById('price_whole_error');
+                                                errorDiv.classList.remove('hidden');
+                                                // Hide the message after 2 seconds
+                                                setTimeout(() => {
+                                                    errorDiv.classList.add('hidden');
+                                                }, 3000);
+                                            }
+                                            return isValid;
                                         }).call(this, window.event || arguments[0])"
                                         class="block w-full"
                                         required
                                         oninput="updateFormattedPrice(this.value, 'formatted_price');"
+                                        onpaste="return (function(evt) {
+                                            const pastedData = (evt.clipboardData || window.clipboardData).getData('text');
+                                            const isValid = /^[0-9]+$/.test(pastedData);
+                                            if (!isValid) {
+                                                const errorDiv = document.getElementById('price_whole_error');
+                                                errorDiv.classList.remove('hidden');
+                                                // Hide the message after 2 seconds
+                                                setTimeout(() => {
+                                                    errorDiv.classList.add('hidden');
+                                                }, 3000);
+                                            }
+                                            return isValid;
+                                        }).call(this, window.event || arguments[0])"
                                     />
+
+                                    <div id="price_whole_error" class="text-red-500 text-sm mt-1 hidden">
+                                        {{ __('price_whole_numbers_only') }}
+                                    </div>
+
                                 </div>
 
                                 <div class="flex items-center mt-2">
