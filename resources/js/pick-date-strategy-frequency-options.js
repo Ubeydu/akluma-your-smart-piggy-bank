@@ -29,9 +29,8 @@ const dateInput = document.getElementById("saving_date");
 
         /**
          * @typedef {Object} Amount
-         * @property {number} amount - The numerical amount
-         * @property {string} formatted_amount - Formatted string representation of the amount
-         * @property {string} currency - Currency code
+         * @property {Object} amount - The Money object
+         * @property {string} formatted_value - Pre-formatted string with amount and currency
          */
 
         /**
@@ -71,16 +70,15 @@ const dateInput = document.getElementById("saving_date");
 
         /**
          * Formats currency amount with proper styling
-         * @param {string} formattedAmount - Pre-formatted amount string from server
-         * @param {string} currency - Currency code
+         * @param {string} formattedValue -
+         *
          * @returns {string} HTML string for displaying amount
          */
-    const formatAmount = (formattedAmount, currency) => `
-            <div class="inline-flex items-center gap-1">
-                <div class="bg-gray-50 px-3 py-1.5 rounded font-mono text-lg">${formattedAmount}</div>
-                <div class="text-gray-600">${currency}</div>
-            </div>
-        `;
+        const formatAmount = (formattedValue) => `
+    <div class="inline-flex items-center gap-1">
+        <div class="bg-gray-50 px-3 py-1.5 rounded font-mono text-lg">${formattedValue}</div>
+    </div>
+`;
 
         /**
          * Maps period types to their translation keys
@@ -184,7 +182,7 @@ const dateInput = document.getElementById("saving_date");
 }
 
     // Handle valid saving options
-    if (option.amount && option.amount.amount !== null) {
+    if (option.amount?.formatted_value) {
     const isShortTerm = shortTermPeriods.includes(type);
     const container = document.querySelector(
     isShortTerm ? '#shortTermOptions' : '#longTermOptions'
@@ -205,24 +203,24 @@ const dateInput = document.getElementById("saving_date");
         <div class="ml-3">
             <div class="text-sm font-medium text-gray-700 flex flex-wrap gap-2">
                 <span data-translate="savings-plan">${window.Laravel.translations['Savings plan']}:</span>
-                <span class="font-semibold">${formatAmount(option.amount.formatted_amount, option.amount.currency)}</span>
+                <span class="font-semibold">${formatAmount(option.amount.formatted_value)}</span>
                 <span>×</span>
                 <span>${option.frequency} ${periodLabel}</span>
             </div>
             ${option.extra_savings ? `
                 <div class="text-xs text-gray-600 mt-2 space-y-1">
                     <div class="flex justify-between">
-                        <span data-translate="target-amount">${window.Laravel.translations['Target']}:</span>
-                        <span>${formatAmount(option.target_amount.formatted_amount, option.target_amount.currency)}</span>
-                    </div>
-                    <div class="flex justify-between text-green-600">
-                        <span data-translate="extra-savings">${window.Laravel.translations['Extra']}:</span>
-                        <span>+${formatAmount(option.extra_savings.formatted_amount, option.extra_savings.currency)}</span>
-                    </div>
-                    <div class="flex justify-between font-semibold">
-                        <span data-translate="total-savings">${window.Laravel.translations['Total']}:</span>
-                        <span>${formatAmount(option.total_savings.formatted_amount, option.total_savings.currency)}</span>
-                    </div>
+            <span data-translate="target-amount">${window.Laravel.translations['Target']}:</span>
+            <span>${formatAmount(option.target_amount.formatted_value)}</span>
+        </div>
+        <div class="flex justify-between text-green-600">
+            <span data-translate="extra-savings">${window.Laravel.translations['Extra']}:</span>
+            <span>+${formatAmount(option.extra_savings.formatted_value)}</span>
+        </div>
+        <div class="flex justify-between font-semibold">
+            <span data-translate="total-savings">${window.Laravel.translations['Total']}:</span>
+            <span>${formatAmount(option.total_savings.formatted_value)}</span>
+        </div>
                 </div>
             ` : ''}
         </div>

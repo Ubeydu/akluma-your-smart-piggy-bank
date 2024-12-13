@@ -46,8 +46,7 @@ $currentPlaceholder = $placeholders[$language];
                             <div class="flex justify-between items-baseline">
                                 <span class="text-gray-700 break-normal">{{ __('Item Price') }}:</span>
                                 <div class="flex items-baseline gap-2 text-right flex-wrap justify-end min-w-[120px]">
-                                    <span>{{ number_format((float)session('pick_date_step1.price')->getAmount()->__toString(), 0) }}</span>
-                                    <span>{{ session('pick_date_step1.currency') }}</span>
+                                    {{ session('pick_date_step1.price')->formatTo(App::getLocale()) }}
                                 </div>
                             </div>
 
@@ -56,12 +55,13 @@ $currentPlaceholder = $placeholders[$language];
                                 <div class="flex justify-between items-baseline">
                                     <span class="text-gray-700 break-normal">{{ __('Initial Deposit') }}:</span>
                                     <div class="flex items-baseline gap-2 text-right flex-wrap justify-end min-w-[120px]">
-                                        <span>{{ number_format((float)session('pick_date_step1.starting_amount')->getAmount()->__toString(), 0) }}</span>
-                                        <span>{{ session('pick_date_step1.currency') }}</span>
+                                        {{ session('pick_date_step1.starting_amount')->formatTo(App::getLocale()) }}
                                     </div>
                                 </div>
                             @endif
                         </div>
+
+
                     </div>
 
 

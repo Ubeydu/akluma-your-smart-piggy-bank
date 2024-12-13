@@ -10,6 +10,7 @@ use Brick\Money\Money;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
 class PiggyBankCreateController extends Controller
@@ -407,18 +408,18 @@ class PiggyBankCreateController extends Controller
             $calculations['amount']
         );
 
-        // Parse dates for comparison
-        $targetDate = Carbon::parse($summary['pick_date_step3']['date']);
-        $finalPaymentDate = Carbon::parse(end($paymentSchedule)['date']);
-        $today = Carbon::today();
+        // Create Carbon instances with the current locale
+        $targetDate = Carbon::parse($summary['pick_date_step3']['date'])->locale(App::getLocale());
+        $finalPaymentDate = Carbon::parse(end($paymentSchedule)['date'])->locale(App::getLocale());
+        $today = Carbon::today()->locale(App::getLocale());
 
         // Initialize variables for date storage and user messaging
         $savingCompletionDate = $finalPaymentDate;
         $dateMessage = null;
 
-        // Validate dates and set appropriate message
+        // Validate dates and set messages using locale-aware date formatting
         if ($targetDate->isPast() || $finalPaymentDate->isPast()) {
-            $savingCompletionDate = Carbon::tomorrow();
+            $savingCompletionDate = Carbon::tomorrow()->locale(App::getLocale());
             $dateMessage = __('Due to a calculation error, we\'ve adjusted your saving plan to start from tomorrow.');
         } else {
             if ($finalPaymentDate->equalTo($targetDate)) {
@@ -427,13 +428,13 @@ class PiggyBankCreateController extends Controller
             elseif ($finalPaymentDate->lt($targetDate)) {
                 $savingCompletionDate = $finalPaymentDate;
                 $dateMessage = __('Good news! You will reach your saving goal earlier than planned, on :date', [
-                    'date' => $finalPaymentDate->format('d.m.Y')
+                    'date' => $finalPaymentDate->isoFormat('LL')  // Using isoFormat for locale-aware date formatting
                 ]);
             }
             else {
                 $savingCompletionDate = $finalPaymentDate;
                 $dateMessage = __('Note: Your saving plan will complete on :date', [
-                    'date' => $finalPaymentDate->format('d.m.Y')
+                    'date' => $finalPaymentDate->isoFormat('LL')  // Using isoFormat for locale-aware date formatting
                 ]);
             }
         }

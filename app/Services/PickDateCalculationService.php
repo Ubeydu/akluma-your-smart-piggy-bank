@@ -10,6 +10,8 @@ use Brick\Money\Exception\UnknownCurrencyException;
 use Carbon\Carbon;
 use Brick\Money\Money;
 use Brick\Math\RoundingMode;
+use Exception;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
@@ -217,31 +219,33 @@ class PickDateCalculationService
             $totalSavings = $roundedMoney->multipliedBy($neededPeriods);
             $extraSavings = $totalSavings->minus($targetAmount);
 
-            return [
+            $result = [
                 'amount' => [
-                    'value' => $roundedMoney->getAmount()->__toString(),
-                    'formatted_amount' => number_format($roundedAmount, 0),
-                    'currency' => $roundedMoney->getCurrency()->getCurrencyCode()
+                    'amount' => $roundedMoney,  // Keep the Money object for internal use
+                    'formatted_value' => $roundedMoney->formatTo(App::getLocale())  // Add formatted string for JS
                 ],
                 'frequency' => $neededPeriods,
                 'message' => null,
                 'extra_savings' => [
-                    'value' => $extraSavings->getAmount()->__toString(),
-                    'formatted_amount' => number_format((float)$extraSavings->getAmount()->__toString(), 0),
-                    'currency' => $extraSavings->getCurrency()->getCurrencyCode()
+                    'amount' => $extraSavings,  // Money object
+                    'formatted_value' => $extraSavings->formatTo(App::getLocale())  // Pre-formatted for display
                 ],
                 'total_savings' => [
-                    'value' => $totalSavings->getAmount()->__toString(),
-                    'formatted_amount' => number_format((float)$totalSavings->getAmount()->__toString(), 0),
-                    'currency' => $totalSavings->getCurrency()->getCurrencyCode()
+                    'amount' => $totalSavings,  // Money object
+                    'formatted_value' => $totalSavings->formatTo(App::getLocale())  // Pre-formatted for display
                 ],
                 'target_amount' => [
-                    'value' => $targetAmount->getAmount()->__toString(),
-                    'formatted_amount' => number_format((float)$targetAmount->getAmount()->__toString(), 0),
-                    'currency' => $targetAmount->getCurrency()->getCurrencyCode()
+                    'amount' => $targetAmount,  // Money object
+                    'formatted_value' => $targetAmount->formatTo(App::getLocale())  // Pre-formatted for display
                 ]
             ];
-        } catch (MathException|MoneyMismatchException $e) {
+
+
+            \Log::info('Calculation result:', ['result' => $result]);
+
+            return $result;
+
+        } catch (Exception $e) {
             Log::error('Error in calculateFrequencyOption during final calculations: ' . $e->getMessage());
             return [
                 'amount' => null,
