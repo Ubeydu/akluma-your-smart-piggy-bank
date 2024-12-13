@@ -46,7 +46,7 @@
     "4. Details": "4. Başka detaylar girmek istersen",
     "5. I already saved some money": "5. Kumbarana önden biraz para koymak istersen",
     "Are you sure you want to cancel?": "İşlemi iptal etmek istediğinden emin misin?",
-    "Next": "Sonraki",
+    "Next": "Devam",
     "Currency": "Para Birimi",
     "Turkish Lira": "Türk Lirası",
     "US Dollar": "ABD Doları",
@@ -93,5 +93,6 @@
     "No, continue": "Hayır",
     "formatted: :value": "biçimlendirilmiş: :value",
     "The difference between starting amount and price cannot be less than 100. Please check.": "Kumbarana önden koyacağın miktarla, almak istediğin şeyin fiyatı arasındaki fark 100'den az olamaz.",
-    "price_whole_numbers_only": "Bu kısma rakam haricinde hiç bir şey yazamazsın."
+    "price_whole_numbers_only": "Bu kısma rakam haricinde hiç bir şey yazamazsın.",
+    "Create Piggy Bank": "Kumbaranı Oluştur"
 }

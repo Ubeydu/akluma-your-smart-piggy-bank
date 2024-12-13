@@ -85,14 +85,11 @@ $currentPlaceholder = $placeholders[$language];
                     </script>
                     @vite(['resources/js/pick-date-strategy-frequency-options.js'])
 
-
                     <!-- Action Buttons -->
-                    <div class="flex justify-between mt-6">
-
-
+                    <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-between sm:space-y-0 mt-6">
                         <div x-data="{ showConfirmCancel: false }">
                             <!-- Cancel button -->
-                            <x-danger-button @click="showConfirmCancel = true">
+                            <x-danger-button @click="showConfirmCancel = true" class="w-[200px] sm:w-auto justify-center sm:justify-start">
                                 {{ __('Cancel') }}
                             </x-danger-button>
 
@@ -103,53 +100,94 @@ $currentPlaceholder = $placeholders[$language];
                                 </x-slot>
 
                                 <x-slot:actions>
-
-                                    <div class="flex flex-row items-stretch gap-3 justify-end">
+                                    <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
                                         <form action="{{ route('create-piggy-bank.cancel') }}" method="POST" class="block">
                                             @csrf
-                                            <x-danger-button type="submit" class="justify-center">
+                                            <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
                                                 {{ __('Yes, cancel') }}
                                             </x-danger-button>
                                         </form>
 
                                         <x-secondary-button
                                             @click="showConfirmCancel = false"
-                                            class="justify-center"
+                                            class="w-[200px] sm:w-auto justify-center sm:justify-start"
                                         >
                                             {{ __('No, continue') }}
                                         </x-secondary-button>
                                     </div>
-
                                 </x-slot:actions>
-
                             </x-confirmation-dialog>
                         </div>
 
-
                         <form method="GET" action="{{ route('create-piggy-bank.step-2.get') }}" class="inline">
-                            <x-secondary-button type="submit">
+                            <x-secondary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
                                 {{ __('Previous') }}
                             </x-secondary-button>
                         </form>
 
-{{--                        <x-primary-button id="nextButton" type="button" class="hidden">--}}
-{{--                            {{ __('Next') }}--}}
-{{--                        </x-primary-button>--}}
                         <form method="POST" action="{{ route('create-piggy-bank.pick-date.show-summary') }}">
                             @csrf
-                            <x-primary-button type="submit" id="nextButton" disabled>
+                            <x-primary-button type="submit" id="nextButton" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start">
                                 {{ __('Next') }}
                             </x-primary-button>
                         </form>
                     </div>
 
 
-{{--                    @if(session('debug_summary'))--}}
-{{--                        <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200 font-mono">--}}
-{{--                            <pre class="whitespace-pre-wrap">{{ print_r(session('debug_summary'), true) }}</pre>--}}
-{{--                        </div>--}}
-{{--                    @endif--}}
+{{--                    <!-- Action Buttons -->--}}
+{{--                    <div class="flex justify-between mt-6">--}}
 
+
+{{--                        <div x-data="{ showConfirmCancel: false }">--}}
+{{--                            <!-- Cancel button -->--}}
+{{--                            <x-danger-button @click="showConfirmCancel = true">--}}
+{{--                                {{ __('Cancel') }}--}}
+{{--                            </x-danger-button>--}}
+
+{{--                            <!-- Confirmation dialog component -->--}}
+{{--                            <x-confirmation-dialog>--}}
+{{--                                <x-slot:title>--}}
+{{--                                    {{ __('Are you sure you want to cancel?') }}--}}
+{{--                                </x-slot>--}}
+
+{{--                                <x-slot:actions>--}}
+
+{{--                                    <div class="flex flex-row items-stretch gap-3 justify-end">--}}
+{{--                                        <form action="{{ route('create-piggy-bank.cancel') }}" method="POST" class="block">--}}
+{{--                                            @csrf--}}
+{{--                                            <x-danger-button type="submit" class="justify-center">--}}
+{{--                                                {{ __('Yes, cancel') }}--}}
+{{--                                            </x-danger-button>--}}
+{{--                                        </form>--}}
+
+{{--                                        <x-secondary-button--}}
+{{--                                            @click="showConfirmCancel = false"--}}
+{{--                                            class="justify-center"--}}
+{{--                                        >--}}
+{{--                                            {{ __('No, continue') }}--}}
+{{--                                        </x-secondary-button>--}}
+{{--                                    </div>--}}
+
+{{--                                </x-slot:actions>--}}
+
+{{--                            </x-confirmation-dialog>--}}
+{{--                        </div>--}}
+
+
+{{--                        <form method="GET" action="{{ route('create-piggy-bank.step-2.get') }}" class="inline">--}}
+{{--                            <x-secondary-button type="submit">--}}
+{{--                                {{ __('Previous') }}--}}
+{{--                            </x-secondary-button>--}}
+{{--                        </form>--}}
+
+
+{{--                        <form method="POST" action="{{ route('create-piggy-bank.pick-date.show-summary') }}">--}}
+{{--                            @csrf--}}
+{{--                            <x-primary-button type="submit" id="nextButton" disabled>--}}
+{{--                                {{ __('Next') }}--}}
+{{--                            </x-primary-button>--}}
+{{--                        </form>--}}
+{{--                    </div>--}}
 
                 </div>
             </div>
