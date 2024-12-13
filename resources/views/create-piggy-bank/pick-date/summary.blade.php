@@ -14,6 +14,7 @@
                     <!-- Product Information Section -->
                     <div class="mb-8">
                         <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Product Details') }}</h2>
+                        <!-- This grid will only contain the basic info and image -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-4">
                                 <div>
@@ -24,7 +25,6 @@
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Product Price') }}</h3>
                                     <p class="mt-1 text-base text-gray-900">
-                                        {{-- Using the Money object's built-in formatting --}}
                                         {{ isset($summary['pick_date_step1']['price']) ? $summary['pick_date_step1']['price']->formatTo('en_US') : '-' }}
                                     </p>
                                 </div>
@@ -32,28 +32,13 @@
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Starting Amount') }}</h3>
                                     <p class="mt-1 text-base text-gray-900">
-                                        {{-- Using the Money object's built-in formatting --}}
                                         {{ isset($summary['pick_date_step1']['starting_amount']) ? $summary['pick_date_step1']['starting_amount']->formatTo('en_US') : '-' }}
                                     </p>
                                 </div>
-
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Product Link') }}</h3>
-                                    @if(isset($summary['pick_date_step1']['link']))
-                                        <a href="{{ $summary['pick_date_step1']['link'] }}" target="_blank" class="mt-1 text-base text-blue-600 hover:text-blue-800 break-all">{{ $summary['pick_date_step1']['link'] }}</a>
-                                    @else
-                                        <p class="mt-1 text-base text-gray-900">-</p>
-                                    @endif
-                                </div>
-
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Notes') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ $summary['pick_date_step1']['details'] ?? '-' }}</p>
-                                </div>
                             </div>
 
-                            <div class="w-full md:w-48 mt-1">
-                                <div class="aspect-square h-32 md:aspect-auto md:h-32 relative overflow-hidden rounded-lg shadow-sm bg-gray-50">
+                            <div class="w-48 mx-auto mt-1">
+                                <div class="aspect-square h-32 md:aspect-auto md:h-32 relative overflow-hidden rounded-lg shadow-sm bg-gray-50 mx-auto">
                                     <div class="relative w-full h-full">
                                         <img
                                             src="{{ $summary['pick_date_step1']['preview']['image'] }}"
@@ -63,43 +48,57 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
+                        <!-- Moved outside the grid -->
+                        <div class="space-y-4 mt-6">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">{{ __('Product Link') }}</h3>
+                                @if(isset($summary['pick_date_step1']['link']))
+                                    <a href="{{ $summary['pick_date_step1']['link'] }}" target="_blank" class="mt-1 text-base text-blue-600 hover:text-blue-800 break-all">{{ $summary['pick_date_step1']['link'] }}</a>
+                                @else
+                                    <p class="mt-1 text-base text-gray-900">-</p>
+                                @endif
+                            </div>
+
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">{{ __('Notes') }}</h3>
+                                <p class="mt-1 text-base text-gray-900">{{ $summary['pick_date_step1']['details'] ?? '-' }}</p>
+                            </div>
                         </div>
                     </div>
+
 
                     <!-- Savings Plan Section -->
                     <div class="mb-8">
                         <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Savings Plan') }}</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-4">
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Target Date') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ \Carbon\Carbon::parse($summary['pick_date_step3']['date'])->format('F j, Y') }}</p>
-                                </div>
-
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Saving Frequency') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ ucfirst($summary['pick_date_step3']['selected_frequency']) }}</p>
-                                </div>
-
-                                @if($dateMessage)
-                                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                                        <p class="text-blue-700">{{ $dateMessage }}</p>
-                                    </div>
-                                @endif
+                        <!-- Remove grid, use single column layout -->
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">{{ __('Target Date') }}</h3>
+                                <p class="mt-1 text-base text-gray-900">{{ \Carbon\Carbon::parse($summary['pick_date_step3']['date'])->format('F j, Y') }}</p>
                             </div>
 
-                            <div class="space-y-4">
-
-                                @if(isset($summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['message']))
-                                    <div>
-                                        <h3 class="text-sm font-medium text-gray-500">{{ __('Additional Information') }}</h3>
-                                        <p class="mt-1 text-base text-gray-900">{{ $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['message'] }}</p>
-                                    </div>
-                                @endif
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">{{ __('Saving Frequency') }}</h3>
+                                <p class="mt-1 text-base text-gray-900">{{ ucfirst($summary['pick_date_step3']['selected_frequency']) }}</p>
                             </div>
+
+                            @if($dateMessage)
+                                <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                                    <p class="text-blue-700">{{ $dateMessage }}</p>
+                                </div>
+                            @endif
+
+                            @if(isset($summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['message']))
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Additional Information') }}</h3>
+                                    <p class="mt-1 text-base text-gray-900">{{ $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['message'] }}</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
+
 
                     <!-- Financial Summary Section -->
                     <div class="mb-8">
