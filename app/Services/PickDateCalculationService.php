@@ -21,74 +21,18 @@ class PickDateCalculationService
     private const SHORT_TERM_PERIODS = ['hour', 'day'];
     private const LONG_TERM_PERIODS = ['week', 'month', 'year'];
 
-    /**
-     * Handles rounding for short-term savings (minutes, hours, days)
-     * These are typically for smaller amounts where people handle physical money
-     */
-    private function roundShortTerm(float $amount, string $period): float
-    {
-        if ($amount < 0) {
-            throw new InvalidArgumentException('Amount cannot be negative');
-        }
-
-        switch ($period) {
-
-            case 'hour':
-                if ($amount < 50) return ceil($amount / 5) * 5;  // 5 TRY increments
-                if ($amount < 200) return ceil($amount / 10) * 10;  // 10 TRY increments
-                if ($amount < 1000) return ceil($amount / 50) * 50;  // 50 TRY increments
-                return ceil($amount / 100) * 100;  // 100 TRY increments
-
-            case 'day':
-                if ($amount < 100) return ceil($amount / 10) * 10;  // 10 TRY increments
-                if ($amount < 1000) return ceil($amount / 50) * 50;  // 50 TRY increments
-                if ($amount < 10000) return ceil($amount / 100) * 100;  // 100 TRY increments
-                return ceil($amount / 500) * 500;  // 500 TRY increments
-
-            default:
-                throw new InvalidArgumentException('Invalid period for short-term rounding');
-        }
-    }
-
-    /**
-     * Handles rounding for long-term savings (weeks, months, years)
-     * These are typically for larger amounts where people use bank transfers
-     */
-    private function roundLongTerm(float $amount, string $period): float
-    {
-        if ($amount < 0) {
-            throw new InvalidArgumentException('Amount cannot be negative');
-        }
-
-        switch ($period) {
-            case 'week':
-                if ($amount < 500) return ceil($amount / 50) * 50;  // 50 TRY increments
-                if ($amount < 2000) return ceil($amount / 100) * 100;  // 100 TRY increments
-                if ($amount < 10000) return ceil($amount / 500) * 500;  // 500 TRY increments
-                return ceil($amount / 1000) * 1000;  // 1000 TRY increments
-
-            case 'month':
-                if ($amount < 1000) return ceil($amount / 100) * 100;  // 100 TRY increments
-                if ($amount < 5000) return ceil($amount / 500) * 500;  // 500 TRY increments
-                if ($amount < 50000) return ceil($amount / 1000) * 1000;  // 1000 TRY increments
-                return ceil($amount / 5000) * 5000;  // 5000 TRY increments
-
-            case 'year':
-                if ($amount < 10000) return ceil($amount / 1000) * 1000;  // 1000 TRY increments
-                if ($amount < 100000) return ceil($amount / 5000) * 5000;  // 5000 TRY increments
-                if ($amount < 1000000) return ceil($amount / 10000) * 10000;  // 10000 TRY increments
-                return ceil($amount / 50000) * 50000;  // 50000 TRY increments
-
-            default:
-                throw new InvalidArgumentException('Invalid period for long-term rounding');
-        }
-    }
 
     /**
      * Calculate savings frequency options with appropriate rounding based on time period
+     *
+     * @param int $timeDiff Number of periods until target date
+     * @param string $period Type of period (hour, day, week, month, year)
+     * @param Money $targetAmount Total amount needed to save
+     * @return array Calculation results with amounts and frequency
      */
     private function calculateFrequencyOption(int $timeDiff, string $period, Money $targetAmount): array
     {
+        // If we have less than one period, we can't create a saving plan
         if ($timeDiff <= 0) {
             return [
                 'amount' => null,
@@ -100,209 +44,285 @@ class PickDateCalculationService
         // Determine if this is short-term or long-term saving
         $isShortTerm = in_array($period, self::SHORT_TERM_PERIODS);
 
-        // Validate that the period is either short-term or long-term
+        // Validate period type
         if (!$isShortTerm && !in_array($period, self::LONG_TERM_PERIODS)) {
             throw new InvalidArgumentException('Invalid period type provided');
         }
 
-        // Get exact target amount
-        $targetAmountFloat = $targetAmount->getAmount()->toFloat();
-
-        // Calculate initial amount per period
-        $exactAmount = $targetAmountFloat / $timeDiff;
-
-// Define single payment thresholds for each period
-        $singlePaymentThresholds = [
-            'hour' => 20,     // If target is <= 20 TRY, consider single payment for hours
-            'day' => 50,     // If target is <= 50 TRY, consider single payment for days
-            'week' => 200,    // If target is <= 200 TRY, consider single payment for weeks
-            'month' => 500,  // If target is <= 500 TRY, consider single payment for months
-            'year' => 5000    // If target is <= 5000 TRY, consider single payment for years
+        // Define single payment thresholds as Money objects for proper comparison
+        $thresholds = [
+            'hour' => Money::of(20, $targetAmount->getCurrency()->getCurrencyCode()),
+            'day' => Money::of(50, $targetAmount->getCurrency()->getCurrencyCode()),
+            'week' => Money::of(200, $targetAmount->getCurrency()->getCurrencyCode()),
+            'month' => Money::of(500, $targetAmount->getCurrency()->getCurrencyCode()),
+            'year' => Money::of(5000, $targetAmount->getCurrency()->getCurrencyCode())
         ];
 
-        // Right after getting the target amount
-//        Log::info('Initial target amount float:', ['targetAmountFloat' => $targetAmountFloat]);
+        // Check if we should use single payment
+        $threshold = $thresholds[$period] ?? Money::of(PHP_FLOAT_MAX, $targetAmount->getCurrency()->getCurrencyCode());
+        $useSinglePayment = $timeDiff === 1 || $targetAmount->isLessThanOrEqualTo($threshold);
 
-// Just before our single payment condition
-//        Log::info('Checking single payment condition:', [
-//            'timeDiff' => $timeDiff,
-//            'period' => $period,
-//            'threshold' => $singlePaymentThresholds[$period] ?? PHP_FLOAT_MAX
-//        ]);
-
-        // Check if we can and should achieve the target in one payment
-        if ($timeDiff == 1 ||
-            $targetAmountFloat <= ($singlePaymentThresholds[$period] ?? PHP_FLOAT_MAX)) {
-
-            // Convert our target amount to a string with exactly 2 decimal places
-            $amountStr = number_format($targetAmountFloat, 2, '.', '');
-
-            // Split into whole and decimal parts
-            list($whole, $decimal) = explode('.', $amountStr);
-
-            // If we have any decimal part at all, round up to next whole number
-            $roundedAmount = (float)$whole;
-            if ($decimal > '00') {
-                $roundedAmount = $roundedAmount + 1;
-            }
-        } else {
-            // Round using appropriate strategy
-            $roundedAmount = $isShortTerm
-                ? $this->roundShortTerm($exactAmount, $period)
-                : $this->roundLongTerm($exactAmount, $period);
-        }
-
-        // Initialize variables for calculation loop
-        $foundValidAmount = false;
-        $neededPeriods = $timeDiff;
-
-        while (!$foundValidAmount) {
-            // Calculate how many periods we need with current rounded amount
-            $neededPeriods = ceil($targetAmountFloat / $roundedAmount);
-
-            if ($neededPeriods <= $timeDiff) {
-                // Calculate total savings
-                $totalSavings = $roundedAmount * $neededPeriods;
-
-                // Check if we've reached our target
-                if ($totalSavings >= $targetAmountFloat) {
-                    $foundValidAmount = true;
-                } else {
-                    // If we're still short, increase the amount using appropriate strategy
-                    $roundedAmount = $isShortTerm
-                        ? $this->roundShortTerm($roundedAmount + 1, $period)
-                        : $this->roundLongTerm($roundedAmount + 100, $period);
-                }
+        try {
+            if ($useSinglePayment) {
+                // For single payments, we just use the target amount directly
+                $roundedAmount = $targetAmount;
+                $neededPeriods = 1;
             } else {
-                // If we need more periods than available, increase amount
-                $exactAmount = $targetAmountFloat / $timeDiff;
-                $roundedAmount = $isShortTerm
-                    ? $this->roundShortTerm($exactAmount + 1, $period)
-                    : $this->roundLongTerm($exactAmount + 100, $period);
-                $neededPeriods = $timeDiff;
+                // Add this logging before the division
+                Log::info('About to perform division:', [
+                    'targetAmount' => [
+                        'value' => $targetAmount->getAmount()->__toString(),
+                        'currency' => $targetAmount->getCurrency()->getCurrencyCode()
+                    ],
+                    'timeDiff' => $timeDiff,
+                    'period' => $period
+                ]);
+
+                try {
+                    // Calculate initial amount per period using Money division
+                    // We use exact scale to avoid rounding issues in intermediate calculations
+                    $initialAmount = $targetAmount->dividedBy($timeDiff, RoundingMode::UP);
+
+                    Log::info('Division successful:', [
+                        'result' => [
+                            'value' => $initialAmount->getAmount()->__toString(),
+                            'currency' => $initialAmount->getCurrency()->getCurrencyCode()
+                        ]
+                    ]);
+                } catch (Exception $e) {
+                    Log::error('Division failed:', [
+                        'error' => $e->getMessage(),
+                        'error_type' => get_class($e)
+                    ]);
+                    throw $e;
+                }
+
+                // When converting to base units, we need to multiply by 100 since TRY has 2 decimal places
+                // This ensures we're working with whole numbers (cents) instead of decimals
+                $baseAmount = (int)($initialAmount->getAmount()->toFloat() * 100);
+
+                // Apply rounding rules based on period type
+                if ($isShortTerm) {
+                    $roundedBase = $this->roundShortTermBase($baseAmount, $period);
+                } else {
+                    $roundedBase = $this->roundLongTermBase($baseAmount, $period);
+                }
+
+                // Add this right after we calculate roundedBase
+                Log::info('After base rounding:', [
+                    'initial_base' => $baseAmount,
+                    'rounded_base' => $roundedBase,
+                    'period' => $period
+                ]);
+
+                try {
+                    $roundedAmount = Money::ofMinor($roundedBase, $targetAmount->getCurrency()->getCurrencyCode(), null, RoundingMode::CEILING);
+                } catch (RoundingNecessaryException $e) {
+                    // If rounding is still needed, force ceiling rounding
+                    $roundedAmount = Money::ofMinor($roundedBase, $targetAmount->getCurrency()->getCurrencyCode(), null, RoundingMode::CEILING);
+                }
+
+                // Add this after converting back to Money object
+                Log::info('After converting back to Money:', [
+                    'rounded_amount' => $roundedAmount->getAmount()->__toString(),
+                    'currency' => $roundedAmount->getCurrency()->getCurrencyCode()
+                ]);
+
+                // Calculate how many periods we need
+                $neededPeriods = $this->calculateNeededPeriods($targetAmount, $roundedAmount);
+
+                // Ensure we don't exceed available time
+                if ($neededPeriods > $timeDiff) {
+                    $neededPeriods = $timeDiff;
+                    // Recalculate amount needed per period
+                    $roundedAmount = $targetAmount->dividedBy($timeDiff, RoundingMode::CEILING);
+                }
             }
-        }
 
-        // Convert final amount to Money object
-        try {
-            $roundedMoney = Money::of(
-                number_format($roundedAmount, 2, '.', ''),
-                $targetAmount->getCurrency()->getCurrencyCode(),
-                null,
-                RoundingMode::CEILING
-            );
-        } catch (NumberFormatException $e) {
-            Log::error('Number format error in calculateFrequencyOption: ' . $e->getMessage());
-            return [
-                'amount' => null,
-                'frequency' => 0,
-                'message' => 'There was an error with the number format. Please try again.'
-            ];
-        } catch (RoundingNecessaryException $e) {
-            Log::error('Rounding error in calculateFrequencyOption: ' . $e->getMessage());
-            return [
-                'amount' => null,
-                'frequency' => 0,
-                'message' => 'There was an error with number rounding. Please try again.'
-            ];
-        } catch (UnknownCurrencyException $e) {
-            Log::error('Currency error in calculateFrequencyOption: ' . $e->getMessage());
-            return [
-                'amount' => null,
-                'frequency' => 0,
-                'message' => 'The specified currency is not recognized. Please check the currency and try again.'
-            ];
-        }
-
-        // Calculate final totals
-        try {
-            $totalSavings = $roundedMoney->multipliedBy($neededPeriods);
+            // Calculate final totals using Money arithmetic
+            $totalSavings = $roundedAmount->multipliedBy($neededPeriods);
             $extraSavings = $totalSavings->minus($targetAmount);
 
-            $result = [
+            return [
                 'amount' => [
-                    'amount' => $roundedMoney,  // Keep the Money object for internal use
-                    'formatted_value' => $roundedMoney->formatTo(App::getLocale())  // Add formatted string for JS
+                    'amount' => $roundedAmount,
+                    'formatted_value' => $roundedAmount->formatTo(App::getLocale())
                 ],
                 'frequency' => $neededPeriods,
                 'message' => null,
                 'extra_savings' => [
-                    'amount' => $extraSavings,  // Money object
-                    'formatted_value' => $extraSavings->formatTo(App::getLocale())  // Pre-formatted for display
+                    'amount' => $extraSavings,
+                    'formatted_value' => $extraSavings->formatTo(App::getLocale())
                 ],
                 'total_savings' => [
-                    'amount' => $totalSavings,  // Money object
-                    'formatted_value' => $totalSavings->formatTo(App::getLocale())  // Pre-formatted for display
+                    'amount' => $totalSavings,
+                    'formatted_value' => $totalSavings->formatTo(App::getLocale())
                 ],
                 'target_amount' => [
-                    'amount' => $targetAmount,  // Money object
-                    'formatted_value' => $targetAmount->formatTo(App::getLocale())  // Pre-formatted for display
+                    'amount' => $targetAmount,
+                    'formatted_value' => $targetAmount->formatTo(App::getLocale())
                 ]
             ];
 
-
-            \Log::info('Calculation result:', ['result' => $result]);
-
-            return $result;
-
         } catch (Exception $e) {
-            Log::error('Error in calculateFrequencyOption during final calculations: ' . $e->getMessage());
+            Log::error('Error in calculateFrequencyOption: ' . $e->getMessage());
             return [
                 'amount' => null,
                 'frequency' => 0,
-                'message' => 'There was an error calculating the savings amounts. This might happen if the currencies don\'t match or the numbers are too large. Please check your input values.'
+                'message' => 'There was an error calculating the savings amounts. Please check your input values.'
             ];
         }
-
-
     }
 
-    // Main function remains largely the same but handles time calculations more appropriately
+    /**
+     * Round amount base units for short-term periods
+     * Works with integer amounts (e.g., cents) to avoid floating-point issues
+     */
+    private function roundShortTermBase(int $amount, string $period): int
+    {
+        switch ($period) {
+            case 'hour':
+                if ($amount < 5000) return (int)ceil($amount / 500) * 500;  // 5 TRY increments
+                if ($amount < 20000) return (int)ceil($amount / 1000) * 1000;  // 10 TRY increments
+                if ($amount < 100000) return (int)ceil($amount / 5000) * 5000;  // 50 TRY increments
+                return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
+
+            case 'day':
+                if ($amount < 10000) return (int)ceil($amount / 1000) * 1000;  // 10 TRY increments
+                if ($amount < 100000) return (int)ceil($amount / 5000) * 5000;  // 50 TRY increments
+                if ($amount < 1000000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
+                return (int)ceil($amount / 50000) * 50000;  // 500 TRY increments
+
+            default:
+                throw new InvalidArgumentException('Invalid period for short-term rounding');
+        }
+    }
+
+    /**
+     * Round amount base units for long-term periods
+     * Works with integer amounts (e.g., cents) to avoid floating-point issues
+     */
+    private function roundLongTermBase(int $amount, string $period): int
+    {
+        Log::info('Starting roundLongTermBase:', [
+            'amount' => $amount,
+            'period' => $period
+        ]);
+
+        switch ($period) {
+            case 'week':
+                if ($amount < 50000) return (int)ceil($amount / 5000) * 5000;  // 50 TRY increments
+                if ($amount < 200000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
+                if ($amount < 1000000) return (int)ceil($amount / 50000) * 50000;  // 500 TRY increments
+                return (int)ceil($amount / 100000) * 100000;  // 1000 TRY increments
+
+            case 'month':
+                if ($amount < 100000) return (int)ceil($amount / 5000) * 5000;    // 50 TRY increments
+                if ($amount < 200000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
+                if ($amount < 500000) return (int)ceil($amount / 25000) * 25000;  // 250 TRY increments
+                if ($amount < 1000000) return (int)ceil($amount / 50000) * 50000; // 500 TRY increments
+                return (int)ceil($amount / 100000) * 100000;                      // 1000 TRY increments
+
+            case 'year':
+                if ($amount < 500000) return (int)ceil($amount / 25000) * 25000;      // 250 TRY increments
+                if ($amount < 1500000) return (int)ceil($amount / 50000) * 50000;     // 500 TRY increments
+                if ($amount < 3000000) return (int)ceil($amount / 100000) * 100000;   // 1000 TRY increments
+                if ($amount < 5000000) return (int)ceil($amount / 250000) * 250000;   // 2500 TRY increments
+                if ($amount < 10000000) return (int)ceil($amount / 500000) * 500000;  // 5000 TRY increments
+                return (int)ceil($amount / 1000000) * 1000000;                        // 10000 TRY increments
+
+            default:
+                throw new InvalidArgumentException('Invalid period for long-term rounding');
+        }
+    }
+
+    /**
+     * Calculate how many periods are needed to reach target amount
+     */
+    private function calculateNeededPeriods(Money $targetAmount, Money $roundedAmount): int
+    {
+        return (int)ceil($targetAmount->getAmount()->toInt() / $roundedAmount->getAmount()->toInt());
+    }
+
+
     public function calculateAllFrequencyOptions(Money $price, ?Money $startingAmount, string $purchaseDate): array
     {
         try {
+            // Validate purchase date first
+            $purchaseDateTime = Carbon::parse($purchaseDate);
+            if ($purchaseDateTime->isPast()) {
+                return [
+                    'success' => false,
+                    'error' => 'Purchase date cannot be in the past.',
+                ];
+            }
+
+            // Validate starting amount against price
+            if ($startingAmount && $startingAmount->isGreaterThan($price)) {
+                return [
+                    'success' => false,
+                    'error' => 'Starting amount cannot be greater than the price.',
+                ];
+            }
+
+            // Calculate target amount
             $targetAmount = !$startingAmount ? $price : $price->minus($startingAmount);
+
+            $today = Carbon::now();
+
+            // Calculate all frequency options
+            return [
+                // Short-term options
+                'hours' => $this->calculateFrequencyOption(
+                    (int)ceil($today->diffInHours($purchaseDateTime)),
+                    'hour',
+                    $targetAmount
+                ),
+                'days' => $this->calculateFrequencyOption(
+                    (int)ceil($today->diffInDays($purchaseDateTime)),
+                    'day',
+                    $targetAmount
+                ),
+                // Long-term options
+                'weeks' => $this->calculateFrequencyOption(
+                    (int)ceil(Carbon::tomorrow()->startOfDay()->diffInDays($purchaseDateTime->endOfDay()) / 7),
+                    'week',
+                    $targetAmount
+                ),
+                'months' => $this->calculateFrequencyOption(
+                    (int)ceil($today->diffInMonths($purchaseDateTime)),
+                    'month',
+                    $targetAmount
+                ),
+                'years' => $this->calculateFrequencyOption(
+                    (int)ceil($today->diffInYears($purchaseDateTime)),
+                    'year',
+                    $targetAmount
+                )
+            ];
+
         } catch (MathException|MoneyMismatchException $e) {
-            \Log::error('Error calculating target amount: ' . $e->getMessage());
+            Log::error('Error calculating target amount: ' . $e->getMessage());
             return [
                 'success' => false,
-                'error' => 'There was an issue calculating the target amount. Please try again.',
+                'error' => 'There was an issue calculating the target amount. Please check currency compatibility.',
+            ];
+        } catch (InvalidArgumentException $e) {
+            Log::error('Invalid argument provided: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => 'Invalid input provided. Please check your values.',
+            ];
+        } catch (Exception $e) {
+            Log::error('Unexpected error in calculateAllFrequencyOptions: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => 'An unexpected error occurred. Please try again.',
             ];
         }
-
-        $today = Carbon::now();
-        $purchaseDateTime = Carbon::parse($purchaseDate);
-
-        // Calculate time differences - now separated by group for better handling
-        return [
-            // Short-term options
-            'hours' => $this->calculateFrequencyOption(
-                (int)ceil($today->diffInHours($purchaseDateTime)),
-                'hour',
-                $targetAmount
-            ),
-            'days' => $this->calculateFrequencyOption(
-                (int)ceil($today->diffInDays($purchaseDateTime)),
-                'day',
-                $targetAmount
-            ),
-
-            // Long-term options
-            'weeks' => $this->calculateFrequencyOption(
-                (int)ceil(Carbon::tomorrow()->startOfDay()->diffInDays($purchaseDateTime->endOfDay()) / 7),
-                'week',
-                $targetAmount
-            ),
-            'months' => $this->calculateFrequencyOption(
-                (int)ceil($today->diffInMonths($purchaseDateTime)),
-                'month',
-                $targetAmount
-            ),
-            'years' => $this->calculateFrequencyOption(
-                (int)ceil($today->diffInYears($purchaseDateTime)),
-                'year',
-                $targetAmount
-            )
-        ];
     }
+
+
+
+
 }
