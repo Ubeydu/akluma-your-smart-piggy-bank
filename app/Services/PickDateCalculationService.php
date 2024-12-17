@@ -232,17 +232,89 @@ class PickDateCalculationService
      */
     private function roundLongTermBase(int $amount, string $period): int
     {
-        Log::info('Starting roundLongTermBase:', [
-            'amount' => $amount,
+        Log::info('Starting roundLongTermBase with detailed logging:', [
+            'input_amount' => $amount,
+            'input_amount_as_try' => $amount / 100,
             'period' => $period
         ]);
 
         switch ($period) {
+//            case 'week':
+//                Log::info('Processing weekly amount:', [
+//                    'checking_condition_1' => $amount < 50000 ? 'true' : 'false',
+//                    'checking_condition_2' => $amount < 500000 ? 'true' : 'false',
+//                    'checking_condition_3' => $amount < 1000000 ? 'true' : 'false'
+//                ]);
+//
+//                if ($amount < 50000) {
+//                    $result = (int)ceil($amount / 5000) * 5000;
+//                    Log::info('Applied condition 1:', [
+//                        'division_result' => $amount / 5000,
+//                        'ceiling_result' => ceil($amount / 5000),
+//                        'final_result' => $result,
+//                        'final_result_as_try' => $result / 100
+//                    ]);
+//                    return $result;
+//                }
+//
+//                if ($amount < 500000) {
+//                    $result = (int)ceil($amount / 10000) * 10000;
+//                    Log::info('Applied condition 2:', [
+//                        'division_result' => $amount / 10000,
+//                        'ceiling_result' => ceil($amount / 10000),
+//                        'final_result' => $result,
+//                        'final_result_as_try' => $result / 100
+//                    ]);
+//                    return $result;
+//                }
+//
+//                if ($amount < 1000000) {
+//                    $result = (int)ceil($amount / 50000) * 50000;
+//                    Log::info('Applied condition 3:', [
+//                        'division_result' => $amount / 50000,
+//                        'ceiling_result' => ceil($amount / 50000),
+//                        'final_result' => $result,
+//                        'final_result_as_try' => $result / 100
+//                    ]);
+//                    return $result;
+//                }
+//
+//                $result = (int)ceil($amount / 100000) * 100000;
+//                Log::info('Applied default condition:', [
+//                    'division_result' => $amount / 100000,
+//                    'ceiling_result' => ceil($amount / 100000),
+//                    'final_result' => $result,
+//                    'final_result_as_try' => $result / 100
+//                ]);
+//                return $result;
+
+//            case 'week':
+//                if ($amount < 50000) return (int)ceil($amount / 5000) * 5000;  // 50 TRY increments
+//                if ($amount < 200000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
+//                if ($amount < 1000000) return (int)ceil($amount / 50000) * 50000;  // 500 TRY increments
+//                return (int)ceil($amount / 100000) * 100000;  // 1000 TRY increments
+
+//            case 'week':
+//                if ($amount < 50000) return (int)ceil($amount / 5000) * 5000;       // 50 TRY increments
+//                if ($amount < 500000) return (int)ceil($amount / 2500) * 2500;      // 25 TRY increments
+//                if ($amount < 1000000) return (int)ceil($amount / 50000) * 50000;   // 500 TRY increments
+//                return (int)ceil($amount / 100000) * 100000;                      // 1000 TRY increments
+
             case 'week':
-                if ($amount < 50000) return (int)ceil($amount / 5000) * 5000;  // 50 TRY increments
-                if ($amount < 200000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
-                if ($amount < 1000000) return (int)ceil($amount / 50000) * 50000;  // 500 TRY increments
-                return (int)ceil($amount / 100000) * 100000;  // 1000 TRY increments
+                // Up to 5000 TRY (500,000 kuruş)
+                if ($amount < 500000) return (int)ceil($amount / 2500) * 2500;      // 25 TRY increments
+
+                // From 5000 TRY to 10000 TRY (500,000 to 1,000,000 kuruş)
+                if ($amount < 1000000) return (int)ceil($amount / 5000) * 5000;     // 50 TRY increments
+
+                // From 10000 TRY to 50000 TRY (1,000,000 to 5,000,000 kuruş)
+                if ($amount < 5000000) return (int)ceil($amount / 10000) * 10000;   // 100 TRY increments
+
+                // From 50000 TRY to 100000 TRY (5,000,000 to 10,000,000 kuruş)
+                if ($amount < 10000000) return (int)ceil($amount / 25000) * 25000;  // 250 TRY increments
+
+                // Above 100000 TRY (10,000,000 kuruş)
+                return (int)ceil($amount / 50000) * 50000;                          // 500 TRY increments
 
             case 'month':
                 if ($amount < 100000) return (int)ceil($amount / 5000) * 5000;    // 50 TRY increments
