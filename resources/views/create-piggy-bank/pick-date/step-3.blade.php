@@ -30,7 +30,8 @@ $currentPlaceholder = $placeholders[$language];
                         </label>
                         <input type="date" id="saving_date" name="saving_date"
                                class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                               min="{{ \Carbon\Carbon::now()->addDay()->format('Y-m-d') }}" />
+                               min="{{ \Carbon\Carbon::now()->addDay()->format('Y-m-d') }}"
+                                value="{{ session('pick_date_step3.date', '') }}" />
                         <p id="dateError" class="text-red-500 text-sm mt-1 hidden">
                             {{ __('Please pick a valid future date.') }}
                         </p>

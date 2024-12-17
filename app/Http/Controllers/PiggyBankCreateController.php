@@ -315,6 +315,12 @@ class PiggyBankCreateController extends Controller
             'calculations' => $calculations
         ]);
 
+        Log::info('Setting flash message');
+        session()->flash('success', __('Saving options have been calculated for :date', [
+            'date' => Carbon::parse($request->purchase_date)->locale(app()->getLocale())->isoFormat('LL')
+        ]));
+        Log::info('Flash message in session:', ['message' => session('success')]);
+
         return response()->json($calculations);
     }
 

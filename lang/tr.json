@@ -112,5 +112,6 @@
     "Saving Schedule": "Birikim Programın",
     "Saving #": "Birikim #",
     "Date": "Tarih",
-    "Amount": "Miktar"
+    "Amount": "Miktar",
+    "Saving options have been calculated for :date": "Birikim seçeneklerini bu tarih için hesapladık: :date"
 }
