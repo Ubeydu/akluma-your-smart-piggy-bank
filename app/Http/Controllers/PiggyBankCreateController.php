@@ -339,45 +339,6 @@ class PiggyBankCreateController extends Controller
         return response()->json(['success' => true]);
     }
 
-//    public function showSummary(Request $request)
-//    {
-//        // Get all relevant session data
-//        $summary = [
-//            'pick_date_step1' => $request->session()->get('pick_date_step1'),
-//            'pick_date_step2' => $request->session()->get('pick_date_step2'),
-//            'pick_date_step3' => $request->session()->get('pick_date_step3')
-//        ];
-//
-//        $request->session()->put('debug_summary', $summary);
-//
-//        if ($request->isMethod('post')) {
-//            // If it's a POST request, store the data and redirect to GET route
-//            return redirect()->route('create-piggy-bank.pick-date.summary');
-//        }
-//
-//        // Now, let's generate the payment schedule before returning the view
-//        // First, we get the necessary data from the summary
-//        $selectedFrequency = $summary['pick_date_step3']['selected_frequency'];
-//        $calculations = $summary['pick_date_step3']['calculations'][$selectedFrequency];
-//
-//        // Create an instance of our new PaymentScheduleService
-//        $scheduleService = new PaymentScheduleService();
-//
-//        // Generate the payment schedule using the service
-//        // Note how we pass in all the required parameters from our existing data
-//        $paymentSchedule = $scheduleService->generateSchedule(
-//            $summary['pick_date_step3']['date'],  // The target date from step 3
-//            $calculations['frequency'],            // How many payments are needed
-//            $selectedFrequency,                    // The period type (days, weeks, etc.)
-//            $calculations['amount']                // The amount details for each payment
-//        );
-//
-//        // Return the view with both the summary and the payment schedule
-//        return view('create-piggy-bank.pick-date.summary', [
-//            'summary' => $summary,
-//            'paymentSchedule' => $paymentSchedule  // Add this new data to the view
-//        ]);
-//    }
 
     public function showSummary(Request $request)
     {

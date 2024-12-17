@@ -139,9 +139,30 @@ class PickDateCalculationService
                 }
             }
 
+            // Add right before: $totalSavings = $roundedAmount->multipliedBy($neededPeriods);
+            Log::info('About to calculate total savings:', [
+                'rounded_amount_value' => $roundedAmount->getAmount()->__toString(),
+                'rounded_amount_scale' => $roundedAmount->getAmount()->getScale(),
+                'needed_periods' => $neededPeriods
+            ]);
+
+
             // Calculate final totals using Money arithmetic
             $totalSavings = $roundedAmount->multipliedBy($neededPeriods);
+
+            Log::info('Total savings calculated:', [
+                'total_savings' => $totalSavings->getAmount()->__toString(),
+                'needed_periods' => $neededPeriods,
+                'per_period' => $roundedAmount->getAmount()->__toString()
+            ]);
+
             $extraSavings = $totalSavings->minus($targetAmount);
+
+            Log::info('Extra savings calculated:', [
+                'extra_savings' => $extraSavings->getAmount()->__toString(),
+                'total_collected' => $totalSavings->getAmount()->__toString(),
+                'target_was' => $targetAmount->getAmount()->__toString()
+            ]);
 
             return [
                 'amount' => [
@@ -180,6 +201,13 @@ class PickDateCalculationService
      */
     private function roundShortTermBase(int $amount, string $period): int
     {
+        // Add at the start of roundShortTermBase method
+        Log::debug('Short term rounding input:', [
+            'original_amount' => $amount,
+            'period' => $period,
+            'amount_decimal' => $amount / 100 // Show in currency units
+        ]);
+
         switch ($period) {
             case 'hour':
                 if ($amount < 5000) return (int)ceil($amount / 500) * 500;  // 5 TRY increments
@@ -218,10 +246,9 @@ class PickDateCalculationService
 
             case 'month':
                 if ($amount < 100000) return (int)ceil($amount / 5000) * 5000;    // 50 TRY increments
-                if ($amount < 200000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
-                if ($amount < 500000) return (int)ceil($amount / 25000) * 25000;  // 250 TRY increments
-                if ($amount < 1000000) return (int)ceil($amount / 50000) * 50000; // 500 TRY increments
-                return (int)ceil($amount / 100000) * 100000;                      // 1000 TRY increments
+                if ($amount < 1000000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
+                if ($amount < 10000000) return (int)ceil($amount / 50000) * 50000; // 500 TRY increments
+                return (int)ceil($amount / 100000) * 100000;                     // 1000 TRY increments
 
             case 'year':
                 if ($amount < 500000) return (int)ceil($amount / 25000) * 25000;      // 250 TRY increments
@@ -241,7 +268,18 @@ class PickDateCalculationService
      */
     private function calculateNeededPeriods(Money $targetAmount, Money $roundedAmount): int
     {
-        return (int)ceil($targetAmount->getAmount()->toInt() / $roundedAmount->getAmount()->toInt());
+
+        // Add this logging
+        Log::debug('Calculating periods with raw values:', [
+            'target_base' => $targetAmount->getMinorAmount()->toInt(),
+            'rounded_base' => $roundedAmount->getMinorAmount()->toInt()
+        ]);
+
+        // Use minor amounts (cents) for the calculation to avoid rounding issues
+        $targetMinor = $targetAmount->getMinorAmount()->toInt();
+        $roundedMinor = $roundedAmount->getMinorAmount()->toInt();
+
+        return (int)ceil($targetMinor / $roundedMinor);
     }
 
 

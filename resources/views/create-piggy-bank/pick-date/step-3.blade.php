@@ -42,6 +42,8 @@ $currentPlaceholder = $placeholders[$language];
                     <div class="mb-8 bg-gray-50 p-6 rounded-lg border border-gray-200">
 
                         <div class="space-y-4">
+
+
                             <!-- Price Display -->
                             <div class="flex justify-between items-baseline">
                                 <span class="text-gray-700 break-normal">{{ __('Item Price') }}:</span>
@@ -59,6 +61,27 @@ $currentPlaceholder = $placeholders[$language];
                                     </div>
                                 </div>
                             @endif
+
+
+                            <!-- Target Amount Display -->
+                            @php
+                                $startingAmount = session('pick_date_step1.starting_amount');
+                                // Only proceed with calculation if starting amount exists and is not zero
+                                if ($startingAmount && !$startingAmount->isZero()) {
+                                    $price = session('pick_date_step1.price');
+                                    $targetAmount = $price->minus($startingAmount);
+                            @endphp
+                            <div class="flex justify-between items-baseline">
+                                <span class="text-gray-700 break-normal">{{ __('Target Amount') }}:</span>
+                                <div class="flex items-baseline gap-2 text-right flex-wrap justify-end min-w-[120px]">
+                                    {{ $targetAmount->formatTo(App::getLocale()) }}
+                                </div>
+                            </div>
+                            @php
+                                }
+                            @endphp
+
+
                         </div>
 
 
@@ -132,62 +155,6 @@ $currentPlaceholder = $placeholders[$language];
                             </x-primary-button>
                         </form>
                     </div>
-
-
-{{--                    <!-- Action Buttons -->--}}
-{{--                    <div class="flex justify-between mt-6">--}}
-
-
-{{--                        <div x-data="{ showConfirmCancel: false }">--}}
-{{--                            <!-- Cancel button -->--}}
-{{--                            <x-danger-button @click="showConfirmCancel = true">--}}
-{{--                                {{ __('Cancel') }}--}}
-{{--                            </x-danger-button>--}}
-
-{{--                            <!-- Confirmation dialog component -->--}}
-{{--                            <x-confirmation-dialog>--}}
-{{--                                <x-slot:title>--}}
-{{--                                    {{ __('Are you sure you want to cancel?') }}--}}
-{{--                                </x-slot>--}}
-
-{{--                                <x-slot:actions>--}}
-
-{{--                                    <div class="flex flex-row items-stretch gap-3 justify-end">--}}
-{{--                                        <form action="{{ route('create-piggy-bank.cancel') }}" method="POST" class="block">--}}
-{{--                                            @csrf--}}
-{{--                                            <x-danger-button type="submit" class="justify-center">--}}
-{{--                                                {{ __('Yes, cancel') }}--}}
-{{--                                            </x-danger-button>--}}
-{{--                                        </form>--}}
-
-{{--                                        <x-secondary-button--}}
-{{--                                            @click="showConfirmCancel = false"--}}
-{{--                                            class="justify-center"--}}
-{{--                                        >--}}
-{{--                                            {{ __('No, continue') }}--}}
-{{--                                        </x-secondary-button>--}}
-{{--                                    </div>--}}
-
-{{--                                </x-slot:actions>--}}
-
-{{--                            </x-confirmation-dialog>--}}
-{{--                        </div>--}}
-
-
-{{--                        <form method="GET" action="{{ route('create-piggy-bank.step-2.get') }}" class="inline">--}}
-{{--                            <x-secondary-button type="submit">--}}
-{{--                                {{ __('Previous') }}--}}
-{{--                            </x-secondary-button>--}}
-{{--                        </form>--}}
-
-
-{{--                        <form method="POST" action="{{ route('create-piggy-bank.pick-date.show-summary') }}">--}}
-{{--                            @csrf--}}
-{{--                            <x-primary-button type="submit" id="nextButton" disabled>--}}
-{{--                                {{ __('Next') }}--}}
-{{--                            </x-primary-button>--}}
-{{--                        </form>--}}
-{{--                    </div>--}}
 
                 </div>
             </div>
