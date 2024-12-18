@@ -231,12 +231,14 @@ document.addEventListener("DOMContentLoaded", function () {
                         const periodLabel = formatPeriodLabel(baseType);
 
                         container.innerHTML += `
-    <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50 mb-2">
+    <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50 mb-2 cursor-pointer"
+        onclick="this.querySelector('input[type=\\'radio\\']').click()">
         <div class="flex items-center h-5">
             <input type="radio"
                    name="frequency"
                    value="${type}"
-                   class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                   class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                   onclick="event.stopPropagation()">
         </div>
         <div class="ml-3">
             <div class="text-sm font-medium text-gray-700 flex flex-wrap gap-2">

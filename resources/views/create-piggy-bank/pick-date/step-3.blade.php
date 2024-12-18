@@ -90,7 +90,7 @@ $currentPlaceholder = $placeholders[$language];
 
 
                     {{-- Frequency Options Container --}}
-                    <div id="frequencyOptions" class="mt-8 hidden"> <!-- Container starts hidden -->
+                    <div id="frequencyOptions" class="mt-8 hidden">
                         <h2 id="frequencyTitle" class="text-lg font-semibold mb-6">{{ __('Select your saving frequency') }}</h2>
                         <div class="space-y-6">
                             <!-- Will be populated by JavaScript -->
