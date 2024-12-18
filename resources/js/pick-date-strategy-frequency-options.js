@@ -331,5 +331,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+});
 
+document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === 'visible' && dateInput instanceof HTMLInputElement && dateInput.value) {
+        dateInput.dispatchEvent(new Event('change'));
+    }
 });
