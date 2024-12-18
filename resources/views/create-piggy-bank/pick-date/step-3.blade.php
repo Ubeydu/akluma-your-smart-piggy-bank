@@ -111,6 +111,7 @@ $currentPlaceholder = $placeholders[$language];
 
                     <!-- Action Buttons -->
                     <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-between sm:space-y-0 mt-6">
+
                         <div x-data="{ showConfirmCancel: false }">
                             <!-- Cancel button -->
                             <x-danger-button @click="showConfirmCancel = true" class="w-[200px] sm:w-auto justify-center sm:justify-start">

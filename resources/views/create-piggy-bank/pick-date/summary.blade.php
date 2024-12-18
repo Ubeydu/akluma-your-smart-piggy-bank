@@ -175,10 +175,42 @@
 
                     <!-- Action Buttons -->
                     <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-between sm:space-y-0 mt-8">
-                        <x-danger-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('dashboard') }}'; }">
-                            {{ __('Cancel') }}
-                        </x-danger-button>
 
+                        <!-- Cancel button with confirmation dialog -->
+                        <div x-data="{ showConfirmCancel: false }">
+                            <x-danger-button
+                                @click="showConfirmCancel = true"
+                                class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                            >
+                                {{ __('Cancel') }}
+                            </x-danger-button>
+
+                            <x-confirmation-dialog>
+                                <x-slot:title>
+                                    {{ __('Are you sure you want to cancel?') }}
+                                </x-slot>
+
+                                <x-slot:actions>
+                                    <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
+                                        <form action="{{ route('create-piggy-bank.cancel') }}" method="POST" class="block">
+                                            @csrf
+                                            <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                                {{ __('Yes, cancel') }}
+                                            </x-danger-button>
+                                        </form>
+
+                                        <x-secondary-button
+                                            @click="showConfirmCancel = false"
+                                            class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                        >
+                                            {{ __('No, continue') }}
+                                        </x-secondary-button>
+                                    </div>
+                                </x-slot:actions>
+                            </x-confirmation-dialog>
+                        </div>
+
+                        <!-- Previous and Create buttons (unchanged) -->
                         <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
                             <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ route('create-piggy-bank.pick-date.step-3') }}'">
                                 {{ __('Previous') }}
@@ -189,6 +221,24 @@
                             </x-primary-button>
                         </div>
                     </div>
+
+
+{{--                    <!-- Action Buttons -->--}}
+{{--                    <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-between sm:space-y-0 mt-8">--}}
+{{--                        <x-danger-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('dashboard') }}'; }">--}}
+{{--                            {{ __('Cancel') }}--}}
+{{--                        </x-danger-button>--}}
+
+{{--                        <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">--}}
+{{--                            <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ route('create-piggy-bank.pick-date.step-3') }}'">--}}
+{{--                                {{ __('Previous') }}--}}
+{{--                            </x-secondary-button>--}}
+
+{{--                            <x-primary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ route('dashboard') }}'">--}}
+{{--                                {{ __('Create Piggy Bank') }}--}}
+{{--                            </x-primary-button>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
 
 
                 </div>
