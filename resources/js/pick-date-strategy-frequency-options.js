@@ -335,8 +335,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-document.addEventListener("visibilitychange", function() {
-    if (document.visibilityState === 'visible' && dateInput instanceof HTMLInputElement && dateInput.value) {
+window.addEventListener('pageshow', function(event) {
+    // This will run even if the page is loaded from bfcache
+    console.log('Page shown:', event.persisted ? 'from bfcache' : 'fresh load');
+
+    if (dateInput instanceof HTMLInputElement && dateInput.value) {
+        console.log('Found date input with value:', dateInput.value);
         dateInput.dispatchEvent(new Event('change'));
     }
 });

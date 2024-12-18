@@ -221,26 +221,6 @@
                             </x-primary-button>
                         </div>
                     </div>
-
-
-{{--                    <!-- Action Buttons -->--}}
-{{--                    <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-between sm:space-y-0 mt-8">--}}
-{{--                        <x-danger-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('dashboard') }}'; }">--}}
-{{--                            {{ __('Cancel') }}--}}
-{{--                        </x-danger-button>--}}
-
-{{--                        <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">--}}
-{{--                            <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ route('create-piggy-bank.pick-date.step-3') }}'">--}}
-{{--                                {{ __('Previous') }}--}}
-{{--                            </x-secondary-button>--}}
-
-{{--                            <x-primary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ route('dashboard') }}'">--}}
-{{--                                {{ __('Create Piggy Bank') }}--}}
-{{--                            </x-primary-button>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-
-
                 </div>
             </div>
         </div>
