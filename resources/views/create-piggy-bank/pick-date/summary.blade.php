@@ -40,8 +40,12 @@
                             <div class="w-48 mx-auto mt-1">
                                 <div class="aspect-square h-32 md:aspect-auto md:h-32 relative overflow-hidden rounded-lg shadow-sm bg-gray-50 mx-auto">
                                     <div class="relative w-full h-full">
+                                        @php
+                                            $previewImage = $summary['pick_date_step1']['preview']['image'] ?? null;
+                                            $imageUrl = $previewImage ?: asset('images/default_piggy_bank.png');
+                                        @endphp
                                         <img
-                                            src="{{ $summary['pick_date_step1']['preview']['image'] }}"
+                                            src="{{ $summary['pick_date_step1']['preview']['image'] ?? asset('images/default_piggy_bank.png') }}"
                                             alt="{{ $summary['pick_date_step1']['name'] }}"
                                             class="absolute inset-0 w-full h-full object-contain"
                                         />
