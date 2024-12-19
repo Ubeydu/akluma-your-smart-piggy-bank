@@ -325,10 +325,8 @@ class PickDateCalculationService
             case 'year':
                 if ($amount < 500000) return (int)ceil($amount / 25000) * 25000;      // 250 TRY increments
                 if ($amount < 1500000) return (int)ceil($amount / 50000) * 50000;     // 500 TRY increments
-                if ($amount < 3000000) return (int)ceil($amount / 100000) * 100000;   // 1000 TRY increments
-                if ($amount < 5000000) return (int)ceil($amount / 250000) * 250000;   // 2500 TRY increments
-                if ($amount < 10000000) return (int)ceil($amount / 500000) * 500000;  // 5000 TRY increments
-                return (int)ceil($amount / 1000000) * 1000000;                        // 10000 TRY increments
+                if ($amount < 10000000) return (int)ceil($amount / 100000) * 100000;   // 1000 TRY increments
+                return (int)ceil($amount / 500000) * 500000;                        // 5000 TRY increments
 
             default:
                 throw new InvalidArgumentException('Invalid period for long-term rounding');
