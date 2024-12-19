@@ -356,16 +356,16 @@ class PiggyBankCreateController extends Controller
             'pick_date_step3' => $request->session()->get('pick_date_step3')
         ];
 
-        $request->session()->put('debug_summary', $summary);
-
-        // Add this after the debug_summary line for testing
-        $imageDebug = [
-            'raw_preview_data' => $summary['pick_date_step1']['preview'] ?? 'no preview data exists',
-            'session_dump' => [
-                'pick_date_step1' => $request->session()->get('pick_date_step1'),
-            ]
-        ];
-        $request->session()->put('image_debug', $imageDebug);
+//        $request->session()->put('debug_summary', $summary);
+//
+//        // Add this after the debug_summary line for testing
+//        $imageDebug = [
+//            'raw_preview_data' => $summary['pick_date_step1']['preview'] ?? 'no preview data exists',
+//            'session_dump' => [
+//                'pick_date_step1' => $request->session()->get('pick_date_step1'),
+//            ]
+//        ];
+//        $request->session()->put('image_debug', $imageDebug);
 
 //        dd(session()->get('image_debug'));
 

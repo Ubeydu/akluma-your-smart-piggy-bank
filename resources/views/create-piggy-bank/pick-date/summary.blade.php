@@ -1,4 +1,5 @@
 <x-app-layout>
+    @if(request()->has('debug')) @dump(session()->all()) @endif
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-900 leading-tight">
             {{ __('Create New Piggy Bank') }}
@@ -220,7 +221,7 @@
                                 {{ __('Previous') }}
                             </x-secondary-button>
 
-                            <x-primary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ route('dashboard') }}'">
+                            <x-primary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location = window.location.href + '?debug=true'">
                                 {{ __('Create Piggy Bank') }}
                             </x-primary-button>
                         </div>
