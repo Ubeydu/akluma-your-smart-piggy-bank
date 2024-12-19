@@ -79,6 +79,7 @@ class PiggyBankCreateController extends Controller
 
 
         $preview = null;
+        // Inside step2 method, replace the preview array creation sections with:
         if (!empty($validated['link'])) {
             try {
                 $preview = $this->linkPreviewService->getPreviewData($validated['link']);
@@ -97,7 +98,7 @@ class PiggyBankCreateController extends Controller
                 $preview = [
                     'title' => null,
                     'description' => null,
-                    'image' => '/images/default_piggy_bank.png',
+                    'image' => null, // Changed: Store null instead of a path
                     'url' => $validated['link']
                 ];
             }
@@ -105,19 +106,18 @@ class PiggyBankCreateController extends Controller
             $preview = [
                 'title' => null,
                 'description' => null,
-                'image' => '/images/default_piggy_bank.png',
+                'image' => null, // Changed: Store null instead of a path
                 'url' => null
             ];
         }
 
-        if ($preview && !filter_var($preview['image'], FILTER_VALIDATE_URL)) {
-            $preview['image'] = url($preview['image']);
+        if ($preview && $preview['image'] !== null && !filter_var($preview['image'], FILTER_VALIDATE_URL)) {
+            $preview['image'] = url($preview['image']); // Only convert to full URL if it's not null and not already a URL
 
             \Log::info('Preview Image URL', [
                 'original_image' => $preview['image'] ?? 'No image',
                 'full_url' => $preview['image'] ?? 'No URL generated'
             ]);
-
         }
 
 
@@ -357,6 +357,17 @@ class PiggyBankCreateController extends Controller
         ];
 
         $request->session()->put('debug_summary', $summary);
+
+        // Add this after the debug_summary line for testing
+        $imageDebug = [
+            'raw_preview_data' => $summary['pick_date_step1']['preview'] ?? 'no preview data exists',
+            'session_dump' => [
+                'pick_date_step1' => $request->session()->get('pick_date_step1'),
+            ]
+        ];
+        $request->session()->put('image_debug', $imageDebug);
+
+//        dd(session()->get('image_debug'));
 
         // Handle POST request - keeping this part unchanged
         if ($request->isMethod('post')) {

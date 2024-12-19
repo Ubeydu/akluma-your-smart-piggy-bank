@@ -103,7 +103,7 @@ class LinkPreviewService
      * Extract the image from the page.
      */
     // Find the getImage method and replace it with:
-    private function getImage(DOMXPath $xpath): string
+    private function getImage(DOMXPath $xpath): ?string
     {
         // Try OpenGraph image first
         $ogImage = $this->getMetaContent($xpath, 'og:image');
@@ -117,8 +117,8 @@ class LinkPreviewService
             return $twitterImage;
         }
 
-        // Return default image path if no valid image found
-        return '/images/default_piggy_bank.png';
+        // Return null if no valid image found
+        return null;
     }
 
 // Add this new method right after getImage:

@@ -149,7 +149,7 @@
                                 <div class="w-full md:w-48 mt-1">
                                     @php
                                         $preview = session('pick_date_step1.preview');
-                                        $imageUrl = $preview['image'] ?? '/images/default_piggy_bank.png';
+                                        $imageUrl = $preview['image'] ?? asset('images/default_piggy_bank.png');
                                     @endphp
                                     <div class="aspect-square h-32 md:aspect-auto md:h-48 relative overflow-hidden rounded-lg shadow-sm bg-gray-50">
                                         <!-- Loading spinner overlay -->
