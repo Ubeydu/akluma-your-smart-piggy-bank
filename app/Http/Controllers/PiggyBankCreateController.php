@@ -126,8 +126,9 @@ class PiggyBankCreateController extends Controller
 
         $startingAmount = null;
 
-        if (!empty($validated['starting_amount_whole'])) {
-            $moneyString = $validated['starting_amount_whole'] . '.' . str_pad($validated['starting_amount_cents'] ?? '00', 2, '0', STR_PAD_LEFT);
+        if (!empty($validated['starting_amount_whole']) || !empty($validated['starting_amount_cents'])) {
+            $moneyString = ($validated['starting_amount_whole'] ?? '0') . '.' . str_pad($validated['starting_amount_cents'] ?? '00', 2, '0', STR_PAD_LEFT);
+
 //            \Log::info('Attempting to create starting amount:', ['money_string' => $moneyString]);
 
             try {

@@ -212,7 +212,7 @@
                                         name="starting_amount_whole"
                                         type="text"
                                         inputmode="numeric"
-                                        pattern="[1-9][0-9]{0,14}"
+                                        pattern="[0-9]{1,15}"
                                         :value="old('starting_amount_whole', session('pick_date_step1.starting_amount') ? explode('.', session('pick_date_step1.starting_amount')->getAmount())[0] : '')"
                                         onkeypress="return (function(evt) {
                                             const value = this.value;
