@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 use InvalidArgumentException;
 
 class PaymentScheduleService
@@ -10,15 +11,14 @@ class PaymentScheduleService
     /**
      * Generates a complete payment schedule with dates and amounts
      *
-     * @param string $targetDate      The date to start generating payments from
-     * @param int    $frequency      How many payments to generate
-     * @param string $periodType     The type of period (days, weeks, months, years)
-     * @param array  $amountDetails  Amount details from calculation service
-     * @return array                 Array of scheduled payments with dates and amounts
+     * @param string $targetDate    The date to start generating payments from
+     * @param int    $frequency     How many payments to generate
+     * @param string $periodType    The type of period (days, weeks, months, years)
+     * @param array  $amountDetails Amount details from calculation service
+     * @return array               Array of scheduled payments with dates and amounts
      */
-
     public function generateSchedule(
-        string $targetDate,    // Renamed from startDate to make it clear this is the end date
+        string $targetDate,
         int $frequency,
         string $periodType,
         array $amountDetails
@@ -28,62 +28,65 @@ class PaymentScheduleService
             throw new InvalidArgumentException("Invalid period type: $periodType");
         }
 
-        // Start from tomorrow
-        $startDate = Carbon::tomorrow();
+        // Start from tomorrow and set the locale for date formatting
+        $startDate = Carbon::tomorrow()->locale(App::getLocale());
 
-        if ($periodType === 'hours') {
-            $startDate->setTime(11, 0, 0);  // Set start time to 11:00 AM
-        }
+        // Set initial time based on frequency type
+        $this->setInitialTime($startDate, $periodType);
 
         $schedule = [];
-        $amount = $amountDetails['formatted_amount'] . ' ' . $amountDetails['currency'];
+        $currentDate = clone $startDate;
 
-        $currentDate = $startDate;
+        // Get the date format pattern based on frequency type
+        $dateFormat = $this->getDateFormatPattern($periodType);
 
         for ($i = 0; $i < $frequency; $i++) {
-            if ($periodType === 'hours') {
-                $schedule[] = [
-                    'payment_number' => $i + 1,
-                    'date' => $currentDate->format('Y-m-d H:i:s'),
-                    'amount' => $amount,
-                    'formatted_date' => $currentDate->format('d.m.Y H:i')  // Show hours and minutes for hourly frequency
-                ];
-            } else {
-                // For all other frequencies, set time to 10:00
-                $currentDate->setTime(10, 0, 0);
-                $schedule[] = [
-                    'payment_number' => $i + 1,
-                    'date' => $currentDate->format('Y-m-d H:i:s'),
-                    'amount' => $amount,
-                    'formatted_date' => $currentDate->format('d.m.Y')  // Keep just the date for daily and longer frequencies
-                ];
-            }
+            $schedule[] = [
+                'payment_number' => $i + 1,
+                'date' => $currentDate->format('Y-m-d H:i:s'),  // Store standardized format for processing
+                'amount' => $amountDetails['amount'],   // Use pre-formatted value
+                'formatted_date' => $currentDate->isoFormat($dateFormat)  // Use locale-aware formatting
+            ];
 
-//            // Add the calculated interval
-//            $currentDate->addDays($intervalDays);
-
-            switch ($periodType) {
-                case 'hours':
-                    $currentDate->addHour();
-                    break;
-                case 'weeks':
-                    $currentDate->addWeek();
-                    break;
-                case 'days':
-                    $currentDate->addDay();
-                    break;
-                case 'months':
-                    $currentDate->addMonth();
-                    break;
-                case 'years':
-                    $currentDate->addYear();
-                    break;
-            }
-
+            $this->advanceDate($currentDate, $periodType);
         }
 
         return $schedule;
     }
 
+    /**
+     * Sets the initial time of day based on frequency type
+     */
+    private function setInitialTime(Carbon $date, string $periodType): void
+    {
+        $time = $periodType === 'hours' ? 11 : 10;
+        $date->setTime($time, 0, 0);
+    }
 
+    /**
+     * Gets the appropriate date format pattern based on frequency type
+     */
+    private function getDateFormatPattern(string $periodType): string
+    {
+        // Use ISO format patterns for locale-aware date formatting
+        // L = locale's date format
+        // LT = locale's time format
+        return $periodType === 'hours' ? 'L LT' : 'L';
+    }
+
+    /**
+     * Advances the date based on period type
+     */
+    private function advanceDate(Carbon $date, string $periodType): void
+    {
+        $methods = [
+            'hours' => 'addHour',
+            'days' => 'addDay',
+            'weeks' => 'addWeek',
+            'months' => 'addMonth',
+            'years' => 'addYear'
+        ];
+
+        $date->{$methods[$periodType]}();
+    }
 }

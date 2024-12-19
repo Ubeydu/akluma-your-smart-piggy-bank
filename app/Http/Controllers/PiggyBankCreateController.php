@@ -10,6 +10,7 @@ use Brick\Money\Money;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 
 class PiggyBankCreateController extends Controller
@@ -125,8 +126,9 @@ class PiggyBankCreateController extends Controller
 
         $startingAmount = null;
 
-        if (!empty($validated['starting_amount_whole'])) {
-            $moneyString = $validated['starting_amount_whole'] . '.' . str_pad($validated['starting_amount_cents'] ?? '00', 2, '0', STR_PAD_LEFT);
+        if (!empty($validated['starting_amount_whole']) || !empty($validated['starting_amount_cents'])) {
+            $moneyString = ($validated['starting_amount_whole'] ?? '0') . '.' . str_pad($validated['starting_amount_cents'] ?? '00', 2, '0', STR_PAD_LEFT);
+
 //            \Log::info('Attempting to create starting amount:', ['money_string' => $moneyString]);
 
             try {
@@ -314,6 +316,12 @@ class PiggyBankCreateController extends Controller
             'calculations' => $calculations
         ]);
 
+        Log::info('Setting flash message');
+        session()->flash('success', __('Saving options have been calculated for :date', [
+            'date' => Carbon::parse($request->purchase_date)->locale(app()->getLocale())->isoFormat('LL')
+        ]));
+        Log::info('Flash message in session:', ['message' => session('success')]);
+
         return response()->json($calculations);
     }
 
@@ -338,45 +346,6 @@ class PiggyBankCreateController extends Controller
         return response()->json(['success' => true]);
     }
 
-//    public function showSummary(Request $request)
-//    {
-//        // Get all relevant session data
-//        $summary = [
-//            'pick_date_step1' => $request->session()->get('pick_date_step1'),
-//            'pick_date_step2' => $request->session()->get('pick_date_step2'),
-//            'pick_date_step3' => $request->session()->get('pick_date_step3')
-//        ];
-//
-//        $request->session()->put('debug_summary', $summary);
-//
-//        if ($request->isMethod('post')) {
-//            // If it's a POST request, store the data and redirect to GET route
-//            return redirect()->route('create-piggy-bank.pick-date.summary');
-//        }
-//
-//        // Now, let's generate the payment schedule before returning the view
-//        // First, we get the necessary data from the summary
-//        $selectedFrequency = $summary['pick_date_step3']['selected_frequency'];
-//        $calculations = $summary['pick_date_step3']['calculations'][$selectedFrequency];
-//
-//        // Create an instance of our new PaymentScheduleService
-//        $scheduleService = new PaymentScheduleService();
-//
-//        // Generate the payment schedule using the service
-//        // Note how we pass in all the required parameters from our existing data
-//        $paymentSchedule = $scheduleService->generateSchedule(
-//            $summary['pick_date_step3']['date'],  // The target date from step 3
-//            $calculations['frequency'],            // How many payments are needed
-//            $selectedFrequency,                    // The period type (days, weeks, etc.)
-//            $calculations['amount']                // The amount details for each payment
-//        );
-//
-//        // Return the view with both the summary and the payment schedule
-//        return view('create-piggy-bank.pick-date.summary', [
-//            'summary' => $summary,
-//            'paymentSchedule' => $paymentSchedule  // Add this new data to the view
-//        ]);
-//    }
 
     public function showSummary(Request $request)
     {
@@ -407,18 +376,18 @@ class PiggyBankCreateController extends Controller
             $calculations['amount']
         );
 
-        // Parse dates for comparison
-        $targetDate = Carbon::parse($summary['pick_date_step3']['date']);
-        $finalPaymentDate = Carbon::parse(end($paymentSchedule)['date']);
-        $today = Carbon::today();
+        // Create Carbon instances with the current locale
+        $targetDate = Carbon::parse($summary['pick_date_step3']['date'])->locale(App::getLocale());
+        $finalPaymentDate = Carbon::parse(end($paymentSchedule)['date'])->locale(App::getLocale());
+        $today = Carbon::today()->locale(App::getLocale());
 
         // Initialize variables for date storage and user messaging
         $savingCompletionDate = $finalPaymentDate;
         $dateMessage = null;
 
-        // Validate dates and set appropriate message
+        // Validate dates and set messages using locale-aware date formatting
         if ($targetDate->isPast() || $finalPaymentDate->isPast()) {
-            $savingCompletionDate = Carbon::tomorrow();
+            $savingCompletionDate = Carbon::tomorrow()->locale(App::getLocale());
             $dateMessage = __('Due to a calculation error, we\'ve adjusted your saving plan to start from tomorrow.');
         } else {
             if ($finalPaymentDate->equalTo($targetDate)) {
@@ -427,13 +396,13 @@ class PiggyBankCreateController extends Controller
             elseif ($finalPaymentDate->lt($targetDate)) {
                 $savingCompletionDate = $finalPaymentDate;
                 $dateMessage = __('Good news! You will reach your saving goal earlier than planned, on :date', [
-                    'date' => $finalPaymentDate->format('d.m.Y')
+                    'date' => $finalPaymentDate->isoFormat('LL')  // Using isoFormat for locale-aware date formatting
                 ]);
             }
             else {
                 $savingCompletionDate = $finalPaymentDate;
                 $dateMessage = __('Note: Your saving plan will complete on :date', [
-                    'date' => $finalPaymentDate->format('d.m.Y')
+                    'date' => $finalPaymentDate->isoFormat('LL')  // Using isoFormat for locale-aware date formatting
                 ]);
             }
         }

@@ -7,19 +7,22 @@
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('form');
     const nextButton = document.getElementById('nextButton');
+    const priceWholeInput = document.getElementById('price_whole');
+    const startingAmountWholeInput = document.getElementById('starting_amount_whole');
+    const amountWarning = document.getElementById('amount-warning'); // Reference to the warning message
+    const differenceAmountWarning = document.getElementById('difference-amount-warning');
+
+    setTimeout(() => validateAmounts(), 0);
 
     // Required field validation logic
     const requiredFields = form.querySelectorAll('[required]');
     requiredFields.forEach(field => {
         field.addEventListener('input', function() {
-            const allValid = Array.from(requiredFields).every(f => f.checkValidity());
-            nextButton.disabled = !allValid;
+            validateAmounts();  // Let validateAmounts handle everything
         });
     });
 
-    // Initial check for validity
-    const isValid = form.checkValidity();
-    nextButton.disabled = !isValid;
+
 
     // Character count logic
     const fields = [
@@ -38,11 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Logic for comparing starting_amount_whole and price_whole
-    const priceWholeInput = document.getElementById('price_whole');
-    const startingAmountWholeInput = document.getElementById('starting_amount_whole');
-    const amountWarning = document.getElementById('amount-warning'); // Reference to the warning message
-    const differenceAmountWarning = document.getElementById('difference-amount-warning');
 
 
 
@@ -50,27 +48,36 @@ document.addEventListener('DOMContentLoaded', function () {
         const priceWhole = parseInt(priceWholeInput.value, 10) || 0;
         const startingAmountWhole = parseInt(startingAmountWholeInput.value, 10) || 0;
 
-        // First, check if either field is empty
-        if (priceWholeInput.value.trim() === '' || startingAmountWholeInput.value.trim() === '') {
+        // Changed how we check required fields - checking specific fields we know are required
+        const priceValid = priceWholeInput.value.trim() !== '';
+        const nameValid = document.getElementById('name').value.trim() !== '';
+
+        // If either required field is empty, disable button and hide warnings
+        if (!priceValid || !nameValid) {
+            nextButton.disabled = true;
             amountWarning.classList.add('hidden');
             differenceAmountWarning.classList.add('hidden');
-            const allValid = Array.from(requiredFields).every(f => f.checkValidity());
-            nextButton.disabled = !allValid;
-            return; // Exit the function here if either field is empty
+            return;
         }
 
-        // If we get here, both fields have values, so perform the validation
-        if (startingAmountWhole >= priceWhole) {
-            nextButton.disabled = true;
-            amountWarning.classList.remove('hidden');
-            differenceAmountWarning.classList.add('hidden');
-        } else if ((priceWhole - startingAmountWhole) < 100) {
-            nextButton.disabled = true;
-            differenceAmountWarning.classList.remove('hidden');
-            amountWarning.classList.add('hidden');
+        // Now check the amount comparisons only if we have a starting amount
+        if (startingAmountWholeInput.value.trim() !== '') {
+            if (startingAmountWhole >= priceWhole) {
+                nextButton.disabled = true;
+                amountWarning.classList.remove('hidden');
+                differenceAmountWarning.classList.add('hidden');
+            } else if ((priceWhole - startingAmountWhole) < 100) {
+                nextButton.disabled = true;
+                differenceAmountWarning.classList.remove('hidden');
+                amountWarning.classList.add('hidden');
+            } else {
+                nextButton.disabled = false;
+                amountWarning.classList.add('hidden');
+                differenceAmountWarning.classList.add('hidden');
+            }
         } else {
-            const allValid = Array.from(requiredFields).every(f => f.checkValidity());
-            nextButton.disabled = !allValid;
+            // If no starting amount, just enable the button since required fields are valid
+            nextButton.disabled = false;
             amountWarning.classList.add('hidden');
             differenceAmountWarning.classList.add('hidden');
         }
@@ -97,6 +104,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 : '';
         }
     };
+
+    // Initialize the formatted price on page load
+    const priceInput = document.getElementById('price_whole');
+    if (priceInput && priceInput.value) {
+        updateFormattedPrice(priceInput.value, 'formatted_price');
+    }
 
 
     // Dynamic image preview loading

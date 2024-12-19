@@ -91,6 +91,12 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
             'pick_date_step1.currency',
         ]);
 
+            // Clear step 3 session data
+            session()->forget([
+                'pick_date_step3.date',
+                'pick_date_step3.calculations'
+            ]);
+
         session()->flash('success', __('You cleared the form.'));
 
     } catch (\Exception $e) {
@@ -120,6 +126,12 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
         Route::post('/show-summary', [PiggyBankCreateController::class, 'showSummary'])->name('show-summary');
         Route::get('/summary', [PiggyBankCreateController::class, 'showSummary'])->name('summary');
     });
+
+    // Flash message check route
+    Route::get('/check-flash-messages', function() {
+        return view('components.flash-message');
+    })->name('check-flash-messages');
+
     Route::prefix('enter-saving-amount')->name('enter-saving-amount.')->group(function () {
         Route::get('/step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
     });

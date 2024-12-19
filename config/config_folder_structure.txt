@@ -1,0 +1,14 @@
+.
+├── app.php
+├── auth.php
+├── cache.php
+├── config_folder_structure.txt
+├── database.php
+├── filesystems.php
+├── logging.php
+├── mail.php
+├── queue.php
+├── services.php
+└── session.php
+
+1 directory, 11 files

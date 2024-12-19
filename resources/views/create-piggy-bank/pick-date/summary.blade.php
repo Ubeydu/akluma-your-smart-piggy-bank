@@ -25,14 +25,14 @@
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Product Price') }}</h3>
                                     <p class="mt-1 text-base text-gray-900">
-                                        {{ isset($summary['pick_date_step1']['price']) ? $summary['pick_date_step1']['price']->formatTo('en_US') : '-' }}
+                                        {{ isset($summary['pick_date_step1']['price']) ? $summary['pick_date_step1']['price']->formatTo(App::getLocale()) : '-' }}
                                     </p>
                                 </div>
 
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Starting Amount') }}</h3>
                                     <p class="mt-1 text-base text-gray-900">
-                                        {{ isset($summary['pick_date_step1']['starting_amount']) ? $summary['pick_date_step1']['starting_amount']->formatTo('en_US') : '-' }}
+                                        {{ isset($summary['pick_date_step1']['starting_amount']) ? $summary['pick_date_step1']['starting_amount']->formatTo(App::getLocale()) : '-' }}
                                     </p>
                                 </div>
                             </div>
@@ -62,7 +62,7 @@
                             </div>
 
                             <div>
-                                <h3 class="text-sm font-medium text-gray-500">{{ __('Notes') }}</h3>
+                                <h3 class="text-sm font-medium text-gray-500">{{ __('Details') }}</h3>
                                 <p class="mt-1 text-base text-gray-900">{{ $summary['pick_date_step1']['details'] ?? '-' }}</p>
                             </div>
                         </div>
@@ -71,17 +71,18 @@
 
                     <!-- Savings Plan Section -->
                     <div class="mb-8">
-                        <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Savings Plan') }}</h2>
-                        <!-- Remove grid, use single column layout -->
+{{--                        <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Savings Plan') }}</h2>--}}
                         <div class="space-y-4">
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500">{{ __('Target Date') }}</h3>
-                                <p class="mt-1 text-base text-gray-900">{{ \Carbon\Carbon::parse($summary['pick_date_step3']['date'])->format('F j, Y') }}</p>
+                                <p class="mt-1 text-base text-gray-900">{{ \Carbon\Carbon::parse($summary['pick_date_step3']['date'])->locale(App::getLocale())->isoFormat('LL') }}</p>
                             </div>
 
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500">{{ __('Saving Frequency') }}</h3>
-                                <p class="mt-1 text-base text-gray-900">{{ ucfirst($summary['pick_date_step3']['selected_frequency']) }}</p>
+                                <p class="mt-1 text-base text-gray-900">
+                                    {{ ucfirst(__(strtolower($summary['pick_date_step3']['selected_frequency']))) }}
+                                </p>
                             </div>
 
                             @if($dateMessage)
@@ -106,27 +107,26 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                             <div class="bg-gray-50 rounded-lg p-4">
-                                <h3 class="text-sm font-medium text-gray-500">{{ __('Extra Savings') }}</h3>
+                                <h3 class="text-sm font-medium text-gray-500">{{ __('Target Amount') }}</h3>
                                 <p class="mt-1 text-lg font-semibold text-gray-900">
-                                    {{ $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['extra_savings']['formatted_amount'] ?? '-' }}
-                                    {{ $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['extra_savings']['currency'] ?? '' }}
+                                    {{ isset($summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['target_amount']['amount']) ?
+                                    $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['target_amount']['amount']->formatTo(App::getLocale()) : '-' }}
                                 </p>
                             </div>
 
                             <div class="bg-gray-50 rounded-lg p-4">
-                                <h3 class="text-sm font-medium text-gray-500">{{ __('Target Amount') }}</h3>
+                                <h3 class="text-sm font-medium text-gray-500">{{ __('Extra Savings') }}</h3>
                                 <p class="mt-1 text-lg font-semibold text-gray-900">
-                                    {{ $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['target_amount']['formatted_amount'] ?? '-' }}
-                                    {{ $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['target_amount']['currency'] ?? '' }}
+                                    {{ isset($summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['extra_savings']['amount']) ?
+                                        $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['extra_savings']['amount']->formatTo(App::getLocale()) : '-' }}
                                 </p>
                             </div>
-
 
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <h3 class="text-sm font-medium text-gray-500">{{ __('Total Savings') }}</h3>
                                 <p class="mt-1 text-lg font-semibold text-gray-900">
-                                    {{ $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['total_savings']['formatted_amount'] ?? '-' }}
-                                    {{ $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['total_savings']['currency'] ?? '' }}
+                                  {{ isset($summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['total_savings']['amount']) ?
+                                  $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['total_savings']['amount']->formatTo(App::getLocale()) : '-' }}
                                 </p>
                             </div>
 
@@ -136,13 +136,13 @@
                     <!-- Payment Schedule Section -->
                     @if(isset($paymentSchedule) && count($paymentSchedule) > 0)
                         <div class="mb-8">
-                            <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Payment Schedule') }}</h2>
+                            <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Saving Schedule') }}</h2>
                             <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                     <tr>
                                         <th scope="col" class="px-1 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider break-words max-w-[40px]">
-                                            {{ __('Payment #') }}
+                                            {{ __('Saving #') }}
                                         </th>
                                         <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             {{ __('Date') }}
@@ -159,10 +159,10 @@
                                                 {{ $payment['payment_number'] ?? '-' }}
                                             </td>
                                             <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $payment['formatted_date'] ?? '-' }}
+                                                {{ isset($payment['date']) ? Carbon\Carbon::parse($payment['date'])->locale(App::getLocale())->isoFormat('L LT') : '-' }}
                                             </td>
                                             <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ $payment['amount'] ?? '-' }}
+                                                {{ $payment['amount']->formatTo(App::getLocale()) ?? '-' }}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -175,10 +175,42 @@
 
                     <!-- Action Buttons -->
                     <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-between sm:space-y-0 mt-8">
-                        <x-danger-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('dashboard') }}'; }">
-                            {{ __('Cancel') }}
-                        </x-danger-button>
 
+                        <!-- Cancel button with confirmation dialog -->
+                        <div x-data="{ showConfirmCancel: false }">
+                            <x-danger-button
+                                @click="showConfirmCancel = true"
+                                class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                            >
+                                {{ __('Cancel') }}
+                            </x-danger-button>
+
+                            <x-confirmation-dialog>
+                                <x-slot:title>
+                                    {{ __('Are you sure you want to cancel?') }}
+                                </x-slot>
+
+                                <x-slot:actions>
+                                    <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
+                                        <form action="{{ route('create-piggy-bank.cancel') }}" method="POST" class="block">
+                                            @csrf
+                                            <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                                {{ __('Yes, cancel') }}
+                                            </x-danger-button>
+                                        </form>
+
+                                        <x-secondary-button
+                                            @click="showConfirmCancel = false"
+                                            class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                        >
+                                            {{ __('No, continue') }}
+                                        </x-secondary-button>
+                                    </div>
+                                </x-slot:actions>
+                            </x-confirmation-dialog>
+                        </div>
+
+                        <!-- Previous and Create buttons (unchanged) -->
                         <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
                             <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ route('create-piggy-bank.pick-date.step-3') }}'">
                                 {{ __('Previous') }}
@@ -189,8 +221,6 @@
                             </x-primary-button>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
