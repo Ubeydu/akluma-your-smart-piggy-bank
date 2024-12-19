@@ -98,6 +98,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    // Initialize the formatted price on page load
+    const priceInput = document.getElementById('price_whole');
+    if (priceInput && priceInput.value) {
+        updateFormattedPrice(priceInput.value, 'formatted_price');
+    }
+
 
     // Dynamic image preview loading
     const linkInput = document.getElementById('link');
