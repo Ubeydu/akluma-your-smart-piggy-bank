@@ -317,7 +317,7 @@ class PickDateCalculationService
                 return (int)ceil($amount / 50000) * 50000;                          // 500 TRY increments
 
             case 'month':
-                if ($amount < 100000) return (int)ceil($amount / 5000) * 5000;    // 50 TRY increments
+                if ($amount < 100000) return (int)ceil($amount / 2500) * 2500;    // 25 TRY increments
                 if ($amount < 1000000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
                 if ($amount < 10000000) return (int)ceil($amount / 50000) * 50000; // 500 TRY increments
                 return (int)ceil($amount / 100000) * 100000;                     // 1000 TRY increments
