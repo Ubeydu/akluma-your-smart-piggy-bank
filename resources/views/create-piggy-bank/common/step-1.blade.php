@@ -309,7 +309,6 @@
                             </x-confirmation-dialog>
                         </div>
 
-                        <!-- Clear form - completely separate from main form -->
                         <form action="{{ route('create-piggy-bank.clear') }}" method="POST">
                             @csrf
                             <x-secondary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
@@ -317,8 +316,7 @@
                             </x-secondary-button>
                         </form>
 
-                        <!-- Next button that belongs to the main form -->
-                        <x-primary-button form="mainForm" type="submit" id="nextButton" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start disabled:bg-gray-300 disabled:cursor-not-allowed">
+                        <x-primary-button form="mainForm" type="submit" id="nextButton" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start disabled:bg-gray-400 disabled:cursor-not-allowed  disabled:hover:bg-gray-300">
                             {{ __('Next') }}
                         </x-primary-button>
                     </div>
