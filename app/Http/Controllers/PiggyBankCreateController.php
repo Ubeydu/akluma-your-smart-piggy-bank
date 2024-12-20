@@ -490,6 +490,21 @@ class PiggyBankCreateController extends Controller
     }
 
 
+    public function storeTimezone(Request $request)
+    {
+        // Validate the incoming timezone
+        $request->validate([
+            'timezone' => 'required|string'
+        ]);
+
+        // Store timezone in session
+        session(['user_timezone' => $request->timezone]);
+
+        // Return JSON response for the AJAX call
+        return response()->json(['status' => 'success']);
+    }
+
+
 //    /**
 //     * Finalize piggy bank creation and save to the database.
 //     */

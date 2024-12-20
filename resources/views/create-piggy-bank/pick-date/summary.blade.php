@@ -217,7 +217,7 @@
                             </x-confirmation-dialog>
                         </div>
 
-                        <!-- Previous and Create buttons (unchanged) -->
+                        <!-- Previous and Create buttons  -->
                         <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
                             <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ route('create-piggy-bank.pick-date.step-3') }}'">
                                 {{ __('Previous') }}
@@ -232,6 +232,31 @@
             </div>
         </div>
     </div>
+
+
+        <input type="hidden" name="user_timezone" id="user_timezone">
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get timezone using Intl API
+                const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+                // Store in hidden input (for future use)
+                document.getElementById('user_timezone').value = timezone;
+
+                // Store timezone in session via AJAX
+                fetch('{{ route("create-piggy-bank.store-timezone") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ timezone: timezone })
+                });
+            });
+        </script>
+
+
 </x-app-layout>
 
 

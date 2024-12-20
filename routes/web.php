@@ -132,6 +132,10 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
         return view('components.flash-message');
     })->name('check-flash-messages');
 
+    Route::post('/store-timezone', [PiggyBankCreateController::class, 'storeTimezone'])
+        ->name('store-timezone');
+
+
     Route::prefix('enter-saving-amount')->name('enter-saving-amount.')->group(function () {
         Route::get('/step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
     });
