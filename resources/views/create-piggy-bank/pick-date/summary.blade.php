@@ -232,31 +232,6 @@
             </div>
         </div>
     </div>
-
-
-        <input type="hidden" name="user_timezone" id="user_timezone">
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Get timezone using Intl API
-                const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-                // Store in hidden input (for future use)
-                document.getElementById('user_timezone').value = timezone;
-
-                // Store timezone in session via AJAX
-                fetch('{{ route("create-piggy-bank.store-timezone") }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ timezone: timezone })
-                });
-            });
-        </script>
-
-
 </x-app-layout>
 
 

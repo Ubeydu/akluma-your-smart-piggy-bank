@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PiggyBankCreateController;
 use App\Http\Controllers\PiggyBankController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserPreferencesController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -132,9 +133,6 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
         return view('components.flash-message');
     })->name('check-flash-messages');
 
-    Route::post('/store-timezone', [PiggyBankCreateController::class, 'storeTimezone'])
-        ->name('store-timezone');
-
 
     Route::prefix('enter-saving-amount')->name('enter-saving-amount.')->group(function () {
         Route::get('/step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
@@ -166,6 +164,10 @@ Route::get('/format-date', function (Request $request) {
         return response()->json(['error' => 'Date formatting failed: ' . $e->getMessage()], 500);
     }
 });
+
+Route::post('/update-timezone', [UserPreferencesController::class, 'updateTimezone'])
+    ->name('update-timezone')
+    ->middleware('auth');
 
 
 require __DIR__.'/auth.php';

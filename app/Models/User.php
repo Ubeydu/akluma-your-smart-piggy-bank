@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'timezone'
     ];
 
     /**
@@ -50,5 +51,10 @@ class User extends Authenticatable
     public function piggyBanks(): HasMany
     {
         return $this->hasMany(PiggyBank::class);
+    }
+
+    public function updateTimezone($timezone): void
+    {
+        $this->update(['timezone' => $timezone]);
     }
 }

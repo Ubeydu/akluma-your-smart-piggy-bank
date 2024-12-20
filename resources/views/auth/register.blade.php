@@ -48,5 +48,11 @@
                 {{ __('Register') }}
             </x-primary-button>
         </div>
+
+        <input type="hidden" id="timezone" name="timezone" value="">
+        <script>
+            document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        </script>
+
     </form>
 </x-guest-layout>
