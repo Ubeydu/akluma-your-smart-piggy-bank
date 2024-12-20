@@ -296,8 +296,9 @@ class PickDateCalculationService
     public function calculateAllFrequencyOptions(Money $price, ?Money $startingAmount, string $purchaseDate): array
     {
         try {
-            // Validate purchase date first
-            $purchaseDateTime = Carbon::parse($purchaseDate);
+            $purchaseDateTime = Carbon::parse($purchaseDate, 'UTC')
+                ->setTime(0, 0, 0);
+
             if ($purchaseDateTime->isPast()) {
                 return [
                     'success' => false,

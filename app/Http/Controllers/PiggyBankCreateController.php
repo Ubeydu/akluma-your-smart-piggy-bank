@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PiggyBank;
 use App\Services\LinkPreviewService;
-use App\Services\PaymentScheduleService;
+use App\Services\SavingScheduleService;
 use App\Services\PickDateCalculationService;
 use Brick\Money\Money;
 use Carbon\Carbon;
@@ -288,6 +288,16 @@ class PiggyBankCreateController extends Controller
      */
     public function calculateFrequencyOptions(Request $request)
     {
+        Log::info('Detailed Date Debug', [
+            'input_date' => $request->purchase_date,
+            'carbon_parsed' => Carbon::parse($request->purchase_date),
+            'carbon_parsed_utc' => Carbon::parse($request->purchase_date)->utc(),
+            'carbon_parsed_start_of_day' => Carbon::parse($request->purchase_date)->startOfDay(),
+            'carbon_parsed_start_of_day_utc' => Carbon::parse($request->purchase_date)->startOfDay()->utc(),
+            'current_timezone' => date_default_timezone_get(),
+            'app_timezone' => config('app.timezone')
+        ]);
+
         $request->validate([
             'purchase_date' => 'required|date|after:today',
         ]);
@@ -297,30 +307,37 @@ class PiggyBankCreateController extends Controller
             return response()->json(['error' => 'Missing step 1 data'], 400);
         }
 
+        $utcPurchaseDate = Carbon::createFromFormat('Y-m-d', $request->purchase_date);
+
+
         // Log the values for debugging
         Log::info('Calculating frequency options', [
             'price' => $step1Data['price'] ?? 'Not set',
             'starting_amount' => $step1Data['starting_amount'] ?? 'Not set',
-            'purchase_date' => $request->purchase_date
+            'purchase_date' => $utcPurchaseDate->toISOString()  // Log UTC time
         ]);
 
         $calculations = $this->pickDateCalculationService->calculateAllFrequencyOptions(
             $step1Data['price'],
             $step1Data['starting_amount'],
-            $request->purchase_date
+            $utcPurchaseDate->toISOString()  // Pass UTC time to service
         );
 
-        // Store calculations in session for next step
+        // Store UTC date in session
         $request->session()->put('pick_date_step3', [
-            'date' => $request->purchase_date,
+            'date' => $utcPurchaseDate,  // Store Carbon object in UTC
             'calculations' => $calculations
         ]);
 
-        Log::info('Setting flash message');
+        // Format date in user's timezone for display
+        $localizedDate = $utcPurchaseDate
+            ->copy()
+            ->setTimezone(config('app.timezone'))
+            ->locale(app()->getLocale());
+
         session()->flash('success', __('Saving options have been calculated for :date', [
-            'date' => Carbon::parse($request->purchase_date)->locale(app()->getLocale())->isoFormat('LL')
+            'date' => $localizedDate->isoFormat('LL')
         ]));
-        Log::info('Flash message in session:', ['message' => session('success')]);
 
         return response()->json($calculations);
     }
@@ -349,12 +366,27 @@ class PiggyBankCreateController extends Controller
 
     public function showSummary(Request $request)
     {
+        // Add detailed logging at the start
+        Log::info('ShowSummary Method - Session Debug', [
+            'full_session_data' => $request->session()->all(),
+            'pick_date_step3' => $request->session()->get('pick_date_step3')
+        ]);
+
+
         // Get all relevant session data - keeping this part unchanged
         $summary = [
             'pick_date_step1' => $request->session()->get('pick_date_step1'),
             'pick_date_step2' => $request->session()->get('pick_date_step2'),
             'pick_date_step3' => $request->session()->get('pick_date_step3')
         ];
+
+
+        // Log the summary details with more context
+        Log::info('ShowSummary Method - Date Details', [
+            'step3_date_raw' => $summary['pick_date_step3']['date'] ?? 'Not Set',
+            'step3_date_type' => gettype($summary['pick_date_step3']['date'] ?? null),
+            'step3_date_class' => get_class($summary['pick_date_step3']['date'] ?? null)
+        ]);
 
 //        $request->session()->put('debug_summary', $summary);
 //
@@ -379,7 +411,7 @@ class PiggyBankCreateController extends Controller
         $calculations = $summary['pick_date_step3']['calculations'][$selectedFrequency];
 
         // Generate payment schedule
-        $scheduleService = new PaymentScheduleService();
+        $scheduleService = new SavingScheduleService();
         $paymentSchedule = $scheduleService->generateSchedule(
             $summary['pick_date_step3']['date'],
             $calculations['frequency'],
@@ -387,18 +419,34 @@ class PiggyBankCreateController extends Controller
             $calculations['amount']
         );
 
-        // Create Carbon instances with the current locale
-        $targetDate = Carbon::parse($summary['pick_date_step3']['date'])->locale(App::getLocale());
-        $finalPaymentDate = Carbon::parse(end($paymentSchedule)['date'])->locale(App::getLocale());
-        $today = Carbon::today()->locale(App::getLocale());
+        $request->session()->put('payment_schedule', $paymentSchedule);
 
-        // Initialize variables for date storage and user messaging
-        $savingCompletionDate = $finalPaymentDate;
+        // Get dates in UTC
+        $targetDate = ($summary['pick_date_step3']['date'] instanceof Carbon)
+            ? $summary['pick_date_step3']['date']
+            : Carbon::parse($summary['pick_date_step3']['date'])->utc();
+
+        $finalPaymentDate = $selectedFrequency === 'hours'
+            ? $paymentSchedule[count($paymentSchedule) - 1]['date']  // Keep full datetime for hours
+            : $paymentSchedule[count($paymentSchedule) - 1]['date']->startOfDay();  // Only date for others
+
+        $firstPaymentDate = $selectedFrequency === 'hours'
+            ? $paymentSchedule[0]['date']  // Keep full datetime for hours
+            : $paymentSchedule[0]['date']->startOfDay();  // Only date for others
+
+
+        // Store UTC dates in session
+        $request->session()->put('final_payment_date', $finalPaymentDate);
+        $request->session()->put('first_payment_date', $firstPaymentDate);
+
+
+
+        // Initialize variables for user messaging
         $dateMessage = null;
 
-        // Validate dates and set messages using locale-aware date formatting
+        // For comparisons, use UTC dates directly
         if ($targetDate->isPast() || $finalPaymentDate->isPast()) {
-            $savingCompletionDate = Carbon::tomorrow()->locale(App::getLocale());
+            $savingCompletionDate = Carbon::tomorrow()->utc();
             $dateMessage = __('Due to a calculation error, we\'ve adjusted your saving plan to start from tomorrow.');
         } else {
             if ($finalPaymentDate->equalTo($targetDate)) {
@@ -406,14 +454,26 @@ class PiggyBankCreateController extends Controller
             }
             elseif ($finalPaymentDate->lt($targetDate)) {
                 $savingCompletionDate = $finalPaymentDate;
+                // Convert to local timezone for display
+                $localizedDate = $finalPaymentDate
+                    ->copy()
+                    ->setTimezone(config('app.timezone'))
+                    ->locale(App::getLocale());
+
                 $dateMessage = __('Good news! You will reach your saving goal earlier than planned, on :date', [
-                    'date' => $finalPaymentDate->isoFormat('LL')  // Using isoFormat for locale-aware date formatting
+                    'date' => $localizedDate->isoFormat('LL')
                 ]);
             }
             else {
                 $savingCompletionDate = $finalPaymentDate;
+                // Convert to local timezone for display
+                $localizedDate = $finalPaymentDate
+                    ->copy()
+                    ->setTimezone(config('app.timezone'))
+                    ->locale(App::getLocale());
+
                 $dateMessage = __('Note: Your saving plan will complete on :date', [
-                    'date' => $finalPaymentDate->isoFormat('LL')  // Using isoFormat for locale-aware date formatting
+                    'date' => $localizedDate->isoFormat('LL')
                 ]);
             }
         }
@@ -423,7 +483,9 @@ class PiggyBankCreateController extends Controller
             'summary' => $summary,
             'paymentSchedule' => $paymentSchedule,
             'dateMessage' => $dateMessage,
-            'savingCompletionDate' => $savingCompletionDate->format('Y-m-d')
+            'savingCompletionDate' => $selectedFrequency === 'hours'
+                ? $savingCompletionDate  // Keep full datetime for hours
+                : $savingCompletionDate->format('Y-m-d')  // Only date for others
         ]);
     }
 

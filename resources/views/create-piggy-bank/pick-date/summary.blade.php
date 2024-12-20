@@ -80,7 +80,9 @@
                         <div class="space-y-4">
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500">{{ __('Target Date') }}</h3>
-                                <p class="mt-1 text-base text-gray-900">{{ \Carbon\Carbon::parse($summary['pick_date_step3']['date'])->locale(App::getLocale())->isoFormat('LL') }}</p>
+                                <p class="mt-1 text-base text-gray-900">{{ $summary['pick_date_step3']['date'] instanceof Carbon\Carbon
+    ? $summary['pick_date_step3']['date']->copy()->setTimezone(config('app.timezone'))->locale(App::getLocale())->isoFormat('LL')
+    : Carbon\Carbon::parse($summary['pick_date_step3']['date'])->utc()->setTimezone(config('app.timezone'))->locale(App::getLocale())->isoFormat('LL') }}</p>
                             </div>
 
                             <div>
@@ -164,7 +166,7 @@
                                                 {{ $payment['payment_number'] ?? '-' }}
                                             </td>
                                             <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ isset($payment['date']) ? Carbon\Carbon::parse($payment['date'])->locale(App::getLocale())->isoFormat('L LT') : '-' }}
+                                                {{ $payment['formatted_date'] ?? '-' }}
                                             </td>
                                             <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 {{ $payment['amount']->formatTo(App::getLocale()) ?? '-' }}
