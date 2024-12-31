@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PeriodicSaving;
+use App\Models\ScheduledSaving;
 use Illuminate\Http\Request;
 
-class PeriodicSavingController extends Controller
+class ScheduledSavingController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $periodicSavings = PeriodicSaving::all();
+        $periodicSavings = ScheduledSaving::all();
         return response()->json($periodicSavings);
     }
 
@@ -28,7 +28,7 @@ class PeriodicSavingController extends Controller
             'status' => 'required|in:paid,unpaid,snoozed',
         ]);
 
-        $periodicSaving = PeriodicSaving::create($validatedData);
+        $periodicSaving = ScheduledSaving::create($validatedData);
 
         return response()->json($periodicSaving, 201);
     }
@@ -36,7 +36,7 @@ class PeriodicSavingController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PeriodicSaving $periodicSaving)
+    public function show(ScheduledSaving $periodicSaving)
     {
         return response()->json($periodicSaving);
     }
@@ -44,7 +44,7 @@ class PeriodicSavingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PeriodicSaving $periodicSaving)
+    public function update(Request $request, ScheduledSaving $periodicSaving)
     {
         $validatedData = $request->validate([
             'piggy_bank_id' => 'sometimes|exists:piggy_banks,id',
@@ -61,7 +61,7 @@ class PeriodicSavingController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PeriodicSaving $periodicSaving)
+    public function destroy(ScheduledSaving $periodicSaving)
     {
         $periodicSaving->delete();
 

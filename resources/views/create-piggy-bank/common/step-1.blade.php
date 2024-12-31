@@ -156,7 +156,7 @@
 
                             <div class="flex items-center gap-4 mt-1">
                                 <p class="text-gray-500 text-sm">{{ __('minimum amount 100') }},</p>
-                                <p class="text-gray-500 text-sm">{{ __('maximum amount 9,999,999,999') }}</p>
+{{--                                <p class="text-gray-500 text-sm">{{ __('maximum amount 9,999,999,999') }}</p>--}}
                                 <p id="formatted_price" class="text-gray-500 text-sm italic"></p>
                             </div>
 
@@ -358,7 +358,7 @@
                             </div>
 
                             <div class="flex items-center gap-4 mt-1">
-                                <p class="text-gray-500 text-sm">{{ __('maximum amount 9,999,999,999') }}</p>
+{{--                                <p class="text-gray-500 text-sm">{{ __('maximum amount 9,999,999,999') }}</p>--}}
                                 <p id="formatted_starting_amount_whole" class="text-gray-500 text-sm italic"></p>
                             </div>
 

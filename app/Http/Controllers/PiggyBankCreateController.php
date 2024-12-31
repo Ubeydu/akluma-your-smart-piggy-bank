@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\PiggyBank;
+use App\Models\ScheduledSaving;
 use App\Services\LinkPreviewService;
 use App\Services\SavingScheduleService;
 use App\Services\PickDateCalculationService;
 use Brick\Money\Money;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PiggyBankCreateController extends Controller
@@ -89,7 +92,7 @@ class PiggyBankCreateController extends Controller
                     'preview_data' => $preview,
                 ]);
 
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 \Log::warning('Failed to fetch link preview:', [
                     'url' => $validated['link'],
                     'error' => $e->getMessage(),
@@ -98,7 +101,7 @@ class PiggyBankCreateController extends Controller
                 $preview = [
                     'title' => null,
                     'description' => null,
-                    'image' => null, // Changed: Store null instead of a path
+                    'image' => null,
                     'url' => $validated['link']
                 ];
             }
@@ -106,7 +109,7 @@ class PiggyBankCreateController extends Controller
             $preview = [
                 'title' => null,
                 'description' => null,
-                'image' => null, // Changed: Store null instead of a path
+                'image' => null,
                 'url' => null
             ];
         }
@@ -134,7 +137,7 @@ class PiggyBankCreateController extends Controller
             try {
                 $startingAmount = Money::of($moneyString, $validated['currency']);
 //                \Log::info('Starting amount created successfully');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
 //                \Log::error('Error creating starting amount:', ['error' => $e->getMessage()]);
                 return redirect()->back()->withErrors(['starting_amount_whole' => 'Invalid starting amount']);
             }
@@ -215,7 +218,7 @@ class PiggyBankCreateController extends Controller
                 'preview' => $preview
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Log the error for debugging purposes
             \Log::error('Error fetching link preview:', [
                 'url' => $validated['url'],
@@ -490,6 +493,211 @@ class PiggyBankCreateController extends Controller
     }
 
 
+    /**
+     * Store piggy bank data from session to database.
+     * @throws Exception
+     */
+    public function storePiggyBank(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $step1Data = $request->session()->get('pick_date_step1');
+            $step3Data = $request->session()->get('pick_date_step3');
+            $selectedFrequency = $step3Data['selected_frequency'];
+            $calculations = $step3Data['calculations'][$selectedFrequency];
+            $paymentSchedule = $request->session()->get('payment_schedule');
+
+            $piggyBank = new PiggyBank();
+            $piggyBank->user_id = auth()->id();
+            $piggyBank->name = $step1Data['name'];
+
+            // New way to handle Money objects - get actual decimal values
+            $piggyBank->price = $step1Data['price']->getAmount()->toFloat();
+            $piggyBank->starting_amount = $step1Data['starting_amount']?->getAmount()->toFloat();
+            $piggyBank->current_balance = $step1Data['starting_amount']?->getAmount()->toFloat();
+            $piggyBank->target_amount = $calculations['target_amount']['amount']->getAmount()->toFloat();
+            $piggyBank->extra_savings = $calculations['extra_savings']['amount']->getAmount()->toFloat();
+            $piggyBank->total_savings = $calculations['total_savings']['amount']->getAmount()->toFloat();
+
+            // Basic fields remain the same
+            $piggyBank->link = $step1Data['link'];
+            $piggyBank->details = $step1Data['details'];
+            $piggyBank->chosen_strategy = $request->session()->get('chosen_strategy');
+            $piggyBank->selected_frequency = $selectedFrequency;
+            $piggyBank->currency = $step1Data['currency'];
+
+            // Preview data remains the same
+            $preview = $step1Data['preview'] ?? [];
+            $piggyBank->preview_title = $preview['title'] ?? null;
+            $piggyBank->preview_description = $preview['description'] ?? null;
+            $piggyBank->preview_image = $preview['image'] ?? 'images/piggy_banks/default_piggy_bank.png';
+            $piggyBank->preview_url = $preview['url'] ?? null;
+
+            $piggyBank->save();
+
+            // Update scheduled savings to use the same approach
+            foreach ($paymentSchedule as $payment) {
+                $scheduledSaving = new ScheduledSaving();
+                $scheduledSaving->piggy_bank_id = $piggyBank->id;
+                $scheduledSaving->saving_number = $payment['payment_number'];
+                $scheduledSaving->amount = $payment['amount']->getAmount()->toFloat();
+                $scheduledSaving->saving_date = $payment['date'];
+                $scheduledSaving->save();
+            }
+
+            DB::commit();
+            return $piggyBank;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error saving piggy bank:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
+    }
+
+
+//    public function storePiggyBank(Request $request)
+//    {
+//        // Start transaction outside try block
+//        DB::beginTransaction();
+//
+//        try {
+//            $step1Data = $request->session()->get('pick_date_step1');
+//            $step3Data = $request->session()->get('pick_date_step3');
+//            $selectedFrequency = $step3Data['selected_frequency'];
+//            $calculations = $step3Data['calculations'][$selectedFrequency];
+//            $paymentSchedule = $request->session()->get('payment_schedule');
+//
+//            // Create and save piggy bank
+//            $piggyBank = new PiggyBank();
+//            $piggyBank->user_id = auth()->id();
+//            $piggyBank->name = $step1Data['name'];
+//
+//            // Handle Money objects for piggy bank
+//            $piggyBank->price = $step1Data['price']->getMinorAmount()->toInt();
+//            $piggyBank->starting_amount = $step1Data['starting_amount']?->getMinorAmount()->toInt();
+//            $piggyBank->current_balance = $step1Data['starting_amount']?->getMinorAmount()->toInt();
+//            $piggyBank->target_amount = $calculations['target_amount']['amount']->getMinorAmount()->toInt();
+//            $piggyBank->extra_savings = $calculations['extra_savings']['amount']->getMinorAmount()->toInt();
+//            $piggyBank->total_savings = $calculations['total_savings']['amount']->getMinorAmount()->toInt();
+//
+//            // Basic fields
+//            $piggyBank->link = $step1Data['link'];
+//            $piggyBank->details = $step1Data['details'];
+//            $piggyBank->chosen_strategy = $request->session()->get('chosen_strategy');
+//            $piggyBank->selected_frequency = $selectedFrequency;
+//            $piggyBank->currency = $step1Data['currency'];
+//
+//            // Preview data
+//            $preview = $step1Data['preview'] ?? [];
+//            $piggyBank->preview_title = $preview['title'] ?? null;
+//            $piggyBank->preview_description = $preview['description'] ?? null;
+//            $piggyBank->preview_image = $preview['image'] ?? 'images/piggy_banks/default_piggy_bank.png';
+//            $piggyBank->preview_url = $preview['url'] ?? null;
+//
+//            $piggyBank->save();
+//
+//            // Create scheduled savings entries
+//            foreach ($paymentSchedule as $payment) {
+//                $scheduledSaving = new ScheduledSaving();
+//                $scheduledSaving->piggy_bank_id = $piggyBank->id;
+//                $scheduledSaving->saving_number = $payment['payment_number'];
+//                $scheduledSaving->amount = $payment['amount']->getMinorAmount()->toInt() / 100;
+//                $scheduledSaving->saving_date = $payment['date'];
+//                $scheduledSaving->save();
+//            }
+//
+//            // If we get here, all operations succeeded, so commit the transaction
+//            DB::commit();
+//
+//            return $piggyBank;
+//
+//        } catch (Exception $e) {
+//            // If anything fails, roll back the transaction
+//            DB::rollBack();
+//
+//            Log::error('Error saving piggy bank:', [
+//                'error' => $e->getMessage(),
+//                'trace' => $e->getTraceAsString()
+//            ]);
+//
+//            throw $e;
+//        }
+//    }
+
+
+
+//    public function storePiggyBank(Request $request)
+//    {
+//        try {
+//            $step1Data = $request->session()->get('pick_date_step1');
+//            $step3Data = $request->session()->get('pick_date_step3');
+//            $selectedFrequency = $step3Data['selected_frequency'];
+//            $calculations = $step3Data['calculations'][$selectedFrequency];
+//            $paymentSchedule = $request->session()->get('payment_schedule');
+//
+//            \DB::beginTransaction();
+//
+//            $piggyBank = new PiggyBank();
+//            $piggyBank->user_id = auth()->id();
+//            $piggyBank->name = $step1Data['name'];
+//
+//            // Handle Money objects
+//            $piggyBank->price = $step1Data['price']->getMinorAmount()->toInt() / 100;
+//            $piggyBank->starting_amount = $step1Data['starting_amount']?->getMinorAmount()->toInt() / 100;
+//            $piggyBank->current_balance = $step1Data['starting_amount']?->getMinorAmount()->toInt() / 100;
+//
+//            // Get target amount from calculations
+//            $piggyBank->target_amount = $calculations['target_amount']['amount']->getMinorAmount()->toInt() / 100;
+//            $piggyBank->extra_savings = $calculations['extra_savings']['amount']->getMinorAmount()->toInt() / 100;
+//            $piggyBank->total_savings = $calculations['total_savings']['amount']->getMinorAmount()->toInt() / 100;
+//
+//            // Basic fields
+//            $piggyBank->link = $step1Data['link'];
+//            $piggyBank->details = $step1Data['details'];
+//            $piggyBank->chosen_strategy = $request->session()->get('chosen_strategy');
+//            $piggyBank->selected_frequency = $selectedFrequency;
+//            $piggyBank->currency = $step1Data['currency'];
+//
+//            // Preview data
+//            $preview = $step1Data['preview'] ?? [];
+//            $piggyBank->preview_title = $preview['title'] ?? null;
+//            $piggyBank->preview_description = $preview['description'] ?? null;
+//            $piggyBank->preview_image = $preview['image'] ?? 'images/piggy_banks/default_piggy_bank.png';
+//            $piggyBank->preview_url = $preview['url'] ?? null;
+//
+//            $piggyBank->save();
+//
+//            // Save scheduled savings
+//            foreach ($paymentSchedule as $payment) {
+//                $scheduledSaving = new ScheduledSaving();
+//                $scheduledSaving->piggy_bank_id = $piggyBank->id;
+//                $scheduledSaving->saving_number = $payment['payment_number'];
+//                $scheduledSaving->amount = $payment['amount']->getMinorAmount()->toInt() / 100;
+//                $scheduledSaving->saving_date = $payment['date'];
+//                $scheduledSaving->save();
+//            }
+//
+//            DB::commit();
+//            return $piggyBank;
+//
+//
+//        } catch (Exception $e) {
+//            Log::error('Error saving piggy bank:', [
+//                'error' => $e->getMessage(),
+//                'trace' => $e->getTraceAsString()
+//            ]);
+//            throw $e;
+//        }
+//    }
+
+
+
+
 
     /**
      * Handle cancellation from any step of the piggy bank creation process.
@@ -512,7 +720,7 @@ class PiggyBankCreateController extends Controller
                 ->route('piggy-banks.index')
                 ->with('warning', __('You cancelled creating your piggy bank.'));
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error during piggy bank creation cancellation:', [
                 'error' => $e->getMessage()
             ]);

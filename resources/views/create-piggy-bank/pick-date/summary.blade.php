@@ -1,5 +1,5 @@
 <x-app-layout>
-    @if(request()->has('debug')) @dump(session()->all()) @endif
+{{--    @if(request()->has('debug')) @dump(session()->all()) @endif--}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-900 leading-tight">
             {{ __('Create New Piggy Bank') }}
@@ -223,9 +223,17 @@
                                 {{ __('Previous') }}
                             </x-secondary-button>
 
-                            <x-primary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location = window.location.href + '?debug=true'">
-                                {{ __('Create Piggy Bank') }}
-                            </x-primary-button>
+{{--                            <x-primary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location = window.location.href + '?debug=true'">--}}
+{{--                                {{ __('Create Piggy Bank') }}--}}
+{{--                            </x-primary-button>--}}
+
+                            <form method="POST" action="{{ route('create-piggy-bank.pick-date.store') }}" class="mt-4">
+                                @csrf
+                                <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                    {{ __('Create Piggy Bank') }}
+                                </x-primary-button>
+                            </form>
+
                         </div>
                     </div>
                 </div>
