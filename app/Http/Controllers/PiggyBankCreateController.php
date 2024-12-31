@@ -60,12 +60,12 @@ class PiggyBankCreateController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string',
-            'price_whole' => 'required|integer|min:1|max:999999999999999',
+            'price_whole' => 'required|integer|min:1|max:9999999999',
             'price_cents' => 'required|integer|min:0|max:99',
             'currency' => 'required|string|size:3',
             'link' => 'nullable|url|max:255',
             'details' => 'nullable|string|max:5000',
-            'starting_amount_whole' => 'nullable|integer|min:0|max:999999999999999',
+            'starting_amount_whole' => 'nullable|integer|min:0|max:9999999999',
             'starting_amount_cents' => 'nullable|integer|min:0|max:99',
         ]);
 

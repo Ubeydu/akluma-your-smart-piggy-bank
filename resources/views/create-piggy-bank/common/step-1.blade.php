@@ -36,42 +36,79 @@
                                         name="price_whole"
                                         type="text"
                                         inputmode="numeric"
-                                        pattern="[1-9][0-9]{2,14}"
+                                        pattern="[1-9][0-9]{2,9}"
                                         min="100"
                                         :value="old('price_whole', session('pick_date_step1.price') ? explode('.', session('pick_date_step1.price')->getAmount())[0] : '')"
                                         onkeypress="return (function(evt) {
                                             const value = this.value;
-                                            const isValid = /[0-9]/.test(evt.key) && !(value === '' && evt.key === '0') && value.length < 15;
-                                            if (!isValid) {
-                                                const errorDiv = document.getElementById('price_whole_error');
+
+                                            // Check for non-numeric input
+                                            if (!/[0-9]/.test(evt.key)) {
+                                                const errorDiv = document.getElementById('price_whole_error_numbers');
                                                 errorDiv.classList.remove('hidden');
-                                                // Hide the message after 2 seconds
                                                 setTimeout(() => {
                                                     errorDiv.classList.add('hidden');
                                                 }, 3000);
+                                                return false;
                                             }
-                                            return isValid;
+
+                                            // Check for initial zero
+                                            if (value === '' && evt.key === '0') {
+                                                const errorDiv = document.getElementById('price_whole_error_numbers');
+                                                errorDiv.classList.remove('hidden');
+                                                setTimeout(() => {
+                                                    errorDiv.classList.add('hidden');
+                                                }, 3000);
+                                                return false;
+                                            }
+
+                                            // Check length
+                                            if (value.length >= 10) {
+                                                const errorDiv = document.getElementById('price_whole_error_length');
+                                                errorDiv.classList.remove('hidden');
+                                                setTimeout(() => {
+                                                    errorDiv.classList.add('hidden');
+                                                }, 3000);
+                                                return false;
+                                            }
+
+                                            return true;
                                         }).call(this, window.event || arguments[0])"
                                         class="block w-full"
                                         required
                                         oninput="updateFormattedPrice(this.value, 'formatted_price');"
                                         onpaste="return (function(evt) {
                                             const pastedData = (evt.clipboardData || window.clipboardData).getData('text');
-                                            const isValid = /^[0-9]+$/.test(pastedData);
-                                            if (!isValid) {
-                                                const errorDiv = document.getElementById('price_whole_error');
+
+                                            // Check for non-numeric input
+                                            if (!/^[0-9]+$/.test(pastedData)) {
+                                                const errorDiv = document.getElementById('price_whole_error_numbers');
                                                 errorDiv.classList.remove('hidden');
-                                                // Hide the message after 2 seconds
                                                 setTimeout(() => {
                                                     errorDiv.classList.add('hidden');
                                                 }, 3000);
+                                                return false;
                                             }
-                                            return isValid;
+
+                                            // Check length
+                                            if (pastedData.length > 10) {
+                                                const errorDiv = document.getElementById('price_whole_error_length');
+                                                errorDiv.classList.remove('hidden');
+                                                setTimeout(() => {
+                                                    errorDiv.classList.add('hidden');
+                                                }, 3000);
+                                                return false;
+                                            }
+
+                                            return true;
                                         }).call(this, window.event || arguments[0])"
                                     />
 
-                                    <div id="price_whole_error" class="text-red-500 text-sm mt-1 hidden">
+                                    <div id="price_whole_error_numbers" class="text-red-500 text-sm mt-1 hidden">
                                         {{ __('price_whole_numbers_only') }}
+                                    </div>
+                                    <div id="price_whole_error_length" class="text-red-500 text-sm mt-1 hidden">
+                                        {{ __('price_whole_length_exceeded') }}
                                     </div>
 
                                 </div>
@@ -119,6 +156,7 @@
 
                             <div class="flex items-center gap-4 mt-1">
                                 <p class="text-gray-500 text-sm">{{ __('minimum amount 100') }},</p>
+                                <p class="text-gray-500 text-sm">{{ __('maximum amount 9,999,999,999') }}</p>
                                 <p id="formatted_price" class="text-gray-500 text-sm italic"></p>
                             </div>
 
@@ -212,15 +250,80 @@
                                         name="starting_amount_whole"
                                         type="text"
                                         inputmode="numeric"
-                                        pattern="[0-9]{1,15}"
+                                        pattern="[0-9]{1,9}"
                                         :value="old('starting_amount_whole', session('pick_date_step1.starting_amount') ? explode('.', session('pick_date_step1.starting_amount')->getAmount())[0] : '')"
                                         onkeypress="return (function(evt) {
                                             const value = this.value;
-                                            return /[0-9]/.test(evt.key) && !(value === '' && evt.key === '0') && value.length < 15;
+
+                                            // Check for non-numeric input
+                                            if (!/[0-9]/.test(evt.key)) {
+                                                const errorDiv = document.getElementById('starting_amount_error_numbers');
+                                                errorDiv.classList.remove('hidden');
+                                                setTimeout(() => {
+                                                    errorDiv.classList.add('hidden');
+                                                }, 3000);
+                                                return false;
+                                            }
+
+                                            // Check for initial zero
+                                            if (value === '' && evt.key === '0') {
+                                                const errorDiv = document.getElementById('starting_amount_error_numbers');
+                                                errorDiv.classList.remove('hidden');
+                                                setTimeout(() => {
+                                                    errorDiv.classList.add('hidden');
+                                                }, 3000);
+                                                return false;
+                                            }
+
+                                            // Check length
+                                            if (value.length >= 10) {
+                                                const errorDiv = document.getElementById('starting_amount_error_length');
+                                                errorDiv.classList.remove('hidden');
+                                                setTimeout(() => {
+                                                    errorDiv.classList.add('hidden');
+                                                }, 3000);
+                                                return false;
+                                            }
+
+                                            return true;
+                                        }).call(this, window.event || arguments[0])"
+                                        onpaste="return (function(evt) {
+                                            const pastedData = (evt.clipboardData || window.clipboardData).getData('text');
+
+                                            // Check for non-numeric input
+                                            if (!/^[0-9]+$/.test(pastedData)) {
+                                                const errorDiv = document.getElementById('starting_amount_error_numbers');
+                                                errorDiv.classList.remove('hidden');
+                                                setTimeout(() => {
+                                                    errorDiv.classList.add('hidden');
+                                                }, 3000);
+                                                return false;
+                                            }
+
+                                            // Check length
+                                            if (pastedData.length > 10) {
+                                                const errorDiv = document.getElementById('starting_amount_error_length');
+                                                errorDiv.classList.remove('hidden');
+                                                setTimeout(() => {
+                                                    errorDiv.classList.add('hidden');
+                                                }, 3000);
+                                                return false;
+                                            }
+
+                                            return true;
                                         }).call(this, window.event || arguments[0])"
                                         oninput="document.getElementById('starting_amount_cents').value = (this.value === '' || this.value === '0') ? '' : '00'; updateFormattedPrice(this.value, 'formatted_starting_amount_whole');"
                                         class="block w-full"
                                     />
+
+                                    <div id="starting_amount_error_numbers" class="text-red-500 text-sm mt-1 hidden">
+                                        {{ __('starting_amount_numbers_only') }}
+                                    </div>
+                                    <div id="starting_amount_error_length" class="text-red-500 text-sm mt-1 hidden">
+                                        {{ __('starting_amount_length_exceeded') }}
+                                    </div>
+
+
                                 </div>
 
                                 <div class="flex items-center mt-2">
@@ -254,9 +357,10 @@
 
                             </div>
 
-
-
-                            <p id="formatted_starting_amount_whole" class="text-gray-500 text-sm italic"></p>
+                            <div class="flex items-center gap-4 mt-1">
+                                <p class="text-gray-500 text-sm">{{ __('maximum amount 9,999,999,999') }}</p>
+                                <p id="formatted_starting_amount_whole" class="text-gray-500 text-sm italic"></p>
+                            </div>
 
 
 
