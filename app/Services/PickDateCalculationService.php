@@ -69,26 +69,26 @@ class PickDateCalculationService
                 $neededPeriods = 1;
             } else {
                 // Add this logging before the division
-                Log::info('About to perform division:', [
-                    'targetAmount' => [
-                        'value' => $targetAmount->getAmount()->__toString(),
-                        'currency' => $targetAmount->getCurrency()->getCurrencyCode()
-                    ],
-                    'timeDiff' => $timeDiff,
-                    'period' => $period
-                ]);
+//                Log::info('About to perform division:', [
+//                    'targetAmount' => [
+//                        'value' => $targetAmount->getAmount()->__toString(),
+//                        'currency' => $targetAmount->getCurrency()->getCurrencyCode()
+//                    ],
+//                    'timeDiff' => $timeDiff,
+//                    'period' => $period
+//                ]);
 
                 try {
                     // Calculate initial amount per period using Money division
                     // We use exact scale to avoid rounding issues in intermediate calculations
                     $initialAmount = $targetAmount->dividedBy($timeDiff, RoundingMode::UP);
 
-                    Log::info('Division successful:', [
-                        'result' => [
-                            'value' => $initialAmount->getAmount()->__toString(),
-                            'currency' => $initialAmount->getCurrency()->getCurrencyCode()
-                        ]
-                    ]);
+//                    Log::info('Division successful:', [
+//                        'result' => [
+//                            'value' => $initialAmount->getAmount()->__toString(),
+//                            'currency' => $initialAmount->getCurrency()->getCurrencyCode()
+//                        ]
+//                    ]);
                 } catch (Exception $e) {
                     Log::error('Division failed:', [
                         'error' => $e->getMessage(),
@@ -109,11 +109,11 @@ class PickDateCalculationService
                 }
 
                 // Add this right after we calculate roundedBase
-                Log::info('After base rounding:', [
-                    'initial_base' => $baseAmount,
-                    'rounded_base' => $roundedBase,
-                    'period' => $period
-                ]);
+//                Log::info('After base rounding:', [
+//                    'initial_base' => $baseAmount,
+//                    'rounded_base' => $roundedBase,
+//                    'period' => $period
+//                ]);
 
                 try {
                     $roundedAmount = Money::ofMinor($roundedBase, $targetAmount->getCurrency()->getCurrencyCode(), null, RoundingMode::CEILING);
@@ -123,10 +123,10 @@ class PickDateCalculationService
                 }
 
                 // Add this after converting back to Money object
-                Log::info('After converting back to Money:', [
-                    'rounded_amount' => $roundedAmount->getAmount()->__toString(),
-                    'currency' => $roundedAmount->getCurrency()->getCurrencyCode()
-                ]);
+//                Log::info('After converting back to Money:', [
+//                    'rounded_amount' => $roundedAmount->getAmount()->__toString(),
+//                    'currency' => $roundedAmount->getCurrency()->getCurrencyCode()
+//                ]);
 
                 // Calculate how many periods we need
                 $neededPeriods = $this->calculateNeededPeriods($targetAmount, $roundedAmount);
@@ -140,29 +140,29 @@ class PickDateCalculationService
             }
 
             // Add right before: $totalSavings = $roundedAmount->multipliedBy($neededPeriods);
-            Log::info('About to calculate total savings:', [
-                'rounded_amount_value' => $roundedAmount->getAmount()->__toString(),
-                'rounded_amount_scale' => $roundedAmount->getAmount()->getScale(),
-                'needed_periods' => $neededPeriods
-            ]);
+//            Log::info('About to calculate total savings:', [
+//                'rounded_amount_value' => $roundedAmount->getAmount()->__toString(),
+//                'rounded_amount_scale' => $roundedAmount->getAmount()->getScale(),
+//                'needed_periods' => $neededPeriods
+//            ]);
 
 
             // Calculate final totals using Money arithmetic
             $totalSavings = $roundedAmount->multipliedBy($neededPeriods);
 
-            Log::info('Total savings calculated:', [
-                'total_savings' => $totalSavings->getAmount()->__toString(),
-                'needed_periods' => $neededPeriods,
-                'per_period' => $roundedAmount->getAmount()->__toString()
-            ]);
+//            Log::info('Total savings calculated:', [
+//                'total_savings' => $totalSavings->getAmount()->__toString(),
+//                'needed_periods' => $neededPeriods,
+//                'per_period' => $roundedAmount->getAmount()->__toString()
+//            ]);
 
             $extraSavings = $totalSavings->minus($targetAmount);
 
-            Log::info('Extra savings calculated:', [
-                'extra_savings' => $extraSavings->getAmount()->__toString(),
-                'total_collected' => $totalSavings->getAmount()->__toString(),
-                'target_was' => $targetAmount->getAmount()->__toString()
-            ]);
+//            Log::info('Extra savings calculated:', [
+//                'extra_savings' => $extraSavings->getAmount()->__toString(),
+//                'total_collected' => $totalSavings->getAmount()->__toString(),
+//                'target_was' => $targetAmount->getAmount()->__toString()
+//            ]);
 
             return [
                 'amount' => [
@@ -202,11 +202,11 @@ class PickDateCalculationService
     private function roundShortTermBase(int $amount, string $period): int
     {
         // Add at the start of roundShortTermBase method
-        Log::debug('Short term rounding input:', [
-            'original_amount' => $amount,
-            'period' => $period,
-            'amount_decimal' => $amount / 100 // Show in currency units
-        ]);
+//        Log::debug('Short term rounding input:', [
+//            'original_amount' => $amount,
+//            'period' => $period,
+//            'amount_decimal' => $amount / 100 // Show in currency units
+//        ]);
 
         switch ($period) {
             case 'hour':
@@ -232,11 +232,11 @@ class PickDateCalculationService
      */
     private function roundLongTermBase(int $amount, string $period): int
     {
-        Log::info('Starting roundLongTermBase with detailed logging:', [
-            'input_amount' => $amount,
-            'input_amount_as_try' => $amount / 100,
-            'period' => $period
-        ]);
+//        Log::info('Starting roundLongTermBase with detailed logging:', [
+//            'input_amount' => $amount,
+//            'input_amount_as_try' => $amount / 100,
+//            'period' => $period
+//        ]);
 
         switch ($period) {
 
@@ -280,10 +280,10 @@ class PickDateCalculationService
     {
 
         // Add this logging
-        Log::debug('Calculating periods with raw values:', [
-            'target_base' => $targetAmount->getMinorAmount()->toInt(),
-            'rounded_base' => $roundedAmount->getMinorAmount()->toInt()
-        ]);
+//        Log::debug('Calculating periods with raw values:', [
+//            'target_base' => $targetAmount->getMinorAmount()->toInt(),
+//            'rounded_base' => $roundedAmount->getMinorAmount()->toInt()
+//        ]);
 
         // Use minor amounts (cents) for the calculation to avoid rounding issues
         $targetMinor = $targetAmount->getMinorAmount()->toInt();
@@ -296,8 +296,26 @@ class PickDateCalculationService
     public function calculateAllFrequencyOptions(Money $price, ?Money $startingAmount, string $purchaseDate): array
     {
         try {
-            $purchaseDateTime = Carbon::parse($purchaseDate, 'UTC')
-                ->setTime(0, 0, 0);
+            Log::debug('CalculationService - Input received', [
+                'purchaseDate' => $purchaseDate,
+                'default_timezone' => config('app.timezone')
+            ]);
+
+            $purchaseDateTime = Carbon::parse($purchaseDate);
+
+            Log::debug('CalculationService - After parsing purchase date', [
+                'parsed_date' => $purchaseDateTime->toDateTimeString(),
+                'timezone' => $purchaseDateTime->timezone->getName()
+            ]);
+
+            $today = Carbon::now()->setTimezone('UTC');
+
+            Log::debug('CalculationService - Current time', [
+                'today' => $today->toDateTimeString(),
+                'today_timezone' => $today->timezone->getName(),
+                'diff_in_hours' => $today->diffInHours($purchaseDateTime),
+                'diff_in_days' => $today->diffInDays($purchaseDateTime)
+            ]);
 
             if ($purchaseDateTime->isPast()) {
                 return [
@@ -321,7 +339,7 @@ class PickDateCalculationService
 
             // Calculate all frequency options
             return [
-                // Short-term options
+                // Short-term options - start counting from current time since immediate action is possible
                 'hours' => $this->calculateFrequencyOption(
                     (int)ceil($today->diffInHours($purchaseDateTime)),
                     'hour',
@@ -334,10 +352,17 @@ class PickDateCalculationService
                 ),
                 // Long-term options
                 'weeks' => $this->calculateFrequencyOption(
+                    // Weekly savings require special handling for better user experience:
+                    // 1. Start from tomorrow morning (00:00:00) to give full weeks
+                    // 2. Count until end of purchase date (23:59:59)
+                    // This aligns with typical weekly budget/salary cycles and
+                    // ensures users get complete weeks for their saving plan
                     (int)ceil(Carbon::tomorrow()->startOfDay()->diffInDays($purchaseDateTime->endOfDay()) / 7),
                     'week',
                     $targetAmount
                 ),
+                // Monthly/Yearly calculations can handle partial periods since they're
+                // longer timeframes and users can adjust their saving amounts accordingly
                 'months' => $this->calculateFrequencyOption(
                     (int)ceil($today->diffInMonths($purchaseDateTime)),
                     'month',

@@ -50,11 +50,11 @@ class PiggyBankCreateController extends Controller
 //            'all_data' => $request->all()
 //        ]);
 
-        \Log::info('Current Application Locale:', [
-            'app_locale' => app()->getLocale(),
-            'fallback_locale' => config('app.fallback_locale'),
-            'session_locale' => session('locale')
-        ]);
+//        \Log::info('Current Application Locale:', [
+//            'app_locale' => app()->getLocale(),
+//            'fallback_locale' => config('app.fallback_locale'),
+//            'session_locale' => session('locale')
+//        ]);
 
         $request->merge([
             'price_cents' => (int) $request->input('price_cents'),
@@ -72,13 +72,13 @@ class PiggyBankCreateController extends Controller
             'starting_amount_cents' => 'nullable|integer|min:0|max:99',
         ]);
 
-        \Log::info('Validated Request Data', [
-            'validated_data' => $validated,
-        ]);
+//        \Log::info('Validated Request Data', [
+//            'validated_data' => $validated,
+//        ]);
 
-        \Log::info('Link Preview Input', [
-            'link' => $validated['link'] ?? 'No link provided',
-        ]);
+//        \Log::info('Link Preview Input', [
+//            'link' => $validated['link'] ?? 'No link provided',
+//        ]);
 
 
         $preview = null;
@@ -87,16 +87,16 @@ class PiggyBankCreateController extends Controller
             try {
                 $preview = $this->linkPreviewService->getPreviewData($validated['link']);
 
-                \Log::info('Link preview fetched:', [
-                    'url' => $validated['link'],
-                    'preview_data' => $preview,
-                ]);
+//                \Log::info('Link preview fetched:', [
+//                    'url' => $validated['link'],
+//                    'preview_data' => $preview,
+//                ]);
 
             } catch (Exception $e) {
-                \Log::warning('Failed to fetch link preview:', [
-                    'url' => $validated['link'],
-                    'error' => $e->getMessage(),
-                ]);
+//                \Log::warning('Failed to fetch link preview:', [
+//                    'url' => $validated['link'],
+//                    'error' => $e->getMessage(),
+//                ]);
 
                 $preview = [
                     'title' => null,
@@ -117,10 +117,10 @@ class PiggyBankCreateController extends Controller
         if ($preview && $preview['image'] !== null && !filter_var($preview['image'], FILTER_VALIDATE_URL)) {
             $preview['image'] = url($preview['image']); // Only convert to full URL if it's not null and not already a URL
 
-            \Log::info('Preview Image URL', [
-                'original_image' => $preview['image'] ?? 'No image',
-                'full_url' => $preview['image'] ?? 'No URL generated'
-            ]);
+//            \Log::info('Preview Image URL', [
+//                'original_image' => $preview['image'] ?? 'No image',
+//                'full_url' => $preview['image'] ?? 'No URL generated'
+//            ]);
         }
 
 
@@ -143,20 +143,20 @@ class PiggyBankCreateController extends Controller
             }
         }
 
-        \Log::info('Values to be stored in database:', [
-            'name' => $validated['name'],
-            'price_in_cents' => (int)$price->getMinorAmount()->toInt(), // Get amount in minor units (cents)
-            'currency' => $validated['currency'],
-            'link' => $validated['link'],
-            'details' => $validated['details'],
-            'starting_amount_in_cents' => (int) $startingAmount?->getMinorAmount()->toInt(),
-        ]);
-
-        \Log::info('Preview Data Before Session Storage', [
-            'preview_full_details' => $preview,
-            'preview_image_url' => $preview['image'] ?? 'No image URL',
-            'preview_original_link' => $preview['url'] ?? 'No original link'
-        ]);
+//        \Log::info('Values to be stored in database:', [
+//            'name' => $validated['name'],
+//            'price_in_cents' => (int)$price->getMinorAmount()->toInt(), // Get amount in minor units (cents)
+//            'currency' => $validated['currency'],
+//            'link' => $validated['link'],
+//            'details' => $validated['details'],
+//            'starting_amount_in_cents' => (int) $startingAmount?->getMinorAmount()->toInt(),
+//        ]);
+//
+//        \Log::info('Preview Data Before Session Storage', [
+//            'preview_full_details' => $preview,
+//            'preview_image_url' => $preview['image'] ?? 'No image URL',
+//            'preview_original_link' => $preview['url'] ?? 'No original link'
+//        ]);
 
         // Store step 1 data in session
         $request->session()->put('pick_date_step1', [
@@ -171,7 +171,7 @@ class PiggyBankCreateController extends Controller
 
 
 
-        \Log::info('Session data stored:', $request->session()->get('pick_date_step1', []));
+//        \Log::info('Session data stored:', $request->session()->get('pick_date_step1', []));
 
 
         return view('create-piggy-bank.common.step-2');
@@ -291,39 +291,64 @@ class PiggyBankCreateController extends Controller
      */
     public function calculateFrequencyOptions(Request $request)
     {
-        Log::info('Detailed Date Debug', [
-            'input_date' => $request->purchase_date,
-            'carbon_parsed' => Carbon::parse($request->purchase_date),
-            'carbon_parsed_utc' => Carbon::parse($request->purchase_date)->utc(),
-            'carbon_parsed_start_of_day' => Carbon::parse($request->purchase_date)->startOfDay(),
-            'carbon_parsed_start_of_day_utc' => Carbon::parse($request->purchase_date)->startOfDay()->utc(),
-            'current_timezone' => date_default_timezone_get(),
-            'app_timezone' => config('app.timezone')
+//        Log::info('Detailed Date Debug', [
+//            'input_date' => $request->purchase_date,
+//            'carbon_parsed' => Carbon::parse($request->purchase_date),
+//            'carbon_parsed_utc' => Carbon::parse($request->purchase_date)->utc(),
+//            'carbon_parsed_start_of_day' => Carbon::parse($request->purchase_date)->startOfDay(),
+//            'carbon_parsed_start_of_day_utc' => Carbon::parse($request->purchase_date)->startOfDay()->utc(),
+//            'current_timezone' => date_default_timezone_get(),
+//            'app_timezone' => config('app.timezone')
+//        ]);
+
+
+        Log::debug('Starting calculateFrequencyOptions with input', [
+            'purchase_date' => $request->purchase_date,
+            'current_timezone' => config('app.timezone')
         ]);
 
         $request->validate([
             'purchase_date' => 'required|date|after:today',
         ]);
 
+        Log::debug('Validation passed for purchase_date');
+
         $step1Data = $request->session()->get('pick_date_step1');
         if (!$step1Data) {
             return response()->json(['error' => 'Missing step 1 data'], 400);
         }
 
-        $utcPurchaseDate = Carbon::createFromFormat('Y-m-d', $request->purchase_date);
+        // With these lines:
+        $utcPurchaseDate = Carbon::createFromFormat('Y-m-d', $request->purchase_date)
+            ->startOfDay()  // This sets time to 00:00:00
+            ->setTimezone('UTC');  // Explicitly set to UTC
+
+        Log::debug('Created Carbon date object', [
+            'input_date' => $request->purchase_date,
+            'carbon_date' => $utcPurchaseDate->toDateTimeString(),
+            'carbon_timezone' => $utcPurchaseDate->timezone->getName(),
+            'is_start_of_day' => $utcPurchaseDate->format('H:i:s') === '00:00:00'
+        ]);
+
+//        \Log::debug('utcPurchaseDate: ', ['date' => $utcPurchaseDate]);
 
 
         // Log the values for debugging
-        Log::info('Calculating frequency options', [
-            'price' => $step1Data['price'] ?? 'Not set',
-            'starting_amount' => $step1Data['starting_amount'] ?? 'Not set',
-            'purchase_date' => $utcPurchaseDate->toISOString()  // Log UTC time
+//        Log::info('Calculating frequency options', [
+//            'price' => $step1Data['price'] ?? 'Not set',
+//            'starting_amount' => $step1Data['starting_amount'] ?? 'Not set',
+//            'purchase_date' => $utcPurchaseDate->toISOString()  // Log UTC time
+//        ]);
+
+        $isoDate = $utcPurchaseDate->toISOString();
+        Log::debug('Converting to ISO string for service', [
+            'iso_date' => $isoDate
         ]);
 
         $calculations = $this->pickDateCalculationService->calculateAllFrequencyOptions(
             $step1Data['price'],
             $step1Data['starting_amount'],
-            $utcPurchaseDate->toISOString()  // Pass UTC time to service
+            $isoDate
         );
 
         // Store UTC date in session
@@ -332,11 +357,25 @@ class PiggyBankCreateController extends Controller
             'calculations' => $calculations
         ]);
 
+        Log::debug('Stored in session', [
+            'stored_date' => $utcPurchaseDate->toDateTimeString(),
+            'stored_timezone' => $utcPurchaseDate->timezone->getName()
+        ]);
+
         // Format date in user's timezone for display
         $localizedDate = $utcPurchaseDate
             ->copy()
             ->setTimezone(config('app.timezone'))
             ->locale(app()->getLocale());
+
+        Log::debug('Localized date for display', [
+            'localized_date' => $localizedDate->toDateTimeString(),
+            'localized_timezone' => $localizedDate->timezone->getName(),
+            'locale' => app()->getLocale(),
+            'formatted_date' => $localizedDate->isoFormat('LL')
+        ]);
+
+
 
         session()->flash('success', __('Saving options have been calculated for :date', [
             'date' => $localizedDate->isoFormat('LL')
@@ -370,10 +409,10 @@ class PiggyBankCreateController extends Controller
     public function showSummary(Request $request)
     {
         // Add detailed logging at the start
-        Log::info('ShowSummary Method - Session Debug', [
-            'full_session_data' => $request->session()->all(),
-            'pick_date_step3' => $request->session()->get('pick_date_step3')
-        ]);
+//        Log::info('ShowSummary Method - Session Debug', [
+//            'full_session_data' => $request->session()->all(),
+//            'pick_date_step3' => $request->session()->get('pick_date_step3')
+//        ]);
 
 
         // Get all relevant session data - keeping this part unchanged
