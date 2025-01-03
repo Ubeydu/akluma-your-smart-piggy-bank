@@ -390,7 +390,7 @@ class PiggyBankCreateController extends Controller
     public function storeSelectedFrequency(Request $request)
     {
         $request->validate([
-            'frequency_type' => 'required|in:minutes,hours,days,weeks,months,years',
+            'frequency_type' => 'required|in:days,weeks,months,years',
         ]);
 
         $step3Data = $request->session()->get('pick_date_step3');
@@ -468,13 +468,8 @@ class PiggyBankCreateController extends Controller
             ? $summary['pick_date_step3']['date']
             : Carbon::parse($summary['pick_date_step3']['date'])->utc();
 
-        $finalPaymentDate = $selectedFrequency === 'hours'
-            ? $paymentSchedule[count($paymentSchedule) - 1]['date']  // Keep full datetime for hours
-            : $paymentSchedule[count($paymentSchedule) - 1]['date']->startOfDay();  // Only date for others
-
-        $firstPaymentDate = $selectedFrequency === 'hours'
-            ? $paymentSchedule[0]['date']  // Keep full datetime for hours
-            : $paymentSchedule[0]['date']->startOfDay();  // Only date for others
+        $finalPaymentDate = $paymentSchedule[count($paymentSchedule) - 1]['date']->startOfDay();
+        $firstPaymentDate = $paymentSchedule[0]['date']->startOfDay();
 
 
         // Store UTC dates in session
@@ -525,9 +520,7 @@ class PiggyBankCreateController extends Controller
             'summary' => $summary,
             'paymentSchedule' => $paymentSchedule,
             'dateMessage' => $dateMessage,
-            'savingCompletionDate' => $selectedFrequency === 'hours'
-                ? $savingCompletionDate  // Keep full datetime for hours
-                : $savingCompletionDate->format('Y-m-d')  // Only date for others
+            'savingCompletionDate' => $savingCompletionDate->format('Y-m-d')
         ]);
     }
 

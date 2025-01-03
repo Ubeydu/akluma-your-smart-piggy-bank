@@ -24,7 +24,7 @@ class SavingScheduleService
         array $amountDetails
     ): array {
         // Validate period type first
-        $validPeriods = ['hours', 'days', 'weeks', 'months', 'years'];
+        $validPeriods = ['days', 'weeks', 'months', 'years'];
         if (!in_array($periodType, $validPeriods)) {
             throw new InvalidArgumentException("Invalid period type: $periodType");
         }
@@ -41,8 +41,8 @@ class SavingScheduleService
 
         $startDate = Carbon::tomorrow(); // Always start schedule the next day from "today"
 
-        // Set initial time based on frequency type (in UTC)
-        $this->setInitialTime($startDate, $periodType);
+//        // Set initial time based on frequency type (in UTC)
+//        $this->setInitialTime($startDate, $periodType);
 
         // Debug logging after initial time set
         \Log::info('After Initial Time Set', [
@@ -60,9 +60,7 @@ class SavingScheduleService
             // Store both UTC and formatted versions of the date
             $schedule[] = [
                 'payment_number' => $i + 1,
-                'date' => $periodType === 'hours'
-                    ? clone $currentDate                     // Keep full datetime for hourly
-                    : (clone $currentDate)->startOfDay(),    // Strip time info for other frequencies
+                'date' => (clone $currentDate)->startOfDay(),
                 'amount' => $amountDetails['amount'],
                 'formatted_date' => (clone $currentDate)
                     ->setTimezone(config('app.timezone'))
@@ -76,26 +74,12 @@ class SavingScheduleService
         return $schedule;
     }
 
-    /**
-     * Sets the initial time for different frequency types
-     */
-    private function setInitialTime(Carbon $date, string $periodType): void
-    {
-        // For hours, set specific time at 10:00
-        if ($periodType === 'hours') {
-            $date->setTime(10, 0, 0);
-        }
-    }
 
-    /**
-     * Gets the appropriate date format pattern based on frequency type
-     */
+
+
     private function getDateFormatPattern(string $periodType): string
     {
-        // Use ISO format patterns for locale-aware date formatting
-        // L = locale's date format
-        // LT = locale's time format
-        return $periodType === 'hours' ? 'L LT' : 'L';
+        return 'L';
     }
 
     /**
@@ -104,7 +88,6 @@ class SavingScheduleService
     private function advanceDate(Carbon $date, string $periodType): void
     {
         $methods = [
-            'hours' => 'addHour',
             'days' => 'addDay',
             'weeks' => 'addWeek',
             'months' => 'addMonth',

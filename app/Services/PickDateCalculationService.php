@@ -46,6 +46,8 @@ class PickDateCalculationService
             ];
         }
 
+        Log::info('Period received:', ['period' => $period]);
+
         // Determine if this is short-term or long-term saving
         $isShortTerm = in_array($period, self::SHORT_TERM_PERIODS);
 
@@ -220,6 +222,23 @@ class PickDateCalculationService
                 if ($amount < 1000000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
                 return (int)ceil($amount / 50000) * 50000;  // 500 TRY increments
 
+
+            case 'week':
+                // Up to 5000 TRY (500,000 kuruş)
+                if ($amount < 500000) return (int)ceil($amount / 2500) * 2500;      // 25 TRY increments
+
+                // From 5000 TRY to 10000 TRY (500,000 to 1,000,000 kuruş)
+                if ($amount < 1000000) return (int)ceil($amount / 5000) * 5000;     // 50 TRY increments
+
+                // From 10000 TRY to 50000 TRY (1,000,000 to 5,000,000 kuruş)
+                if ($amount < 5000000) return (int)ceil($amount / 10000) * 10000;   // 100 TRY increments
+
+                // From 50000 TRY to 100000 TRY (5,000,000 to 10,000,000 kuruş)
+                if ($amount < 10000000) return (int)ceil($amount / 25000) * 25000;  // 250 TRY increments
+
+                // Above 100000 TRY (10,000,000 kuruş)
+                return (int)ceil($amount / 50000) * 50000;                          // 500 TRY increments
+
             default:
                 throw new InvalidArgumentException('Invalid period for short-term rounding');
         }
@@ -238,22 +257,6 @@ class PickDateCalculationService
 //        ]);
 
         switch ($period) {
-
-            case 'week':
-                // Up to 5000 TRY (500,000 kuruş)
-                if ($amount < 500000) return (int)ceil($amount / 2500) * 2500;      // 25 TRY increments
-
-                // From 5000 TRY to 10000 TRY (500,000 to 1,000,000 kuruş)
-                if ($amount < 1000000) return (int)ceil($amount / 5000) * 5000;     // 50 TRY increments
-
-                // From 10000 TRY to 50000 TRY (1,000,000 to 5,000,000 kuruş)
-                if ($amount < 5000000) return (int)ceil($amount / 10000) * 10000;   // 100 TRY increments
-
-                // From 50000 TRY to 100000 TRY (5,000,000 to 10,000,000 kuruş)
-                if ($amount < 10000000) return (int)ceil($amount / 25000) * 25000;  // 250 TRY increments
-
-                // Above 100000 TRY (10,000,000 kuruş)
-                return (int)ceil($amount / 50000) * 50000;                          // 500 TRY increments
 
             case 'month':
                 if ($amount < 100000) return (int)ceil($amount / 2500) * 2500;    // 25 TRY increments
@@ -313,7 +316,6 @@ class PickDateCalculationService
             Log::debug('CalculationService - Current time', [
                 'today' => $today->toDateTimeString(),
                 'today_timezone' => $today->timezone->getName(),
-                'diff_in_hours' => $today->diffInHours($purchaseDateTime),
                 'diff_in_days' => $today->diffInDays($purchaseDateTime)
             ]);
 

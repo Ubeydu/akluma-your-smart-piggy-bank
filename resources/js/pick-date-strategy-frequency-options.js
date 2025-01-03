@@ -121,12 +121,11 @@ document.addEventListener("DOMContentLoaded", function () {
             /**
              * Maps period types to their translation keys
              * Always uses plural form for simplicity across languages
-             * @param {string} type - Base period type (hour, day, etc.)
+             * @param {string} type - Base period type (day, week etc.)
              * @returns {string} Translation key for the period
              */
             const periodToTranslationKey = (type) => {
                 const translationMap = {
-                    'hour': 'hours',
                     'day': 'days',
                     'week': 'weeks',
                     'month': 'months',
@@ -149,8 +148,8 @@ document.addEventListener("DOMContentLoaded", function () {
              * Predefined period types for grouping saving options
              * @type {string[]}
              */
-            const shortTermPeriods = ['hours', 'days'];
-            const longTermPeriods = ['weeks', 'months', 'years'];
+            const shortTermPeriods = ['days', 'weeks'];
+            const longTermPeriods = ['months', 'years'];
 
             const hasShortTermOptions = shortTermPeriods.some(period => data[period]?.amount);
             const hasLongTermOptions = longTermPeriods.some(period => data[period]?.amount);
