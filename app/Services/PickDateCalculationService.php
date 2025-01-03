@@ -213,11 +213,6 @@ class PickDateCalculationService
 //        ]);
 
         switch ($period) {
-            case 'hour':
-                if ($amount < 5000) return (int)ceil($amount / 500) * 500;  // 5 TRY increments
-                if ($amount < 20000) return (int)ceil($amount / 1000) * 1000;  // 10 TRY increments
-                if ($amount < 100000) return (int)ceil($amount / 5000) * 5000;  // 50 TRY increments
-                return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
 
             case 'day':
                 if ($amount < 10000) return (int)ceil($amount / 1000) * 1000;  // 10 TRY increments
@@ -279,6 +274,7 @@ class PickDateCalculationService
 
     /**
      * Calculate how many periods are needed to reach target amount
+     * @throws MathException
      */
     private function calculateNeededPeriods(Money $targetAmount, Money $roundedAmount): int
     {
@@ -344,17 +340,12 @@ class PickDateCalculationService
             // Calculate all frequency options
             return [
                 // Short-term options - start counting from current time since immediate action is possible
-                'hours' => $this->calculateFrequencyOption(
-                    (int)ceil($today->diffInHours($purchaseDateTime)),
-                    'hour',
-                    $targetAmount
-                ),
                 'days' => $this->calculateFrequencyOption(
                     (int)ceil($today->diffInDays($purchaseDateTime)),
                     'day',
                     $targetAmount
                 ),
-                // Long-term options
+
                 'weeks' => $this->calculateFrequencyOption(
                     // Weekly savings require special handling for better user experience:
                     // 1. Start from tomorrow morning (00:00:00) to give full weeks
@@ -365,6 +356,8 @@ class PickDateCalculationService
                     'week',
                     $targetAmount
                 ),
+                // Long-term options
+
                 // Monthly/Yearly calculations can handle partial periods since they're
                 // longer timeframes and users can adjust their saving amounts accordingly
                 'months' => $this->calculateFrequencyOption(
