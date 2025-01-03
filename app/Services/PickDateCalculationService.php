@@ -18,17 +18,22 @@ use InvalidArgumentException;
 class PickDateCalculationService
 {
     // Constants to help us identify which group a time period belongs to
-    private const SHORT_TERM_PERIODS = ['hour', 'day'];
-    private const LONG_TERM_PERIODS = ['week', 'month', 'year'];
+    private const SHORT_TERM_PERIODS = ['day', 'week'];
+    private const LONG_TERM_PERIODS = ['month', 'year'];
 
 
     /**
      * Calculate savings frequency options with appropriate rounding based on time period
      *
-     * @param int $timeDiff Number of periods until target date
-     * @param string $period Type of period (hour, day, week, month, year)
-     * @param Money $targetAmount Total amount needed to save
+     * @param  int  $timeDiff  Number of periods until target date
+     * @param  string  $period  Type of period (day, week, month, year)
+     * @param  Money  $targetAmount  Total amount needed to save
      * @return array Calculation results with amounts and frequency
+     * @throws MathException
+     * @throws MoneyMismatchException
+     * @throws NumberFormatException
+     * @throws RoundingNecessaryException
+     * @throws UnknownCurrencyException
      */
     private function calculateFrequencyOption(int $timeDiff, string $period, Money $targetAmount): array
     {
