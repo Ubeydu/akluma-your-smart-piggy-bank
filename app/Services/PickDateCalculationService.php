@@ -56,7 +56,6 @@ class PickDateCalculationService
 
         // Define single payment thresholds as Money objects for proper comparison
         $thresholds = [
-            'hour' => Money::of(20, $targetAmount->getCurrency()->getCurrencyCode()),
             'day' => Money::of(50, $targetAmount->getCurrency()->getCurrencyCode()),
             'week' => Money::of(200, $targetAmount->getCurrency()->getCurrencyCode()),
             'month' => Money::of(500, $targetAmount->getCurrency()->getCurrencyCode()),
