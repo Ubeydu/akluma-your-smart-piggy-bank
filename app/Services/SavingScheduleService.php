@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 class SavingScheduleService
@@ -11,7 +12,7 @@ class SavingScheduleService
     /**
      * Generates a complete payment schedule with dates and amounts
      *
-     * @param string $targetDate     The target date (will be parsed as UTC)
+     * @param string $targetDate     The target date in Y-m-d format
      * @param int    $frequency      How many payments to generate
      * @param string $periodType     The type of period (days, weeks, months, years)
      * @param array  $amountDetails  Amount details from calculation service
@@ -23,49 +24,45 @@ class SavingScheduleService
         string $periodType,
         array $amountDetails
     ): array {
+        Log::debug('Starting generateSchedule with inputs', [
+            'target_date' => $targetDate,
+            'frequency' => $frequency,
+            'period_type' => $periodType
+        ]);
+
         // Validate period type first
         $validPeriods = ['days', 'weeks', 'months', 'years'];
         if (!in_array($periodType, $validPeriods)) {
             throw new InvalidArgumentException("Invalid period type: $periodType");
         }
 
-        // Debug logging
-        \Log::info('Generate Schedule Debug', [
-            'targetDate' => $targetDate,
-            'periodType' => $periodType,
-            'initialStartDate' => Carbon::parse($targetDate)->utc(),
-            'now' => Carbon::now()->utc(),
-        ]);
+        $startDate = Carbon::tomorrow()->toDateString(); // Get tomorrow's date in Y-m-d format
 
-        \Log::info('Target Date Before Parsing', ['targetDate' => $targetDate]);
+        $currentDate = Carbon::createFromFormat('Y-m-d', $startDate);
 
-        $startDate = Carbon::tomorrow(); // Always start schedule the next day from "today"
-
-//        // Set initial time based on frequency type (in UTC)
-//        $this->setInitialTime($startDate, $periodType);
-
-        // Debug logging after initial time set
-        \Log::info('After Initial Time Set', [
-            'startDate' => $startDate,
-            'periodType' => $periodType,
+        Log::debug('Schedule start date created', [
+            'start_date' => $startDate,
+            'current_date' => $currentDate->toDateString()
         ]);
 
         $schedule = [];
-        $currentDate = clone $startDate;
-
-        // Get the date format pattern for display purposes
         $dateFormat = $this->getDateFormatPattern($periodType);
 
         for ($i = 0; $i < $frequency; $i++) {
-            // Store both UTC and formatted versions of the date
+            if ($i === 0) {
+                Log::debug('First schedule entry created', [
+                    'payment_number' => 1,
+                    'date' => $currentDate->toDateString(),
+                    'formatted_date' => $currentDate->locale(App::getLocale())->isoFormat($dateFormat)
+                ]);
+            }
+
+
             $schedule[] = [
                 'payment_number' => $i + 1,
-                'date' => (clone $currentDate)->startOfDay(),
-                'amount' => $amountDetails['amount'],
-                'formatted_date' => (clone $currentDate)
-                    ->setTimezone(config('app.timezone'))
-                    ->locale(App::getLocale())
-                    ->isoFormat($dateFormat)
+                'date' => $currentDate->toDateString(),
+                'formatted_date' => $currentDate->locale(App::getLocale())->isoFormat($dateFormat),
+                'amount' => $amountDetails['amount']
             ];
 
             $this->advanceDate($currentDate, $periodType);

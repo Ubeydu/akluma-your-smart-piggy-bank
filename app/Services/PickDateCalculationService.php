@@ -46,7 +46,7 @@ class PickDateCalculationService
             ];
         }
 
-        Log::info('Period received:', ['period' => $period]);
+//        Log::info('Period received:', ['period' => $period]);
 
         // Determine if this is short-term or long-term saving
         $isShortTerm = in_array($period, self::SHORT_TERM_PERIODS);
@@ -299,25 +299,9 @@ class PickDateCalculationService
     public function calculateAllFrequencyOptions(Money $price, ?Money $startingAmount, string $purchaseDate): array
     {
         try {
-            Log::debug('CalculationService - Input received', [
-                'purchaseDate' => $purchaseDate,
-                'default_timezone' => config('app.timezone')
-            ]);
 
             $purchaseDateTime = Carbon::parse($purchaseDate);
 
-            Log::debug('CalculationService - After parsing purchase date', [
-                'parsed_date' => $purchaseDateTime->toDateTimeString(),
-                'timezone' => $purchaseDateTime->timezone->getName()
-            ]);
-
-            $today = Carbon::now()->setTimezone('UTC');
-
-            Log::debug('CalculationService - Current time', [
-                'today' => $today->toDateTimeString(),
-                'today_timezone' => $today->timezone->getName(),
-                'diff_in_days' => $today->diffInDays($purchaseDateTime)
-            ]);
 
             if ($purchaseDateTime->isPast()) {
                 return [

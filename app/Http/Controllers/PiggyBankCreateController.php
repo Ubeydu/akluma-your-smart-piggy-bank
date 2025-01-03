@@ -291,20 +291,9 @@ class PiggyBankCreateController extends Controller
      */
     public function calculateFrequencyOptions(Request $request)
     {
-//        Log::info('Detailed Date Debug', [
-//            'input_date' => $request->purchase_date,
-//            'carbon_parsed' => Carbon::parse($request->purchase_date),
-//            'carbon_parsed_utc' => Carbon::parse($request->purchase_date)->utc(),
-//            'carbon_parsed_start_of_day' => Carbon::parse($request->purchase_date)->startOfDay(),
-//            'carbon_parsed_start_of_day_utc' => Carbon::parse($request->purchase_date)->startOfDay()->utc(),
-//            'current_timezone' => date_default_timezone_get(),
-//            'app_timezone' => config('app.timezone')
-//        ]);
-
 
         Log::debug('Starting calculateFrequencyOptions with input', [
             'purchase_date' => $request->purchase_date,
-            'current_timezone' => config('app.timezone')
         ]);
 
         $request->validate([
@@ -318,67 +307,28 @@ class PiggyBankCreateController extends Controller
             return response()->json(['error' => 'Missing step 1 data'], 400);
         }
 
-        // With these lines:
-        $utcPurchaseDate = Carbon::createFromFormat('Y-m-d', $request->purchase_date)
-            ->startOfDay()  // This sets time to 00:00:00
-            ->setTimezone('UTC');  // Explicitly set to UTC
+        $purchaseDate = Carbon::createFromFormat('Y-m-d', $request->purchase_date);
 
         Log::debug('Created Carbon date object', [
             'input_date' => $request->purchase_date,
-            'carbon_date' => $utcPurchaseDate->toDateTimeString(),
-            'carbon_timezone' => $utcPurchaseDate->timezone->getName(),
-            'is_start_of_day' => $utcPurchaseDate->format('H:i:s') === '00:00:00'
+            'parsed_date' => $purchaseDate->toDateString()
         ]);
 
-//        \Log::debug('utcPurchaseDate: ', ['date' => $utcPurchaseDate]);
-
-
-        // Log the values for debugging
-//        Log::info('Calculating frequency options', [
-//            'price' => $step1Data['price'] ?? 'Not set',
-//            'starting_amount' => $step1Data['starting_amount'] ?? 'Not set',
-//            'purchase_date' => $utcPurchaseDate->toISOString()  // Log UTC time
-//        ]);
-
-        $isoDate = $utcPurchaseDate->toISOString();
-        Log::debug('Converting to ISO string for service', [
-            'iso_date' => $isoDate
-        ]);
 
         $calculations = $this->pickDateCalculationService->calculateAllFrequencyOptions(
             $step1Data['price'],
             $step1Data['starting_amount'],
-            $isoDate
+            $purchaseDate->toDateString()  // This will output YYYY-MM-DD
         );
 
-        // Store UTC date in session
         $request->session()->put('pick_date_step3', [
-            'date' => $utcPurchaseDate,  // Store Carbon object in UTC
+            'date' => $purchaseDate->toDateString(),
             'calculations' => $calculations
         ]);
 
-        Log::debug('Stored in session', [
-            'stored_date' => $utcPurchaseDate->toDateTimeString(),
-            'stored_timezone' => $utcPurchaseDate->timezone->getName()
-        ]);
-
-        // Format date in user's timezone for display
-        $localizedDate = $utcPurchaseDate
-            ->copy()
-            ->setTimezone(config('app.timezone'))
-            ->locale(app()->getLocale());
-
-        Log::debug('Localized date for display', [
-            'localized_date' => $localizedDate->toDateTimeString(),
-            'localized_timezone' => $localizedDate->timezone->getName(),
-            'locale' => app()->getLocale(),
-            'formatted_date' => $localizedDate->isoFormat('LL')
-        ]);
-
-
 
         session()->flash('success', __('Saving options have been calculated for :date', [
-            'date' => $localizedDate->isoFormat('LL')
+            'date' => $purchaseDate->locale(app()->getLocale())->isoFormat('LL')
         ]));
 
         return response()->json($calculations);
@@ -423,12 +373,12 @@ class PiggyBankCreateController extends Controller
         ];
 
 
-        // Log the summary details with more context
-        Log::info('ShowSummary Method - Date Details', [
-            'step3_date_raw' => $summary['pick_date_step3']['date'] ?? 'Not Set',
-            'step3_date_type' => gettype($summary['pick_date_step3']['date'] ?? null),
-            'step3_date_class' => get_class($summary['pick_date_step3']['date'] ?? null)
-        ]);
+//        // Log the summary details with more context
+//        Log::info('ShowSummary Method - Date Details', [
+//            'step3_date_raw' => $summary['pick_date_step3']['date'] ?? 'Not Set',
+//            'step3_date_type' => gettype($summary['pick_date_step3']['date'] ?? null),
+//            'step3_date_class' => get_class($summary['pick_date_step3']['date'] ?? null)
+//        ]);
 
 //        $request->session()->put('debug_summary', $summary);
 //
@@ -454,6 +404,7 @@ class PiggyBankCreateController extends Controller
 
         // Generate payment schedule
         $scheduleService = new SavingScheduleService();
+
         $paymentSchedule = $scheduleService->generateSchedule(
             $summary['pick_date_step3']['date'],
             $calculations['frequency'],
@@ -463,18 +414,21 @@ class PiggyBankCreateController extends Controller
 
         $request->session()->put('payment_schedule', $paymentSchedule);
 
-        // Get dates in UTC
         $targetDate = ($summary['pick_date_step3']['date'] instanceof Carbon)
-            ? $summary['pick_date_step3']['date']
-            : Carbon::parse($summary['pick_date_step3']['date'])->utc();
+            ? $summary['pick_date_step3']['date']->toDateString()
+            : $summary['pick_date_step3']['date'];
+        $targetDate = Carbon::createFromFormat('Y-m-d', $targetDate);
 
-        $finalPaymentDate = $paymentSchedule[count($paymentSchedule) - 1]['date']->startOfDay();
-        $firstPaymentDate = $paymentSchedule[0]['date']->startOfDay();
+//        $finalPaymentDate = $paymentSchedule[count($paymentSchedule) - 1]['date']->startOfDay();
+//        $firstPaymentDate = $paymentSchedule[0]['date']->startOfDay();
+
+        $finalPaymentDate = Carbon::createFromFormat('Y-m-d', $paymentSchedule[count($paymentSchedule) - 1]['date']);
+        $firstPaymentDate = Carbon::createFromFormat('Y-m-d', $paymentSchedule[0]['date']);
 
 
-        // Store UTC dates in session
-        $request->session()->put('final_payment_date', $finalPaymentDate);
-        $request->session()->put('first_payment_date', $firstPaymentDate);
+        // Store dates in session
+        $request->session()->put('final_payment_date', $finalPaymentDate->toDateString());
+        $request->session()->put('first_payment_date', $firstPaymentDate->toDateString());
 
 
 
