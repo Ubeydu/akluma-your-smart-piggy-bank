@@ -260,19 +260,12 @@ class PickDateCalculationService
      */
     private function roundShortTermBase(int $amount, string $period): int
     {
-//        \Log::debug('Rounding Short Term Base', [
-//            'original_amount' => $amount,
-//            'period' => $period,
-//            'amount_in_currency' => $amount / 100
-//        ]);
 
-
-        // Add at the start of roundShortTermBase method
-//        Log::debug('Short term rounding input:', [
-//            'original_amount' => $amount,
-//            'period' => $period,
-//            'amount_decimal' => $amount / 100 // Show in currency units
-//        ]);
+         // Add at the start of roundShortTermBase method
+        Log::debug('Short term rounding input:', [
+            'original_amount' => $amount,
+            'period' => $period,
+        ]);
 
         switch ($period) {
 
@@ -310,18 +303,13 @@ class PickDateCalculationService
      */
     private function roundLongTermBase(int $amount, string $period): int
     {
-//        \Log::debug('Rounding Long Term Base', [
-//            'original_amount' => $amount,
-//            'period' => $period,
-//            'amount_in_currency' => $amount / 100
-//        ]);
 
+        // Add at the start of roundLongTermBase method
+        Log::debug('Long term rounding input:', [
+            'original_amount' => $amount,
+            'period' => $period,
+        ]);
 
-//        Log::info('Starting roundLongTermBase with detailed logging:', [
-//            'input_amount' => $amount,
-//            'input_amount_as_try' => $amount / 100,
-//            'period' => $period
-//        ]);
 
         switch ($period) {
 
