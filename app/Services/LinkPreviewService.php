@@ -41,9 +41,11 @@ class LinkPreviewService
             $response = $this->client->get($url);
             $html = $response->getBody()->getContents();
 
-            // Initialize DOM parser
-            $doc = new DOMDocument();
-            @$doc->loadHTML($html, LIBXML_NOERROR);
+            // Initialize DOM parser with proper encoding
+            $doc = new DOMDocument('1.0', 'UTF-8');
+            // Tell DOMDocument the input is UTF-8
+            $doc->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'),
+                LIBXML_NOERROR | LIBXML_NOWARNING);
 
             // Create XPath object for querying the document
             $xpath = new DOMXPath($doc);

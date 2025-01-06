@@ -3,5 +3,5 @@
     <p class="text-sm text-gray-600 font-medium">{{ __('price') }}: {{ $piggyBank->price }}</p>
     <p class="text-sm text-gray-600 font-medium">{{ __('starting_amount') }}: {{ $piggyBank->starting_amount }}</p>
     <p class="text-sm text-gray-600 font-medium">{{ __('remaining_amount') }}: {{ $piggyBank->price - $piggyBank->starting_amount }}</p>
-    <p class="text-sm text-gray-600 font-medium">{{ __('purchase_date') }}: {{ $piggyBank->purchase_date }}</p>
+    <p class="text-sm text-gray-600 font-medium">{{ __('purchase_date') }}: {{ $piggyBank->scheduledSavings()->orderByDesc('saving_number')->first()->saving_date->translatedFormat('d F Y') }}</p>
 </div>

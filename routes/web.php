@@ -4,6 +4,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PiggyBankCreateController;
 use App\Http\Controllers\PiggyBankController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserPreferencesController;
+use Brick\Money\Money;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -42,12 +44,16 @@ Route::get('/language/{locale}', function ($locale) {
 
 Route::get('currency/switch/{currency}', function ($currency) {
     try {
-//        // Force an error by trying to access a non-existent key. Uncomment this to test the error message for translations.
-//        $forceError = config('app.currencies')['NON_EXISTENT_KEY_TO_FORCE_ERROR'];
+        // Validate currency exists in config
+        if (!isset(config('app.currencies')[$currency])) {
+            throw new \Exception('Invalid currency.');
+        }
 
         // Store the currency in session
         session(['currency' => $currency]);
-        $currencyName = __(config('app.currencies')[$currency]);
+
+        // Get the translated name
+        $currencyName = __(config('app.currencies')[$currency]['name']);
 
         session()->flash('success', __('You switched the currency to :currency', ['currency' => $currencyName]));
 
@@ -63,7 +69,14 @@ Route::get('currency/switch/{currency}', function ($currency) {
 // Debug route for currency
 // visit this to test: http://127.0.0.1:8000/current-currency
 Route::get('/current-currency', function () {
-    dd(session('currency', config('app.default_currency')));
+    $currencyCode = session('currency', config('app.default_currency'));
+    $currencyInfo = config('app.currencies')[$currencyCode];
+
+    dd([
+        'code' => $currencyCode,
+        'name' => $currencyInfo['name'],
+        'decimal_places' => $currencyInfo['decimal_places']
+    ]);
 });
 
 
@@ -125,12 +138,14 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
         Route::post('/store-frequency', [PiggyBankCreateController::class, 'storeSelectedFrequency'])->name('store-frequency');
         Route::post('/show-summary', [PiggyBankCreateController::class, 'showSummary'])->name('show-summary');
         Route::get('/summary', [PiggyBankCreateController::class, 'showSummary'])->name('summary');
+        Route::post('/store', [PiggyBankCreateController::class, 'storePiggyBank'])->name('store');
     });
 
     // Flash message check route
     Route::get('/check-flash-messages', function() {
         return view('components.flash-message');
     })->name('check-flash-messages');
+
 
     Route::prefix('enter-saving-amount')->name('enter-saving-amount.')->group(function () {
         Route::get('/step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
@@ -163,5 +178,44 @@ Route::get('/format-date', function (Request $request) {
     }
 });
 
+Route::post('/update-timezone', [UserPreferencesController::class, 'updateTimezone'])
+    ->name('update-timezone')
+    ->middleware('auth');
+
+Route::get('/test-money', function() {
+    try {
+        // Test XOF with decimal
+        $xof_decimal = Money::of('1000.00', 'XOF');
+        dump("XOF with decimal: " . $xof_decimal->getAmount());
+        dump("XOF with decimal (minor units): " . $xof_decimal->getMinorAmount()->toInt());
+
+        // Test XOF without decimal
+        $xof_whole = Money::of('1000', 'XOF');
+        dump("XOF without decimal: " . $xof_whole->getAmount());
+        dump("XOF without decimal (minor units): " . $xof_whole->getMinorAmount()->toInt());
+
+        // Compare with EUR for reference
+        $eur = Money::of('1000.00', 'EUR');
+        dump("EUR: " . $eur->getAmount());
+        dump("EUR (minor units): " . $eur->getMinorAmount()->toInt());
+
+    } catch (\Exception $e) {
+        dump("Error: " . $e->getMessage());
+    }
+});
+
+
+Route::get('/test-currency-helper', function () {
+    // Test with XOF (should return false)
+    dump('XOF has decimals: ' . (App\Helpers\CurrencyHelper::hasDecimalPlaces('XOF') ? 'true' : 'false'));
+
+    // Test with EUR (should return true)
+    dump('EUR has decimals: ' . (App\Helpers\CurrencyHelper::hasDecimalPlaces('EUR') ? 'true' : 'false'));
+
+    // Test with your current session currency
+    $currentCurrency = session('currency', config('app.default_currency'));
+    dump('Current currency (' . $currentCurrency . ') has decimals: ' .
+        (App\Helpers\CurrencyHelper::hasDecimalPlaces($currentCurrency) ? 'true' : 'false'));
+});
 
 require __DIR__.'/auth.php';

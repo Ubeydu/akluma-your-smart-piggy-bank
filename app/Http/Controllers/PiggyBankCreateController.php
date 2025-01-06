@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CurrencyHelper;
 use App\Models\PiggyBank;
+use App\Models\ScheduledSaving;
 use App\Services\LinkPreviewService;
-use App\Services\PaymentScheduleService;
+use App\Services\SavingScheduleService;
 use App\Services\PickDateCalculationService;
+use Brick\Math\Exception\MathException;
+use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class PiggyBankCreateController extends Controller
 {
@@ -38,6 +45,8 @@ class PiggyBankCreateController extends Controller
 
     /**
      * Step 2: Process Screen 1 data and show strategy selection screen (Screen 2).
+     * @throws MathException
+     * @throws UnknownCurrencyException
      */
     public function step2(Request $request)
     {
@@ -47,11 +56,11 @@ class PiggyBankCreateController extends Controller
 //            'all_data' => $request->all()
 //        ]);
 
-        \Log::info('Current Application Locale:', [
-            'app_locale' => app()->getLocale(),
-            'fallback_locale' => config('app.fallback_locale'),
-            'session_locale' => session('locale')
-        ]);
+//        \Log::info('Current Application Locale:', [
+//            'app_locale' => app()->getLocale(),
+//            'fallback_locale' => config('app.fallback_locale'),
+//            'session_locale' => session('locale')
+//        ]);
 
         $request->merge([
             'price_cents' => (int) $request->input('price_cents'),
@@ -60,45 +69,58 @@ class PiggyBankCreateController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string',
-            'price_whole' => 'required|integer|min:1|max:999999999999999',
-            'price_cents' => 'required|integer|min:0|max:99',
+            'price_whole' => 'required|integer|min:1|max:9999999999',
+            'price_cents' => [
+                Rule::requiredIf(fn() => CurrencyHelper::hasDecimalPlaces($request->input('currency'))),
+                'integer',
+                'min:0',
+                'max:99'
+            ],
             'currency' => 'required|string|size:3',
             'link' => 'nullable|url|max:255',
             'details' => 'nullable|string|max:5000',
-            'starting_amount_whole' => 'nullable|integer|min:0|max:999999999999999',
-            'starting_amount_cents' => 'nullable|integer|min:0|max:99',
+            'starting_amount_whole' => 'nullable|integer|min:0|max:9999999999',
+            'starting_amount_cents' => [
+                Rule::requiredIf(fn() =>
+                    CurrencyHelper::hasDecimalPlaces($request->input('currency')) &&
+                    !empty($request->input('starting_amount_whole'))
+                ),
+                'nullable',
+                'integer',
+                'min:0',
+                'max:99'
+            ],
         ]);
 
         \Log::info('Validated Request Data', [
             'validated_data' => $validated,
         ]);
 
-        \Log::info('Link Preview Input', [
-            'link' => $validated['link'] ?? 'No link provided',
-        ]);
+//        \Log::info('Link Preview Input', [
+//            'link' => $validated['link'] ?? 'No link provided',
+//        ]);
 
 
-        $preview = null;
         // Inside step2 method, replace the preview array creation sections with:
         if (!empty($validated['link'])) {
             try {
                 $preview = $this->linkPreviewService->getPreviewData($validated['link']);
 
-                \Log::info('Link preview fetched:', [
-                    'url' => $validated['link'],
-                    'preview_data' => $preview,
-                ]);
+//                \Log::info('Link preview fetched:', [
+//                    'url' => $validated['link'],
+//                    'preview_data' => $preview,
+//                ]);
 
-            } catch (\Exception $e) {
-                \Log::warning('Failed to fetch link preview:', [
-                    'url' => $validated['link'],
-                    'error' => $e->getMessage(),
-                ]);
+            } catch (Exception $e) {
+//                \Log::warning('Failed to fetch link preview:', [
+//                    'url' => $validated['link'],
+//                    'error' => $e->getMessage(),
+//                ]);
 
                 $preview = [
                     'title' => null,
                     'description' => null,
-                    'image' => null, // Changed: Store null instead of a path
+                    'image' => null,
                     'url' => $validated['link']
                 ];
             }
@@ -106,7 +128,7 @@ class PiggyBankCreateController extends Controller
             $preview = [
                 'title' => null,
                 'description' => null,
-                'image' => null, // Changed: Store null instead of a path
+                'image' => null,
                 'url' => null
             ];
         }
@@ -114,46 +136,70 @@ class PiggyBankCreateController extends Controller
         if ($preview && $preview['image'] !== null && !filter_var($preview['image'], FILTER_VALIDATE_URL)) {
             $preview['image'] = url($preview['image']); // Only convert to full URL if it's not null and not already a URL
 
-            \Log::info('Preview Image URL', [
-                'original_image' => $preview['image'] ?? 'No image',
-                'full_url' => $preview['image'] ?? 'No URL generated'
-            ]);
+//            \Log::info('Preview Image URL', [
+//                'original_image' => $preview['image'] ?? 'No image',
+//                'full_url' => $preview['image'] ?? 'No URL generated'
+//            ]);
         }
 
+//        Log::info('Money Input Values:', [
+//            'price_whole' => $validated['price_whole'],
+//            'currency' => $validated['currency'],
+//            'price_whole_type' => gettype($validated['price_whole'])
+//        ]);
 
-        // Create Money objects
-        $price = Money::of($validated['price_whole'] . '.' . str_pad($validated['price_cents'], 2, '0', STR_PAD_LEFT), $validated['currency']);
+        $price = Money::of($validated['price_whole'], $validated['currency']);
+
+//        Log::info('Money Result:', [
+//            'price' => $price->getAmount(),
+//            'currency' => $price->getCurrency()
+//        ]);
+
+
+//        \Log::info('Money Object Details', [
+//            'price_whole' => $validated['price_whole'],
+//            'price_cents' => $validated['price_cents'],
+//            'currency' => $validated['currency'],
+//            'money_object' => [
+//                'amount' => $price->getAmount()->__toString(),
+//                'minor_amount' => $price->getMinorAmount()->toInt(),
+//                'formatted' => $price->formatTo(App::getLocale())
+//            ]
+//        ]);
+
 
         $startingAmount = null;
 
         if (!empty($validated['starting_amount_whole']) || !empty($validated['starting_amount_cents'])) {
-            $moneyString = ($validated['starting_amount_whole'] ?? '0') . '.' . str_pad($validated['starting_amount_cents'] ?? '00', 2, '0', STR_PAD_LEFT);
-
-//            \Log::info('Attempting to create starting amount:', ['money_string' => $moneyString]);
+            $startingAmountString = ($validated['starting_amount_whole'] ?? '0') . '.' .
+                (CurrencyHelper::hasDecimalPlaces($validated['currency'])
+                    ? str_pad($validated['starting_amount_cents'] ?? '00', 2, '0', STR_PAD_LEFT)
+                    : '00');
 
             try {
-                $startingAmount = Money::of($moneyString, $validated['currency']);
-//                \Log::info('Starting amount created successfully');
-            } catch (\Exception $e) {
-//                \Log::error('Error creating starting amount:', ['error' => $e->getMessage()]);
+                $startingAmount = Money::of($startingAmountString, $validated['currency']);
+            } catch (Exception $e) {
                 return redirect()->back()->withErrors(['starting_amount_whole' => 'Invalid starting amount']);
             }
         }
 
-        \Log::info('Values to be stored in database:', [
-            'name' => $validated['name'],
-            'price_in_cents' => (int)$price->getMinorAmount()->toInt(), // Get amount in minor units (cents)
-            'currency' => $validated['currency'],
-            'link' => $validated['link'],
-            'details' => $validated['details'],
-            'starting_amount_in_cents' => (int) $startingAmount?->getMinorAmount()->toInt(),
-        ]);
 
-        \Log::info('Preview Data Before Session Storage', [
-            'preview_full_details' => $preview,
-            'preview_image_url' => $preview['image'] ?? 'No image URL',
-            'preview_original_link' => $preview['url'] ?? 'No original link'
-        ]);
+
+
+//        \Log::info('Values to be stored in database:', [
+//            'name' => $validated['name'],
+//            'price_in_cents' => (int)$price->getMinorAmount()->toInt(), // Get amount in minor units (cents)
+//            'currency' => $validated['currency'],
+//            'link' => $validated['link'],
+//            'details' => $validated['details'],
+//            'starting_amount_in_cents' => (int) $startingAmount?->getMinorAmount()->toInt(),
+//        ]);
+//
+//        \Log::info('Preview Data Before Session Storage', [
+//            'preview_full_details' => $preview,
+//            'preview_image_url' => $preview['image'] ?? 'No image URL',
+//            'preview_original_link' => $preview['url'] ?? 'No original link'
+//        ]);
 
         // Store step 1 data in session
         $request->session()->put('pick_date_step1', [
@@ -168,7 +214,7 @@ class PiggyBankCreateController extends Controller
 
 
 
-        \Log::info('Session data stored:', $request->session()->get('pick_date_step1', []));
+//        \Log::info('Session data stored:', $request->session()->get('pick_date_step1', []));
 
 
         return view('create-piggy-bank.common.step-2');
@@ -215,7 +261,7 @@ class PiggyBankCreateController extends Controller
                 'preview' => $preview
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Log the error for debugging purposes
             \Log::error('Error fetching link preview:', [
                 'url' => $validated['url'],
@@ -288,39 +334,45 @@ class PiggyBankCreateController extends Controller
      */
     public function calculateFrequencyOptions(Request $request)
     {
+
+//        Log::debug('Starting calculateFrequencyOptions with input', [
+//            'purchase_date' => $request->purchase_date,
+//        ]);
+
         $request->validate([
             'purchase_date' => 'required|date|after:today',
         ]);
+
+//        Log::debug('Validation passed for purchase_date');
 
         $step1Data = $request->session()->get('pick_date_step1');
         if (!$step1Data) {
             return response()->json(['error' => 'Missing step 1 data'], 400);
         }
 
-        // Log the values for debugging
-        Log::info('Calculating frequency options', [
-            'price' => $step1Data['price'] ?? 'Not set',
-            'starting_amount' => $step1Data['starting_amount'] ?? 'Not set',
-            'purchase_date' => $request->purchase_date
-        ]);
+        $purchaseDate = Carbon::createFromFormat('Y-m-d', $request->purchase_date);
+
+//        Log::debug('Created Carbon date object', [
+//            'input_date' => $request->purchase_date,
+//            'parsed_date' => $purchaseDate->toDateString()
+//        ]);
+
 
         $calculations = $this->pickDateCalculationService->calculateAllFrequencyOptions(
             $step1Data['price'],
             $step1Data['starting_amount'],
-            $request->purchase_date
+            $purchaseDate->toDateString()  // This will output YYYY-MM-DD
         );
 
-        // Store calculations in session for next step
         $request->session()->put('pick_date_step3', [
-            'date' => $request->purchase_date,
+            'date' => $purchaseDate->toDateString(),
             'calculations' => $calculations
         ]);
 
-        Log::info('Setting flash message');
+
         session()->flash('success', __('Saving options have been calculated for :date', [
-            'date' => Carbon::parse($request->purchase_date)->locale(app()->getLocale())->isoFormat('LL')
+            'date' => $purchaseDate->locale(app()->getLocale())->isoFormat('LL')
         ]));
-        Log::info('Flash message in session:', ['message' => session('success')]);
 
         return response()->json($calculations);
     }
@@ -331,7 +383,7 @@ class PiggyBankCreateController extends Controller
     public function storeSelectedFrequency(Request $request)
     {
         $request->validate([
-            'frequency_type' => 'required|in:minutes,hours,days,weeks,months,years',
+            'frequency_type' => 'required|in:days,weeks,months,years',
         ]);
 
         $step3Data = $request->session()->get('pick_date_step3');
@@ -349,6 +401,13 @@ class PiggyBankCreateController extends Controller
 
     public function showSummary(Request $request)
     {
+        // Add detailed logging at the start
+//        Log::info('ShowSummary Method - Session Debug', [
+//            'full_session_data' => $request->session()->all(),
+//            'pick_date_step3' => $request->session()->get('pick_date_step3')
+//        ]);
+
+
         // Get all relevant session data - keeping this part unchanged
         $summary = [
             'pick_date_step1' => $request->session()->get('pick_date_step1'),
@@ -356,16 +415,24 @@ class PiggyBankCreateController extends Controller
             'pick_date_step3' => $request->session()->get('pick_date_step3')
         ];
 
-        $request->session()->put('debug_summary', $summary);
 
-        // Add this after the debug_summary line for testing
-        $imageDebug = [
-            'raw_preview_data' => $summary['pick_date_step1']['preview'] ?? 'no preview data exists',
-            'session_dump' => [
-                'pick_date_step1' => $request->session()->get('pick_date_step1'),
-            ]
-        ];
-        $request->session()->put('image_debug', $imageDebug);
+//        // Log the summary details with more context
+//        Log::info('ShowSummary Method - Date Details', [
+//            'step3_date_raw' => $summary['pick_date_step3']['date'] ?? 'Not Set',
+//            'step3_date_type' => gettype($summary['pick_date_step3']['date'] ?? null),
+//            'step3_date_class' => get_class($summary['pick_date_step3']['date'] ?? null)
+//        ]);
+
+//        $request->session()->put('debug_summary', $summary);
+//
+//        // Add this after the debug_summary line for testing
+//        $imageDebug = [
+//            'raw_preview_data' => $summary['pick_date_step1']['preview'] ?? 'no preview data exists',
+//            'session_dump' => [
+//                'pick_date_step1' => $request->session()->get('pick_date_step1'),
+//            ]
+//        ];
+//        $request->session()->put('image_debug', $imageDebug);
 
 //        dd(session()->get('image_debug'));
 
@@ -379,7 +446,8 @@ class PiggyBankCreateController extends Controller
         $calculations = $summary['pick_date_step3']['calculations'][$selectedFrequency];
 
         // Generate payment schedule
-        $scheduleService = new PaymentScheduleService();
+        $scheduleService = new SavingScheduleService();
+
         $paymentSchedule = $scheduleService->generateSchedule(
             $summary['pick_date_step3']['date'],
             $calculations['frequency'],
@@ -387,18 +455,30 @@ class PiggyBankCreateController extends Controller
             $calculations['amount']
         );
 
-        // Create Carbon instances with the current locale
-        $targetDate = Carbon::parse($summary['pick_date_step3']['date'])->locale(App::getLocale());
-        $finalPaymentDate = Carbon::parse(end($paymentSchedule)['date'])->locale(App::getLocale());
-        $today = Carbon::today()->locale(App::getLocale());
+        $request->session()->put('payment_schedule', $paymentSchedule);
 
-        // Initialize variables for date storage and user messaging
-        $savingCompletionDate = $finalPaymentDate;
+        $targetDate = ($summary['pick_date_step3']['date'] instanceof Carbon)
+            ? $summary['pick_date_step3']['date']->toDateString()
+            : $summary['pick_date_step3']['date'];
+        $targetDate = Carbon::createFromFormat('Y-m-d', $targetDate);
+
+
+        $finalPaymentDate = Carbon::createFromFormat('Y-m-d', $paymentSchedule[count($paymentSchedule) - 1]['date']);
+        $firstPaymentDate = Carbon::createFromFormat('Y-m-d', $paymentSchedule[0]['date']);
+
+
+        // Store dates in session
+        $request->session()->put('final_payment_date', $finalPaymentDate->toDateString());
+        $request->session()->put('first_payment_date', $firstPaymentDate->toDateString());
+
+
+
+        // Initialize variables for user messaging
         $dateMessage = null;
 
-        // Validate dates and set messages using locale-aware date formatting
+        // For comparisons, use UTC dates directly
         if ($targetDate->isPast() || $finalPaymentDate->isPast()) {
-            $savingCompletionDate = Carbon::tomorrow()->locale(App::getLocale());
+            $savingCompletionDate = Carbon::tomorrow()->utc();
             $dateMessage = __('Due to a calculation error, we\'ve adjusted your saving plan to start from tomorrow.');
         } else {
             if ($finalPaymentDate->equalTo($targetDate)) {
@@ -406,14 +486,26 @@ class PiggyBankCreateController extends Controller
             }
             elseif ($finalPaymentDate->lt($targetDate)) {
                 $savingCompletionDate = $finalPaymentDate;
+                // Convert to local timezone for display
+                $localizedDate = $finalPaymentDate
+                    ->copy()
+                    ->setTimezone(config('app.timezone'))
+                    ->locale(App::getLocale());
+
                 $dateMessage = __('Good news! You will reach your saving goal earlier than planned, on :date', [
-                    'date' => $finalPaymentDate->isoFormat('LL')  // Using isoFormat for locale-aware date formatting
+                    'date' => $localizedDate->isoFormat('LL')
                 ]);
             }
             else {
                 $savingCompletionDate = $finalPaymentDate;
+                // Convert to local timezone for display
+                $localizedDate = $finalPaymentDate
+                    ->copy()
+                    ->setTimezone(config('app.timezone'))
+                    ->locale(App::getLocale());
+
                 $dateMessage = __('Note: Your saving plan will complete on :date', [
-                    'date' => $finalPaymentDate->isoFormat('LL')  // Using isoFormat for locale-aware date formatting
+                    'date' => $localizedDate->isoFormat('LL')
                 ]);
             }
         }
@@ -429,68 +521,69 @@ class PiggyBankCreateController extends Controller
 
 
     /**
-     * Finalize piggy bank creation and save to the database.
+     * Store piggy bank data from session to database.
+     * @throws Exception
      */
-    public function save(Request $request)
+    public function storePiggyBank(Request $request)
     {
-        // Determine the chosen strategy
-        $strategy = $request->session()->get('chosen_strategy');
+        DB::beginTransaction();
 
-        if (!$strategy) {
-            return redirect()->route('create-piggy-bank.step-1')->with('error', 'No strategy selected.');
-        }
-
-        // Fetch shared Step 1 data
-        $step1Data = $request->session()->get('pick_date_step1');
-        if (!$step1Data) {
-            return redirect()->route('create-piggy-bank.step-1')->with('error', 'Incomplete data. Please start the process again.');
-        }
-
-        // Strategy-specific Step 3 data
-        $step3Data = null;
-
-        if ($strategy === 'pick-date') {
+        try {
+            $step1Data = $request->session()->get('pick_date_step1');
             $step3Data = $request->session()->get('pick_date_step3');
-            if (!$step3Data) {
-                return redirect()->route('create-piggy-bank.pick-date.step-3')->with('error', 'Step 3 data missing. Please complete the process.');
+            $selectedFrequency = $step3Data['selected_frequency'];
+            $calculations = $step3Data['calculations'][$selectedFrequency];
+            $paymentSchedule = $request->session()->get('payment_schedule');
+
+            $piggyBank = new PiggyBank();
+            $piggyBank->user_id = auth()->id();
+            $piggyBank->name = $step1Data['name'];
+
+            // New way to handle Money objects - get actual decimal values
+            $piggyBank->price = $step1Data['price']->getAmount()->toFloat();
+            $piggyBank->starting_amount = $step1Data['starting_amount']?->getAmount()->toFloat();
+            $piggyBank->current_balance = $step1Data['starting_amount']?->getAmount()->toFloat();
+            $piggyBank->target_amount = $calculations['target_amount']['amount']->getAmount()->toFloat();
+            $piggyBank->extra_savings = $calculations['extra_savings']['amount']->getAmount()->toFloat();
+            $piggyBank->total_savings = $calculations['total_savings']['amount']->getAmount()->toFloat();
+
+            // Basic fields remain the same
+            $piggyBank->link = $step1Data['link'];
+            $piggyBank->details = $step1Data['details'];
+            $piggyBank->chosen_strategy = $request->session()->get('chosen_strategy');
+            $piggyBank->selected_frequency = $selectedFrequency;
+            $piggyBank->currency = $step1Data['currency'];
+
+            // Preview data remains the same
+            $preview = $step1Data['preview'] ?? [];
+            $piggyBank->preview_title = $preview['title'] ?? null;
+            $piggyBank->preview_description = $preview['description'] ?? null;
+            $piggyBank->preview_image = $preview['image'] ?? 'images/piggy_banks/default_piggy_bank.png';
+            $piggyBank->preview_url = $preview['url'] ?? null;
+
+            $piggyBank->save();
+
+            // Update scheduled savings to use the same approach
+            foreach ($paymentSchedule as $payment) {
+                $scheduledSaving = new ScheduledSaving();
+                $scheduledSaving->piggy_bank_id = $piggyBank->id;
+                $scheduledSaving->saving_number = $payment['payment_number'];
+                $scheduledSaving->amount = $payment['amount']->getAmount()->toFloat();
+                $scheduledSaving->saving_date = $payment['date'];
+                $scheduledSaving->save();
             }
 
-            // Validate required Pick Date Step 3 fields
-            if (empty($step3Data['date'])) {
-                return redirect()->route('create-piggy-bank.pick-date.step-3')->with('error', 'Invalid Step 3 data.');
-            }
-        } elseif ($strategy === 'enter-saving-amount') {
-            $step3Data = $request->session()->get('enter_saving_step3');
-            if (!$step3Data) {
-                return redirect()->route('create-piggy-bank.enter-saving-amount.step-3')->with('error', 'Step 3 data missing. Please complete the process.');
-            }
+            DB::commit();
+            return $piggyBank;
 
-            // Validate required Enter Saving Amount Step 3 fields
-            if (empty($step3Data['saving_amount'])) {
-                return redirect()->route('create-piggy-bank.enter-saving-amount.step-3')->with('error', 'Invalid Step 3 data.');
-            }
-        } else {
-            return redirect()->route('create-piggy-bank.step-1')->with('error', 'Invalid strategy selected.');
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error saving piggy bank:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
-
-        // Combine shared and strategy-specific data for saving
-        $piggyBankData = array_merge($step1Data, [
-            'user_id' => auth()->id(),
-            'date' => $step3Data['date'] ?? null,
-            'purchase_date' => $step3Data['date'] ?? null,
-            'balance' => $step1Data['starting_amount'] ?? 0,
-        ]);
-
-        PiggyBank::create($piggyBankData);
-
-        // Clear session data for the chosen strategy
-        if ($strategy === 'pick-date') {
-            $request->session()->forget(['pick_date_step1', 'pick_date_step3']);
-        } elseif ($strategy === 'enter-saving-amount') {
-            $request->session()->forget(['pick_date_step1', 'enter_saving_step3']);
-        }
-
-        return redirect()->route('piggy-banks.index')->with('success', 'Your piggy bank has been created successfully!');
     }
 
 
@@ -515,7 +608,7 @@ class PiggyBankCreateController extends Controller
                 ->route('piggy-banks.index')
                 ->with('warning', __('You cancelled creating your piggy bank.'));
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error during piggy bank creation cancellation:', [
                 'error' => $e->getMessage()
             ]);
@@ -525,6 +618,5 @@ class PiggyBankCreateController extends Controller
                 ->with('error', __('There was an error cancelling the process. Please try again.'));
         }
     }
-
 
 }

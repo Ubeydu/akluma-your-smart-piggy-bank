@@ -11,6 +11,7 @@
         "ext-intl": "*",
         "ext-libxml": "*",
         "brick/money": "^0.10.0",
+        "doctrine/dbal": "^4.2",
         "guzzlehttp/guzzle": "^7.0",
         "laravel-lang/lang": "^15.9",
         "laravel/framework": "^11.31",
@@ -33,7 +34,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/CurrencyHelper.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

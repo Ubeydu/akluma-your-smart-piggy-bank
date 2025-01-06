@@ -16,7 +16,7 @@ const dateInput = document.getElementById("saving_date");
 // const dateDisplay = document.getElementById("dateDisplay");
 
 // Log when page starts loading
-console.log('Page starting to load');
+// console.log('Page starting to load');
 
 /**
  * Main initialization function that sets up all event listeners and handlers
@@ -24,8 +24,8 @@ console.log('Page starting to load');
  */
 document.addEventListener("DOMContentLoaded", function () {
     // Log initial state
-    console.log('DOMContentLoaded fired');
-    console.log('Initial date input value:', dateInput?.value);
+    // console.log('DOMContentLoaded fired');
+    // console.log('Initial date input value:', dateInput?.value);
 
     /**
      * Handles changes to the date input field, formatting and displaying the selected date
@@ -55,16 +55,16 @@ document.addEventListener("DOMContentLoaded", function () {
      */
 
     dateInput.addEventListener("change", async function() {
-        console.log('Change event handler triggered');
-        console.log('Current date value:', this.value);
+        // console.log('Change event handler triggered');
+        // console.log('Current date value:', this.value);
 
         if (!this.value) {
-            console.log('No date value, returning early');
+            // console.log('No date value, returning early');
             return;
         }
 
         try {
-            console.log('About to fetch frequencies for date:', this.value);
+            // console.log('About to fetch frequencies for date:', this.value);
             const response = await fetch(window.Laravel.routes.calculateFrequencies, {
                 method: 'POST',
                 headers: {
@@ -74,8 +74,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 body: JSON.stringify({purchase_date: this.value})
             });
 
+            // console.log('Response raw:', response);
+            // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+            // console.log('Response status:', response.status);
+            // console.log('Response statusText:', response.statusText);
 
-            console.log('Fetch response status:', response.status);
 
             if (!response.ok) {
                 console.error('Server responded with error:', response.status);
@@ -83,11 +86,19 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const data = await response.json();
-            console.log('Received frequency data:', data);
-            console.log('Response received - checking session data:', {
-                timestamp: new Date().toISOString(),
-                responseData: data
-            });
+
+            // console.log('Parsed response data:', data);
+            // console.log('Data structure:', JSON.stringify(data, null, 2));
+
+            // console.log('Received frequency data:', data);
+            // console.log('Data type:', typeof data);
+            // console.log('Data keys:', Object.keys(data));
+
+
+            // console.log('Response received - checking session data:', {
+            //     timestamp: new Date().toISOString(),
+            //     responseData: data
+            // });
 
             const flashResponse = await fetch('/create-piggy-bank/check-flash-messages');
             const flashHtml = await flashResponse.text();
@@ -104,6 +115,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const container = document.querySelector('#frequencyOptions .space-y-6');
+
+            // console.log('Frequency options container:', container);
+
             container.innerHTML = '';
 
             /**
@@ -121,12 +135,11 @@ document.addEventListener("DOMContentLoaded", function () {
             /**
              * Maps period types to their translation keys
              * Always uses plural form for simplicity across languages
-             * @param {string} type - Base period type (hour, day, etc.)
+             * @param {string} type - Base period type (day, week etc.)
              * @returns {string} Translation key for the period
              */
             const periodToTranslationKey = (type) => {
                 const translationMap = {
-                    'hour': 'hours',
                     'day': 'days',
                     'week': 'weeks',
                     'month': 'months',
@@ -149,11 +162,15 @@ document.addEventListener("DOMContentLoaded", function () {
              * Predefined period types for grouping saving options
              * @type {string[]}
              */
-            const shortTermPeriods = ['hours', 'days'];
-            const longTermPeriods = ['weeks', 'months', 'years'];
+            const shortTermPeriods = ['days', 'weeks'];
+            const longTermPeriods = ['months', 'years'];
 
             const hasShortTermOptions = shortTermPeriods.some(period => data[period]?.amount);
             const hasLongTermOptions = longTermPeriods.some(period => data[period]?.amount);
+
+            // console.log('hasShortTermOptions:', hasShortTermOptions);
+            // console.log('hasLongTermOptions:', hasLongTermOptions);
+
 
             document.getElementById('frequencyOptions').classList.remove('hidden');
 
@@ -195,6 +212,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Process each saving option
             Object.entries(data).forEach(([type, option]) => {
+                // console.log(`Processing option for period type: ${type}`);
+                // console.log('Processing option for currency:', type);
+                // console.log('Option data:', option);
+
+
                 // Simpler check that only looks at frequency
                 const isSinglePayment = option.frequency === 1 && option.amount; // ensure we have amount data
 
@@ -296,13 +318,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Then, after the listener is set up, check for and trigger existing date
     if (dateInput instanceof HTMLInputElement && dateInput.value) {
-        console.log('Found existing date:', dateInput.value);
-        console.log('About to dispatch change event');
+        // console.log('Found existing date:', dateInput.value);
+        // console.log('About to dispatch change event');
         dateInput.dispatchEvent(new Event('change'));
-        console.log('Change event dispatched');
+        // console.log('Change event dispatched');
     } else {
-        console.log('No existing date found or dateInput invalid');
-        console.log('dateInput type:', dateInput?.constructor.name);
+        // console.log('No existing date found or dateInput invalid');
+        // console.log('dateInput type:', dateInput?.constructor.name);
     }
 
     /**
@@ -337,10 +359,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 window.addEventListener('pageshow', function(event) {
     // This will run even if the page is loaded from bfcache
-    console.log('Page shown:', event.persisted ? 'from bfcache' : 'fresh load');
+    // console.log('Page shown:', event.persisted ? 'from bfcache' : 'fresh load');
 
     if (dateInput instanceof HTMLInputElement && dateInput.value) {
-        console.log('Found date input with value:', dateInput.value);
+        // console.log('Found date input with value:', dateInput.value);
         dateInput.dispatchEvent(new Event('change'));
     }
 });

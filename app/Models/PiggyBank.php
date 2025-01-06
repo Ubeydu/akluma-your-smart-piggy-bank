@@ -6,8 +6,31 @@ use App\Casts\MoneyCast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Brick\Money\Money;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property string $created_at
+ * @property string $updated_at
+ * @property int $user_id
+ * @property string $name
+ * @property float $price
+ * @property float|null $starting_amount
+ * @property float|null $current_balance
+ * @property float $target_amount
+ * @property float|null $extra_savings
+ * @property float $total_savings
+ * @property string|null $link
+ * @property string|null $details
+ * @property string $chosen_strategy
+ * @property string $selected_frequency
+ * @property string $preview_image
+ * @property string $currency
+ * @property string $status
+ * @property string|null $preview_title
+ * @property string|null $preview_description
+ * @property string|null $preview_url
+ */
 class PiggyBank extends Model
 {
     use HasFactory;
@@ -16,78 +39,36 @@ class PiggyBank extends Model
         'user_id',
         'name',
         'price',
+        'starting_amount',
+        'current_balance',
+        'target_amount',
+        'extra_savings',
+        'total_savings',
         'link',
         'details',
-        'starting_amount',
-        'image',
+        'chosen_strategy',
+        'selected_frequency',
+        'preview_image',
         'currency',
+        'status',
+        'preview_title',
+        'preview_description',
+        'preview_url'
     ];
 
     protected $attributes = [
-        'image' => 'images/piggy_banks/default_piggy_bank.png',
+        'preview_image' => 'images/piggy_banks/default_piggy_bank.png',
         'currency' => 'TRY',
         'status' => 'active',
-        'balance' => 0,
-        'starting_amount' => 0,
     ];
 
-    protected $casts = [
-        'price' => MoneyCast::class,
-        'starting_amount' => MoneyCast::class,
-        'balance' => MoneyCast::class,
-    ];
-
-    // Relationship with User model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relationship with periodic savings
-    public function periodicSavings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function scheduledSavings(): HasMany
     {
-        return $this->hasMany(PeriodicSaving::class);
+        return $this->hasMany(ScheduledSaving::class);
     }
-
-    // Relationship with transactions
-//    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
-//    {
-//        return $this->hasMany(Transaction::class);
-//    }
-
-    // Accessor for remaining amount (in minor units)
-    public function getRemainingAmountAttribute(): Money
-    {
-        return $this->price->minus($this->balance);
-    }
-
-    // Accessor for formatted remaining amount (as float)
-    public function getFormattedRemainingAmountAttribute(): float
-    {
-        return $this->remaining_amount->getAmount()->toFloat();
-    }
-
-    // Accessor for total saved amount (in minor units)
-//    public function getTotalSavedAttribute(): int
-//    {
-//        return $this->transactions()->where('type', 'in')->sum('amount');
-//    }
-
-    // Accessor for formatted total saved (as float)
-//    public function getFormattedTotalSavedAttribute(): float
-//    {
-//        return $this->total_saved / 100;
-//    }
-
-    // Accessor for total withdrawn amount (in minor units)
-//    public function getTotalWithdrawnAttribute(): int
-//    {
-//        return $this->transactions()->where('type', 'out')->sum('amount');
-//    }
-
-    // Accessor for formatted total withdrawn (as float)
-//    public function getFormattedTotalWithdrawnAttribute(): float
-//    {
-//        return $this->total_withdrawn / 100;
-//    }
 }

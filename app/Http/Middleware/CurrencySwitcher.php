@@ -16,10 +16,10 @@ class CurrencySwitcher
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $availableCurrencies = config('app.currencies', []);
+        $availableCurrencies = array_keys(config('app.currencies', []));
         $currency = Session::get('currency', config('app.default_currency'));
 
-        if (array_key_exists($currency, $availableCurrencies)) {
+        if (in_array($currency, $availableCurrencies)) {
             session(['currency' => $currency]);
         } else {
             session(['currency' => config('app.default_currency')]);

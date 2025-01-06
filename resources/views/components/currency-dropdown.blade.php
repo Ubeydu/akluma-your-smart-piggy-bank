@@ -17,7 +17,7 @@
         @foreach (config('app.currencies') as $code => $currency)
             <x-dropdown-link :href="route('currency.switch', ['currency' => $code])"
                              :class="session('currency') == $code ? 'font-bold text-gray-900' : ''">
-                {{ __($currency) }}
+                {{ __($currency['name']) }}
             </x-dropdown-link>
         @endforeach
     </x-slot>
