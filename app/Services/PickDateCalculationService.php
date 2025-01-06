@@ -268,30 +268,83 @@ class PickDateCalculationService
             'decimal_places' => $decimalPlaces
         ]);
 
+        // If it's a currency with decimals (like TRY), amount is in base units (e.g., 10000 = 100.00 TRY)
+        // If it's a currency without decimals (like XOF), amount is the actual value (e.g., 128 = 128 XOF)
+
+        // Convert amount to actual currency value for comparison
+        $actualAmount = $decimalPlaces > 0 ? $amount / (10 ** $decimalPlaces) : $amount;
+
+
         switch ($period) {
 
+//            case 'day':
+//                if ($amount < 10000) return (int)ceil($amount / 1000) * 1000;  // 10 TRY increments
+//                if ($amount < 100000) return (int)ceil($amount / 5000) * 5000;  // 50 TRY increments
+//                if ($amount < 1000000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
+//                return (int)ceil($amount / 50000) * 50000;  // 500 TRY increments
+
+
             case 'day':
-                if ($amount < 10000) return (int)ceil($amount / 1000) * 1000;  // 10 TRY increments
-                if ($amount < 100000) return (int)ceil($amount / 5000) * 5000;  // 50 TRY increments
-                if ($amount < 1000000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
-                return (int)ceil($amount / 50000) * 50000;  // 500 TRY increments
+                // Determine rounding increment based on actual amount
+                if ($actualAmount < 100) {
+                    $roundingIncrement = 10;
+                } elseif ($actualAmount < 1000) {
+                    $roundingIncrement = 50;
+                } elseif ($actualAmount < 10000) {
+                    $roundingIncrement = 100;
+                } else {
+                    $roundingIncrement = 500;
+                }
+
+                // Round the actual amount
+                $roundedActual = (int)ceil($actualAmount / $roundingIncrement) * $roundingIncrement;
+
+                // Convert back to base units if necessary
+                return $decimalPlaces > 0 ? $roundedActual * (10 ** $decimalPlaces) : $roundedActual;
+
+
+
+
+//            case 'week':
+//                // Up to 5000 TRY (500,000 kuruş)
+//                if ($amount < 500000) return (int)ceil($amount / 2500) * 2500;      // 25 TRY increments
+//
+//                // From 5000 TRY to 10000 TRY (500,000 to 1,000,000 kuruş)
+//                if ($amount < 1000000) return (int)ceil($amount / 5000) * 5000;     // 50 TRY increments
+//
+//                // From 10000 TRY to 50000 TRY (1,000,000 to 5,000,000 kuruş)
+//                if ($amount < 5000000) return (int)ceil($amount / 10000) * 10000;   // 100 TRY increments
+//
+//                // From 50000 TRY to 100000 TRY (5,000,000 to 10,000,000 kuruş)
+//                if ($amount < 10000000) return (int)ceil($amount / 25000) * 25000;  // 250 TRY increments
+//
+//                // Above 100000 TRY (10,000,000 kuruş)
+//                return (int)ceil($amount / 50000) * 50000;                          // 500 TRY increments
 
 
             case 'week':
-                // Up to 5000 TRY (500,000 kuruş)
-                if ($amount < 500000) return (int)ceil($amount / 2500) * 2500;      // 25 TRY increments
+                // Convert amount to actual currency value for comparison
+                $actualAmount = $decimalPlaces > 0 ? $amount / (10 ** $decimalPlaces) : $amount;
 
-                // From 5000 TRY to 10000 TRY (500,000 to 1,000,000 kuruş)
-                if ($amount < 1000000) return (int)ceil($amount / 5000) * 5000;     // 50 TRY increments
+                // Determine rounding increment based on actual amount
+                if ($actualAmount < 5000) {
+                    $roundingIncrement = 25;
+                } elseif ($actualAmount < 10000) {
+                    $roundingIncrement = 50;
+                } elseif ($actualAmount < 50000) {
+                    $roundingIncrement = 100;
+                } elseif ($actualAmount < 100000) {
+                    $roundingIncrement = 250;
+                } else {
+                    $roundingIncrement = 500;
+                }
 
-                // From 10000 TRY to 50000 TRY (1,000,000 to 5,000,000 kuruş)
-                if ($amount < 5000000) return (int)ceil($amount / 10000) * 10000;   // 100 TRY increments
+                // Round the actual amount
+                $roundedActual = (int)ceil($actualAmount / $roundingIncrement) * $roundingIncrement;
 
-                // From 50000 TRY to 100000 TRY (5,000,000 to 10,000,000 kuruş)
-                if ($amount < 10000000) return (int)ceil($amount / 25000) * 25000;  // 250 TRY increments
+                // Convert back to base units if necessary
+                return $decimalPlaces > 0 ? $roundedActual * (10 ** $decimalPlaces) : $roundedActual;
 
-                // Above 100000 TRY (10,000,000 kuruş)
-                return (int)ceil($amount / 50000) * 50000;                          // 500 TRY increments
 
             default:
                 throw new InvalidArgumentException('Invalid period for short-term rounding');
@@ -313,23 +366,72 @@ class PickDateCalculationService
         ]);
 
 
-        switch ($period) {
+//        switch ($period) {
+//
+//            case 'month':
+//                if ($amount < 100000) return (int)ceil($amount / 2500) * 2500;    // 25 TRY increments
+//                if ($amount < 1000000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
+//                if ($amount < 10000000) return (int)ceil($amount / 50000) * 50000; // 500 TRY increments
+//                return (int)ceil($amount / 100000) * 100000;                     // 1000 TRY increments
+//
+//            case 'year':
+//                if ($amount < 500000) return (int)ceil($amount / 25000) * 25000;      // 250 TRY increments
+//                if ($amount < 1500000) return (int)ceil($amount / 50000) * 50000;     // 500 TRY increments
+//                if ($amount < 10000000) return (int)ceil($amount / 100000) * 100000;   // 1000 TRY increments
+//                return (int)ceil($amount / 500000) * 500000;                        // 5000 TRY increments
+//
+//            default:
+//                throw new InvalidArgumentException('Invalid period for long-term rounding');
+//        }
 
+
+        switch ($period) {
             case 'month':
-                if ($amount < 100000) return (int)ceil($amount / 2500) * 2500;    // 25 TRY increments
-                if ($amount < 1000000) return (int)ceil($amount / 10000) * 10000;  // 100 TRY increments
-                if ($amount < 10000000) return (int)ceil($amount / 50000) * 50000; // 500 TRY increments
-                return (int)ceil($amount / 100000) * 100000;                     // 1000 TRY increments
+                // Convert amount to actual currency value for comparison
+                $actualAmount = $decimalPlaces > 0 ? $amount / (10 ** $decimalPlaces) : $amount;
+
+                // Determine rounding increment based on actual amount
+                if ($actualAmount < 1000) {
+                    $roundingIncrement = 25;
+                } elseif ($actualAmount < 10000) {
+                    $roundingIncrement = 100;
+                } elseif ($actualAmount < 100000) {
+                    $roundingIncrement = 500;
+                } else {
+                    $roundingIncrement = 1000;
+                }
+
+                // Round the actual amount
+                $roundedActual = (int)ceil($actualAmount / $roundingIncrement) * $roundingIncrement;
+
+                // Convert back to base units if necessary
+                return $decimalPlaces > 0 ? $roundedActual * (10 ** $decimalPlaces) : $roundedActual;
 
             case 'year':
-                if ($amount < 500000) return (int)ceil($amount / 25000) * 25000;      // 250 TRY increments
-                if ($amount < 1500000) return (int)ceil($amount / 50000) * 50000;     // 500 TRY increments
-                if ($amount < 10000000) return (int)ceil($amount / 100000) * 100000;   // 1000 TRY increments
-                return (int)ceil($amount / 500000) * 500000;                        // 5000 TRY increments
+                // Convert amount to actual currency value for comparison
+                $actualAmount = $decimalPlaces > 0 ? $amount / (10 ** $decimalPlaces) : $amount;
+
+                // Determine rounding increment based on actual amount
+                if ($actualAmount < 5000) {
+                    $roundingIncrement = 250;
+                } elseif ($actualAmount < 15000) {
+                    $roundingIncrement = 500;
+                } elseif ($actualAmount < 100000) {
+                    $roundingIncrement = 1000;
+                } else {
+                    $roundingIncrement = 5000;
+                }
+
+                // Round the actual amount
+                $roundedActual = (int)ceil($actualAmount / $roundingIncrement) * $roundingIncrement;
+
+                // Convert back to base units if necessary
+                return $decimalPlaces > 0 ? $roundedActual * (10 ** $decimalPlaces) : $roundedActual;
 
             default:
                 throw new InvalidArgumentException('Invalid period for long-term rounding');
         }
+
     }
 
     /**
