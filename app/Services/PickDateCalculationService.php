@@ -152,9 +152,9 @@ class PickDateCalculationService
 
                 // Apply rounding rules based on period type
                 if ($isShortTerm) {
-                    $roundedBase = $this->roundShortTermBase($baseAmount, $period);
+                    $roundedBase = $this->roundShortTermBase($baseAmount, $period, $decimalPlaces);
                 } else {
-                    $roundedBase = $this->roundLongTermBase($baseAmount, $period);
+                    $roundedBase = $this->roundLongTermBase($baseAmount, $period, $decimalPlaces);
                 }
 
                 // Add this right after we calculate roundedBase
@@ -258,13 +258,14 @@ class PickDateCalculationService
      * Round amount base units for short-term periods
      * Works with integer amounts (e.g., cents) to avoid floating-point issues
      */
-    private function roundShortTermBase(int $amount, string $period): int
+    private function roundShortTermBase(int $amount, string $period, int $decimalPlaces): int
     {
 
          // Add at the start of roundShortTermBase method
         Log::debug('Short term rounding input:', [
             'original_amount' => $amount,
             'period' => $period,
+            'decimal_places' => $decimalPlaces
         ]);
 
         switch ($period) {
@@ -301,13 +302,14 @@ class PickDateCalculationService
      * Round amount base units for long-term periods
      * Works with integer amounts (e.g., cents) to avoid floating-point issues
      */
-    private function roundLongTermBase(int $amount, string $period): int
+    private function roundLongTermBase(int $amount, string $period, int $decimalPlaces): int
     {
 
         // Add at the start of roundLongTermBase method
         Log::debug('Long term rounding input:', [
             'original_amount' => $amount,
             'period' => $period,
+            'decimal_places' => $decimalPlaces
         ]);
 
 
