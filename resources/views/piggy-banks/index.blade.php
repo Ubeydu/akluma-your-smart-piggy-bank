@@ -22,7 +22,10 @@
                         @else
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 @foreach($piggyBanks as $piggyBank)
-                                    <x-piggy-bank-card :piggyBank="$piggyBank" />
+                                    <x-piggy-bank-card
+                                        :piggyBank="$piggyBank"
+                                        :newPiggyBankId="$newPiggyBankId ?? null"
+                                    />
                                 @endforeach
                             </div>
                         @endif

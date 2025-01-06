@@ -24,11 +24,11 @@ class SavingScheduleService
         string $periodType,
         array $amountDetails
     ): array {
-        Log::debug('Starting generateSchedule with inputs', [
-            'target_date' => $targetDate,
-            'frequency' => $frequency,
-            'period_type' => $periodType
-        ]);
+//        Log::debug('Starting generateSchedule with inputs', [
+//            'target_date' => $targetDate,
+//            'frequency' => $frequency,
+//            'period_type' => $periodType
+//        ]);
 
         // Validate period type first
         $validPeriods = ['days', 'weeks', 'months', 'years'];
@@ -40,21 +40,21 @@ class SavingScheduleService
 
         $currentDate = Carbon::createFromFormat('Y-m-d', $startDate);
 
-        Log::debug('Schedule start date created', [
-            'start_date' => $startDate,
-            'current_date' => $currentDate->toDateString()
-        ]);
+//        Log::debug('Schedule start date created', [
+//            'start_date' => $startDate,
+//            'current_date' => $currentDate->toDateString()
+//        ]);
 
         $schedule = [];
         $dateFormat = $this->getDateFormatPattern($periodType);
 
         for ($i = 0; $i < $frequency; $i++) {
             if ($i === 0) {
-                Log::debug('First schedule entry created', [
-                    'payment_number' => 1,
-                    'date' => $currentDate->toDateString(),
-                    'formatted_date' => $currentDate->locale(App::getLocale())->isoFormat($dateFormat)
-                ]);
+//                Log::debug('First schedule entry created', [
+//                    'payment_number' => 1,
+//                    'date' => $currentDate->toDateString(),
+//                    'formatted_date' => $currentDate->locale(App::getLocale())->isoFormat($dateFormat)
+//                ]);
             }
 
 

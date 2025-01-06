@@ -13,6 +13,12 @@ class PiggyBankController extends Controller
             ->latest()
             ->get();
 
-        return view('piggy-banks.index', compact('piggyBanks'));
+        // Get the value before clearing
+        $newPiggyBankId = session('newPiggyBankId');
+
+        // Clear it after getting the value
+        session()->forget('newPiggyBankId');
+
+        return view('piggy-banks.index', compact('piggyBanks', 'newPiggyBankId'));
     }
 }
