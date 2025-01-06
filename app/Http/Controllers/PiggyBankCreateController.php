@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CurrencyHelper;
 use App\Models\PiggyBank;
 use App\Models\ScheduledSaving;
 use App\Services\LinkPreviewService;
 use App\Services\SavingScheduleService;
 use App\Services\PickDateCalculationService;
+use Brick\Math\Exception\MathException;
+use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
 use Carbon\Carbon;
 use Exception;
@@ -15,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class PiggyBankCreateController extends Controller
 {
@@ -41,6 +45,8 @@ class PiggyBankCreateController extends Controller
 
     /**
      * Step 2: Process Screen 1 data and show strategy selection screen (Screen 2).
+     * @throws MathException
+     * @throws UnknownCurrencyException
      */
     public function step2(Request $request)
     {
@@ -64,24 +70,37 @@ class PiggyBankCreateController extends Controller
         $validated = $request->validate([
             'name' => 'required|string',
             'price_whole' => 'required|integer|min:1|max:9999999999',
-            'price_cents' => 'required|integer|min:0|max:99',
+            'price_cents' => [
+                Rule::requiredIf(fn() => CurrencyHelper::hasDecimalPlaces($request->input('currency'))),
+                'integer',
+                'min:0',
+                'max:99'
+            ],
             'currency' => 'required|string|size:3',
             'link' => 'nullable|url|max:255',
             'details' => 'nullable|string|max:5000',
             'starting_amount_whole' => 'nullable|integer|min:0|max:9999999999',
-            'starting_amount_cents' => 'nullable|integer|min:0|max:99',
+            'starting_amount_cents' => [
+                Rule::requiredIf(fn() =>
+                    CurrencyHelper::hasDecimalPlaces($request->input('currency')) &&
+                    !empty($request->input('starting_amount_whole'))
+                ),
+                'nullable',
+                'integer',
+                'min:0',
+                'max:99'
+            ],
         ]);
 
-//        \Log::info('Validated Request Data', [
-//            'validated_data' => $validated,
-//        ]);
+        \Log::info('Validated Request Data', [
+            'validated_data' => $validated,
+        ]);
 
 //        \Log::info('Link Preview Input', [
 //            'link' => $validated['link'] ?? 'No link provided',
 //        ]);
 
 
-        $preview = null;
         // Inside step2 method, replace the preview array creation sections with:
         if (!empty($validated['link'])) {
             try {
@@ -123,25 +142,49 @@ class PiggyBankCreateController extends Controller
 //            ]);
         }
 
+//        Log::info('Money Input Values:', [
+//            'price_whole' => $validated['price_whole'],
+//            'currency' => $validated['currency'],
+//            'price_whole_type' => gettype($validated['price_whole'])
+//        ]);
 
-        // Create Money objects
-        $price = Money::of($validated['price_whole'] . '.' . str_pad($validated['price_cents'], 2, '0', STR_PAD_LEFT), $validated['currency']);
+        $price = Money::of($validated['price_whole'], $validated['currency']);
+
+//        Log::info('Money Result:', [
+//            'price' => $price->getAmount(),
+//            'currency' => $price->getCurrency()
+//        ]);
+
+
+//        \Log::info('Money Object Details', [
+//            'price_whole' => $validated['price_whole'],
+//            'price_cents' => $validated['price_cents'],
+//            'currency' => $validated['currency'],
+//            'money_object' => [
+//                'amount' => $price->getAmount()->__toString(),
+//                'minor_amount' => $price->getMinorAmount()->toInt(),
+//                'formatted' => $price->formatTo(App::getLocale())
+//            ]
+//        ]);
+
 
         $startingAmount = null;
 
         if (!empty($validated['starting_amount_whole']) || !empty($validated['starting_amount_cents'])) {
-            $moneyString = ($validated['starting_amount_whole'] ?? '0') . '.' . str_pad($validated['starting_amount_cents'] ?? '00', 2, '0', STR_PAD_LEFT);
-
-//            \Log::info('Attempting to create starting amount:', ['money_string' => $moneyString]);
+            $startingAmountString = ($validated['starting_amount_whole'] ?? '0') . '.' .
+                (CurrencyHelper::hasDecimalPlaces($validated['currency'])
+                    ? str_pad($validated['starting_amount_cents'] ?? '00', 2, '0', STR_PAD_LEFT)
+                    : '00');
 
             try {
-                $startingAmount = Money::of($moneyString, $validated['currency']);
-//                \Log::info('Starting amount created successfully');
+                $startingAmount = Money::of($startingAmountString, $validated['currency']);
             } catch (Exception $e) {
-//                \Log::error('Error creating starting amount:', ['error' => $e->getMessage()]);
                 return redirect()->back()->withErrors(['starting_amount_whole' => 'Invalid starting amount']);
             }
         }
+
+
+
 
 //        \Log::info('Values to be stored in database:', [
 //            'name' => $validated['name'],
@@ -171,7 +214,7 @@ class PiggyBankCreateController extends Controller
 
 
 
-//        \Log::info('Session data stored:', $request->session()->get('pick_date_step1', []));
+        \Log::info('Session data stored:', $request->session()->get('pick_date_step1', []));
 
 
         return view('create-piggy-bank.common.step-2');

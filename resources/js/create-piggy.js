@@ -112,6 +112,30 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
+    window.clearFormAndSwitchCurrency = async function(currency) {
+        try {
+            // First, make request to clear the form
+            const response = await fetch('/create-piggy-bank/clear', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            // Then switch currency
+            window.location.href = `/currency/switch/${currency}`;
+
+        } catch (error) {
+            console.error('Error:', error);
+            // Optionally handle the error, maybe show a message to user
+        }
+    };
+
+
     // Dynamic image preview loading
     const linkInput = document.getElementById('link');
     const currentImage = document.getElementById('preview-image-current');
@@ -121,17 +145,17 @@ document.addEventListener('DOMContentLoaded', function () {
     let debounceTimer;
 
 // Add debugging to help us understand what's happening
-    console.log('Elements found:', {
-        linkInput,
-        currentImage,
-        nextImage,
-        loadingElement,
-        errorElement
-    });
-
-    console.log('Link Input:', linkInput);
-    console.log('Loading Element:', loadingElement);
-    console.log('Error Element:', errorElement);
+//     console.log('Elements found:', {
+//         linkInput,
+//         currentImage,
+//         nextImage,
+//         loadingElement,
+//         errorElement
+//     });
+//
+//     console.log('Link Input:', linkInput);
+//     console.log('Loading Element:', loadingElement);
+//     console.log('Error Element:', errorElement);
 
     // Helper functions to manage UI states
     function showLoading() {

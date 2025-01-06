@@ -113,6 +113,8 @@
 
                                 </div>
 
+
+                                @if( App\Helpers\CurrencyHelper::hasDecimalPlaces(session('currency', config('app.default_currency'))))
                                 <div class="flex items-center mt-2">
                                     <span class="text-lg">.</span>
                                 </div>
@@ -133,15 +135,16 @@
                                         required
                                     />
                                 </div>
+                                @endif
 
                                 <!-- Currency -->
                                 <select
                                     id="currency"
                                     name="currency"
                                     class="block w-24 text-center border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                    onchange="window.location.href = '{{ url('currency/switch') }}/' + this.value;"
+                                    onchange="clearFormAndSwitchCurrency(this.value);"
                                 >
-                                    @foreach(config('app.currencies') as $code => $name)
+                                    @foreach(config('app.currencies') as $code => $currencyData)
                                         <option
                                             value="{{ $code }}"
                                             {{ session('currency') === $code ? 'selected' : '' }}
@@ -149,6 +152,7 @@
                                             {{ $code }}
                                         </option>
                                     @endforeach
+
                                 </select>
 
 
@@ -326,6 +330,8 @@
 
                                 </div>
 
+                                @if( App\Helpers\CurrencyHelper::hasDecimalPlaces(session('currency', config('app.default_currency'))))
+
                                 <div class="flex items-center mt-2">
                                     <span class="text-lg">.</span>
                                 </div>
@@ -343,6 +349,7 @@
                                         class="block w-full"
                                     />
                                 </div>
+                                @endif
 
                                 <!-- Currency -->
                                 <div class="w-24">

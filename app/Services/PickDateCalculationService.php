@@ -17,6 +17,16 @@ use InvalidArgumentException;
 
 class PickDateCalculationService
 {
+
+    private function logCalculationDetails($calculationResult): array {
+        return [
+            'amount' => $calculationResult['amount'] ?? null,
+            'frequency' => $calculationResult['frequency'] ?? null,
+            'message' => $calculationResult['message'] ?? null
+        ];
+    }
+
+
     // Constants to help us identify which group a time period belongs to
     private const SHORT_TERM_PERIODS = ['day', 'week'];
     private const LONG_TERM_PERIODS = ['month', 'year'];
@@ -37,6 +47,16 @@ class PickDateCalculationService
      */
     private function calculateFrequencyOption(int $timeDiff, string $period, Money $targetAmount): array
     {
+//        \Log::debug('Calculating Frequency Option', [
+//            'time_diff' => $timeDiff,
+//            'period' => $period,
+//            'target_amount' => [
+//                'amount' => $targetAmount->getAmount()->__toString(),
+//                'currency' => $targetAmount->getCurrency()->getCurrencyCode()
+//            ]
+//        ]);
+
+
         // If we have less than one period, we can't create a saving plan
         if ($timeDiff <= 0) {
             return [
@@ -89,23 +109,46 @@ class PickDateCalculationService
                     // We use exact scale to avoid rounding issues in intermediate calculations
                     $initialAmount = $targetAmount->dividedBy($timeDiff, RoundingMode::UP);
 
-//                    Log::info('Division successful:', [
-//                        'result' => [
-//                            'value' => $initialAmount->getAmount()->__toString(),
-//                            'currency' => $initialAmount->getCurrency()->getCurrencyCode()
-//                        ]
-//                    ]);
-                } catch (Exception $e) {
-                    Log::error('Division failed:', [
-                        'error' => $e->getMessage(),
-                        'error_type' => get_class($e)
+                    Log::info('Division successful:', [
+                        'result' => [
+                            'value' => $initialAmount->getAmount()->__toString(),
+                            'currency' => $initialAmount->getCurrency()->getCurrencyCode()
+                        ]
                     ]);
-                    throw $e;
+                } catch (Exception $e) {
+                    \Log::error('Division Failed in Frequency Calculation', [
+                        'target_amount' => $targetAmount->getAmount()->__toString(),
+                        'time_diff' => $timeDiff,
+                        'error_message' => $e->getMessage(),
+                        'error_class' => get_class($e)
+                    ]);
+                    return [
+                        'amount' => null,
+                        'frequency' => 0,
+                        'message' => 'Error calculating savings frequency.'
+                    ];
                 }
 
-                // When converting to base units, we need to multiply by 100 since TRY has 2 decimal places
-                // This ensures we're working with whole numbers (cents) instead of decimals
-                $baseAmount = (int)($initialAmount->getAmount()->toFloat() * 100);
+
+                \Log::info('Initial amount object:', ['initialAmount' => $initialAmount]);
+                \Log::info('Amount as float:', ['float_value' => $initialAmount->getAmount()->toFloat()]);
+
+
+//                // When converting to base units, we need to multiply by 100 since TRY has 2 decimal places
+//                // This ensures we're working with whole numbers (cents) instead of decimals
+//                $baseAmount = (int)($initialAmount->getAmount()->toFloat() * 100);
+
+
+                // Get currency's decimal places and calculate multiplier
+                $decimalPlaces = $initialAmount->getCurrency()->getDefaultFractionDigits();
+                $multiplier = 10 ** $decimalPlaces;
+
+                // Convert to base units using the correct multiplier
+                $baseAmount = (int)($initialAmount->getAmount()->toFloat() * $multiplier);
+
+
+                \Log::info('Final baseAmount:', ['baseAmount' => $baseAmount]);
+
 
                 // Apply rounding rules based on period type
                 if ($isShortTerm) {
@@ -145,7 +188,7 @@ class PickDateCalculationService
                 }
             }
 
-            // Add right before: $totalSavings = $roundedAmount->multipliedBy($neededPeriods);
+
 //            Log::info('About to calculate total savings:', [
 //                'rounded_amount_value' => $roundedAmount->getAmount()->__toString(),
 //                'rounded_amount_scale' => $roundedAmount->getAmount()->getScale(),
@@ -169,6 +212,16 @@ class PickDateCalculationService
 //                'total_collected' => $totalSavings->getAmount()->__toString(),
 //                'target_was' => $targetAmount->getAmount()->__toString()
 //            ]);
+
+
+//            \Log::debug('Frequency Option Calculation Result', [
+//                'period' => $period,
+//                'calculated_amount' => $roundedAmount ? $roundedAmount->getAmount()->__toString() : 'null',
+//                'needed_periods' => $neededPeriods ?? 'null',
+//                'is_amount_null' => $roundedAmount === null
+//            ]);
+
+
 
             return [
                 'amount' => [
@@ -207,6 +260,13 @@ class PickDateCalculationService
      */
     private function roundShortTermBase(int $amount, string $period): int
     {
+//        \Log::debug('Rounding Short Term Base', [
+//            'original_amount' => $amount,
+//            'period' => $period,
+//            'amount_in_currency' => $amount / 100
+//        ]);
+
+
         // Add at the start of roundShortTermBase method
 //        Log::debug('Short term rounding input:', [
 //            'original_amount' => $amount,
@@ -250,6 +310,13 @@ class PickDateCalculationService
      */
     private function roundLongTermBase(int $amount, string $period): int
     {
+//        \Log::debug('Rounding Long Term Base', [
+//            'original_amount' => $amount,
+//            'period' => $period,
+//            'amount_in_currency' => $amount / 100
+//        ]);
+
+
 //        Log::info('Starting roundLongTermBase with detailed logging:', [
 //            'input_amount' => $amount,
 //            'input_amount_as_try' => $amount / 100,
@@ -296,8 +363,28 @@ class PickDateCalculationService
     }
 
 
+
+
+
+
+
     public function calculateAllFrequencyOptions(Money $price, ?Money $startingAmount, string $purchaseDate): array
     {
+//        \Log::info('Calculation Started', [
+//            'price' => [
+//                'amount' => $price->getAmount()->__toString(),
+//                'currency' => $price->getCurrency()->getCurrencyCode()
+//            ],
+//            'starting_amount' => $startingAmount ? [
+//                'amount' => $startingAmount->getAmount()->__toString(),
+//                'currency' => $startingAmount->getCurrency()->getCurrencyCode()
+//            ] : null,
+//            'purchase_date' => $purchaseDate
+//        ]);
+
+
+
+
         try {
 
             $purchaseDateTime = Carbon::parse($purchaseDate);
@@ -323,29 +410,68 @@ class PickDateCalculationService
 
             $today = Carbon::now();
 
-            // Calculate all frequency options
-            return [
-                // Short-term options - start counting from current time since immediate action is possible
+
+//            \Log::debug('Before Frequency Calculations', [
+//                'target_amount' => [
+//                    'amount' => $targetAmount->getAmount()->__toString(),
+//                    'currency' => $targetAmount->getCurrency()->getCurrencyCode()
+//                ],
+//                'time_diff_days' => (int)ceil($today->diffInDays($purchaseDateTime)),
+//                'time_diff_weeks' => (int)ceil(Carbon::tomorrow()->startOfDay()->diffInDays($purchaseDateTime->endOfDay()) / 7),
+//                'time_diff_months' => (int)ceil($today->diffInMonths($purchaseDateTime)),
+//                'time_diff_years' => (int)ceil($today->diffInYears($purchaseDateTime))
+//            ]);
+
+
+//            // Calculate all frequency options
+//            return [
+//                // Short-term options - start counting from current time since immediate action is possible
+//                'days' => $this->calculateFrequencyOption(
+//                    (int)ceil($today->diffInDays($purchaseDateTime)),
+//                    'day',
+//                    $targetAmount
+//                ),
+//
+//                'weeks' => $this->calculateFrequencyOption(
+//                    // Weekly savings require special handling for better user experience:
+//                    // 1. Start from tomorrow morning (00:00:00) to give full weeks
+//                    // 2. Count until end of purchase date (23:59:59)
+//                    // This aligns with typical weekly budget/salary cycles and
+//                    // ensures users get complete weeks for their saving plan
+//                    (int)ceil(Carbon::tomorrow()->startOfDay()->diffInDays($purchaseDateTime->endOfDay()) / 7),
+//                    'week',
+//                    $targetAmount
+//                ),
+//                // Long-term options
+//
+//                // Monthly/Yearly calculations can handle partial periods since they're
+//                // longer timeframes and users can adjust their saving amounts accordingly
+//                'months' => $this->calculateFrequencyOption(
+//                    (int)ceil($today->diffInMonths($purchaseDateTime)),
+//                    'month',
+//                    $targetAmount
+//                ),
+//                'years' => $this->calculateFrequencyOption(
+//                    (int)ceil($today->diffInYears($purchaseDateTime)),
+//                    'year',
+//                    $targetAmount
+//                )
+//            ];
+
+
+
+
+            $calculations = [
                 'days' => $this->calculateFrequencyOption(
                     (int)ceil($today->diffInDays($purchaseDateTime)),
                     'day',
                     $targetAmount
                 ),
-
                 'weeks' => $this->calculateFrequencyOption(
-                    // Weekly savings require special handling for better user experience:
-                    // 1. Start from tomorrow morning (00:00:00) to give full weeks
-                    // 2. Count until end of purchase date (23:59:59)
-                    // This aligns with typical weekly budget/salary cycles and
-                    // ensures users get complete weeks for their saving plan
                     (int)ceil(Carbon::tomorrow()->startOfDay()->diffInDays($purchaseDateTime->endOfDay()) / 7),
                     'week',
                     $targetAmount
                 ),
-                // Long-term options
-
-                // Monthly/Yearly calculations can handle partial periods since they're
-                // longer timeframes and users can adjust their saving amounts accordingly
                 'months' => $this->calculateFrequencyOption(
                     (int)ceil($today->diffInMonths($purchaseDateTime)),
                     'month',
@@ -357,6 +483,16 @@ class PickDateCalculationService
                     $targetAmount
                 )
             ];
+
+//            \Log::debug('Frequency Calculations Final Result', [
+//                'days' => $this->logCalculationDetails($calculations['days']),
+//                'weeks' => $this->logCalculationDetails($calculations['weeks']),
+//                'months' => $this->logCalculationDetails($calculations['months']),
+//                'years' => $this->logCalculationDetails($calculations['years'])
+//            ]);
+
+            return $calculations;
+
 
         } catch (MathException|MoneyMismatchException $e) {
             Log::error('Error calculating target amount: ' . $e->getMessage());

@@ -192,10 +192,10 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        @foreach (config('app.currencies') as $currency => $currencyName)
+                        @foreach (config('app.currencies') as $currency => $currencyData)
                             <x-responsive-nav-link :href="route('currency.switch', ['currency' => $currency])"
                                                    :class="session('currency', config('app.default_currency')) == $currency ? 'font-bold text-gray-900' : ''">
-                                {{ __($currencyName) }}
+                                {{ __($currencyData['name']) }}
                             </x-responsive-nav-link>
                         @endforeach
                     </x-slot>

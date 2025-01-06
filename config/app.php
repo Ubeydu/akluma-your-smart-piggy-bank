@@ -85,11 +85,26 @@ return [
     'default_currency' => env('APP_DEFAULT_CURRENCY', 'TRY'),
 
     'currencies' => [
-      'TRY' => 'Turkish Lira',
-      'USD' => 'US Dollar',
-      'GBP' => 'British Pound',
-      'EUR' => 'Euro',
-      'XOF' => 'West African CFA franc',
+        'TRY' => [
+            'name' => 'Turkish Lira',
+            'decimal_places' => 2,
+        ],
+        'USD' => [
+            'name' => 'US Dollar',
+            'decimal_places' => 2,
+        ],
+        'GBP' => [
+            'name' => 'British Pound',
+            'decimal_places' => 2,
+        ],
+        'EUR' => [
+            'name' => 'Euro',
+            'decimal_places' => 2,
+        ],
+        'XOF' => [
+            'name' => 'West African CFA franc',
+            'decimal_places' => 0,
+        ],
     ],
 
 
