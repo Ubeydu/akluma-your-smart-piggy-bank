@@ -18,15 +18,6 @@ use InvalidArgumentException;
 class PickDateCalculationService
 {
 
-    private function logCalculationDetails($calculationResult): array {
-        return [
-            'amount' => $calculationResult['amount'] ?? null,
-            'frequency' => $calculationResult['frequency'] ?? null,
-            'message' => $calculationResult['message'] ?? null
-        ];
-    }
-
-
     // Constants to help us identify which group a time period belongs to
     private const SHORT_TERM_PERIODS = ['day', 'week'];
     private const LONG_TERM_PERIODS = ['month', 'year'];
@@ -109,12 +100,12 @@ class PickDateCalculationService
                     // We use exact scale to avoid rounding issues in intermediate calculations
                     $initialAmount = $targetAmount->dividedBy($timeDiff, RoundingMode::UP);
 
-                    Log::info('Division successful:', [
-                        'result' => [
-                            'value' => $initialAmount->getAmount()->__toString(),
-                            'currency' => $initialAmount->getCurrency()->getCurrencyCode()
-                        ]
-                    ]);
+//                    Log::info('Division successful:', [
+//                        'result' => [
+//                            'value' => $initialAmount->getAmount()->__toString(),
+//                            'currency' => $initialAmount->getCurrency()->getCurrencyCode()
+//                        ]
+//                    ]);
                 } catch (Exception $e) {
                     \Log::error('Division Failed in Frequency Calculation', [
                         'target_amount' => $targetAmount->getAmount()->__toString(),
@@ -130,8 +121,8 @@ class PickDateCalculationService
                 }
 
 
-                \Log::info('Initial amount object:', ['initialAmount' => $initialAmount]);
-                \Log::info('Amount as float:', ['float_value' => $initialAmount->getAmount()->toFloat()]);
+//                \Log::info('Initial amount object:', ['initialAmount' => $initialAmount]);
+//                \Log::info('Amount as float:', ['float_value' => $initialAmount->getAmount()->toFloat()]);
 
 
 //                // When converting to base units, we need to multiply by 100 since TRY has 2 decimal places
@@ -147,7 +138,7 @@ class PickDateCalculationService
                 $baseAmount = (int)($initialAmount->getAmount()->toFloat() * $multiplier);
 
 
-                \Log::info('Final baseAmount:', ['baseAmount' => $baseAmount]);
+//                \Log::info('Final baseAmount:', ['baseAmount' => $baseAmount]);
 
 
                 // Apply rounding rules based on period type
@@ -262,11 +253,11 @@ class PickDateCalculationService
     {
 
          // Add at the start of roundShortTermBase method
-        Log::debug('Short term rounding input:', [
-            'original_amount' => $amount,
-            'period' => $period,
-            'decimal_places' => $decimalPlaces
-        ]);
+//        Log::debug('Short term rounding input:', [
+//            'original_amount' => $amount,
+//            'period' => $period,
+//            'decimal_places' => $decimalPlaces
+//        ]);
 
         // If it's a currency with decimals (like TRY), amount is in base units (e.g., 10000 = 100.00 TRY)
         // If it's a currency without decimals (like XOF), amount is the actual value (e.g., 128 = 128 XOF)
@@ -359,11 +350,11 @@ class PickDateCalculationService
     {
 
         // Add at the start of roundLongTermBase method
-        Log::debug('Long term rounding input:', [
-            'original_amount' => $amount,
-            'period' => $period,
-            'decimal_places' => $decimalPlaces
-        ]);
+//        Log::debug('Long term rounding input:', [
+//            'original_amount' => $amount,
+//            'period' => $period,
+//            'decimal_places' => $decimalPlaces
+//        ]);
 
 
 //        switch ($period) {

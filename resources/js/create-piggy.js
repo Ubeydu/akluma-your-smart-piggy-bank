@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Helper functions to manage UI states
     function showLoading() {
-        console.log('Showing loading state');
+        // console.log('Showing loading state');
         if (loadingElement) loadingElement.classList.remove('opacity-0', 'invisible');
         if (currentImage) currentImage.classList.add('opacity-50');
         if (nextImage) nextImage.classList.add('opacity-0');
@@ -167,20 +167,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function hideLoading() {
-        console.log('Hiding loading state');
+        // console.log('Hiding loading state');
         if (loadingElement) loadingElement.classList.add('opacity-0', 'invisible');
         if (currentImage) currentImage.classList.remove('opacity-50');
     }
 
     function showError() {
-        console.log('Showing error state');
+        // console.log('Showing error state');
         if (errorElement) errorElement.classList.remove('opacity-0', 'invisible');
         if (currentImage) currentImage.classList.add('opacity-50');
         if (nextImage) nextImage.classList.add('opacity-0');
     }
 
     function hideError() {
-        console.log('Hiding error state');
+        // console.log('Hiding error state');
         if (errorElement) errorElement.classList.add('opacity-0', 'invisible');
         if (currentImage) currentImage.classList.remove('opacity-50');
     }
@@ -224,14 +224,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (linkInput) {
         linkInput.addEventListener('input', function() {
-            console.log('Input event triggered');
+            // console.log('Input event triggered');
             clearTimeout(debounceTimer);
 
             const url = this.value.trim();
-            console.log('URL:', url);
+            // console.log('URL:', url);
 
             if (!url) {
-                console.log('Empty URL, resetting to default');
+                // console.log('Empty URL, resetting to default');
                 hideLoading();
                 hideError();
                 currentImage.src = '/images/default_piggy_bank.png';
@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
             showLoading();
 
             debounceTimer = setTimeout(() => {
-                console.log('Making fetch request');
+                // console.log('Making fetch request');
                 fetch('/create-piggy-bank/api/link-preview', {
                     method: 'POST',
                     headers: {
@@ -252,14 +252,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     body: JSON.stringify({ url: url })
                 })
                     .then(response => {
-                        console.log('Response received:', response);
+                        // console.log('Response received:', response);
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
                         }
                         return response.json();
                     })
                     .then(data => {
-                        console.log('Preview data:', data);
+                        // console.log('Preview data:', data);
                         if (data.preview && data.preview.image) {
                             // Use the new function instead of directly setting src
                             updatePreviewImage(data.preview.image);

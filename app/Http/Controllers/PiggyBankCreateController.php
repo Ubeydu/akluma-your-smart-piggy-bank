@@ -214,7 +214,7 @@ class PiggyBankCreateController extends Controller
 
 
 
-        \Log::info('Session data stored:', $request->session()->get('pick_date_step1', []));
+//        \Log::info('Session data stored:', $request->session()->get('pick_date_step1', []));
 
 
         return view('create-piggy-bank.common.step-2');
@@ -335,15 +335,15 @@ class PiggyBankCreateController extends Controller
     public function calculateFrequencyOptions(Request $request)
     {
 
-        Log::debug('Starting calculateFrequencyOptions with input', [
-            'purchase_date' => $request->purchase_date,
-        ]);
+//        Log::debug('Starting calculateFrequencyOptions with input', [
+//            'purchase_date' => $request->purchase_date,
+//        ]);
 
         $request->validate([
             'purchase_date' => 'required|date|after:today',
         ]);
 
-        Log::debug('Validation passed for purchase_date');
+//        Log::debug('Validation passed for purchase_date');
 
         $step1Data = $request->session()->get('pick_date_step1');
         if (!$step1Data) {
@@ -352,10 +352,10 @@ class PiggyBankCreateController extends Controller
 
         $purchaseDate = Carbon::createFromFormat('Y-m-d', $request->purchase_date);
 
-        Log::debug('Created Carbon date object', [
-            'input_date' => $request->purchase_date,
-            'parsed_date' => $purchaseDate->toDateString()
-        ]);
+//        Log::debug('Created Carbon date object', [
+//            'input_date' => $request->purchase_date,
+//            'parsed_date' => $purchaseDate->toDateString()
+//        ]);
 
 
         $calculations = $this->pickDateCalculationService->calculateAllFrequencyOptions(
@@ -462,8 +462,6 @@ class PiggyBankCreateController extends Controller
             : $summary['pick_date_step3']['date'];
         $targetDate = Carbon::createFromFormat('Y-m-d', $targetDate);
 
-//        $finalPaymentDate = $paymentSchedule[count($paymentSchedule) - 1]['date']->startOfDay();
-//        $firstPaymentDate = $paymentSchedule[0]['date']->startOfDay();
 
         $finalPaymentDate = Carbon::createFromFormat('Y-m-d', $paymentSchedule[count($paymentSchedule) - 1]['date']);
         $firstPaymentDate = Carbon::createFromFormat('Y-m-d', $paymentSchedule[0]['date']);
@@ -587,145 +585,6 @@ class PiggyBankCreateController extends Controller
             throw $e;
         }
     }
-
-
-//    public function storePiggyBank(Request $request)
-//    {
-//        // Start transaction outside try block
-//        DB::beginTransaction();
-//
-//        try {
-//            $step1Data = $request->session()->get('pick_date_step1');
-//            $step3Data = $request->session()->get('pick_date_step3');
-//            $selectedFrequency = $step3Data['selected_frequency'];
-//            $calculations = $step3Data['calculations'][$selectedFrequency];
-//            $paymentSchedule = $request->session()->get('payment_schedule');
-//
-//            // Create and save piggy bank
-//            $piggyBank = new PiggyBank();
-//            $piggyBank->user_id = auth()->id();
-//            $piggyBank->name = $step1Data['name'];
-//
-//            // Handle Money objects for piggy bank
-//            $piggyBank->price = $step1Data['price']->getMinorAmount()->toInt();
-//            $piggyBank->starting_amount = $step1Data['starting_amount']?->getMinorAmount()->toInt();
-//            $piggyBank->current_balance = $step1Data['starting_amount']?->getMinorAmount()->toInt();
-//            $piggyBank->target_amount = $calculations['target_amount']['amount']->getMinorAmount()->toInt();
-//            $piggyBank->extra_savings = $calculations['extra_savings']['amount']->getMinorAmount()->toInt();
-//            $piggyBank->total_savings = $calculations['total_savings']['amount']->getMinorAmount()->toInt();
-//
-//            // Basic fields
-//            $piggyBank->link = $step1Data['link'];
-//            $piggyBank->details = $step1Data['details'];
-//            $piggyBank->chosen_strategy = $request->session()->get('chosen_strategy');
-//            $piggyBank->selected_frequency = $selectedFrequency;
-//            $piggyBank->currency = $step1Data['currency'];
-//
-//            // Preview data
-//            $preview = $step1Data['preview'] ?? [];
-//            $piggyBank->preview_title = $preview['title'] ?? null;
-//            $piggyBank->preview_description = $preview['description'] ?? null;
-//            $piggyBank->preview_image = $preview['image'] ?? 'images/piggy_banks/default_piggy_bank.png';
-//            $piggyBank->preview_url = $preview['url'] ?? null;
-//
-//            $piggyBank->save();
-//
-//            // Create scheduled savings entries
-//            foreach ($paymentSchedule as $payment) {
-//                $scheduledSaving = new ScheduledSaving();
-//                $scheduledSaving->piggy_bank_id = $piggyBank->id;
-//                $scheduledSaving->saving_number = $payment['payment_number'];
-//                $scheduledSaving->amount = $payment['amount']->getMinorAmount()->toInt() / 100;
-//                $scheduledSaving->saving_date = $payment['date'];
-//                $scheduledSaving->save();
-//            }
-//
-//            // If we get here, all operations succeeded, so commit the transaction
-//            DB::commit();
-//
-//            return $piggyBank;
-//
-//        } catch (Exception $e) {
-//            // If anything fails, roll back the transaction
-//            DB::rollBack();
-//
-//            Log::error('Error saving piggy bank:', [
-//                'error' => $e->getMessage(),
-//                'trace' => $e->getTraceAsString()
-//            ]);
-//
-//            throw $e;
-//        }
-//    }
-
-
-
-//    public function storePiggyBank(Request $request)
-//    {
-//        try {
-//            $step1Data = $request->session()->get('pick_date_step1');
-//            $step3Data = $request->session()->get('pick_date_step3');
-//            $selectedFrequency = $step3Data['selected_frequency'];
-//            $calculations = $step3Data['calculations'][$selectedFrequency];
-//            $paymentSchedule = $request->session()->get('payment_schedule');
-//
-//            \DB::beginTransaction();
-//
-//            $piggyBank = new PiggyBank();
-//            $piggyBank->user_id = auth()->id();
-//            $piggyBank->name = $step1Data['name'];
-//
-//            // Handle Money objects
-//            $piggyBank->price = $step1Data['price']->getMinorAmount()->toInt() / 100;
-//            $piggyBank->starting_amount = $step1Data['starting_amount']?->getMinorAmount()->toInt() / 100;
-//            $piggyBank->current_balance = $step1Data['starting_amount']?->getMinorAmount()->toInt() / 100;
-//
-//            // Get target amount from calculations
-//            $piggyBank->target_amount = $calculations['target_amount']['amount']->getMinorAmount()->toInt() / 100;
-//            $piggyBank->extra_savings = $calculations['extra_savings']['amount']->getMinorAmount()->toInt() / 100;
-//            $piggyBank->total_savings = $calculations['total_savings']['amount']->getMinorAmount()->toInt() / 100;
-//
-//            // Basic fields
-//            $piggyBank->link = $step1Data['link'];
-//            $piggyBank->details = $step1Data['details'];
-//            $piggyBank->chosen_strategy = $request->session()->get('chosen_strategy');
-//            $piggyBank->selected_frequency = $selectedFrequency;
-//            $piggyBank->currency = $step1Data['currency'];
-//
-//            // Preview data
-//            $preview = $step1Data['preview'] ?? [];
-//            $piggyBank->preview_title = $preview['title'] ?? null;
-//            $piggyBank->preview_description = $preview['description'] ?? null;
-//            $piggyBank->preview_image = $preview['image'] ?? 'images/piggy_banks/default_piggy_bank.png';
-//            $piggyBank->preview_url = $preview['url'] ?? null;
-//
-//            $piggyBank->save();
-//
-//            // Save scheduled savings
-//            foreach ($paymentSchedule as $payment) {
-//                $scheduledSaving = new ScheduledSaving();
-//                $scheduledSaving->piggy_bank_id = $piggyBank->id;
-//                $scheduledSaving->saving_number = $payment['payment_number'];
-//                $scheduledSaving->amount = $payment['amount']->getMinorAmount()->toInt() / 100;
-//                $scheduledSaving->saving_date = $payment['date'];
-//                $scheduledSaving->save();
-//            }
-//
-//            DB::commit();
-//            return $piggyBank;
-//
-//
-//        } catch (Exception $e) {
-//            Log::error('Error saving piggy bank:', [
-//                'error' => $e->getMessage(),
-//                'trace' => $e->getTraceAsString()
-//            ]);
-//            throw $e;
-//        }
-//    }
-
-
-
 
 
     /**

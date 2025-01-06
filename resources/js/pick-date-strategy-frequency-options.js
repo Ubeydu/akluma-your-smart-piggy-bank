@@ -16,7 +16,7 @@ const dateInput = document.getElementById("saving_date");
 // const dateDisplay = document.getElementById("dateDisplay");
 
 // Log when page starts loading
-console.log('Page starting to load');
+// console.log('Page starting to load');
 
 /**
  * Main initialization function that sets up all event listeners and handlers
@@ -24,8 +24,8 @@ console.log('Page starting to load');
  */
 document.addEventListener("DOMContentLoaded", function () {
     // Log initial state
-    console.log('DOMContentLoaded fired');
-    console.log('Initial date input value:', dateInput?.value);
+    // console.log('DOMContentLoaded fired');
+    // console.log('Initial date input value:', dateInput?.value);
 
     /**
      * Handles changes to the date input field, formatting and displaying the selected date
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // console.log('Current date value:', this.value);
 
         if (!this.value) {
-            console.log('No date value, returning early');
+            // console.log('No date value, returning early');
             return;
         }
 
@@ -168,8 +168,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const hasShortTermOptions = shortTermPeriods.some(period => data[period]?.amount);
             const hasLongTermOptions = longTermPeriods.some(period => data[period]?.amount);
 
-            console.log('hasShortTermOptions:', hasShortTermOptions);
-            console.log('hasLongTermOptions:', hasLongTermOptions);
+            // console.log('hasShortTermOptions:', hasShortTermOptions);
+            // console.log('hasLongTermOptions:', hasLongTermOptions);
 
 
             document.getElementById('frequencyOptions').classList.remove('hidden');
@@ -213,8 +213,8 @@ document.addEventListener("DOMContentLoaded", function () {
             // Process each saving option
             Object.entries(data).forEach(([type, option]) => {
                 // console.log(`Processing option for period type: ${type}`);
-                console.log('Processing option for currency:', type);
-                console.log('Option data:', option);
+                // console.log('Processing option for currency:', type);
+                // console.log('Option data:', option);
 
 
                 // Simpler check that only looks at frequency
@@ -323,8 +323,8 @@ document.addEventListener("DOMContentLoaded", function () {
         dateInput.dispatchEvent(new Event('change'));
         // console.log('Change event dispatched');
     } else {
-        console.log('No existing date found or dateInput invalid');
-        console.log('dateInput type:', dateInput?.constructor.name);
+        // console.log('No existing date found or dateInput invalid');
+        // console.log('dateInput type:', dateInput?.constructor.name);
     }
 
     /**
@@ -359,10 +359,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 window.addEventListener('pageshow', function(event) {
     // This will run even if the page is loaded from bfcache
-    console.log('Page shown:', event.persisted ? 'from bfcache' : 'fresh load');
+    // console.log('Page shown:', event.persisted ? 'from bfcache' : 'fresh load');
 
     if (dateInput instanceof HTMLInputElement && dateInput.value) {
-        console.log('Found date input with value:', dateInput.value);
+        // console.log('Found date input with value:', dateInput.value);
         dateInput.dispatchEvent(new Event('change'));
     }
 });
