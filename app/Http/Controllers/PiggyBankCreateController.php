@@ -92,9 +92,9 @@ class PiggyBankCreateController extends Controller
             ],
         ]);
 
-        \Log::info('Validated Request Data', [
-            'validated_data' => $validated,
-        ]);
+//        \Log::info('Validated Request Data', [
+//            'validated_data' => $validated,
+//        ]);
 
 //        \Log::info('Link Preview Input', [
 //            'link' => $validated['link'] ?? 'No link provided',
@@ -464,12 +464,12 @@ class PiggyBankCreateController extends Controller
 
 
         $finalPaymentDate = Carbon::createFromFormat('Y-m-d', $paymentSchedule[count($paymentSchedule) - 1]['date']);
-        $firstPaymentDate = Carbon::createFromFormat('Y-m-d', $paymentSchedule[0]['date']);
+//        $firstPaymentDate = Carbon::createFromFormat('Y-m-d', $paymentSchedule[0]['date']);
 
 
-        // Store dates in session
-        $request->session()->put('final_payment_date', $finalPaymentDate->toDateString());
-        $request->session()->put('first_payment_date', $firstPaymentDate->toDateString());
+//        // Store dates in session
+//        $request->session()->put('final_payment_date', $finalPaymentDate->toDateString());
+//        $request->session()->put('first_payment_date', $firstPaymentDate->toDateString());
 
 
 
@@ -574,7 +574,27 @@ class PiggyBankCreateController extends Controller
             }
 
             DB::commit();
-            return $piggyBank;
+
+            $request->session()->forget([
+                'pick_date_step1',
+                'pick_date_step3',
+                'chosen_strategy',
+                'payment_schedule',
+                'final_payment_date'
+            ]);
+
+            // First store it in regular session
+            $request->session()->put('newPiggyBankId', $piggyBank->id);
+
+            // Log for debugging
+            Log::info('Redirecting after piggy bank creation:', [
+                'piggy_bank_id' => $piggyBank->id,
+                'session_data' => session()->all()
+            ]);
+
+            return redirect()
+                ->route('piggy-banks.index')
+                ->with('success', __('Your piggy bank has been created successfully.'));
 
         } catch (Exception $e) {
             DB::rollBack();

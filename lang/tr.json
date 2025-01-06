@@ -115,5 +115,6 @@
     "Saving #": "Birikim #",
     "Date": "Tarih",
     "Amount": "Miktar",
-    "Saving options have been calculated for :date": "Birikim seçeneklerini bu tarih için hesapladık: :date"
+    "Saving options have been calculated for :date": "Birikim seçeneklerini bu tarih için hesapladık: :date",
+    "Your piggy bank has been created successfully.": "Tebrikler. Kumbaranı başarılı bir şekilde oluşturdun."
 }

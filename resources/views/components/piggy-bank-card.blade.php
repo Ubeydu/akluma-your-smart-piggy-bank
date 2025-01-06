@@ -1,4 +1,7 @@
-<div class="p-4 border rounded-lg shadow bg-rose-50 hover:bg-rose-100 transition-colors duration-300">
+@props(['piggyBank', 'newPiggyBankId' => null])
+
+<div class="p-4 border rounded-lg shadow bg-rose-50 hover:bg-rose-100 transition-colors duration-300
+    {{ $newPiggyBankId == $piggyBank->id ? 'highlight-new' : '' }}">
     <h3 class="text-lg font-bold">{{ $piggyBank->name }}</h3>
     <p class="text-sm text-gray-600 font-medium">{{ __('price') }}: {{ $piggyBank->price }}</p>
     <p class="text-sm text-gray-600 font-medium">{{ __('starting_amount') }}: {{ $piggyBank->starting_amount }}</p>

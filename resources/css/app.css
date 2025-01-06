@@ -16,3 +16,19 @@
     visibility: hidden; /* Keeps the space reserved */
 }
 
+@keyframes highlight-new {
+    0% {
+        background-color: red;
+    }
+    50% {
+        background-color: blue;
+    }
+    100% {
+        background-color: red;
+    }
+}
+
+.highlight-new {
+    animation: highlight-new 3s ease-in-out;
+}
+
