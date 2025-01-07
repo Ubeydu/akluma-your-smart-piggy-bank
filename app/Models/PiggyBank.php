@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use Brick\Math\Exception\MathException;
+use Brick\Money\Exception\MoneyException;
+use Brick\Money\Exception\MoneyMismatchException;
+use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Log;
 
 /**
  * @property int $id
@@ -70,4 +75,38 @@ class PiggyBank extends Model
     {
         return $this->hasMany(ScheduledSaving::class);
     }
+
+    /**
+     * Get the remaining amount to save
+     *
+     * @throws MoneyException If money calculation fails
+     */
+    public function getRemainingAmountAttribute(): Money
+    {
+        try {
+            return Money::of($this->total_savings, $this->currency)
+                ->minus(Money::of($this->current_balance ?? 0, $this->currency));
+        } catch (MathException $e) {
+            Log::error('Invalid money calculation in piggy bank', [
+                'piggy_bank_id' => $this->id,
+                'total_savings' => $this->total_savings,
+                'current_balance' => $this->current_balance,
+                'currency' => $this->currency,
+                'error' => $e->getMessage()
+            ]);
+
+            // Return a fallback value (zero in the current currency)
+            return Money::zero($this->currency);
+        } catch (MoneyMismatchException $e) {
+            Log::error('Currency mismatch in piggy bank', [
+                'piggy_bank_id' => $this->id,
+                'currency' => $this->currency,
+                'error' => $e->getMessage()
+            ]);
+
+            // Return a fallback value (zero in the current currency)
+            return Money::zero($this->currency);
+        }
+    }
+
 }
