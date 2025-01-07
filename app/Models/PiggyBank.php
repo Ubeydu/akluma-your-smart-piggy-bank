@@ -76,13 +76,27 @@ class PiggyBank extends Model
         return $this->hasMany(ScheduledSaving::class);
     }
 
-    /**
-     * Get the remaining amount to save
-     *
-     * @throws MoneyException If money calculation fails
-     */
+    private $remainingAmountOverride = null;
+
+    public function setRemainingAmountOverride(callable $override)
+    {
+        $this->remainingAmountOverride = $override;
+    }
+
     public function getRemainingAmountAttribute(): Money
     {
+        if ($this->remainingAmountOverride) {
+            try {
+                return call_user_func($this->remainingAmountOverride);
+            } catch (MathException|MoneyMismatchException $e) {
+                Log::error('Error in remaining amount calculation', [
+                    'error' => $e->getMessage()
+                ]);
+                return Money::zero($this->currency);
+            }
+        }
+
+        // Original implementation
         try {
             return Money::of($this->total_savings, $this->currency)
                 ->minus(Money::of($this->current_balance ?? 0, $this->currency));
@@ -95,7 +109,6 @@ class PiggyBank extends Model
                 'error' => $e->getMessage()
             ]);
 
-            // Return a fallback value (zero in the current currency)
             return Money::zero($this->currency);
         } catch (MoneyMismatchException $e) {
             Log::error('Currency mismatch in piggy bank', [
@@ -104,9 +117,11 @@ class PiggyBank extends Model
                 'error' => $e->getMessage()
             ]);
 
-            // Return a fallback value (zero in the current currency)
             return Money::zero($this->currency);
         }
     }
+
+
+
 
 }
