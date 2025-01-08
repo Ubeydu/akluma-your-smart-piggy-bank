@@ -1,7 +1,13 @@
 <?php
 
+namespace Tests\Unit;
+
+use Tests\TestCase;
 use App\Models\PiggyBank;
 use Brick\Money\Money;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(TestCase::class, RefreshDatabase::class);
 
 test('remaining amount is correctly calculated when current balance is less than total savings', function () {
     $piggyBank = PiggyBank::factory()->create([
