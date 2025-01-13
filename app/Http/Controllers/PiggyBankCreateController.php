@@ -539,7 +539,7 @@ class PiggyBankCreateController extends Controller
             $piggyBank->user_id = auth()->id();
             $piggyBank->name = $step1Data['name'];
 
-            // New way to handle Money objects - get actual decimal values
+
             $piggyBank->price = $step1Data['price']->getAmount()->toFloat();
             $piggyBank->starting_amount = $step1Data['starting_amount']?->getAmount()->toFloat();
             $piggyBank->current_balance = $step1Data['starting_amount']?->getAmount()->toFloat();

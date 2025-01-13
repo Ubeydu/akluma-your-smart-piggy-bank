@@ -48,3 +48,50 @@ test('remaining amount returns zero money object when currencies mismatch', func
         ->and($remainingAmount->isZero())->toBeTrue()
         ->and($remainingAmount->getCurrency()->getCurrencyCode())->toBe('EUR');
 });
+
+
+test('remaining amount equals total savings when current balance is null', function () {
+    $piggyBank = PiggyBank::factory()->create([
+        'total_savings' => 1000.00,
+        'current_balance' => null,
+        'currency' => 'USD'
+    ]);
+
+    $remainingAmount = $piggyBank->remaining_amount;
+
+    expect($remainingAmount)
+        ->toBeInstanceOf(Money::class)
+        ->and($remainingAmount->getAmount()->__toString())->toBe('1000.00')
+        ->and($remainingAmount->getCurrency()->getCurrencyCode())->toBe('USD');
+});
+
+
+test('remaining amount is zero when current balance exactly equals total savings', function () {
+    $piggyBank = PiggyBank::factory()->create([
+        'total_savings' => 1000.00,
+        'current_balance' => 1000.00,
+        'currency' => 'USD'
+    ]);
+
+    $remainingAmount = $piggyBank->remaining_amount;
+
+    expect($remainingAmount)
+        ->toBeInstanceOf(Money::class)
+        ->and($remainingAmount->getAmount()->__toString())->toBe('0.00')
+        ->and($remainingAmount->getCurrency()->getCurrencyCode())->toBe('USD');
+});
+
+test('remaining amount is negative when current balance exceeds total savings', function () {
+    $piggyBank = PiggyBank::factory()->create([
+        'total_savings' => 1000.00,
+        'current_balance' => 1200.00,
+        'currency' => 'USD'
+    ]);
+
+    $remainingAmount = $piggyBank->remaining_amount;
+
+    expect($remainingAmount)
+        ->toBeInstanceOf(Money::class)
+        ->and($remainingAmount->getAmount()->__toString())->toBe('-200.00')
+        ->and($remainingAmount->getCurrency()->getCurrencyCode())->toBe('USD');
+});
