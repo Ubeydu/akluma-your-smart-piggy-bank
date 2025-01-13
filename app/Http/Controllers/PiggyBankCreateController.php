@@ -142,13 +142,23 @@ class PiggyBankCreateController extends Controller
 //            ]);
         }
 
-//        Log::info('Money Input Values:', [
-//            'price_whole' => $validated['price_whole'],
-//            'currency' => $validated['currency'],
-//            'price_whole_type' => gettype($validated['price_whole'])
-//        ]);
+        Log::info('Money Input Values:', [
+            'price_whole' => $validated['price_whole'],
+            'currency' => $validated['currency'],
+            'price_whole_type' => gettype($validated['price_whole'])
+        ]);
 
-        $price = Money::of($validated['price_whole'], $validated['currency']);
+//        $price = Money::of($validated['price_whole'], $validated['currency']);
+
+
+        if (CurrencyHelper::hasDecimalPlaces($validated['currency'])) {
+            $priceString = $validated['price_whole'] . '.' .
+                str_pad($validated['price_cents'], 2, '0', STR_PAD_LEFT);
+            $price = Money::of($priceString, $validated['currency']);
+        } else {
+            $price = Money::of($validated['price_whole'], $validated['currency']);
+        }
+
 
 //        Log::info('Money Result:', [
 //            'price' => $price->getAmount(),
@@ -156,16 +166,16 @@ class PiggyBankCreateController extends Controller
 //        ]);
 
 
-//        \Log::info('Money Object Details', [
-//            'price_whole' => $validated['price_whole'],
-//            'price_cents' => $validated['price_cents'],
-//            'currency' => $validated['currency'],
-//            'money_object' => [
-//                'amount' => $price->getAmount()->__toString(),
-//                'minor_amount' => $price->getMinorAmount()->toInt(),
-//                'formatted' => $price->formatTo(App::getLocale())
-//            ]
-//        ]);
+        \Log::info('Money Object Details', [
+            'price_whole' => $validated['price_whole'],
+            'price_cents' => $validated['price_cents'],
+            'currency' => $validated['currency'],
+            'money_object' => [
+                'amount' => $price->getAmount()->__toString(),
+                'minor_amount' => $price->getMinorAmount()->toInt(),
+                'formatted' => $price->formatTo(App::getLocale())
+            ]
+        ]);
 
 
         $startingAmount = null;
