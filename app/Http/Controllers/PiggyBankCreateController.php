@@ -536,6 +536,13 @@ class PiggyBankCreateController extends Controller
      */
     public function storePiggyBank(Request $request)
     {
+        if (!$request->session()->has('pick_date_step3')) {
+            return redirect()
+                ->route('piggy-banks.index')
+                ->with('warning', __('You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.'));
+        }
+
+
         DB::beginTransaction();
 
         try {
