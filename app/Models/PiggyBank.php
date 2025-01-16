@@ -83,6 +83,16 @@ class PiggyBank extends Model
         $this->remainingAmountOverride = $override;
     }
 
+    public function getFinalTotalAttribute(): Money
+    {
+        try {
+            return Money::of($this->total_savings ?? 0, $this->currency)
+                ->plus(Money::of($this->starting_amount ?? 0, $this->currency));
+        } catch (MoneyException $e) {
+            return Money::of(0, $this->currency);
+        }
+    }
+
     public function getRemainingAmountAttribute(): Money
     {
         if ($this->remainingAmountOverride) {
@@ -98,7 +108,7 @@ class PiggyBank extends Model
 
         // Original implementation
         try {
-            return Money::of($this->total_savings, $this->currency)
+            return $this->final_total
                 ->minus(Money::of($this->current_balance ?? 0, $this->currency));
         } catch (MathException $e) {
             Log::error('Invalid money calculation in piggy bank', [
