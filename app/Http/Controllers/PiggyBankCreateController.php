@@ -142,13 +142,23 @@ class PiggyBankCreateController extends Controller
 //            ]);
         }
 
-//        Log::info('Money Input Values:', [
-//            'price_whole' => $validated['price_whole'],
-//            'currency' => $validated['currency'],
-//            'price_whole_type' => gettype($validated['price_whole'])
-//        ]);
+        Log::info('Money Input Values:', [
+            'price_whole' => $validated['price_whole'],
+            'currency' => $validated['currency'],
+            'price_whole_type' => gettype($validated['price_whole'])
+        ]);
 
-        $price = Money::of($validated['price_whole'], $validated['currency']);
+//        $price = Money::of($validated['price_whole'], $validated['currency']);
+
+
+        if (CurrencyHelper::hasDecimalPlaces($validated['currency'])) {
+            $priceString = $validated['price_whole'] . '.' .
+                str_pad($validated['price_cents'], 2, '0', STR_PAD_LEFT);
+            $price = Money::of($priceString, $validated['currency']);
+        } else {
+            $price = Money::of($validated['price_whole'], $validated['currency']);
+        }
+
 
 //        Log::info('Money Result:', [
 //            'price' => $price->getAmount(),
@@ -156,16 +166,16 @@ class PiggyBankCreateController extends Controller
 //        ]);
 
 
-//        \Log::info('Money Object Details', [
-//            'price_whole' => $validated['price_whole'],
-//            'price_cents' => $validated['price_cents'],
-//            'currency' => $validated['currency'],
-//            'money_object' => [
-//                'amount' => $price->getAmount()->__toString(),
-//                'minor_amount' => $price->getMinorAmount()->toInt(),
-//                'formatted' => $price->formatTo(App::getLocale())
-//            ]
-//        ]);
+        \Log::info('Money Object Details', [
+            'price_whole' => $validated['price_whole'],
+            'price_cents' => $validated['price_cents'],
+            'currency' => $validated['currency'],
+            'money_object' => [
+                'amount' => $price->getAmount()->__toString(),
+                'minor_amount' => $price->getMinorAmount()->toInt(),
+                'formatted' => $price->formatTo(App::getLocale())
+            ]
+        ]);
 
 
         $startingAmount = null;
@@ -526,6 +536,13 @@ class PiggyBankCreateController extends Controller
      */
     public function storePiggyBank(Request $request)
     {
+        if (!$request->session()->has('pick_date_step3')) {
+            return redirect()
+                ->route('piggy-banks.index')
+                ->with('warning', __('You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.'));
+        }
+
+
         DB::beginTransaction();
 
         try {
@@ -539,7 +556,7 @@ class PiggyBankCreateController extends Controller
             $piggyBank->user_id = auth()->id();
             $piggyBank->name = $step1Data['name'];
 
-            // New way to handle Money objects - get actual decimal values
+
             $piggyBank->price = $step1Data['price']->getAmount()->toFloat();
             $piggyBank->starting_amount = $step1Data['starting_amount']?->getAmount()->toFloat();
             $piggyBank->current_balance = $step1Data['starting_amount']?->getAmount()->toFloat();

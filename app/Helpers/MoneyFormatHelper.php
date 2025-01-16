@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Helpers;
+
+use Brick\Money\Money;
+use Brick\Money\Context\CustomContext;
+
+class MoneyFormatHelper
+{
+    public static function format(float $amount, string $currency): string
+    {
+        $currencyConfig = config('app.currencies.'.$currency);
+        $decimalPlaces = $currencyConfig['decimal_places'] ?? 2;
+
+        $context = new CustomContext($decimalPlaces);
+
+        try {
+            return Money::of($amount, $currency, $context)
+                ->formatTo(app()->getLocale());
+        } catch (\Throwable $e) {
+            \Log::error('Money formatting error', [
+                'amount' => $amount,
+                'currency' => $currency,
+                'decimal_places' => $decimalPlaces,
+                'error' => $e->getMessage()
+            ]);
+            return $currency . ' ' . number_format($amount, $decimalPlaces);
+        }
+    }
+}

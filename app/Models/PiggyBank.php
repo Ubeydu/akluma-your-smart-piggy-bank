@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
-use App\Casts\MoneyCast;
+use Brick\Math\Exception\MathException;
+use Brick\Money\Exception\MoneyException;
+use Brick\Money\Exception\MoneyMismatchException;
+use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Log;
 
 /**
  * @property int $id
@@ -71,4 +75,72 @@ class PiggyBank extends Model
     {
         return $this->hasMany(ScheduledSaving::class);
     }
+
+    private $remainingAmountOverride = null;
+
+    public function setRemainingAmountOverride(callable $override)
+    {
+        $this->remainingAmountOverride = $override;
+    }
+
+    public function getFinalTotalAttribute(): float
+    {
+        try {
+            return ($this->total_savings ?? 0) + ($this->starting_amount ?? 0);
+        } catch (\Throwable $e) {
+            \Log::error('Error calculating final total', [
+                'piggy_bank_id' => $this->id,
+                'error' => $e->getMessage()
+            ]);
+            return 0.0;
+        }
+    }
+
+    public function getRemainingAmountAttribute(): float
+    {
+        if ($this->remainingAmountOverride) {
+            try {
+                // Since remainingAmountOverride previously returned a Money object,
+                // we need to get its amount as a float
+                $overrideResult = call_user_func($this->remainingAmountOverride);
+                if ($overrideResult instanceof Money) {
+                    return $overrideResult->getAmount()->toFloat();
+                }
+                return (float) $overrideResult;
+            } catch (\Throwable $e) {
+                Log::error('Error in remaining amount override calculation', [
+                    'piggy_bank_id' => $this->id,
+                    'error' => $e->getMessage()
+                ]);
+                return 0.0;
+            }
+        }
+
+        // Original implementation simplified to work with raw values
+        try {
+
+            \Log::info('Calculating remaining amount', [
+                'final_total' => $this->final_total,
+                'current_balance' => $this->current_balance,
+                'total_savings' => $this->total_savings,
+                'starting_amount' => $this->starting_amount
+            ]);
+
+            return $this->final_total - ($this->current_balance ?? 0);
+        } catch (\Throwable $e) {
+            Log::error('Invalid money calculation in piggy bank', [
+                'piggy_bank_id' => $this->id,
+                'total_savings' => $this->total_savings,
+                'current_balance' => $this->current_balance,
+                'currency' => $this->currency,
+                'error' => $e->getMessage()
+            ]);
+
+            return 0.0;
+        }
+    }
+
+
+
+
 }

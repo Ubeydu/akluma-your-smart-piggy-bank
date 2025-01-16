@@ -3,8 +3,26 @@
 <div class="p-4 border rounded-lg shadow bg-rose-50 hover:bg-rose-100 transition-colors duration-300
     {{ $newPiggyBankId == $piggyBank->id ? 'highlight-new' : '' }}">
     <h3 class="text-lg font-bold">{{ $piggyBank->name }}</h3>
-    <p class="text-sm text-gray-600 font-medium">{{ __('price') }}: {{ $piggyBank->price }}</p>
-    <p class="text-sm text-gray-600 font-medium">{{ __('starting_amount') }}: {{ $piggyBank->starting_amount }}</p>
-    <p class="text-sm text-gray-600 font-medium">{{ __('remaining_amount') }}: {{ $piggyBank->price - $piggyBank->starting_amount }}</p>
-    <p class="text-sm text-gray-600 font-medium">{{ __('purchase_date') }}: {{ $piggyBank->scheduledSavings()->orderByDesc('saving_number')->first()->saving_date->translatedFormat('d F Y') }}</p>
+    <div class="flex flex-col gap-y-1">
+        <div class="flex">
+            <span class="text-sm text-gray-600 font-medium w-64">{{ __('Final Total') }}</span>
+            <span class="text-sm text-gray-600 font-medium">: {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->final_total, $piggyBank->currency) }}</span>
+        </div>
+
+        <div class="flex">
+            <span class="text-sm text-gray-600 font-medium w-64">{{ __('Current Balance') }}</span>
+            <span class="text-sm text-gray-600 font-medium">: {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->current_balance ?? 0, $piggyBank->currency) }}</span>
+        </div>
+
+        <div class="flex">
+            <span class="text-sm text-gray-600 font-medium w-64">{{ __('remaining_amount') }}</span>
+            <span class="text-sm text-gray-600 font-medium">: {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->remaining_amount, $piggyBank->currency) }}</span>
+        </div>
+
+        <div class="flex">
+            <span class="text-sm text-gray-600 font-medium w-64">{{ __('saving_goal_reach_date') }}</span>
+            <span class="text-sm text-gray-600 font-medium">: {{ $piggyBank->scheduledSavings()->orderByDesc('saving_number')->first()->saving_date->translatedFormat('d F Y') }}</span>
+        </div>
+    </div>
+    <h3 class="text-lg font-bold">{{ $piggyBank->status }}</h3>
 </div>

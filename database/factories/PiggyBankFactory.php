@@ -29,14 +29,21 @@ class PiggyBankFactory extends Factory
             'user_id' => User::factory(),
             'name' => $this->faker->words(3, true),
             'price' => $this->faker->randomFloat(2, 50, 5000),
+            'target_amount' => $this->faker->randomFloat(2, 1000, 10000),
+            'chosen_strategy' => $this->faker->randomElement(['weekly', 'monthly']), // adjust these values based on your actual strategies
+            'selected_frequency' => $this->faker->randomElement(['weekly', 'bi-weekly']), // adjust these values based on your actual frequencies
+            'starting_amount' => $this->faker->randomFloat(2, 0, 1000),
+            'current_balance' => fn (array $attributes) => $attributes['starting_amount'],
+            'total_savings' => $this->faker->randomFloat(2, 1000, 10000),
+            'extra_savings' => $this->faker->optional(0.3)->randomFloat(2, 0, 500),
             'link' => $this->faker->optional(0.3)->url(),
             'details' => $this->faker->optional(0.3)->paragraphs(2, true),
-            'starting_amount' => $this->faker->randomFloat(2, 0, 1000),
-            'image' => 'images/piggy_banks/default_piggy_bank.png',
-            'currency' => 'TRY',
-            'balance' => fn (array $attributes) => $attributes['starting_amount'],
-            'purchase_date' => fn (array $attributes) => $this->faker->dateTimeBetween($attributes['created_at'] ?? '-1 week', '+1 year')->format('Y-m-d'),
+            'preview_image' => 'images/piggy_banks/default_piggy_bank.png',
+            'currency' => $this->faker->randomElement(array_keys(config('app.currencies'))),
             'status' => $this->faker->randomElement(['active', 'paused', 'done', 'cancelled']),
+            'preview_title' => $this->faker->optional()->sentence,
+            'preview_description' => $this->faker->optional()->paragraph,
+            'preview_url' => $this->faker->optional()->url,
         ];
     }
 

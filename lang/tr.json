@@ -24,6 +24,7 @@
     "starting_amount": "Başlangıç miktarı",
     "remaining_amount": "Kalan miktar",
     "purchase_date": "Satın alma tarihi",
+    "saving_goal_reach_date": "Hedefine ulaşacağın tarih",
     "French": "Fransızca",
     "Profile Information": "Profil Bilgilerim",
     "Update Password": "Şifre Değiştirme",
@@ -110,11 +111,16 @@
     "Financial Summary": "Birikim Özeti",
     "Target Amount": "Birikim Hedefi",
     "Extra Savings": "Fazladan Birikecek Miktar",
-    "Total Savings": "Toplam Birikim",
+    "Total Savings": "Toplam Birikecek Miktar",
+    "Current Balance": "Birikmiş miktar",
+    "Final Total": "Kumbaranda birikecek miktar",
     "Saving Schedule": "Birikim Programın",
     "Saving #": "Birikim #",
     "Date": "Tarih",
     "Amount": "Miktar",
     "Saving options have been calculated for :date": "Birikim seçeneklerini bu tarih için hesapladık: :date",
-    "Your piggy bank has been created successfully.": "Tebrikler. Kumbaranı başarılı bir şekilde oluşturdun."
+    "Your piggy bank has been created successfully.": "Tebrikler. Kumbaranı başarılı bir şekilde oluşturdun.",
+    "confirm_password": "Şifreni tekrar gir",
+    "Already_registered": "Daha önce kaydolduysan buraya tıkla",
+    "You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.": "Bu bilgilerle bir kumbara oluşturduğun için, tekrar olmasın diye seni kumbaralarım sayfasına yönlendirdik."
 }
