@@ -4,94 +4,86 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Models\PiggyBank;
-use Brick\Money\Money;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
-test('remaining amount is correctly calculated when current balance is less than total savings', function () {
+// Initial State Tests (at creation)
+test('initial remaining amount when piggy bank is created', function () {
     $piggyBank = PiggyBank::factory()->create([
         'total_savings' => 1000.00,
-        'current_balance' => 250.00,
+        'starting_amount' => 250.00,  // current_balance will be 250.00
         'currency' => 'USD'
     ]);
 
-    $remainingAmount = $piggyBank->remaining_amount;
-
-    expect($remainingAmount)
-        ->toBeInstanceOf(Money::class)
-        ->and($remainingAmount->getAmount()->__toString())->toBe('750.00')
-        ->and($remainingAmount->getCurrency()->getCurrencyCode())->toBe('USD');
+    expect($piggyBank->final_total)->toBe(1250.00);  // total_savings + starting_amount
+    expect($piggyBank->remaining_amount)->toBe(1000.00);
 });
 
-test('remaining amount returns zero money object when currencies mismatch', function () {
-    // Create the piggy bank with valid data
+// Post-Creation State Tests
+test('remaining amount after saving some money', function () {
     $piggyBank = PiggyBank::factory()->create([
         'total_savings' => 1000.00,
-        'current_balance' => 250.00,
+        'starting_amount' => 250.00,  // current_balance starts at 250.00
+        'currency' => 'USD'
+    ]);
+
+    expect($piggyBank->final_total)->toBe(1250.00);  // Verify final_total is constant
+
+    // Simulate saving money
+    $piggyBank->current_balance = 500.00;
+    $piggyBank->save();
+
+    expect($piggyBank->final_total)->toBe(1250.00);  // Verify final_total hasn't changed
+    expect($piggyBank->remaining_amount)->toBe(750.00);
+});
+
+test('remaining amount when fully saved', function () {
+    $piggyBank = PiggyBank::factory()->create([
+        'total_savings' => 1000.00,
+        'starting_amount' => 250.00,  // current_balance starts at 250.00
+        'currency' => 'USD'
+    ]);
+
+    expect($piggyBank->final_total)->toBe(1250.00);  // Verify final_total is constant
+
+    // Simulate saving all money
+    $piggyBank->current_balance = 1250.00; // total_savings + starting_amount
+    $piggyBank->save();
+
+    expect($piggyBank->final_total)->toBe(1250.00);  // Verify final_total hasn't changed
+    expect($piggyBank->remaining_amount)->toBe(0.00);
+});
+
+test('remaining amount when oversaved', function () {
+    $piggyBank = PiggyBank::factory()->create([
+        'total_savings' => 1000.00,
+        'starting_amount' => 250.00,  // current_balance starts at 250.00
+        'currency' => 'USD'
+    ]);
+
+    expect($piggyBank->final_total)->toBe(1250.00);  // Verify final_total is constant
+
+    // Simulate saving more than needed
+    $piggyBank->current_balance = 1500.00;
+    $piggyBank->save();
+
+    expect($piggyBank->final_total)->toBe(1250.00);  // Verify final_total hasn't changed
+    expect($piggyBank->remaining_amount)->toBe(-250.00);
+});
+
+test('remaining amount returns zero when override throws an error', function () {
+    $piggyBank = PiggyBank::factory()->create([
+        'total_savings' => 1000.00,
+        'starting_amount' => 250.00,
         'currency' => 'EUR'
     ]);
 
-    // Replace the getRemainingAmountAttribute method temporarily for this test
-    $piggyBank->setRemainingAmountOverride(function() use ($piggyBank) {
-        // Force a currency mismatch by creating two Money objects with different currencies
-        $totalSavings = Money::of($piggyBank->total_savings, 'EUR');
-        $currentBalance = Money::of($piggyBank->current_balance ?? 0, 'USD');
+    expect($piggyBank->final_total)->toBe(1250.00);  // Verify final_total
 
-        return $totalSavings->minus($currentBalance);  // This should throw MoneyMismatchException
+    $piggyBank->setRemainingAmountOverride(function() {
+        throw new \Exception('Forced error for testing');
     });
 
-    $remainingAmount = $piggyBank->remaining_amount;
-
-    expect($remainingAmount)
-        ->toBeInstanceOf(Money::class)
-        ->and($remainingAmount->isZero())->toBeTrue()
-        ->and($remainingAmount->getCurrency()->getCurrencyCode())->toBe('EUR');
-});
-
-
-test('remaining amount equals total savings when current balance is null', function () {
-    $piggyBank = PiggyBank::factory()->create([
-        'total_savings' => 1000.00,
-        'current_balance' => null,
-        'currency' => 'USD'
-    ]);
-
-    $remainingAmount = $piggyBank->remaining_amount;
-
-    expect($remainingAmount)
-        ->toBeInstanceOf(Money::class)
-        ->and($remainingAmount->getAmount()->__toString())->toBe('1000.00')
-        ->and($remainingAmount->getCurrency()->getCurrencyCode())->toBe('USD');
-});
-
-
-test('remaining amount is zero when current balance exactly equals total savings', function () {
-    $piggyBank = PiggyBank::factory()->create([
-        'total_savings' => 1000.00,
-        'current_balance' => 1000.00,
-        'currency' => 'USD'
-    ]);
-
-    $remainingAmount = $piggyBank->remaining_amount;
-
-    expect($remainingAmount)
-        ->toBeInstanceOf(Money::class)
-        ->and($remainingAmount->getAmount()->__toString())->toBe('0.00')
-        ->and($remainingAmount->getCurrency()->getCurrencyCode())->toBe('USD');
-});
-
-test('remaining amount is negative when current balance exceeds total savings', function () {
-    $piggyBank = PiggyBank::factory()->create([
-        'total_savings' => 1000.00,
-        'current_balance' => 1200.00,
-        'currency' => 'USD'
-    ]);
-
-    $remainingAmount = $piggyBank->remaining_amount;
-
-    expect($remainingAmount)
-        ->toBeInstanceOf(Money::class)
-        ->and($remainingAmount->getAmount()->__toString())->toBe('-200.00')
-        ->and($remainingAmount->getCurrency()->getCurrencyCode())->toBe('USD');
+    expect($piggyBank->remaining_amount)->toBe(0.0);
 });

@@ -34,12 +34,12 @@ class PiggyBankFactory extends Factory
             'selected_frequency' => $this->faker->randomElement(['weekly', 'bi-weekly']), // adjust these values based on your actual frequencies
             'starting_amount' => $this->faker->randomFloat(2, 0, 1000),
             'current_balance' => fn (array $attributes) => $attributes['starting_amount'],
-            'total_savings' => fn (array $attributes) => $attributes['target_amount'],
+            'total_savings' => $this->faker->randomFloat(2, 1000, 10000),
             'extra_savings' => $this->faker->optional(0.3)->randomFloat(2, 0, 500),
             'link' => $this->faker->optional(0.3)->url(),
             'details' => $this->faker->optional(0.3)->paragraphs(2, true),
             'preview_image' => 'images/piggy_banks/default_piggy_bank.png',
-            'currency' => 'USD', // Changed from TRY to USD for testing
+            'currency' => $this->faker->randomElement(array_keys(config('app.currencies'))),
             'status' => $this->faker->randomElement(['active', 'paused', 'done', 'cancelled']),
             'preview_title' => $this->faker->optional()->sentence,
             'preview_description' => $this->faker->optional()->paragraph,

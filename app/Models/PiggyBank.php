@@ -83,34 +83,51 @@ class PiggyBank extends Model
         $this->remainingAmountOverride = $override;
     }
 
-    public function getFinalTotalAttribute(): Money
+    public function getFinalTotalAttribute(): float
     {
         try {
-            return Money::of($this->total_savings ?? 0, $this->currency)
-                ->plus(Money::of($this->starting_amount ?? 0, $this->currency));
-        } catch (MoneyException $e) {
-            return Money::of(0, $this->currency);
+            return ($this->total_savings ?? 0) + ($this->starting_amount ?? 0);
+        } catch (\Throwable $e) {
+            \Log::error('Error calculating final total', [
+                'piggy_bank_id' => $this->id,
+                'error' => $e->getMessage()
+            ]);
+            return 0.0;
         }
     }
 
-    public function getRemainingAmountAttribute(): Money
+    public function getRemainingAmountAttribute(): float
     {
         if ($this->remainingAmountOverride) {
             try {
-                return call_user_func($this->remainingAmountOverride);
-            } catch (MathException|MoneyMismatchException $e) {
-                Log::error('Error in remaining amount calculation', [
+                // Since remainingAmountOverride previously returned a Money object,
+                // we need to get its amount as a float
+                $overrideResult = call_user_func($this->remainingAmountOverride);
+                if ($overrideResult instanceof Money) {
+                    return $overrideResult->getAmount()->toFloat();
+                }
+                return (float) $overrideResult;
+            } catch (\Throwable $e) {
+                Log::error('Error in remaining amount override calculation', [
+                    'piggy_bank_id' => $this->id,
                     'error' => $e->getMessage()
                 ]);
-                return Money::zero($this->currency);
+                return 0.0;
             }
         }
 
-        // Original implementation
+        // Original implementation simplified to work with raw values
         try {
-            return $this->final_total
-                ->minus(Money::of($this->current_balance ?? 0, $this->currency));
-        } catch (MathException $e) {
+
+            \Log::info('Calculating remaining amount', [
+                'final_total' => $this->final_total,
+                'current_balance' => $this->current_balance,
+                'total_savings' => $this->total_savings,
+                'starting_amount' => $this->starting_amount
+            ]);
+
+            return $this->final_total - ($this->current_balance ?? 0);
+        } catch (\Throwable $e) {
             Log::error('Invalid money calculation in piggy bank', [
                 'piggy_bank_id' => $this->id,
                 'total_savings' => $this->total_savings,
@@ -119,15 +136,7 @@ class PiggyBank extends Model
                 'error' => $e->getMessage()
             ]);
 
-            return Money::zero($this->currency);
-        } catch (MoneyMismatchException $e) {
-            Log::error('Currency mismatch in piggy bank', [
-                'piggy_bank_id' => $this->id,
-                'currency' => $this->currency,
-                'error' => $e->getMessage()
-            ]);
-
-            return Money::zero($this->currency);
+            return 0.0;
         }
     }
 
