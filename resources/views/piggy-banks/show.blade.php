@@ -25,8 +25,8 @@
                         <!-- Details (Editable) -->
                         <div>
                             <x-input-label for="details" :value="__('Details')" />
-                            <x-textarea-input id="details" name="details" class="mt-1 block w-full"
-                                              rows="3">{{ old('details', $piggyBank->details) }}</x-textarea-input>
+                            <x-text-input id="details" name="details" class="mt-1 block w-full"
+                                              rows="3">{{ old('details', $piggyBank->details) }}</x-text-input>
                             <x-input-error :messages="$errors->get('details')" class="mt-2" />
                         </div>
 
@@ -105,13 +105,14 @@
                             </div>
                         </div>
 
-                        <!-- Saving Schedule Link -->
-                        <div class="mt-8">
-                            <a href="{{ route('piggy-banks.schedule', $piggyBank) }}"
-                               class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
-                                {{ __('View Saving Schedule') }}
-                            </a>
-                        </div>
+{{--                        <!-- Saving Schedule Link -->--}}
+{{--                        <div class="mt-8">--}}
+{{--                            <a href="{{ route('piggy-banks.schedule', $piggyBank) }}"--}}
+{{--                               class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">--}}
+{{--                                {{ __('View Saving Schedule') }}--}}
+{{--                            </a>--}}
+{{--                        </div>--}}
+
                     </div>
                 </div>
             </div>
