@@ -37,7 +37,7 @@ class PiggyBankPolicy
      */
     public function update(User $user, PiggyBank $piggyBank): bool
     {
-        return false;
+        return $user->id === $piggyBank->user_id;
     }
 
     /**
