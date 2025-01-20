@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PiggyBank;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\View\View;
 
 class PiggyBankController extends Controller
 {
@@ -45,6 +46,18 @@ class PiggyBankController extends Controller
         return redirect()
             ->route('piggy-banks.show', $piggyBank)
             ->with('status', __('Piggy bank updated successfully'));
+    }
+
+
+    public function show(PiggyBank $piggyBank): View
+    {
+        if (! Gate::allows('update', $piggyBank)) {
+            abort(403);
+        }
+
+        return view('piggy-banks.show', [
+            'piggyBank' => $piggyBank
+        ]);
     }
 
 }
