@@ -7,8 +7,11 @@ use Brick\Money\Context\CustomContext;
 
 class MoneyFormatHelper
 {
-    public static function format(float $amount, string $currency): string
+    public static function format(?float $amount, string $currency): string
     {
+        // If amount is null, default to 0
+        $amount = $amount ?? 0.0;
+
         $currencyConfig = config('app.currencies.'.$currency);
         $decimalPlaces = $currencyConfig['decimal_places'] ?? 2;
 
