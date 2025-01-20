@@ -88,6 +88,8 @@
     "You cleared the form.": "Formu temizledin.",
     "There was an error during clearing the form. Refresh the page and try again.": "Formu temizlerken bir hata oluştu. Sayfayı yeniden yükle ve tekrar dene.",
     "You cancelled creating your piggy bank.": "Kumbara oluşturma işlemini iptal ettin.",
+    "You cancelled editing your piggy bank details.": "Kumbara detaylarını değiştirme işlemini iptal ettin.",
+    "You updated your piggy bank successfully": "Kumbara detaylarını başarılı şekilde değiştirdin.",
     "There was an error cancelling the process. Please try again.": "İşlem iptal edilirken bir hata oluştu. Lütfen tekrar dene.",
     "Yes, cancel": "Evet",
     "No, continue": "Hayır",

@@ -45,7 +45,8 @@ class PiggyBankController extends Controller
 
         return redirect()
             ->route('piggy-banks.show', $piggyBank)
-            ->with('status', __('Piggy bank updated successfully'));
+            ->with('status', __('You updated your piggy bank successfully'))
+            ->with('success', __('You updated your piggy bank successfully'));
     }
 
 
@@ -69,7 +70,8 @@ class PiggyBankController extends Controller
 
         return redirect()
             ->route('piggy-banks.index')
-            ->with('status', __('Changes cancelled'));
+            ->with('status', __('Changes cancelled'))
+            ->with('warning', __('You cancelled editing your piggy bank details.'));
     }
 
 }
