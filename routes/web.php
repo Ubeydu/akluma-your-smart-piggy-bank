@@ -21,6 +21,15 @@ Route::get('/piggy-banks', [PiggyBankController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('piggy-banks.index');
 
+Route::get('/piggy-banks/{piggyBank}', [PiggyBankController::class, 'show'])
+    ->middleware(['auth', 'verified'])
+    ->name('piggy-banks.show');
+
+Route::put('/piggy-banks/{piggyBank}', [PiggyBankController::class, 'update'])
+    ->middleware(['auth', 'verified'])
+    ->name('piggy-banks.update');
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
