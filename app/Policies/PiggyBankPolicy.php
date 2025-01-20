@@ -21,7 +21,7 @@ class PiggyBankPolicy
      */
     public function view(User $user, PiggyBank $piggyBank): bool
     {
-        return false;
+        return $user->id === $piggyBank->user_id;
     }
 
     /**
