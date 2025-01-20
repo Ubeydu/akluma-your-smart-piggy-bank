@@ -122,5 +122,7 @@
     "Your piggy bank has been created successfully.": "Tebrikler. Kumbaranı başarılı bir şekilde oluşturdun.",
     "confirm_password": "Şifreni tekrar gir",
     "Already_registered": "Daha önce kaydolduysan buraya tıkla",
-    "You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.": "Bu bilgilerle bir kumbara oluşturduğun için, tekrar olmasın diye seni kumbaralarım sayfasına yönlendirdik."
+    "You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.": "Bu bilgilerle bir kumbara oluşturduğun için, tekrar olmasın diye seni kumbaralarım sayfasına yönlendirdik.",
+    "Piggy Bank Details": "Kumbaranın Detayları",
+    "Status": "Durum"
 }

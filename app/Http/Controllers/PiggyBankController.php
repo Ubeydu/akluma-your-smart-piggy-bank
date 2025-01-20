@@ -60,4 +60,16 @@ class PiggyBankController extends Controller
         ]);
     }
 
+
+    public function cancel(PiggyBank $piggyBank)
+    {
+        if (! Gate::allows('update', $piggyBank)) {
+            abort(403);
+        }
+
+        return redirect()
+            ->route('piggy-banks.index')
+            ->with('status', __('Changes cancelled'));
+    }
+
 }

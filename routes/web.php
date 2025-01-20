@@ -30,6 +30,11 @@ Route::put('/piggy-banks/{piggyBank}', [PiggyBankController::class, 'update'])
     ->name('piggy-banks.update');
 
 
+Route::post('/piggy-banks/{piggyBank}/cancel', [PiggyBankController::class, 'cancel'])
+    ->middleware(['auth', 'verified'])
+    ->name('piggy-banks.cancel');
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

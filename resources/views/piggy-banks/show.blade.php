@@ -16,7 +16,7 @@
 
                         <!-- Name (Editable) -->
                         <div>
-                            <x-input-label for="name" :value="__('Name')" />
+                            <x-input-label for="name" :value="__('Product Name')" />
                             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"
                                           :value="old('name', $piggyBank->name)" required />
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
@@ -30,10 +30,51 @@
                             <x-input-error :messages="$errors->get('details')" class="mt-2" />
                         </div>
 
-                        <!-- Save Changes Button -->
-                        <div class="flex justify-end">
-                            <x-primary-button>{{ __('Save Changes') }}</x-primary-button>
+                        <!-- Save and Cancel Buttons -->
+                        <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-end sm:space-y-0 sm:gap-3">
+
+                            <!-- Replace this part in your form -->
+                            <div x-data="{ showConfirmCancel: false }">
+                                <!-- Cancel button -->
+                                <x-danger-button type="button" @click.prevent="showConfirmCancel = true" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                    {{ __('Cancel') }}
+                                </x-danger-button>
+
+                                <!-- Confirmation dialog component -->
+                                <template x-if="showConfirmCancel">
+                                    <x-confirmation-dialog>
+                                        <x-slot:title>
+                                            {{ __('Are you sure you want to cancel?') }}
+                                        </x-slot>
+
+                                        <x-slot:actions>
+                                            <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
+                                                <form action="{{ route('piggy-banks.cancel', $piggyBank) }}" method="POST" class="block">
+                                                    @csrf
+                                                    <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                                        {{ __('Yes, cancel') }}
+                                                    </x-danger-button>
+                                                </form>
+
+                                                <x-secondary-button
+                                                    @click="showConfirmCancel = false"
+                                                    class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                                >
+                                                    {{ __('No, continue') }}
+                                                </x-secondary-button>
+                                            </div>
+                                        </x-slot:actions>
+                                    </x-confirmation-dialog>
+                                </template>
+                            </div>
+
+                            <x-primary-button type="submit">
+                                {{ __('Save') }}
+                            </x-primary-button>
                         </div>
+
+
+
                     </form>
 
                     <!-- Non-editable Fields -->
@@ -52,7 +93,7 @@
                             <!-- Financial Information -->
                             <div class="space-y-4">
                                 <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Price') }}</h3>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Item Price') }}</h3>
                                     <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->price, $piggyBank->currency) }}</p>
                                 </div>
 
@@ -67,7 +108,7 @@
                                 </div>
 
                                 <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Remaining Amount') }}</h3>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('remaining_amount') }}</h3>
                                     <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->remaining_amount, $piggyBank->currency) }}</p>
                                 </div>
                             </div>
@@ -85,7 +126,7 @@
                                 </div>
 
                                 <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Goal Reach Date') }}</h3>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('saving_goal_reach_date') }}</h3>
                                     <p class="mt-1 text-base text-gray-900">
                                         {{ $piggyBank->scheduledSavings()->orderByDesc('saving_number')->first()->saving_date->translatedFormat('d F Y') }}
                                     </p>
