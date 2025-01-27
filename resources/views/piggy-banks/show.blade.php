@@ -34,23 +34,6 @@
                             <x-input-error :messages="$errors->get('details')" class="mt-2" />
                         </div>
 
-{{--                        <!-- Name (Editable) -->--}}
-{{--                        <div>--}}
-{{--                            <x-input-label for="name" :value="__('Product Name')" />--}}
-{{--                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"--}}
-{{--                                          :value="old('name', $piggyBank->name)" required />--}}
-{{--                            <x-input-error :messages="$errors->get('name')" class="mt-2" />--}}
-{{--                        </div>--}}
-
-{{--                        <!-- Details (Editable) -->--}}
-{{--                        <div>--}}
-{{--                            <x-input-label for="details" :value="__('Details')" />--}}
-{{--                            <textarea id="details"--}}
-{{--                                      name="details"--}}
-{{--                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"--}}
-{{--                                      rows="3">{{ old('details', $piggyBank->details) }}</textarea>--}}
-{{--                            <x-input-error :messages="$errors->get('details')" class="mt-2" />--}}
-{{--                        </div>--}}
 
                         <!-- Save and Cancel Buttons -->
                         <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-end sm:space-y-0 sm:gap-3">
@@ -102,48 +85,6 @@
                                 </div>
                             </template>
                         </div>
-
-{{--                        <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-end sm:space-y-0 sm:gap-3">--}}
-
-
-{{--                            <div x-data="{ showConfirmCancel: false }">--}}
-{{--                                <!-- Cancel button -->--}}
-{{--                                <x-danger-button type="button" @click.prevent="showConfirmCancel = true" class="w-[200px] sm:w-auto justify-center sm:justify-start">--}}
-{{--                                    {{ __('Cancel') }}--}}
-{{--                                </x-danger-button>--}}
-
-{{--                                <!-- Confirmation dialog component -->--}}
-{{--                                <template x-if="showConfirmCancel">--}}
-{{--                                    <x-confirmation-dialog>--}}
-{{--                                        <x-slot:title>--}}
-{{--                                            {{ __('Are you sure you want to cancel?') }}--}}
-{{--                                        </x-slot>--}}
-
-{{--                                        <x-slot:actions>--}}
-{{--                                            <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">--}}
-{{--                                                <form action="{{ route('piggy-banks.cancel', $piggyBank) }}" method="POST" class="block">--}}
-{{--                                                    @csrf--}}
-{{--                                                    <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">--}}
-{{--                                                        {{ __('Yes, cancel') }}--}}
-{{--                                                    </x-danger-button>--}}
-{{--                                                </form>--}}
-
-{{--                                                <x-secondary-button--}}
-{{--                                                    @click="showConfirmCancel = false"--}}
-{{--                                                    class="w-[200px] sm:w-auto justify-center sm:justify-start"--}}
-{{--                                                >--}}
-{{--                                                    {{ __('No, continue') }}--}}
-{{--                                                </x-secondary-button>--}}
-{{--                                            </div>--}}
-{{--                                        </x-slot:actions>--}}
-{{--                                    </x-confirmation-dialog>--}}
-{{--                                </template>--}}
-{{--                            </div>--}}
-
-{{--                            <x-primary-button type="submit">--}}
-{{--                                {{ __('Save') }}--}}
-{{--                            </x-primary-button>--}}
-{{--                        </div>--}}
 
 
 
