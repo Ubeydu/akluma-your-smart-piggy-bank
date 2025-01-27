@@ -126,5 +126,11 @@
     "Already_registered": "Daha önce kaydolduysan buraya tıkla",
     "You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.": "Bu bilgilerle bir kumbara oluşturduğun için, tekrar olmasın diye seni kumbaralarım sayfasına yönlendirdik.",
     "Piggy Bank Details": "Kumbaranın Detayları",
-    "Status": "Durum"
+    "Status": "Durum",
+    "active": "aktif",
+    "paused": "beklemede",
+    "done": "tamamlanmış",
+    "cancelled": "iptal edilmiş",
+    "created_at": "Oluşturulma Zamanı",
+    "updated_at": "Güncellenme Zamanı"
 }

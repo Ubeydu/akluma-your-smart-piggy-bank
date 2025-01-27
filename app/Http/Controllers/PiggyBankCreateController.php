@@ -575,7 +575,7 @@ class PiggyBankCreateController extends Controller
             $preview = $step1Data['preview'] ?? [];
             $piggyBank->preview_title = $preview['title'] ?? null;
             $piggyBank->preview_description = $preview['description'] ?? null;
-            $piggyBank->preview_image = $preview['image'] ?? 'images/piggy_banks/default_piggy_bank.png';
+            $piggyBank->preview_image = $preview['image'] ?? 'images/default_piggy_bank.png';
             $piggyBank->preview_url = $preview['url'] ?? null;
 
             $piggyBank->save();

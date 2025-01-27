@@ -84,7 +84,7 @@
                         <!-- Image -->
                         <div class="w-48 mx-auto">
                             <div class="aspect-square h-32 md:aspect-auto md:h-32 relative overflow-hidden rounded-lg shadow-sm bg-gray-50">
-                                <img src="{{ $piggyBank->preview_image ?? asset('images/default_piggy_bank.png') }}"
+                                <img src="{{ asset($piggyBank->preview_image) }}"
                                      alt="{{ $piggyBank->name }}"
                                      class="absolute inset-0 w-full h-full object-contain" />
                             </div>
@@ -125,7 +125,7 @@
                             <div class="space-y-4">
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Status') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ __($piggyBank->status) }}</p>
+                                    <p class="mt-1 text-base text-gray-900">{{ __(strtolower($piggyBank->status)) }}</p>
                                 </div>
 
                                 <div>
@@ -151,6 +151,23 @@
                                         <p class="mt-1 text-base text-gray-900">-</p>
                                     @endif
                                 </div>
+
+
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('created_at') }}</h3>
+                                    <p class="mt-1 text-base text-gray-900">
+                                        {{ $piggyBank->created_at?->translatedFormat('d F Y H:i:s') ?? '-' }}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('updated_at') }}</h3>
+                                    <p class="mt-1 text-base text-gray-900">
+                                        {{ $piggyBank->updated_at?->translatedFormat('d F Y H:i:s') ?? '-' }}
+                                    </p>
+                                </div>
+
+
                             </div>
                         </div>
 
