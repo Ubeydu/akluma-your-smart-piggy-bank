@@ -25,8 +25,10 @@
                         <!-- Details (Editable) -->
                         <div>
                             <x-input-label for="details" :value="__('Details')" />
-                            <x-text-input id="details" name="details" class="mt-1 block w-full"
-                                              rows="3">{{ old('details', $piggyBank->details) }}</x-text-input>
+                            <textarea id="details"
+                                      name="details"
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                      rows="3">{{ old('details', $piggyBank->details) }}</textarea>
                             <x-input-error :messages="$errors->get('details')" class="mt-2" />
                         </div>
 
