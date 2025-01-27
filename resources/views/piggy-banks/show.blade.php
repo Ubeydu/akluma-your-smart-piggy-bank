@@ -93,8 +93,8 @@
                     <!-- Non-editable Fields -->
                     <div class="mt-8 space-y-6">
                         <!-- Image -->
-                        <div class="w-48 mx-auto">
-                            <div class="aspect-square h-32 md:aspect-auto md:h-32 relative overflow-hidden rounded-lg shadow-sm bg-gray-50">
+                        <div class="w-32 md:w-48 mx-auto">
+                            <div class="aspect-square relative overflow-hidden rounded-lg shadow-sm bg-gray-50">
                                 <img src="{{ asset($piggyBank->preview_image) }}"
                                      alt="{{ $piggyBank->name }}"
                                      class="absolute inset-0 w-full h-full object-contain" />
