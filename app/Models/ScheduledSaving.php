@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-
 /**
  * @property int $id
  * @property int $piggy_bank_id
@@ -20,6 +19,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ScheduledSaving extends Model
 {
+    public const STATUS_SAVED = 'saved';
+    public const STATUS_PENDING = 'pending';
+
     protected $fillable = [
         'piggy_bank_id',
         'saving_number',
@@ -29,11 +31,11 @@ class ScheduledSaving extends Model
     ];
 
     protected $attributes = [
-        'status' => 'pending',
+        'status' => self::STATUS_PENDING,
     ];
 
     protected $casts = [
-        'saving_date' => 'datetime',
+        'saving_date' => 'date',
         'amount' => 'decimal:2',
     ];
 

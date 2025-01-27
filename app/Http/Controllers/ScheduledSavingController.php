@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ScheduledSaving;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ScheduledSavingController extends Controller
 {
@@ -50,7 +51,7 @@ class ScheduledSavingController extends Controller
             'piggy_bank_id' => 'sometimes|exists:piggy_banks,id',
             'payment_due_date' => 'sometimes|date',
             'amount' => 'sometimes|numeric|min:0',
-            'status' => 'sometimes|in:paid,unpaid,snoozed',
+            'status' => ['sometimes', Rule::in(['saved', 'pending'])],
         ]);
 
         $periodicSaving->update($validatedData);

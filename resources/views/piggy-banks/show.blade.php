@@ -188,17 +188,64 @@
                             </div>
                         </div>
 
-{{--                        <!-- Saving Schedule Link -->--}}
-{{--                        <div class="mt-8">--}}
-{{--                            <a href="{{ route('piggy-banks.schedule', $piggyBank) }}"--}}
-{{--                               class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">--}}
-{{--                                {{ __('View Saving Schedule') }}--}}
-{{--                            </a>--}}
-{{--                        </div>--}}
+                        <!-- Savings Schedule -->
+                        <div class="mt-8">
+                            <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Saving Schedule') }}</h2>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-1 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider break-words max-w-[40px]">
+                                            {{ __('in_piggy_bank') }}
+                                        </th>
+                                        <th scope="col" class="px-1 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider break-words max-w-[40px]">
+                                            {{ __('Saving #') }}
+                                        </th>
+                                        <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {{ __('Date') }}
+                                        </th>
+                                        <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {{ __('Amount') }}
+                                        </th>
+                                        <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {{ __('Status') }}
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($piggyBank->scheduledSavings as $saving)
+                                        <tr>
+                                            <td class="px-1 py-4 whitespace-normal text-sm text-gray-900">
+                                                <input type="checkbox"
+                                                       class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                                       {{ $saving->status === 'saved' ? 'checked' : '' }}
+                                                       data-saving-id="{{ $saving->id }}"
+                                                       data-piggy-bank-id="{{ $piggyBank->id }}">
+                                            </td>
+                                            <td class="px-1 py-4 whitespace-normal text-sm font-medium text-gray-900">
+                                                {{ $saving->saving_number }}
+                                            </td>
+                                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ $saving->saving_date->translatedFormat('d F Y') }}
+                                            </td>
+                                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {{ \App\Helpers\MoneyFormatHelper::format($saving->amount, $piggyBank->currency) }}
+                                            </td>
+                                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ __(strtolower($saving->status)) }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    @vite(['resources/js/scheduled-savings.js'])
 </x-app-layout>

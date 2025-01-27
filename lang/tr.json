@@ -134,5 +134,8 @@
     "created_at": "Oluşturulma Zamanı",
     "updated_at": "Güncellenme Zamanı",
     "Edit": "Güncelle",
-    "piggy_bank_ID": "Kumbara no"
+    "piggy_bank_ID": "Kumbara no",
+    "in_piggy_bank": "Kumbarada",
+    "saved": "Kumbarada",
+    "pending": "Bekliyor"
 }

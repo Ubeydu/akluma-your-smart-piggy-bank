@@ -166,6 +166,9 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
     });
 });
 
+Route::patch('scheduled-savings/{periodicSaving}', [App\Http\Controllers\ScheduledSavingController::class, 'update'])
+    ->name('scheduled-savings.update');
+
 Route::get('/format-date', function (Request $request) {
     $date = $request->query('date'); // Correct usage of query() method
 
