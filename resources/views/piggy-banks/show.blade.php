@@ -79,7 +79,7 @@
                                         </template>
                                     </div>
 
-                                    <x-primary-button type="submit">
+                                    <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
                                         {{ __('Save') }}
                                     </x-primary-button>
                                 </div>
