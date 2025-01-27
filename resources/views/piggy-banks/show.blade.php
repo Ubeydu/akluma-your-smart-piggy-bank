@@ -135,6 +135,12 @@
                             <!-- Additional Information -->
                             <div class="space-y-4">
                                 <div>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('piggy_bank_ID') }}</h3>
+                                    <p class="mt-1 text-base text-gray-900">{{ $piggyBank->id }}</p>
+                                </div>
+
+
+                                <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Status') }}</h3>
                                     <p class="mt-1 text-base text-gray-900">{{ __(strtolower($piggyBank->status)) }}</p>
                                 </div>
