@@ -33,7 +33,7 @@
                         <!-- Save and Cancel Buttons -->
                         <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-end sm:space-y-0 sm:gap-3">
 
-                            <!-- Replace this part in your form -->
+
                             <div x-data="{ showConfirmCancel: false }">
                                 <!-- Cancel button -->
                                 <x-danger-button type="button" @click.prevent="showConfirmCancel = true" class="w-[200px] sm:w-auto justify-center sm:justify-start">
@@ -101,6 +101,12 @@
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Starting Amount') }}</h3>
                                     <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->starting_amount, $piggyBank->currency) }}</p>
                                 </div>
+
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Final Total') }}</h3>
+                                    <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->final_total, $piggyBank->currency) }}</p>
+                                </div>
+
 
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Current Balance') }}</h3>
