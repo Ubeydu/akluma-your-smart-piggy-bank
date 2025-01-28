@@ -213,7 +213,7 @@
                                     </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($piggyBank->scheduledSavings as $saving)
+                                    @foreach($piggyBank->scheduledSavings()->paginate(50) as $saving)
                                         <tr>
                                             <td class="px-1 py-4 whitespace-normal text-sm text-gray-900">
                                                 <input type="checkbox"
@@ -239,6 +239,12 @@
                                     </tbody>
                                 </table>
                             </div>
+
+
+                            <div class="mt-4">
+                                {{ $piggyBank->scheduledSavings()->paginate(50)->links() }}
+                            </div>
+
                         </div>
 
                     </div>
