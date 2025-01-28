@@ -56,7 +56,10 @@ class ScheduledSavingController extends Controller
 
         $periodicSaving->update($validatedData);
 
-        return response()->json($periodicSaving);
+        return response()->json([
+            'status' => $periodicSaving->status,
+            'translated_status' => __(strtolower($periodicSaving->status))
+        ]);
     }
 
     /**
