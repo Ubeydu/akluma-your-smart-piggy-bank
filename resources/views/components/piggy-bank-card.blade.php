@@ -1,5 +1,6 @@
 @props(['piggyBank', 'newPiggyBankId' => null])
 
+<a href="{{ route('piggy-banks.show', $piggyBank) }}" class="block text-current hover:no-underline">
 <div class="p-4 border rounded-lg shadow bg-rose-50 hover:bg-rose-100 transition-colors duration-300
     {{ $newPiggyBankId == $piggyBank->id ? 'highlight-new' : '' }}">
     <h3 class="text-lg font-bold">{{ $piggyBank->name }}</h3>
@@ -38,3 +39,4 @@
     </div>
     <h3 class="text-lg font-bold mt-4">{{ $piggyBank->status }}</h3>
 </div>
+</a>

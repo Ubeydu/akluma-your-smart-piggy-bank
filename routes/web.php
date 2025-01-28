@@ -21,6 +21,20 @@ Route::get('/piggy-banks', [PiggyBankController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('piggy-banks.index');
 
+Route::get('/piggy-banks/{piggyBank}', [PiggyBankController::class, 'show'])
+    ->middleware(['auth', 'verified'])
+    ->name('piggy-banks.show');
+
+Route::put('/piggy-banks/{piggyBank}', [PiggyBankController::class, 'update'])
+    ->middleware(['auth', 'verified'])
+    ->name('piggy-banks.update');
+
+
+Route::post('/piggy-banks/{piggyBank}/cancel', [PiggyBankController::class, 'cancel'])
+    ->middleware(['auth', 'verified'])
+    ->name('piggy-banks.cancel');
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -151,6 +165,9 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
         Route::get('/step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
     });
 });
+
+Route::patch('scheduled-savings/{periodicSaving}', [App\Http\Controllers\ScheduledSavingController::class, 'update'])
+    ->name('scheduled-savings.update');
 
 Route::get('/format-date', function (Request $request) {
     $date = $request->query('date'); // Correct usage of query() method

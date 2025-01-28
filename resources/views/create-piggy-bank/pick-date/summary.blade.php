@@ -223,9 +223,7 @@
                                 {{ __('Previous') }}
                             </x-secondary-button>
 
-{{--                            <x-primary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location = window.location.href + '?debug=true'">--}}
-{{--                                {{ __('Create Piggy Bank') }}--}}
-{{--                            </x-primary-button>--}}
+
 
                             <form method="POST" action="{{ route('create-piggy-bank.pick-date.store') }}" class="mt-4">
                                 @csrf

@@ -15,5 +15,6 @@ return [
 
     'previous' => '&laquo; Önceki',
     'next' => 'Sonraki &raquo;',
+    'showing' => ':start - :end arasındaki sonuçlar, toplam :total',
 
 ];
