@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
         checkbox.addEventListener('change', async function() {
             const savingId = this.dataset.savingId;
             const piggyBankId = this.dataset.piggyBankId;
+            const amount = parseFloat(this.dataset.amount);
             const newStatus = this.checked ? 'saved' : 'pending';
 
             try {
@@ -19,7 +20,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({
                         status: newStatus,
-                        piggy_bank_id: piggyBankId
+                        piggy_bank_id: piggyBankId,
+                        amount: amount,
                     })
                 });
 
