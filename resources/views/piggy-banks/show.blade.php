@@ -144,8 +144,17 @@
 
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Status') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ __(strtolower($piggyBank->status)) }}</p>
+                                    <p id="piggy-bank-status-{{ $piggyBank->id }}" class="mt-1 text-base text-gray-900">{{ __(strtolower($piggyBank->status)) }}</p>
                                 </div>
+
+                                <script>
+                                    window.piggyBankTranslations = {
+                                        active: "{{ __('active') }}",
+                                        paused: "{{ __('paused') }}",
+                                        done: "{{ __('done') }}",
+                                        cancelled: "{{ __('cancelled') }}"
+                                    };
+                                </script>
 
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Saving Frequency') }}</h3>

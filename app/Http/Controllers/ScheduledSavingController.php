@@ -72,28 +72,32 @@ class ScheduledSavingController extends Controller
 
                 if ($validatedData['status'] === 'saved' && $periodicSaving->status === 'pending') {
                     $piggyBank->increment('current_balance', $amount);
-                    Log::info('Added to balance', ['new_balance' => $piggyBank->current_balance]);
                 } elseif ($validatedData['status'] === 'pending' && $periodicSaving->status === 'saved') {
                     $piggyBank->decrement('current_balance', $amount);
-                    Log::info('Subtracted from balance', ['new_balance' => $piggyBank->current_balance]);
                 }
 
                 $periodicSaving->update(['status' => $validatedData['status']]);
-                Log::info('Updated ScheduledSaving status', ['new_status' => $validatedData['status']]);
+
+                // Fetch updated remaining amount
+                $updatedRemainingAmount = $piggyBank->remaining_amount;
+
+                // Automatically update piggy bank status if needed
+                if (!in_array($piggyBank->status, ['paused', 'cancelled'])) {
+                    $newStatus = $updatedRemainingAmount == 0 ? 'done' : 'active';
+                    $piggyBank->update(['status' => $newStatus]);
+                    Log::info('PiggyBank status updated', ['new_status' => $newStatus]);
+                }
+
             });
 
-            $updatedBalance = PiggyBank::find($validatedData['piggy_bank_id'])->current_balance;
-            Log::info('ScheduledSaving update successful.', [
-                'saving_id' => $periodicSaving->id,
-                'new_status' => $validatedData['status'],
-                'new_balance' => $updatedBalance
-            ]);
+            $updatedPiggyBank = PiggyBank::find($validatedData['piggy_bank_id']);
 
             return response()->json([
                 'status' => $validatedData['status'],
                 'translated_status' => __(strtolower($validatedData['status'])),
-                'new_balance' => $updatedBalance,
-                'remaining_amount' => PiggyBank::find($validatedData['piggy_bank_id'])->remaining_amount,
+                'new_balance' => $updatedPiggyBank->current_balance,
+                'remaining_amount' => $updatedPiggyBank->remaining_amount,
+                'piggy_bank_status' => $updatedPiggyBank->status, // Send updated piggy bank status
             ], 200);
 
         } catch (\Exception $e) {
@@ -101,6 +105,7 @@ class ScheduledSavingController extends Controller
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+
 
 
     /**
