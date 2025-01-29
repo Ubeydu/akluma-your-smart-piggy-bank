@@ -66,16 +66,30 @@ class ScheduledSavingController extends Controller
                 Log::info('Inside DB Transaction', ['saving_id' => $periodicSaving->id]);
 
                 $piggyBank = PiggyBank::findOrFail($validatedData['piggy_bank_id']);
-                Log::info('PiggyBank found', ['piggy_bank_id' => $piggyBank->id, 'current_balance' => $piggyBank->current_balance]);
+
+                // Ensure `current_balance` is never NULL
+                if (is_null($piggyBank->current_balance)) {
+                    $piggyBank->current_balance = 0;
+                }
+
+                Log::info('PiggyBank found', [
+                    'piggy_bank_id' => $piggyBank->id,
+                    'current_balance' => $piggyBank->current_balance
+                ]);
 
                 $amount = $validatedData['amount'];
 
+                // Adjust balance safely
                 if ($validatedData['status'] === 'saved' && $periodicSaving->status === 'pending') {
-                    $piggyBank->increment('current_balance', $amount);
+                    $piggyBank->current_balance += $amount;
                 } elseif ($validatedData['status'] === 'pending' && $periodicSaving->status === 'saved') {
-                    $piggyBank->decrement('current_balance', $amount);
+                    $piggyBank->current_balance -= $amount;
                 }
 
+                // Save the updated balance
+                $piggyBank->save();
+
+                // Update scheduled saving status
                 $periodicSaving->update(['status' => $validatedData['status']]);
 
                 // Fetch updated remaining amount
@@ -87,7 +101,6 @@ class ScheduledSavingController extends Controller
                     $piggyBank->update(['status' => $newStatus]);
                     Log::info('PiggyBank status updated', ['new_status' => $newStatus]);
                 }
-
             });
 
             $updatedPiggyBank = PiggyBank::find($validatedData['piggy_bank_id']);
@@ -105,6 +118,7 @@ class ScheduledSavingController extends Controller
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+
 
 
 
