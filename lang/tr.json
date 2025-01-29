@@ -137,5 +137,7 @@
     "piggy_bank_ID": "Kumbara no",
     "in_piggy_bank": "Kumbarada",
     "saved": "Kumbarada",
-    "pending": "Bekliyor"
+    "pending": "Bekliyor",
+    "Success!": "Tebrikler!",
+    "You have successfully completed your savings goal." : "Birikim hedefinize ulaştınız."
 }

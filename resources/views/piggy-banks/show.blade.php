@@ -265,5 +265,16 @@
         </div>
     </div>
 
+    <script>
+        window.piggyBankTranslations = {
+            active: "{{ __('active') }}",
+            paused: "{{ __('paused') }}",
+            done: "{{ __('done') }}",
+            cancelled: "{{ __('cancelled') }}",
+            success: "{{ __('Success!') }}",
+            goal_completed: "{{ __('You have successfully completed your savings goal.') }}"
+        };
+    </script>
+
     @vite(['resources/js/scheduled-savings.js'])
 </x-app-layout>
