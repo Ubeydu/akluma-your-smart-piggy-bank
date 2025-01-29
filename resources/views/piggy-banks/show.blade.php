@@ -123,12 +123,14 @@
 
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Current Balance') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->current_balance, $piggyBank->currency) }}</p>
+                                    <p id="current-balance-{{ $piggyBank->id }}" class="mt-1 text-base text-gray-900" data-currency="{{ $piggyBank->currency }}"
+                                       data-locale="{{ app()->getLocale() }}">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->current_balance, $piggyBank->currency) }}</p>
                                 </div>
 
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('remaining_amount') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->remaining_amount, $piggyBank->currency) }}</p>
+                                    <p id="remaining-amount-{{ $piggyBank->id }}" class="mt-1 text-base text-gray-900" data-currency="{{ $piggyBank->currency }}"
+                                       data-locale="{{ app()->getLocale() }}">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->remaining_amount, $piggyBank->currency) }}</p>
                                 </div>
                             </div>
 
@@ -220,7 +222,8 @@
                                                        class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                                        {{ $saving->status === 'saved' ? 'checked' : '' }}
                                                        data-saving-id="{{ $saving->id }}"
-                                                       data-piggy-bank-id="{{ $piggyBank->id }}">
+                                                       data-piggy-bank-id="{{ $piggyBank->id }}"
+                                                       data-amount="{{ $saving->amount }}">
                                             </td>
                                             <td class="px-1 py-4 whitespace-normal text-sm font-medium text-gray-900">
                                                 {{ $saving->saving_number }}
