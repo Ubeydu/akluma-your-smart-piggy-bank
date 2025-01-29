@@ -37,6 +37,6 @@
             <span class="text-sm text-gray-600 font-medium mt-1 lg:mt-0 lg:ml-4">{{ $piggyBank->scheduledSavings()->orderByDesc('saving_number')->first()->saving_date->translatedFormat('d F Y') }}</span>
         </div>
     </div>
-    <h3 class="text-lg font-bold mt-4">{{ $piggyBank->status }}</h3>
+    <h3 class="text-lg font-bold mt-4">{{ __(strtolower($piggyBank->status)) }}</h3>
 </div>
 </a>
