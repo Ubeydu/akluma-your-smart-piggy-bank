@@ -119,12 +119,12 @@ class PiggyBank extends Model
         // Original implementation simplified to work with raw values
         try {
 
-            \Log::info('Calculating remaining amount', [
-                'final_total' => $this->final_total,
-                'current_balance' => $this->current_balance,
-                'total_savings' => $this->total_savings,
-                'starting_amount' => $this->starting_amount
-            ]);
+//            \Log::info('Calculating remaining amount', [
+//                'final_total' => $this->final_total,
+//                'current_balance' => $this->current_balance,
+//                'total_savings' => $this->total_savings,
+//                'starting_amount' => $this->starting_amount
+//            ]);
 
             return $this->final_total - ($this->current_balance ?? 0);
         } catch (\Throwable $e) {

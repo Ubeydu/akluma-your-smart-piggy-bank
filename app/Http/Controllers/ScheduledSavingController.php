@@ -50,10 +50,10 @@ class ScheduledSavingController extends Controller
      */
     public function update(Request $request, ScheduledSaving $periodicSaving)
     {
-        Log::info('ScheduledSaving update method called.', [
-            'saving_id' => $periodicSaving->id,
-            'request_data' => $request->all()
-        ]);
+//        Log::info('ScheduledSaving update method called.', [
+//            'saving_id' => $periodicSaving->id,
+//            'request_data' => $request->all()
+//        ]);
 
         $validatedData = $request->validate([
             'piggy_bank_id' => 'required|exists:piggy_banks,id',
@@ -63,7 +63,7 @@ class ScheduledSavingController extends Controller
 
         try {
             DB::transaction(function () use ($periodicSaving, $validatedData) {
-                Log::info('Inside DB Transaction', ['saving_id' => $periodicSaving->id]);
+//                Log::info('Inside DB Transaction', ['saving_id' => $periodicSaving->id]);
 
                 $piggyBank = PiggyBank::findOrFail($validatedData['piggy_bank_id']);
 
@@ -72,10 +72,10 @@ class ScheduledSavingController extends Controller
                     $piggyBank->current_balance = 0;
                 }
 
-                Log::info('PiggyBank found', [
-                    'piggy_bank_id' => $piggyBank->id,
-                    'current_balance' => $piggyBank->current_balance
-                ]);
+//                Log::info('PiggyBank found', [
+//                    'piggy_bank_id' => $piggyBank->id,
+//                    'current_balance' => $piggyBank->current_balance
+//                ]);
 
                 $amount = $validatedData['amount'];
 
@@ -99,7 +99,7 @@ class ScheduledSavingController extends Controller
                 if (!in_array($piggyBank->status, ['paused', 'cancelled'])) {
                     $newStatus = $updatedRemainingAmount == 0 ? 'done' : 'active';
                     $piggyBank->update(['status' => $newStatus]);
-                    Log::info('PiggyBank status updated', ['new_status' => $newStatus]);
+//                    Log::info('PiggyBank status updated', ['new_status' => $newStatus]);
                 }
             });
 
