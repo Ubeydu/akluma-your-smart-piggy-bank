@@ -139,5 +139,6 @@
     "saved": "Kumbarada",
     "pending": "Bekliyor",
     "Success!": "Tebrikler!",
-    "You have successfully completed your savings goal." : "Birikim hedefinize ulaştınız."
+    "You have successfully completed your savings goal." : "Birikim hedefinize ulaştınız.",
+    "Extra Savings Tooltip Info": "Periyodik olarak kenara ayıracağınız miktarlar küsüratlı olmasın diye birikim miktarını yuvarladık. Bu ekstra miktar bundan kaynaklı."
 }
