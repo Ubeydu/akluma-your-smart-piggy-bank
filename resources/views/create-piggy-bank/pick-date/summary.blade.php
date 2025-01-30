@@ -104,6 +104,12 @@
                                     <p class="mt-1 text-base text-gray-900">{{ $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['message'] }}</p>
                                 </div>
                             @endif
+
+
+
+
+
+
                         </div>
                     </div>
 
@@ -178,6 +184,31 @@
                             </div>
                         </div>
                     @endif
+
+
+                    <div class="bg-gray-100 rounded-lg p-4 border-2 border-gray-800 shadow-md">
+                        <h3 class="text-sm font-medium text-gray-500">{{ __('Final Total') }}</h3>
+                        <p class="mt-1 text-xl font-bold text-gray-900">
+                            @php
+                                $startingAmount = $summary['pick_date_step1']['starting_amount'] ?? null;
+                                $totalSavings = $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['total_savings']['amount'] ?? null;
+
+                                // If both amounts exist, add them. If only one exists, use that.
+                                if ($startingAmount && $totalSavings) {
+                                    $finalTotal = $startingAmount->plus($totalSavings);
+                                } elseif ($startingAmount) {
+                                    $finalTotal = $startingAmount;
+                                } elseif ($totalSavings) {
+                                    $finalTotal = $totalSavings;
+                                } else {
+                                    $finalTotal = null;
+                                }
+                            @endphp
+
+                            {{ $finalTotal ? $finalTotal->formatTo(App::getLocale()) : '-' }}
+                        </p>
+                    </div>
+
 
 
                     <!-- Action Buttons -->

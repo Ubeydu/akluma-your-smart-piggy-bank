@@ -46,5 +46,6 @@
     "minimum amount 100": "min. 100",
     "price_whole_numbers_only": "You can put only numbers in this field. No comma, no dot, no letters",
     "Current Balance": "Current balance",
-    "Final Total": "Final total"
+    "Final Total": "Final total",
+    "Total Savings": "Sum of Periodic Savings"
 }
