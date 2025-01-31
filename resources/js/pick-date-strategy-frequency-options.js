@@ -127,10 +127,10 @@ document.addEventListener("DOMContentLoaded", function () {
              * @returns {string} HTML string for displaying amount
              */
             const formatAmount = (formattedValue) => `
-    <div class="inline-flex items-center gap-1">
-        <div class="bg-gray-50 px-3 py-1.5 rounded font-mono text-lg">${formattedValue}</div>
-    </div>
-`;
+            <div class="inline-flex items-center gap-1">
+                <div class="bg-gray-50 px-3 py-1.5 rounded font-mono text-lg">${formattedValue}</div>
+            </div>
+            `;
 
             /**
              * Maps period types to their translation keys
@@ -174,40 +174,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
             document.getElementById('frequencyOptions').classList.remove('hidden');
 
-// If no options available, show error message and return
+            // If no options available, show error message and return
             if (!hasShortTermOptions && !hasLongTermOptions) {
                 document.getElementById('frequencyTitle').classList.add('hidden');
                 container.innerHTML = `
-        <div class="p-4 border rounded-lg bg-gray-50">
-            <p class="text-sm text-gray-700">${window.Laravel.translations['Sorry. We weren\'t able to create a saving plan for you. Try with a different price or date.']}</p>
-        </div>
-    `;
+            <div class="p-4 border rounded-lg bg-gray-50">
+                <p class="text-sm text-gray-700">${window.Laravel.translations['Sorry. We weren\'t able to create a saving plan for you. Try with a different price or date.']}</p>
+            </div>
+            `;
                 return;
             }
 
-// Show the title if we have options
+            // Show the title if we have options
             document.getElementById('frequencyTitle').classList.remove('hidden');
 
             // Create short-term options container
             if (hasShortTermOptions) {  // Using the variable we already calculated
                 container.innerHTML += `
-        <div class="mb-4">
-            <h3 class="text-sm font-semibold text-gray-500 mb-3"
-                data-translate="short-term-options">${window.Laravel.translations['Short-term Saving Options']}</h3>
-            <div class="space-y-3" id="shortTermOptions"></div>
-        </div>
-    `;
+                <div class="mb-4">
+                    <h3 class="text-sm font-semibold text-gray-500 mb-3"
+                        data-translate="short-term-options">${window.Laravel.translations['Short-term Saving Options']}</h3>
+                    <div class="space-y-3" id="shortTermOptions"></div>
+                </div>
+                `;
             }
 
-// Create long-term options container
+            // Create long-term options container
             if (hasLongTermOptions) {  // Using the variable we already calculated
                 container.innerHTML += `
-        <div class="mt-6">
-            <h3 class="text-sm font-semibold text-gray-500 mb-3"
-                data-translate="long-term-options">${window.Laravel.translations['Long-term Saving Options']}</h3>
-            <div class="space-y-3" id="longTermOptions"></div>
-        </div>
-    `;
+                <div class="mt-6">
+                    <h3 class="text-sm font-semibold text-gray-500 mb-3"
+                        data-translate="long-term-options">${window.Laravel.translations['Long-term Saving Options']}</h3>
+                    <div class="space-y-3" id="longTermOptions"></div>
+                </div>
+                `;
             }
 
             // Process each saving option
@@ -253,73 +253,73 @@ document.addEventListener("DOMContentLoaded", function () {
                         const periodLabel = formatPeriodLabel(baseType);
 
                         container.innerHTML += `
-    <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50 mb-2 cursor-pointer"
-        onclick="this.querySelector('input[type=\\'radio\\']').click()">
-        <div class="flex items-center h-5">
-            <input type="radio"
-                   name="frequency"
-                   value="${type}"
-                   class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                   onclick="event.stopPropagation()">
-        </div>
-        <div class="ml-3">
-            <div class="text-sm font-medium text-gray-700 flex flex-wrap gap-2">
-                <span data-translate="savings-plan">${window.Laravel.translations['Savings plan']}:</span>
-                <span class="font-semibold">${formatAmount(option.amount.formatted_value)}</span>
-                <span>×</span>
-                <span>${option.frequency} ${periodLabel}</span>
-            </div>
-            ${option.extra_savings ? `
-                <div class="text-xs text-gray-600 mt-2 space-y-1">
-                    <div class="flex justify-between">
-            <span data-translate="target-amount">${window.Laravel.translations['Target']}:</span>
-            <span>${formatAmount(option.target_amount.formatted_value)}</span>
-        </div>
+                <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50 mb-2 cursor-pointer"
+                    onclick="this.querySelector('input[type=\\'radio\\']').click()">
+                    <div class="flex items-center h-5">
+                        <input type="radio"
+                               name="frequency"
+                               value="${type}"
+                               class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                               onclick="event.stopPropagation()">
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-sm font-medium text-gray-700 flex flex-wrap gap-2">
+                            <span data-translate="savings-plan">${window.Laravel.translations['Savings plan']}:</span>
+                            <span class="font-semibold">${formatAmount(option.amount.formatted_value)}</span>
+                            <span>×</span>
+                            <span>${option.frequency} ${periodLabel}</span>
+                        </div>
+                        ${option.extra_savings ? `
+                            <div class="text-xs text-gray-600 mt-2 space-y-1">
+                                <div class="flex justify-between">
+                        <span data-translate="target-amount">${window.Laravel.translations['Target']}:</span>
+                        <span>${formatAmount(option.target_amount.formatted_value)}</span>
+                    </div>
 
 
-        <div class="flex justify-between text-green-600">
-    <span class="flex items-center gap-1">
-        <span data-translate="extra-savings">${window.Laravel.translations['Extra']}:</span>
-        <span x-data="{ showTooltip: false }" class="relative cursor-help">
-            <svg @mouseenter="showTooltip = true"
-                @mouseleave="showTooltip = false"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                class="w-4 h-4 text-green-600 hover:text-gray-800 transition-colors duration-200">
-                <path stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-            </svg>
-            <div x-show="showTooltip"
-    x-cloak
-    class="absolute z-10 w-48 px-3 py-2 mt-2 text-sm bg-gray-900 text-white rounded-lg shadow-lg"
-    :class="{
-        'left-1/2 -translate-x-1/2': window.innerWidth > 640, /* Center it on larger screens */
-        'left-0 ml-2': window.innerWidth <= 640 && $el.getBoundingClientRect().left < 150, /* Shift right if near left edge */
-        'right-0 mr-2': window.innerWidth <= 640 && $el.getBoundingClientRect().right > window.innerWidth - 150 /* Shift left if near right edge */
-    }"
-    role="tooltip">
+                    <div class="flex justify-between text-green-600">
+                    <span class="flex items-center gap-1">
+                    <span data-translate="extra-savings">${window.Laravel.translations['Extra']}:</span>
+                    <span x-data="{ showTooltip: false }" class="relative cursor-help">
+                        <svg @mouseenter="showTooltip = true"
+                            @mouseleave="showTooltip = false"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            class="w-4 h-4 text-green-600 hover:text-gray-800 transition-colors duration-200">
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                        </svg>
+                        <div x-show="showTooltip"
+                            x-cloak
+                            class="absolute z-10 w-48 px-3 py-2 mt-2 text-sm bg-gray-900 text-white rounded-lg shadow-lg"
+                            :class="{
+                                'left-1/2 -translate-x-1/2': window.innerWidth > 640, /* Center it on larger screens */
+                                'left-0 ml-2': window.innerWidth <= 640 && $el.getBoundingClientRect().left < 150, /* Shift right if near left edge */
+                                'right-0 mr-2': window.innerWidth <= 640 && $el.getBoundingClientRect().right > window.innerWidth - 150 /* Shift left if near right edge */
+                            }"
+                            role="tooltip">
 
-                ${window.Laravel.translations['Extra Savings Tooltip Info']}
-            </div>
-        </span>
-    </span>
-    <span>+${formatAmount(option.extra_savings.formatted_value)}</span>
-</div>
+                            ${window.Laravel.translations['Extra Savings Tooltip Info']}
+                        </div>
+                    </span>
+                    </span>
+                    <span>+${formatAmount(option.extra_savings.formatted_value)}</span>
+                    </div>
 
 
-        <div class="flex justify-between font-semibold">
-            <span data-translate="total-savings">${window.Laravel.translations['Total']}:</span>
-            <span>${formatAmount(option.total_savings.formatted_value)}</span>
-        </div>
+                <div class="flex justify-between font-semibold">
+                    <span data-translate="total-savings">${window.Laravel.translations['Total']}:</span>
+                    <span>${formatAmount(option.total_savings.formatted_value)}</span>
                 </div>
-            ` : ''}
-        </div>
-    </div>
-`;
+                </div>
+                    ` : ''}
+                </div>
+            </div>
+            `;
 
                     }
                 }
@@ -329,12 +329,12 @@ document.addEventListener("DOMContentLoaded", function () {
             const shortTermContainer = document.querySelector('#shortTermOptions');
             const longTermContainer = document.querySelector('#longTermOptions');
 
-// Remove short-term section if no options were rendered
+            // Remove short-term section if no options were rendered
             if (shortTermContainer && !shortTermContainer.hasChildNodes()) {
                 shortTermContainer.closest('.mb-4')?.remove();
             }
 
-// Remove long-term section if no options were rendered
+            // Remove long-term section if no options were rendered
             if (longTermContainer && !longTermContainer.hasChildNodes()) {
                 longTermContainer.closest('.mt-6')?.remove();
             }
