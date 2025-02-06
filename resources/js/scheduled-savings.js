@@ -1,3 +1,73 @@
+// Status transition configuration
+const STATUS_TRANSITIONS = {
+    'active': {
+        'done': {
+            type: 'A', // Automatic
+            endpoint: null, // No endpoint needed as this is automatic
+            message: window.piggyBankTranslations['goal_completed'] || 'You have successfully completed your savings goal.'
+        },
+        'paused': {
+            type: 'PWUC', // Possible with user confirmation
+            endpoint: '/piggy-banks/{id}/pause',
+            confirmMessage: 'Are you sure you want to pause this piggy bank?',
+            successMessage: window.piggyBankTranslations['piggy_bank_paused_info'] || 'Piggy bank has been paused.'
+        },
+        'cancelled': {
+            type: 'PWUC',
+            endpoint: '/piggy-banks/{id}/cancel',
+            confirmMessage: 'Are you sure you want to cancel this piggy bank?',
+            successMessage: 'Piggy bank has been cancelled.'
+        }
+    },
+    'paused': {
+        'active': {
+            type: 'PWUC',
+            endpoint: '/piggy-banks/{id}/resume',
+            confirmMessage: 'Are you sure you want to resume this piggy bank?',
+            successMessage: window.piggyBankTranslations['piggy_bank_resumed_schedule_not_updated_info'] || 'Piggy bank has been resumed.'
+        },
+        'done': {
+            type: 'NPM', // Not possible manually
+            message: 'Cannot mark a paused piggy bank as done. Complete all savings first.'
+        },
+        'cancelled': {
+            type: 'PWUC',
+            endpoint: '/piggy-banks/{id}/cancel',
+            confirmMessage: 'Are you sure you want to cancel this paused piggy bank?',
+            successMessage: 'Piggy bank has been cancelled.'
+        }
+    },
+    'done': {
+        'active': {
+            type: 'NPM',
+            message: 'Cannot reactivate a completed piggy bank.'
+        },
+        'paused': {
+            type: 'NPM',
+            message: 'Cannot pause a completed or cancelled piggy bank.'
+        },
+        'cancelled': {
+            type: 'NPM',
+            message: 'Cannot cancel a completed piggy bank.'
+        }
+    },
+    'cancelled': {
+        'active': {
+            type: 'NPM',
+            message: 'Cannot reactivate a cancelled piggy bank.'
+        },
+        'paused': {
+            type: 'NPM',
+            message: 'Cannot pause a cancelled piggy bank.'
+        },
+        'done': {
+            type: 'NPM',
+            message: 'Cannot mark a cancelled piggy bank as done.'
+        }
+    }
+};
+
+
 async function handleCheckboxChange(checkbox) {
     const savingId = checkbox.dataset.savingId;
     const piggyBankId = checkbox.dataset.piggyBankId;
