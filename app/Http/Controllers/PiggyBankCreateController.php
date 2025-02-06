@@ -142,11 +142,11 @@ class PiggyBankCreateController extends Controller
 //            ]);
         }
 
-        Log::info('Money Input Values:', [
-            'price_whole' => $validated['price_whole'],
-            'currency' => $validated['currency'],
-            'price_whole_type' => gettype($validated['price_whole'])
-        ]);
+//        Log::info('Money Input Values:', [
+//            'price_whole' => $validated['price_whole'],
+//            'currency' => $validated['currency'],
+//            'price_whole_type' => gettype($validated['price_whole'])
+//        ]);
 
 //        $price = Money::of($validated['price_whole'], $validated['currency']);
 
@@ -166,16 +166,16 @@ class PiggyBankCreateController extends Controller
 //        ]);
 
 
-        \Log::info('Money Object Details', [
-            'price_whole' => $validated['price_whole'],
-            'price_cents' => $validated['price_cents'],
-            'currency' => $validated['currency'],
-            'money_object' => [
-                'amount' => $price->getAmount()->__toString(),
-                'minor_amount' => $price->getMinorAmount()->toInt(),
-                'formatted' => $price->formatTo(App::getLocale())
-            ]
-        ]);
+//        \Log::info('Money Object Details', [
+//            'price_whole' => $validated['price_whole'],
+//            'price_cents' => $validated['price_cents'],
+//            'currency' => $validated['currency'],
+//            'money_object' => [
+//                'amount' => $price->getAmount()->__toString(),
+//                'minor_amount' => $price->getMinorAmount()->toInt(),
+//                'formatted' => $price->formatTo(App::getLocale())
+//            ]
+//        ]);
 
 
         $startingAmount = null;
@@ -604,10 +604,10 @@ class PiggyBankCreateController extends Controller
             $request->session()->put('newPiggyBankId', $piggyBank->id);
 
             // Log for debugging
-            Log::info('Redirecting after piggy bank creation:', [
-                'piggy_bank_id' => $piggyBank->id,
-                'session_data' => session()->all()
-            ]);
+//            Log::info('Redirecting after piggy bank creation:', [
+//                'piggy_bank_id' => $piggyBank->id,
+//                'session_data' => session()->all()
+//            ]);
 
             return redirect()
                 ->route('piggy-banks.index')

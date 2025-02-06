@@ -74,4 +74,37 @@ class PiggyBankController extends Controller
             ->with('warning', __('You cancelled editing your piggy bank details.'));
     }
 
+    public function pause(PiggyBank $piggyBank)
+    {
+        try {
+            $piggyBank->update(['status' => 'paused']);
+
+            return response()->json([
+                'status' => 'paused',
+                'message' => __('Piggy bank has been paused successfully.')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => __('Failed to pause piggy bank.')
+            ], 500);
+        }
+    }
+
+    public function resume(PiggyBank $piggyBank)
+    {
+        try {
+            $piggyBank->update(['status' => 'active']);
+
+            return response()->json([
+                'status' => 'active',
+                'message' => __('Piggy bank has been activated successfully.')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => __('Failed to activate piggy bank.')
+            ], 500);
+        }
+    }
+
+
 }

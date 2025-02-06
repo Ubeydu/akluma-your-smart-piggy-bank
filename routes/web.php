@@ -4,8 +4,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PiggyBankCreateController;
 use App\Http\Controllers\PiggyBankController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ScheduledSavingController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserPreferencesController;
 use Brick\Money\Money;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -30,6 +33,20 @@ Route::put('/piggy-banks/{piggyBank}', [PiggyBankController::class, 'update'])
     ->name('piggy-banks.update');
 
 
+Route::patch('/piggy-banks/{piggyBank}/pause', [\App\Http\Controllers\ScheduledSavingController::class, 'pausePiggyBank'])
+    ->middleware(['auth', 'verified'])
+    ->name('piggy-banks.pause');
+
+Route::patch('/piggy-banks/{piggyBank}/resume', [\App\Http\Controllers\ScheduledSavingController::class, 'resumePiggyBank'])
+    ->middleware(['auth', 'verified'])
+    ->name('piggy-banks.resume');
+
+Route::get('/piggy-banks/{piggyBank}/schedule', [ScheduledSavingController::class, 'getSchedulePartial'])
+    ->middleware(['auth', 'verified'])
+    ->name('piggy-banks.schedule');
+
+
+
 Route::post('/piggy-banks/{piggyBank}/cancel', [PiggyBankController::class, 'cancel'])
     ->middleware(['auth', 'verified'])
     ->name('piggy-banks.cancel');
@@ -39,6 +56,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+//    Route::get('/test-piggy-full/{piggyBankId}', [TestController::class, 'testPiggyBank'])
+//        ->name('test.piggy-full');
+
+
+    Route::post('/test-date/{piggyBank}', function(App\Models\PiggyBank $piggyBank, Request $request) {
+        session(['test_date' => $request->test_date]);
+        return back()->with('success', 'Test date set to: ' . $request->test_date);
+    })->name('test.set-date');
+
+    Route::post('/test-date/{piggyBank}/clear', function(App\Models\PiggyBank $piggyBank) {
+        session()->forget('test_date');
+        return back()->with('success', 'Test date cleared');
+    })->name('test.clear-date');
+
 });
 
 // Language switching route
