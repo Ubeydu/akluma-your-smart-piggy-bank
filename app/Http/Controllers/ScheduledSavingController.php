@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PiggyBank;
 use App\Models\ScheduledSaving;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -120,6 +121,141 @@ class ScheduledSavingController extends Controller
     }
 
 
+    /**
+     * Pause a piggy bank (stopping scheduled savings temporarily)
+     */
+    public function pausePiggyBank($piggyBankId)
+    {
+        $piggyBank = PiggyBank::findOrFail($piggyBankId);
+
+        // Ensure we do not pause a completed or cancelled piggy bank
+        if (in_array($piggyBank->status, ['done', 'cancelled'])) {
+            return response()->json(['error' => 'Cannot pause a completed or cancelled piggy bank.'], 400);
+        }
+
+        $piggyBank->update(['status' => 'paused']);
+
+        return response()->json(['message' => __('piggy_bank_paused_info'), 'status' => 'paused']);
+    }
+
+    /**
+     * Resume a piggy bank and recalculate the pending savings schedule with cycle preservation
+     */
+    public function resumePiggyBank($piggyBankId)
+    {
+        \Log::info("Resume called with test date: " . session('test_date'));
+
+        $piggyBank = PiggyBank::findOrFail($piggyBankId);
+
+        \Log::info("Found piggy bank with status: " . $piggyBank->status);
+
+        if ($piggyBank->status !== 'paused') {
+            return response()->json(['error' => 'Piggy bank is not paused.'], 400);
+        }
+
+        DB::transaction(function () use ($piggyBank) {
+            // Update status back to active
+            $piggyBank->update(['status' => 'active']);
+
+            // Get all pending savings sorted by saving_number
+            $pendingSavings = ScheduledSaving::where('piggy_bank_id', $piggyBank->id)
+                ->where('status', 'pending')
+                ->orderBy('saving_number', 'asc')
+                ->get();
+
+            // If no pending savings, nothing to recalculate
+            if ($pendingSavings->isEmpty()) {
+                return;
+            }
+
+            // Get the test date from session if it exists, otherwise use actual today
+            $currentDate = session('test_date')
+                ? Carbon::parse(session('test_date'))
+                : Carbon::today();
+
+            // Get the first saving
+            $firstSaving = $pendingSavings->first();
+
+            \Log::info("First saving date: {$firstSaving->saving_date}, Current date: {$currentDate}");
+
+
+            // Special handling for daily frequency
+            if ($piggyBank->selected_frequency === 'days') {
+                // For daily frequency, compare dates without time
+                if ($firstSaving->saving_date->startOfDay()->gt($currentDate->startOfDay())) {
+                    \Log::info("First saving is in the future (daily schedule), skipping schedule update");
+                    return;
+                }
+            } else {
+                // For other frequencies, use existing comparison
+                if ($firstSaving->saving_date->gt($currentDate)) {
+                    \Log::info("First saving is in the future, skipping schedule update");
+                    return;
+                }
+            }
+
+            //            // Start recalculating from today's date
+            //            $newStartDate = Carbon::today();
+
+            // Get the test date from session if it exists, otherwise use actual today
+            $newStartDate = session('test_date')
+                ? Carbon::parse(session('test_date'))
+                : Carbon::today();
+
+            \Log::info("Using start date: " . $newStartDate->format('Y-m-d'));
+
+            // Mapping for frequency
+            $intervalMapping = [
+                'days' => 'addDays',
+                'weeks' => 'addWeeks',
+                'months' => 'addMonths',
+                'years' => 'addYears',
+            ];
+
+            $intervalFunction = $intervalMapping[$piggyBank->selected_frequency] ?? null;
+
+            if (!$intervalFunction) {
+                throw new \Exception("Invalid frequency set for piggy bank.");
+            }
+
+
+            foreach ($pendingSavings as $index => $saving) {
+                \Log::info("Processing saving #{$saving->saving_number} with date {$saving->saving_date}");
+
+                // Start with the test date plus one day
+                $workingDate = $newStartDate->copy()->addDay();
+
+                \Log::info("Processing with frequency: {$piggyBank->selected_frequency}");
+
+                if ($piggyBank->selected_frequency === 'years') {
+                    $workingDate->addYears($index);
+                } else if ($piggyBank->selected_frequency === 'months') {
+                    $workingDate->addMonths($index);
+                } else if ($piggyBank->selected_frequency === 'weeks') {
+                    // For weekly frequency, use addWeeks instead of calculating days
+                    $workingDate->addWeeks($index);
+                } else { // days
+                    $workingDate->addDays($index);
+                }
+
+                \Log::info("Working date calculated for saving #{$saving->saving_number}: {$workingDate}");
+
+                // Update with the new date
+                $saving->update(['saving_date' => $workingDate]);
+                \Log::info("Saved new date: {$workingDate}");
+            }
+
+
+
+        });
+
+        \Log::info("All savings processed");
+        return response()->json(['message' => __('piggy_bank_resumed_schedule_not_updated_info'), 'status' => 'active']);
+
+    }
+
+
+
 
 
     /**
@@ -131,4 +267,13 @@ class ScheduledSavingController extends Controller
 
         return response()->json(null, 204);
     }
+
+
+
+
+    public function getSchedulePartial(PiggyBank $piggyBank)
+    {
+        return view('partials.schedule', compact('piggyBank'));
+    }
+
 }

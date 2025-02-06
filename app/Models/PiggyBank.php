@@ -39,6 +39,8 @@ class PiggyBank extends Model
 {
     use HasFactory;
 
+    public const STATUS_OPTIONS = ['active', 'paused', 'done', 'cancelled'];
+
     protected $fillable = [
         'user_id',
         'name',
@@ -141,6 +143,9 @@ class PiggyBank extends Model
     }
 
 
-
+    public static function getStatusOptions(): array
+    {
+        return self::STATUS_OPTIONS;
+    }
 
 }

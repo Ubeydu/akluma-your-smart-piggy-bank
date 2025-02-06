@@ -144,17 +144,22 @@
 
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Status') }}</h3>
-                                    <p id="piggy-bank-status-{{ $piggyBank->id }}" class="mt-1 text-base text-gray-900">{{ __(strtolower($piggyBank->status)) }}</p>
+
+                                    <select id="piggy-bank-status-{{ $piggyBank->id }}"
+                                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                            data-initial-status="{{ $piggyBank->status }}">
+                                        @foreach(\App\Models\PiggyBank::getStatusOptions() as $statusOption)
+                                            <option value="{{ $statusOption }}" {{ $piggyBank->status === $statusOption ? 'selected' : '' }}>
+                                                {{ __(strtolower($statusOption)) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+
+                                    <p id="status-text-{{ $piggyBank->id }}" class="mt-1 text-base text-gray-900">
+                                        {{ ucfirst($piggyBank->status) }}
+                                    </p>
                                 </div>
 
-                                <script>
-                                    window.piggyBankTranslations = {
-                                        active: "{{ __('active') }}",
-                                        paused: "{{ __('paused') }}",
-                                        done: "{{ __('done') }}",
-                                        cancelled: "{{ __('cancelled') }}"
-                                    };
-                                </script>
 
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Saving Frequency') }}</h3>
@@ -199,65 +204,47 @@
                             </div>
                         </div>
 
+
+                        @if(app()->environment('local'))
+                            <div class="bg-yellow-50 p-4 rounded-lg mb-4 border border-yellow-200">
+                                <h3 class="font-semibold text-yellow-800 mb-2">Test Tools</h3>
+                                <div class="flex items-center gap-4">
+                                    <form action="{{ route('test.set-date', $piggyBank->id) }}" method="POST" class="flex items-center gap-2">
+                                        @csrf
+                                        <input
+                                                type="date"
+                                                name="test_date"
+                                                class="rounded-md border-gray-300"
+                                                value="{{ session('test_date') ?? now()->format('Y-m-d') }}"
+                                        >
+                                        <button type="submit" class="px-3 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">
+                                            Set Test Date
+                                        </button>
+                                    </form>
+                                    @if(session('test_date'))
+                                        <form action="{{ route('test.clear-date', $piggyBank->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="px-3 py-1 bg-gray-500 text-white rounded-md hover:bg-gray-600">
+                                                Clear Test Date
+                                            </button>
+                                        </form>
+                                    @endif
+                                    <div class="text-sm text-gray-600">
+                                        Current test date:
+                                        <span class="font-medium">
+                    {{ session('test_date') ? Carbon\Carbon::parse(session('test_date'))->format('Y-m-d') : 'Not set' }}
+                </span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+
                         <!-- Savings Schedule -->
-                        <div class="mt-8">
-                            <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Saving Schedule') }}</h2>
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="px-1 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider break-words max-w-[40px]">
-                                            {{ __('in_piggy_bank') }}
-                                        </th>
-                                        <th scope="col" class="px-1 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider break-words max-w-[40px]">
-                                            {{ __('Saving #') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            {{ __('Date') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            {{ __('Amount') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            {{ __('Status') }}
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($piggyBank->scheduledSavings()->paginate(50) as $saving)
-                                        <tr>
-                                            <td class="px-1 py-4 whitespace-normal text-sm text-gray-900">
-                                                <input type="checkbox"
-                                                       class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                                       {{ $saving->status === 'saved' ? 'checked' : '' }}
-                                                       data-saving-id="{{ $saving->id }}"
-                                                       data-piggy-bank-id="{{ $piggyBank->id }}"
-                                                       data-amount="{{ $saving->amount }}">
-                                            </td>
-                                            <td class="px-1 py-4 whitespace-normal text-sm font-medium text-gray-900">
-                                                {{ $saving->saving_number }}
-                                            </td>
-                                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $saving->saving_date->translatedFormat('d F Y') }}
-                                            </td>
-                                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {{ \App\Helpers\MoneyFormatHelper::format($saving->amount, $piggyBank->currency) }}
-                                            </td>
-                                            <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ __(strtolower($saving->status)) }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-
-
-                            <div class="mt-4">
-                                {{ $piggyBank->scheduledSavings()->paginate(50)->links() }}
-                            </div>
-
+                        <div id="schedule-container">
+                            @include('partials.schedule')
                         </div>
+
 
                     </div>
                 </div>
@@ -271,10 +258,19 @@
             paused: "{{ __('paused') }}",
             done: "{{ __('done') }}",
             cancelled: "{{ __('cancelled') }}",
-            success: "{{ __('Success!') }}",
-            goal_completed: "{{ __('You have successfully completed your savings goal.') }}"
+            success: "{{ __('success') }}",
+            info: "{{ __('info') }}",
+            goal_completed: "{{ __('You have successfully completed your savings goal.') }}",
+            paused_message: "{{ __('paused_message') }}"
         };
     </script>
 
+
+
     @vite(['resources/js/scheduled-savings.js'])
+
+
 </x-app-layout>
+
+
+
