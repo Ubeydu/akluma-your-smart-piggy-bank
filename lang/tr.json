@@ -93,6 +93,8 @@
     "There was an error cancelling the process. Please try again.": "İşlem iptal edilirken bir hata oluştu. Lütfen tekrar dene.",
     "Yes, cancel": "Evet",
     "No, continue": "Hayır",
+    "Yes, proceed": "Evet",
+    "No, cancel": "Hayır",
     "formatted: :value": "biçimlendirilmiş: :value",
     "The difference between starting amount and price cannot be less than 100. Please check.": "Kumbarana önden koyacağın miktarla, almak istediğin şeyin fiyatı arasındaki fark 100'den az olamaz.",
     "price_whole_numbers_only": "Bu kısma rakam haricinde hiç bir şey yazamazsın.",
@@ -150,6 +152,9 @@
     "Are you sure you want to pause this piggy bank?": "Bu kumbarayı duraklatmak istediğinden emin misin?",
     "Are you sure you want to cancel this piggy bank?": "Bu kumbarayı iptal etmek istediğinden emin misin?",
     "Are you sure you want to cancel this paused piggy bank?": "Duraklatılmış bu kumbarayı iptal etmek istediğinden emin misin?",
-    "Are you sure you want to resume this piggy bank?": "Bu kumbarayı devam ettirmek istediğinden emin misin?",
-    "Piggy bank has been cancelled.": "Kumbara iptal edildi."
+    "Are you sure you want to resume this piggy bank? Dates in your saving schedule may be updated if you proceed.": "Bu kumbarayı devam ettirmek istediğinden emin misin? Onaylarsan, birikim programındaki tarihler güncellenebilir.",
+    "Piggy bank has been cancelled.": "Kumbara iptal edildi.",
+    "Current Status": "Kumbaranın Statüsü",
+    "Change Status": "Statü Değiştir",
+    "edit_cancelled_message": "Düzenlemeyi iptal ettin. Yaptığın değişiklikler kaydedilmedi."
 }

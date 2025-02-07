@@ -147,13 +147,15 @@ class ScheduledSavingController extends Controller
 
         $piggyBank = PiggyBank::findOrFail($piggyBankId);
 
+        $scheduleUpdated = false;
+
         \Log::info("Found piggy bank with status: " . $piggyBank->status);
 
         if ($piggyBank->status !== 'paused') {
             return response()->json(['error' => 'Piggy bank is not paused.'], 400);
         }
 
-        DB::transaction(function () use ($piggyBank) {
+        DB::transaction(function () use ($piggyBank, &$scheduleUpdated) {
             // Update status back to active
             $piggyBank->update(['status' => 'active']);
 
@@ -246,11 +248,17 @@ class ScheduledSavingController extends Controller
             }
 
 
+            $scheduleUpdated = true;
+
+
 
         });
 
         \Log::info("All savings processed");
-        return response()->json(['message' => __('piggy_bank_resumed_schedule_not_updated_info'), 'status' => 'active']);
+        return response()->json(['message' => __('piggy_bank_resumed_schedule_not_updated_info'),
+            'status' => 'active',
+            'scheduleUpdated' => $scheduleUpdated
+            ]);
 
     }
 

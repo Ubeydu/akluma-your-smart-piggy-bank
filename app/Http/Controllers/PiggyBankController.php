@@ -56,6 +56,10 @@ class PiggyBankController extends Controller
             abort(403);
         }
 
+        if (request()->has('cancelled')) {
+            session()->flash('info', __('edit_cancelled_message'));
+        }
+
         return view('piggy-banks.show', [
             'piggyBank' => $piggyBank
         ]);
