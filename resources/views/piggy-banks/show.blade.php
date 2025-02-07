@@ -150,18 +150,17 @@
 
 
                                 <div x-data="{
-    showConfirmCancel: false,
-    statusChangeAction: '',
-    statusChangeMessage: ''
-}">
+                                    showConfirmCancel: false,
+                                    statusChangeAction: '',
+                                    statusChangeMessage: ''
+                                }">
 
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Status') }}</h3>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Current Status') }}</h3>
 
                                     <div class="mt-1 space-y-2 sm:space-y-0">
 
                                         {{-- Current Status Display --}}
                                         <div class="mb-3">
-                                            <span class="text-sm text-gray-500 block mb-1">{{ __('Current Status') }}</span>
                                             <div class="flex items-center">
                                                 <span class="inline-flex items-center px-3 py-1 rounded-md
                                                     {{ $piggyBank->status === 'active' ? 'bg-green-100 text-green-800' : '' }}
@@ -178,7 +177,7 @@
                                         {{-- Status Change Actions --}}
                                         <div class="relative inline-block w-full sm:w-64 z-30">
                                             <label for="piggy-bank-status-{{ $piggyBank->id }}" class="text-sm text-gray-500 block mb-1">
-                                                {{ __('Change Status') }}
+                                                {{ __('Change Status To') }}
                                             </label>
                                             <select id="piggy-bank-status-{{ $piggyBank->id }}"
                                                     class="block w-full text-base border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 {{ in_array($piggyBank->status, ['done', 'cancelled']) ? 'opacity-50 cursor-not-allowed' : '' }}"

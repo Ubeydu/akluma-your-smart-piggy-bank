@@ -155,6 +155,6 @@
     "Are you sure you want to resume this piggy bank? Dates in your saving schedule may be updated if you proceed.": "Bu kumbarayı devam ettirmek istediğinden emin misin? Onaylarsan, birikim programındaki tarihler güncellenebilir.",
     "Piggy bank has been cancelled.": "Kumbara iptal edildi.",
     "Current Status": "Kumbaranın Statüsü",
-    "Change Status": "Statü Değiştir",
+    "Change Status To": "Statü Değiştir",
     "edit_cancelled_message": "Düzenlemeyi iptal ettin. Yaptığın değişiklikler kaydedilmedi."
 }

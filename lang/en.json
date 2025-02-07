@@ -61,5 +61,6 @@
     "info": "Info",
     "You have successfully completed your savings goal.": "You have successfully completed your savings goal.",
     "in_piggy_bank": "Saved in piggy bank",
-    "edit_cancelled_message": "You cancelled editing. The changes you made weren't saved."
+    "edit_cancelled_message": "You cancelled editing. The changes you made weren't saved.",
+    "piggy_bank_ID": "Piggy Bank ID"
 }
