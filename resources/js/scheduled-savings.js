@@ -1,3 +1,70 @@
+// Status transition configuration
+const STATUS_TRANSITIONS = {
+    'active': {
+        'done': {
+            type: 'A',
+            endpoint: null,
+            message: window.piggyBankTranslations['goal_completed']
+        },
+        'paused': {
+            type: 'PWUC',
+            endpoint: '/piggy-banks/{id}/pause',
+            confirmMessage: window.piggyBankTranslations['confirm_pause'],
+            successMessage: window.piggyBankTranslations['piggy_bank_paused_info']
+        },
+        'cancelled': {
+            type: 'PWUC',
+            endpoint: '/piggy-banks/{id}/update-status-cancelled',
+            method: 'PATCH',
+            confirmMessage: window.piggyBankTranslations['confirm_cancel'],
+            successMessage: window.piggyBankTranslations['piggy_bank_cancelled']
+        }
+    },
+    'paused': {
+        'active': {
+            type: 'PWUC',
+            endpoint: '/piggy-banks/{id}/resume',
+            confirmMessage: window.piggyBankTranslations['confirm_resume'],
+            successMessage: window.piggyBankTranslations['piggy_bank_resumed_schedule_not_updated_info']
+        },
+        'done': {
+            type: 'NPM',
+        },
+        'cancelled': {
+            type: 'PWUC',
+            endpoint: '/piggy-banks/{id}/update-status-cancelled',
+            method: 'PATCH',
+            confirmMessage: window.piggyBankTranslations['confirm_cancel_paused'],
+            successMessage: window.piggyBankTranslations['piggy_bank_cancelled']
+        }
+    },
+    'done': {
+        'active': {
+            type: 'NPM',
+        },
+        'paused': {
+            type: 'NPM',
+        },
+        'cancelled': {
+            type: 'NPM',
+        }
+    },
+    'cancelled': {
+        'active': {
+            type: 'NPM',
+        },
+        'paused': {
+            type: 'NPM',
+        },
+        'done': {
+            type: 'NPM',
+        }
+    }
+};
+
+// console.log('Full STATUS_TRANSITIONS:', STATUS_TRANSITIONS);
+
+
 async function handleCheckboxChange(checkbox) {
     const savingId = checkbox.dataset.savingId;
     const piggyBankId = checkbox.dataset.piggyBankId;
@@ -23,7 +90,19 @@ async function handleCheckboxChange(checkbox) {
             throw new Error('Failed to update status');
         }
 
+        // In handleCheckboxChange, after getting the response:
+        console.log("Checkbox change response:", {
+            newStatus: data.piggy_bank_status,
+            selectElement: document.getElementById(`piggy-bank-status-${piggyBankId}`),
+            currentSelectValue: document.getElementById(`piggy-bank-status-${piggyBankId}`)?.value
+        });
+
         console.log("Piggy Bank Status Returned:", data.piggy_bank_status);
+
+        if (data.piggy_bank_status === 'done') {
+            showFlashMessage(window.piggyBankTranslations['goal_completed'] || 'Congratulations! You have successfully completed your savings goal.');
+            updateSelectAfterStatusChange(piggyBankId, 'done');
+        }
 
         // Format number before updating UI using the correct currency & locale
         function formatCurrency(value, currency, locale) {
@@ -73,37 +152,100 @@ async function handleCheckboxChange(checkbox) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('Scheduled Savings JS Loaded');
+    // console.log('Scheduled Savings JS Loaded');
+    //
+    // console.log('Translation check:', {
+    //     'paused_message': window.piggyBankTranslations['paused_message'],
+    //     'piggy_bank_paused_message': window.piggyBankTranslations['piggy_bank_paused_message']
+    // });
 
-    console.log('Translation check:', {
-        'paused_message': window.piggyBankTranslations['paused_message'],
-        'piggy_bank_paused_message': window.piggyBankTranslations['piggy_bank_paused_message']
-    });
 
 
-    // Add status handler
     const statusSelects = document.querySelectorAll('select[id^="piggy-bank-status-"]');
 
     statusSelects.forEach(select => {
         const piggyBankId = select.id.replace('piggy-bank-status-', '');
         const initialStatus = select.dataset.initialStatus;
 
+        // Disable invalid options based on current status
+        function updateSelectOptions() {
+            const currentStatus = select.dataset.initialStatus;
+            Array.from(select.options).forEach(option => {
+                const targetStatus = option.value;
+                const transition = STATUS_TRANSITIONS[currentStatus]?.[targetStatus];
+
+                // Disable if transition doesn't exist or is not possible manually
+                option.disabled = !transition || transition.type === 'NPM' || transition.type === 'A';
+            });
+        }
+
+        // Initial setup of options
+        updateSelectOptions();
+
+
         select.addEventListener('change', async function() {
             const newStatus = this.value;
-            console.log("Status change triggered", {
-                piggyBankId,
-                newStatus,
-                initialStatus
-            });
+            const currentStatus = this.dataset.initialStatus;
+            const transition = STATUS_TRANSITIONS[currentStatus]?.[newStatus];
 
-            if (newStatus === 'paused') {
-                console.log("Attempting to pause piggy bank", piggyBankId);
-                await updatePiggyBankStatus(piggyBankId, `/piggy-banks/${piggyBankId}/pause`, initialStatus);
-            } else if (newStatus === 'active') {
-                console.log("Attempting to resume piggy bank", piggyBankId);
-                await updatePiggyBankStatus(piggyBankId, `/piggy-banks/${piggyBankId}/resume`, initialStatus);
+            console.log('Current transition config:', transition);
+
+            if (!transition) {
+                // Reset to initial status if transition is not defined
+                this.value = currentStatus;
+                return;
+            }
+
+            if (transition.type === 'PWUC') {
+                console.log('Attempting PWUC transition:', {
+                    from: currentStatus,
+                    to: newStatus,
+                    endpoint: transition.endpoint,
+                    piggyBankId: piggyBankId
+                });
+
+                // Reset select to current status while waiting for confirmation
+                this.value = currentStatus;
+
+                // Find the Alpine container and trigger dialog
+                const dialogContainer = this.closest('[x-data]');
+                if (dialogContainer) {
+                    // Store current select element and status info
+                    const selectElement = this;
+                    const targetStatus = newStatus;
+
+                    // Update Alpine.js state directly on the element
+                    dialogContainer._x_dataStack[0].showConfirmCancel = true;
+                    dialogContainer._x_dataStack[0].statusChangeMessage = transition.confirmMessage;
+                    dialogContainer._x_dataStack[0].statusChangeAction = async function() {
+                        try {
+                            const endpoint = transition.endpoint.replace('{id}', piggyBankId);
+                            console.log('Making request to endpoint:', endpoint);
+
+                            await updatePiggyBankStatus(piggyBankId, endpoint, currentStatus, transition.method || 'PATCH');
+
+                            // If successful, update the data-initial-status
+                            selectElement.dataset.initialStatus = targetStatus;
+                            selectElement.value = targetStatus;
+                            updateSelectOptions();
+
+                            console.log('Request completed');
+                            return true;
+                        } catch (error) {
+                            console.error('Transition error:', error);
+                            selectElement.value = currentStatus;
+                            return false;
+                        }
+                    };
+                }
+
+            } else if (transition.type === 'NPM') {
+                // Show error message and reset
+                showFlashMessage(transition.message);
+                this.value = currentStatus;
             }
         });
+
     });
 
     const checkboxes = document.querySelectorAll('input[data-saving-id]');
@@ -114,9 +256,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (container) {
         const status = container.dataset.piggyBankStatus;
         checkboxes.forEach(checkbox => {
-            checkbox.disabled = status === 'paused';
-
-
+            checkbox.disabled = ['paused', 'cancelled', 'done'].includes(status);
         });
     }
 
@@ -137,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (container) {
             container.dataset.piggyBankStatus = e.detail.status;
             checkboxes.forEach(checkbox => {
-                checkbox.disabled = e.detail.status === 'paused';
+                checkbox.disabled = ['paused', 'cancelled', 'done'].includes(e.detail.status);
             });
         }
     });
@@ -145,87 +285,241 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-async function updatePiggyBankStatus(piggyBankId, url, initialStatus) {
+async function updatePiggyBankStatus(piggyBankId, url, initialStatus, method = 'PATCH') {
     const startTime = performance.now();
     console.log("updatePiggyBankStatus called with:", {
         startTime,
         piggyBankId,
         url,
-        initialStatus
+        initialStatus,
+        method
     });
 
     try {
-        console.log("Making PATCH request to:", url);
-
-        let response = await fetch(url, {
-            method: 'PATCH',
+        // Create form data for POST requests
+        const isPost = method.toUpperCase() === 'POST';
+        let fetchOptions = {
+            method: method,
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
-        });
+        };
 
-        const endTime = performance.now();
-        console.log("Fetch completed", {
-            duration: endTime - startTime,
-            status: response.status
-        });
-
-        console.log("Response received:", response.status);
-
-        let data = await response.json();
-
-        console.log("Response data:", data);
-
-        if (response.ok) {
-            // Update status text
-            const statusTextElement = document.getElementById(`status-text-${piggyBankId}`);
-            if (statusTextElement) {
-                statusTextElement.textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
-            }
-            showFlashMessage(data.message);
-
-
-            // Fetch updated schedule using the new route
-            fetch(`/piggy-banks/${piggyBankId}/schedule`)
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('schedule-container').innerHTML = html;
-
-
-                    // Reinitialize checkboxes after updating the schedule
-                    const newCheckboxes = document.querySelectorAll('input[data-saving-id]');
-                    const container = document.querySelector('[data-piggy-bank-status]');
-                    if (container) {
-                        const status = container.dataset.piggyBankStatus;
-                        newCheckboxes.forEach(checkbox => {
-                            checkbox.disabled = status === 'paused';
-                            // Reattach the change event listener
-                            checkbox.addEventListener('change', async function () {
-                                await handleCheckboxChange(this);
-                            });
-                        });
-                    }
-
-                })
-
-
-
+        // For POST requests, send as form data
+        if (isPost) {
+            const formData = new FormData();
+            formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+            fetchOptions.body = formData;
         } else {
-            alert(data.error || 'Something went wrong.');
-            // Reset select to initial status
-            const select = document.getElementById(`piggy-bank-status-${piggyBankId}`);
-            if (select) {
-                select.value = initialStatus;
-            }
+            // For PATCH and other requests, use JSON
+            fetchOptions.headers['Content-Type'] = 'application/json';
         }
+
+        const response = await fetch(url, fetchOptions);
+
+        console.log("Response status:", response.status);
+
+        // Get response text first to help with debugging
+        const responseText = await response.text();
+        console.log("Raw response:", responseText);
+
+        // Try to parse the response as JSON
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            console.error("Failed to parse response as JSON:", e);
+            throw new Error(responseText.includes('<!DOCTYPE html>') ?
+                "Server error - Request not processed correctly" :
+                "Server returned invalid JSON");
+        }
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Server returned an error');
+        }
+
+        // Update UI elements
+        await updateUIElements(piggyBankId, data);
+
+        // Update schedule if needed
+        await updateSchedule(piggyBankId, data);
+
+        return true;
+
     } catch (error) {
         console.error('Error in updatePiggyBankStatus:', error);
-        alert('Failed to update piggy bank status.');
-        // Reset select to initial status
-        const select = document.getElementById(`piggy-bank-status-${piggyBankId}`);
-        if (select) {
-            select.value = initialStatus;
+        handleError(piggyBankId, initialStatus, error);
+        return false;
+    }
+}
+
+// Helper function to update UI elements
+async function updateUIElements(piggyBankId, data) {
+    // Update status text if it exists
+    const statusTextElement = document.getElementById(`status-text-${piggyBankId}`);
+    if (statusTextElement && data.status) {
+        const translatedStatus = window.piggyBankTranslations[data.status.toLowerCase()] || data.status;
+        statusTextElement.textContent = translatedStatus.charAt(0).toUpperCase() + translatedStatus.slice(1);
+    }
+
+    // Show flash message if there's a message
+    if (data.message) {
+        showFlashMessage(data.message);
+    }
+
+    // Update select element's disabled state
+    updateSelectAfterStatusChange(piggyBankId, data.status);
+}
+
+// Helper function to update schedule
+async function updateSchedule(piggyBankId, statusData) {  // <-- Accept statusData parameter
+    try {
+        const response = await fetch(`/piggy-banks/${piggyBankId}/schedule`);
+        const html = await response.text();
+
+        const scheduleContainer = document.getElementById('schedule-container');
+        if (scheduleContainer) {
+            scheduleContainer.innerHTML = html;
+
+            // Only animate if schedule was updated
+            if (statusData && statusData.scheduleUpdated) {
+                scheduleContainer.classList.add('highlight-new');
+                scheduleContainer.addEventListener('animationend', () => {
+                    scheduleContainer.classList.remove('highlight-new');
+                }, { once: true });
+            }
+
+            reinitializeCheckboxes();
+        }
+    } catch (error) {
+        console.error('Error updating schedule:', error);
+    }
+}
+
+// Helper function to reinitialize checkboxes
+function reinitializeCheckboxes() {
+    const newCheckboxes = document.querySelectorAll('input[data-saving-id]');
+    const container = document.querySelector('[data-piggy-bank-status]');
+
+    if (container) {
+        const status = container.dataset.piggyBankStatus;
+        newCheckboxes.forEach(checkbox => {
+            checkbox.disabled = ['paused', 'cancelled', 'done'].includes(status);
+            checkbox.addEventListener('change', async function () {
+                await handleCheckboxChange(this);
+            });
+        });
+    }
+}
+
+// Helper function to handle errors
+function handleError(piggyBankId, initialStatus, error) {
+    alert('Failed to update piggy bank status.');
+
+    // Reset select to initial status
+    const select = document.getElementById(`piggy-bank-status-${piggyBankId}`);
+    if (select) {
+        select.value = initialStatus;
+    }
+}
+
+function updateSelectAfterStatusChange(piggyBankId, newStatus) {
+    console.log('updateSelectAfterStatusChange called with:', {
+        piggyBankId,
+        newStatus,
+    });
+
+    const selectElement = document.getElementById(`piggy-bank-status-${piggyBankId}`);
+    console.log('Select element found:', {
+        element: selectElement,
+        currentDisabledState: selectElement?.disabled,
+        currentClasses: selectElement?.classList.toString()
+    });
+
+    if (selectElement) {
+        // Update the select value and dataset
+        selectElement.value = newStatus;
+        selectElement.dataset.initialStatus = newStatus;
+
+        console.log('Should disable?', {
+            newStatus,
+            shouldDisable: ['done', 'cancelled'].includes(newStatus)
+        });
+
+        // Disable select and add visual feedback if status is done or cancelled
+        if (['done', 'cancelled'].includes(newStatus)) {
+            selectElement.disabled = true;
+            selectElement.classList.add('opacity-50', 'cursor-not-allowed');
+            console.log('After applying disabled state:', {
+                isDisabled: selectElement.disabled,
+                classes: selectElement.classList.toString()
+            });
+        } else {
+            selectElement.disabled = false;
+            selectElement.classList.remove('opacity-50', 'cursor-not-allowed');
+            console.log('After removing disabled state:', {
+                isDisabled: selectElement.disabled,
+                classes: selectElement.classList.toString()
+            });
+        }
+
+        // Update options' disabled state based on STATUS_TRANSITIONS
+        Array.from(selectElement.options).forEach(option => {
+            const targetStatus = option.value;
+            const transition = STATUS_TRANSITIONS[newStatus]?.[targetStatus];
+            option.disabled = !transition || transition.type === 'NPM' || transition.type === 'A';
+        });
+    }
+
+    // Update status text and color
+    const statusTextElement = document.getElementById(`status-text-${piggyBankId}`);
+    if (statusTextElement) {
+        const translatedStatus = window.piggyBankTranslations[newStatus.toLowerCase()] || newStatus;
+        statusTextElement.textContent = translatedStatus.charAt(0).toUpperCase() + translatedStatus.slice(1);
+
+        // Get the parent span element that has the background color
+        const statusContainer = statusTextElement.closest('span.inline-flex');
+        if (statusContainer) {
+            // Remove all existing status-related background classes
+            statusContainer.classList.remove(
+                'bg-green-100', 'text-green-800',
+                'bg-yellow-100', 'text-yellow-800',
+                'bg-red-100', 'text-red-800',
+                'bg-blue-100', 'text-blue-800'
+            );
+
+            // Add new class based on status
+            switch(newStatus) {
+                case 'active':
+                    statusContainer.classList.add('bg-green-100', 'text-green-800');
+                    break;
+                case 'paused':
+                    statusContainer.classList.add('bg-yellow-100', 'text-yellow-800');
+                    break;
+                case 'cancelled':
+                    statusContainer.classList.add('bg-red-100', 'text-red-800');
+                    break;
+                case 'done':
+                    statusContainer.classList.add('bg-blue-100', 'text-blue-800');
+                    break;
+            }
+        }
+    }
+
+    // Update schedule table and checkboxes
+    const scheduleContainer = document.getElementById('schedule-container');
+    if (scheduleContainer) {
+        const scheduleTable = scheduleContainer.querySelector('table');
+        if (scheduleTable) {
+            if (['done', 'paused', 'cancelled'].includes(newStatus)) {
+                scheduleTable.classList.add('opacity-50');
+                // Disable all checkboxes
+                const checkboxes = scheduleContainer.querySelectorAll('input[data-saving-id]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.disabled = true;
+                });
+            }
         }
     }
 }

@@ -20,7 +20,7 @@
 
     <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Saving Schedule') }}</h2>
     <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 {{ $piggyBank->status === 'paused' ? 'opacity-50' : '' }}">
+        <table class="min-w-full divide-y divide-gray-200 {{ in_array($piggyBank->status, ['paused', 'cancelled', 'done']) ? 'opacity-50' : '' }}">
             <thead class="bg-gray-50">
             <tr>
                 <th scope="col" class="px-1 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider break-words max-w-[40px]">

@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="py-6 px-8">
                     <!-- Editable Fields Form -->
-                    <form method="POST" action="{{ route('piggy-banks.update', $piggyBank) }}" class="space-y-6" x-data="{ isEditing: false }">
+                    <form method="POST" action="{{ route('piggy-banks.update', $piggyBank) }}" class="space-y-6" x-data="{ isEditing: false }" x-ref="editForm">
                         @csrf
                         @method('PUT')
 
@@ -60,21 +60,27 @@
 
                                                 <x-slot:actions>
                                                     <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
-                                                        <form action="{{ route('piggy-banks.cancel', $piggyBank) }}" method="POST" class="block">
-                                                            @csrf
-                                                            <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
-                                                                {{ __('Yes, cancel') }}
-                                                            </x-danger-button>
-                                                        </form>
+
+                                                        <x-danger-button
+                                                                @click="isEditing = false;
+                                                                    showConfirmCancel = false;
+                                                                    $refs.editForm.reset();
+                                                                    window.location.href = '{{ route('piggy-banks.show', $piggyBank) }}?cancelled=1';"
+                                                                class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                                        >
+
+                                                            {{ __('Yes, proceed') }}
+                                                        </x-danger-button>
 
                                                         <x-secondary-button
-                                                            @click="showConfirmCancel = false"
-                                                            class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                                                @click="showConfirmCancel = false"
+                                                                class="w-[200px] sm:w-auto justify-center sm:justify-start"
                                                         >
-                                                            {{ __('No, continue') }}
+                                                            {{ __('No, cancel') }}
                                                         </x-secondary-button>
                                                     </div>
                                                 </x-slot:actions>
+
                                             </x-confirmation-dialog>
                                         </template>
                                     </div>
@@ -142,22 +148,77 @@
                                 </div>
 
 
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Status') }}</h3>
 
-                                    <select id="piggy-bank-status-{{ $piggyBank->id }}"
-                                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                                            data-initial-status="{{ $piggyBank->status }}">
-                                        @foreach(\App\Models\PiggyBank::getStatusOptions() as $statusOption)
-                                            <option value="{{ $statusOption }}" {{ $piggyBank->status === $statusOption ? 'selected' : '' }}>
-                                                {{ __(strtolower($statusOption)) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                <div x-data="{
+                                    showConfirmCancel: false,
+                                    statusChangeAction: '',
+                                    statusChangeMessage: ''
+                                }">
 
-                                    <p id="status-text-{{ $piggyBank->id }}" class="mt-1 text-base text-gray-900">
-                                        {{ ucfirst($piggyBank->status) }}
-                                    </p>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Current Status') }}</h3>
+
+                                    <div class="mt-1 space-y-2 sm:space-y-0">
+
+                                        {{-- Current Status Display --}}
+                                        <div class="mb-3">
+                                            <div class="flex items-center">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-md
+                                                    {{ $piggyBank->status === 'active' ? 'bg-green-100 text-green-800' : '' }}
+                                                    {{ $piggyBank->status === 'paused' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                                    {{ $piggyBank->status === 'cancelled' ? 'bg-red-100 text-red-800' : '' }}
+                                                    {{ $piggyBank->status === 'done' ? 'bg-blue-100 text-blue-800' : '' }}">
+                                                    <div id="status-text-{{ $piggyBank->id }}" class="font-medium">
+                                                        {{ ucfirst(__(strtolower($piggyBank->status))) }}
+                                                    </div>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {{-- Status Change Actions --}}
+                                        <div class="relative inline-block w-full sm:w-64 z-30">
+                                            <label for="piggy-bank-status-{{ $piggyBank->id }}" class="text-sm text-gray-500 block mb-1">
+                                                {{ __('Change Status To') }}
+                                            </label>
+                                            <select id="piggy-bank-status-{{ $piggyBank->id }}"
+                                                    class="block w-full text-base border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 {{ in_array($piggyBank->status, ['done', 'cancelled']) ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                    data-initial-status="{{ $piggyBank->status }}"
+                                                    {{ in_array($piggyBank->status, ['done', 'cancelled']) ? 'disabled' : '' }}>
+                                                @foreach(\App\Models\PiggyBank::getStatusOptions() as $statusOption)
+                                                    <option value="{{ $statusOption }}" {{ $piggyBank->status === $statusOption ? 'selected' : '' }}>
+                                                        {{ __(strtolower($statusOption)) }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <template x-if="showConfirmCancel">
+                                            <x-confirmation-dialog>
+                                                <x-slot:title>
+                                                    <span x-text="statusChangeMessage"></span>
+                                                </x-slot>
+
+                                                <x-slot:actions>
+                                                    <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
+                                                        <x-danger-button
+                                                                @click="await statusChangeAction(); showConfirmCancel = false;"
+                                                                class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                                        >
+                                                            {{ __('Yes, proceed') }}
+                                                        </x-danger-button>
+
+                                                        <x-secondary-button
+                                                                @click="showConfirmCancel = false; console.log('No clicked')"
+                                                                class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                                        >
+                                                            {{ __('No, cancel') }}
+                                                        </x-secondary-button>
+                                                    </div>
+                                                </x-slot:actions>
+                                            </x-confirmation-dialog>
+                                        </template>
+
+
+                                    </div>
                                 </div>
 
 
@@ -241,7 +302,7 @@
 
 
                         <!-- Savings Schedule -->
-                        <div id="schedule-container">
+                        <div id="schedule-container" class="bg-rose-50 rounded-lg">
                             @include('partials.schedule')
                         </div>
 
@@ -261,7 +322,12 @@
             success: "{{ __('success') }}",
             info: "{{ __('info') }}",
             goal_completed: "{{ __('You have successfully completed your savings goal.') }}",
-            paused_message: "{{ __('paused_message') }}"
+            paused_message: "{{ __('paused_message') }}",
+            confirm_pause: "{{ __('Are you sure you want to pause this piggy bank?') }}",
+            confirm_cancel: "{{ __('Are you sure you want to cancel this piggy bank?') }}",
+            confirm_cancel_paused: "{{ __('Are you sure you want to cancel this paused piggy bank?') }}",
+            confirm_resume: "{{ __('Are you sure you want to resume this piggy bank? Dates in your saving schedule may be updated if you proceed.') }}",
+            piggy_bank_cancelled: "{{ __('Piggy bank has been cancelled.') }}",
         };
     </script>
 
