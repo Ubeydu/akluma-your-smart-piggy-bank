@@ -107,4 +107,26 @@ class PiggyBankController extends Controller
     }
 
 
+    public function updateStatusToCancelled(PiggyBank $piggyBank)
+    {
+        if (! Gate::allows('update', $piggyBank)) {
+            abort(403);
+        }
+
+        // Check if piggy bank can be cancelled
+        if (in_array($piggyBank->status, ['done', 'cancelled'])) {
+            return response()->json([
+                'error' => 'Cannot cancel a completed or already cancelled piggy bank.'
+            ], 400);
+        }
+
+        $piggyBank->update(['status' => 'cancelled']);
+
+        return response()->json([
+            'status' => 'cancelled',
+            'message' => __('Piggy bank has been cancelled.')
+        ]);
+    }
+
+
 }

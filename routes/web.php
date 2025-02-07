@@ -41,6 +41,10 @@ Route::patch('/piggy-banks/{piggyBank}/resume', [\App\Http\Controllers\Scheduled
     ->middleware(['auth', 'verified'])
     ->name('piggy-banks.resume');
 
+Route::patch('/piggy-banks/{piggyBank}/update-status-cancelled', [PiggyBankController::class, 'updateStatusToCancelled'])
+    ->middleware(['auth', 'verified'])
+    ->name('piggy-banks.update-status-cancelled');
+
 Route::get('/piggy-banks/{piggyBank}/schedule', [ScheduledSavingController::class, 'getSchedulePartial'])
     ->middleware(['auth', 'verified'])
     ->name('piggy-banks.schedule');

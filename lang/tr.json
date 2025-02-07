@@ -141,9 +141,15 @@
     "success": "Tebrikler",
     "info": "Bilgilendirme",
     "You have successfully completed your savings goal." : "Birikim hedefinize ulaştınız.",
-    "Extra Savings Tooltip Info": "Periyodik olarak kenara ayıracağınız miktarlar küsüratlı olmasın diye birikim miktarını yuvarladık. Bu ekstra miktar bundan kaynaklı.",
+    "Extra Savings Tooltip Info": "Periyodik olarak kenara ayıracağınız miktarlar küsüratlı olmasın diye birikim miktarını yuvarladık. Bu ekstra miktar bundan kaynaklanıyor.",
     "paused_message": "Kumbaranın durumu beklemede. Birikimlerinin statüsünü değiştirmek için önce kumbara durumunu aktif hale getir.",
     "piggy_bank_paused_info": "Birikim yapmaya ara verdin. Devam etmek istediğinde kumbaranı tekrar aktive et.",
     "piggy_bank_resumed_schedule_updated_info": "Kumbaranı aktive ettin. Güncel birikim programınla birikim yapmaya devam edebilirsin.",
-    "piggy_bank_resumed_schedule_not_updated_info": "Kumbaranı aktive ettin. Birikim yapmaya devam edebilirsin."
+    "piggy_bank_resumed_schedule_not_updated_info": "Kumbaranı aktive ettin. Birikim yapmaya devam edebilirsin.",
+    "This piggy bank has reached its goal.": "Kumbaran birikim hedefine ulaşmış.",
+    "Are you sure you want to pause this piggy bank?": "Bu kumbarayı duraklatmak istediğinden emin misin?",
+    "Are you sure you want to cancel this piggy bank?": "Bu kumbarayı iptal etmek istediğinden emin misin?",
+    "Are you sure you want to cancel this paused piggy bank?": "Duraklatılmış bu kumbarayı iptal etmek istediğinden emin misin?",
+    "Are you sure you want to resume this piggy bank?": "Bu kumbarayı devam ettirmek istediğinden emin misin?",
+    "Piggy bank has been cancelled.": "Kumbara iptal edildi."
 }

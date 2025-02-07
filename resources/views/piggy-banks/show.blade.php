@@ -142,22 +142,56 @@
                                 </div>
 
 
+{{--                                <div>--}}
+{{--                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Status') }}</h3>--}}
+
+{{--                                    <select id="piggy-bank-status-{{ $piggyBank->id }}"--}}
+{{--                                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"--}}
+{{--                                            data-initial-status="{{ $piggyBank->status }}">--}}
+{{--                                        @foreach(\App\Models\PiggyBank::getStatusOptions() as $statusOption)--}}
+{{--                                            <option value="{{ $statusOption }}" {{ $piggyBank->status === $statusOption ? 'selected' : '' }}>--}}
+{{--                                                {{ __(strtolower($statusOption)) }}--}}
+{{--                                            </option>--}}
+{{--                                        @endforeach--}}
+{{--                                    </select>--}}
+
+{{--                                    <p id="status-text-{{ $piggyBank->id }}" class="mt-1 text-base text-gray-900">--}}
+{{--                                        {{ ucfirst($piggyBank->status) }}--}}
+{{--                                    </p>--}}
+{{--                                </div>--}}
+
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Status') }}</h3>
 
-                                    <select id="piggy-bank-status-{{ $piggyBank->id }}"
-                                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-                                            data-initial-status="{{ $piggyBank->status }}">
-                                        @foreach(\App\Models\PiggyBank::getStatusOptions() as $statusOption)
-                                            <option value="{{ $statusOption }}" {{ $piggyBank->status === $statusOption ? 'selected' : '' }}>
-                                                {{ __(strtolower($statusOption)) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <div class="mt-1 space-y-2 sm:space-y-0">
+                                        {{-- Status Text (Primary Display) --}}
+                                        <p id="status-text-{{ $piggyBank->id }}"
+                                           class="text-lg font-medium text-gray-900">
+                                            {{ ucfirst(__(strtolower($piggyBank->status))) }}
+                                        </p>
 
-                                    <p id="status-text-{{ $piggyBank->id }}" class="mt-1 text-base text-gray-900">
-                                        {{ ucfirst($piggyBank->status) }}
-                                    </p>
+                                        {{-- Actions Dropdown in its own container --}}
+                                        <div class="relative inline-block w-full sm:w-64 z-30">  <!-- Added relative and z-30 -->
+                                            <select id="piggy-bank-status-{{ $piggyBank->id }}"
+                                                    class="block w-full text-base border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 {{ in_array($piggyBank->status, ['done', 'cancelled']) ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                    data-initial-status="{{ $piggyBank->status }}"
+                                                    {{ in_array($piggyBank->status, ['done', 'cancelled']) ? 'disabled' : '' }}>
+                                                @foreach(\App\Models\PiggyBank::getStatusOptions() as $statusOption)
+                                                    <option value="{{ $statusOption }}" {{ $piggyBank->status === $statusOption ? 'selected' : '' }}>
+                                                        {{ __(strtolower($statusOption)) }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+
+                                    </div>
+
+                                    @if($piggyBank->status === 'done')
+                                        <p class="mt-2 text-sm text-gray-500">
+                                            {{ __('This piggy bank has reached its goal.') }}
+                                        </p>
+                                    @endif
                                 </div>
 
 
@@ -261,7 +295,12 @@
             success: "{{ __('success') }}",
             info: "{{ __('info') }}",
             goal_completed: "{{ __('You have successfully completed your savings goal.') }}",
-            paused_message: "{{ __('paused_message') }}"
+            paused_message: "{{ __('paused_message') }}",
+            confirm_pause: "{{ __('Are you sure you want to pause this piggy bank?') }}",
+            confirm_cancel: "{{ __('Are you sure you want to cancel this piggy bank?') }}",
+            confirm_cancel_paused: "{{ __('Are you sure you want to cancel this paused piggy bank?') }}",
+            confirm_resume: "{{ __('Are you sure you want to resume this piggy bank?') }}",
+            piggy_bank_cancelled: "{{ __('Piggy bank has been cancelled.') }}",
         };
     </script>
 
