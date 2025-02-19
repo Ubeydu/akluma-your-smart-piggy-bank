@@ -2,25 +2,28 @@
 
 namespace App\Mail;
 
+use App\Models\PiggyBank;
+use App\Models\ScheduledSaving;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SavingReminderMail extends Mailable
+class SavingReminderMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(
+        public User $user,
+        public PiggyBank $piggyBank,
+        public ScheduledSaving $scheduledSaving
+    ) {}
 
     /**
      * Get the message envelope.
@@ -28,7 +31,9 @@ class SavingReminderMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Saving Reminder Mail',
+            subject: __('emails.saving_reminder_subject', [
+                'name' => $this->piggyBank->name
+            ]),
         );
     }
 
@@ -40,15 +45,5 @@ class SavingReminderMail extends Mailable
         return new Content(
             markdown: 'emails.saving-reminder',
         );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
     }
 }

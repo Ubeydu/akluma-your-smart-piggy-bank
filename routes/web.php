@@ -271,4 +271,18 @@ Route::get('/test-currency-helper', function () {
         (App\Helpers\CurrencyHelper::hasDecimalPlaces($currentCurrency) ? 'true' : 'false'));
 });
 
+if (app()->environment('local')) {
+    Route::get('/email/preview/saving-reminder', function () {
+        $user = App\Models\User::first();
+        $piggyBank = $user->piggyBanks()->first();
+        $scheduledSaving = $piggyBank->scheduledSavings()->first();
+
+        return new App\Mail\SavingReminderMail(
+            $user,
+            $piggyBank,
+            $scheduledSaving
+        );
+    });
+}
+
 require __DIR__.'/auth.php';
