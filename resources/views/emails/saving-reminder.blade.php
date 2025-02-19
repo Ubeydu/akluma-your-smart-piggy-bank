@@ -1,9 +1,9 @@
 <x-mail::message>
-    # {{ __('emails.saving_reminder_title') }}
+    # {{ __('saving_reminder_title') }}
 
-    {{ __('emails.saving_reminder_greeting', ['name' => $user->name]) }}
+    {{ __('saving_reminder_greeting', ['name' => $user->name]) }}
 
-    {{ __('emails.saving_reminder_message', [
+    {{ __('saving_reminder_message', [
         'saving_number' => $scheduledSaving->saving_number,
         'amount' => $scheduledSaving->amount,
         'currency' => $piggyBank->currency,
@@ -11,14 +11,14 @@
         'date' => $scheduledSaving->saving_date,
     ]) }}
 
-    <x-mail::button :url="route('piggy-banks.show', $piggyBank->id)">
-        {{ __('emails.view_piggy_bank') }}
+    <x-mail::button :url="$piggyBankUrl">
+        {{ __('view_piggy_bank') }}
     </x-mail::button>
 
-    {{ __('emails.saving_reminder_closing') }}<br>
+    {{ __('saving_reminder_closing') }}<br>
     {{ config('app.name') }}
 
     <x-slot:subcopy>
-        {{ __('emails.saving_reminder_unsubscribe_notice') }}
+        {{ __('saving_reminder_unsubscribe_notice') }}
     </x-slot:subcopy>
 </x-mail::message>

@@ -18,7 +18,9 @@ class SendSavingReminders extends Command
      *
      * @var string
      */
-    protected $signature = 'app:send-saving-reminders {--force : Send reminders regardless of time}';
+//    protected $signature = 'app:send-saving-reminders {--force : Send reminders regardless of time}';
+
+    protected $signature = 'app:send-saving-reminders {--force : Send reminders regardless of time} {--date= : Override date for testing}';
 
     /**
      * The console command description.
@@ -34,8 +36,13 @@ class SendSavingReminders extends Command
     {
         $this->info('Starting to process saving reminders...');
 
-        // Get today's date in UTC
-        $today = Carbon::now()->toDateString();
+//        // Get today's date in UTC
+//        $today = Carbon::now()->toDateString();
+
+        // Get target date (today or override for testing)
+        $date = $this->option('date') ? Carbon::parse($this->option('date')) : Carbon::now();
+        $today = $date->toDateString();
+        $this->info("Processing reminders for date: {$today}");
 
         // Find pending scheduled savings for today
         $scheduledSavings = ScheduledSaving::whereDate('saving_date', $today)
@@ -125,7 +132,17 @@ class SendSavingReminders extends Command
 
         // Skip if already sent
         $notificationStatuses = json_decode($saving->notification_statuses, true);
-        if ($notificationStatuses['email']['sent']) {
+        if (!is_array($notificationStatuses)) {
+            // Initialize with default structure if null or invalid
+            $notificationStatuses = [
+                'email' => ['sent' => false, 'sent_at' => null],
+                'sms' => ['sent' => false, 'sent_at' => null],
+                'push' => ['sent' => false, 'sent_at' => null]
+            ];
+            $saving->notification_statuses = json_encode($notificationStatuses);
+            $saving->save();
+            $this->info("Fixed missing notification_statuses for saving #{$saving->id}");
+        } else if ($notificationStatuses['email']['sent']) {
             $this->info("Skipping saving #{$saving->id}: email already sent");
             return;
         }
@@ -150,7 +167,15 @@ class SendSavingReminders extends Command
             $notificationStatuses['email']['sent'] = true;
             $notificationStatuses['email']['sent_at'] = Carbon::now()->toDateTimeString();
 
+            // Update notification status
             $notificationAttempts = json_decode($saving->notification_attempts, true);
+            if (!is_array($notificationAttempts)) {
+                $notificationAttempts = [
+                    'email' => 0,
+                    'sms' => 0,
+                    'push' => 0
+                ];
+            }
             $notificationAttempts['email'] += 1;
 
             $saving->notification_statuses = json_encode($notificationStatuses);

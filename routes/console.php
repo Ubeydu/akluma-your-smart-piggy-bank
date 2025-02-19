@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\SendSavingReminders;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -19,13 +20,10 @@ Artisan::command('logs:clear', function () {
 })->describe('Clear the content of storage/logs/laravel.log');
 
 
-// Register the saving reminders command to run daily at midnight UTC
-Schedule::command('app:send-saving-reminders')
-    ->dailyAt('00:00')
+// Register commands using class names
+Schedule::command(SendSavingReminders::class)->dailyAt('00:00')
     ->description('Send saving reminders to users');
 
-// Retry failed reminders at noon UTC
-Schedule::command('app:retry-failed-reminders')
-    ->dailyAt('12:00')
+Schedule::command(RetryFailedReminders::class)->dailyAt('12:00')
     ->description('Retry failed saving reminders');
 

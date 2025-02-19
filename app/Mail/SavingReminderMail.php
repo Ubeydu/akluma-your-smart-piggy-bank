@@ -11,6 +11,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 
 class SavingReminderMail extends Mailable implements ShouldQueue
 {
@@ -23,7 +24,12 @@ class SavingReminderMail extends Mailable implements ShouldQueue
         public User $user,
         public PiggyBank $piggyBank,
         public ScheduledSaving $scheduledSaving
-    ) {}
+    ) {
+        // Set locale based on user's preferred language
+        // (You might need to adjust this based on how you store user preferences)
+        $locale = $this->user->preferred_language ?? App::getLocale();
+        App::setLocale($locale);
+    }
 
     /**
      * Get the message envelope.
@@ -31,7 +37,7 @@ class SavingReminderMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: __('emails.saving_reminder_subject', [
+            subject: __('saving_reminder_subject', [
                 'name' => $this->piggyBank->name
             ]),
         );
@@ -44,6 +50,9 @@ class SavingReminderMail extends Mailable implements ShouldQueue
     {
         return new Content(
             markdown: 'emails.saving-reminder',
+            with: [
+                'piggyBankUrl' => route('piggy-banks.show', $this->piggyBank->id),
+            ],
         );
     }
 }
