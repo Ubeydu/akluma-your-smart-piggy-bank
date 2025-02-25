@@ -69,5 +69,11 @@
     "saving_reminder_message": "This is a reminder for your saving #:saving_number of :amount :currency for your piggy bank \":piggy_bank_name\" scheduled for today (:date).",
     "view_piggy_bank": "View Piggy Bank",
     "saving_reminder_closing": "Happy saving!",
-    "saving_reminder_unsubscribe_notice": "If you would like to stop receiving these reminders, you can update your notification preferences in your piggy bank settings."
+    "saving_reminder_unsubscribe_notice": "If you would like to stop receiving these reminders, you can update your notification preferences in your piggy bank settings.",
+    "Turkish Lira": "Turkish Lira",
+    "US Dollar": "US Dollar",
+    "British Pound": "British Pound",
+    "Euro": "Euro",
+    "West African CFA franc": "West African CFA franc",
+    "Central African CFA franc": "Central African CFA franc"
 }

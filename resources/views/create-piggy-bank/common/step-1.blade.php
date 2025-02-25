@@ -149,7 +149,7 @@
                                             value="{{ $code }}"
                                             {{ session('currency') === $code ? 'selected' : '' }}
                                         >
-                                            {{ $code }}
+                                            {{ $code }} - {{ __($currencyData['name']) }}
                                         </option>
                                     @endforeach
 
