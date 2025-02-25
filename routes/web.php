@@ -285,4 +285,5 @@ if (app()->environment('local')) {
     });
 }
 
+
 require __DIR__.'/auth.php';

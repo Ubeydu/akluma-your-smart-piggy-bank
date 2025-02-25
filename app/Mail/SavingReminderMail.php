@@ -11,6 +11,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 
 class SavingReminderMail extends Mailable implements ShouldQueue
@@ -26,7 +27,6 @@ class SavingReminderMail extends Mailable implements ShouldQueue
         public ScheduledSaving $scheduledSaving
     ) {
         // Set locale based on user's preferred language
-        // (You might need to adjust this based on how you store user preferences)
         $locale = $this->user->preferred_language ?? App::getLocale();
         App::setLocale($locale);
     }
@@ -48,11 +48,22 @@ class SavingReminderMail extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
+        // Use a hardcoded development URL for testing
+        $baseUrl = 'http://127.0.0.1:8000';
+        $piggyBankUrl = $baseUrl . '/piggy-banks/' . $this->piggyBank->id;
+
+        // Format the date
+        $formattedDate = Carbon::parse($this->scheduledSaving->saving_date)->format('Y-m-d');
+
         return new Content(
             markdown: 'emails.saving-reminder',
             with: [
-                'piggyBankUrl' => route('piggy-banks.show', $this->piggyBank->id),
+                'piggyBankUrl' => $piggyBankUrl,
+                'formattedDate' => $formattedDate,
+                'escapedPiggyBankName' => htmlspecialchars_decode(htmlspecialchars($this->piggyBank->name)),
             ],
         );
     }
+
+
 }

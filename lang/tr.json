@@ -161,7 +161,7 @@
     "saving_reminder_subject": "Hatırlatma: :name için para biriktir",
     "saving_reminder_title": "Birikim Hatırlatması",
     "saving_reminder_greeting": "Merhaba :name,",
-    "saving_reminder_message": "Bu, bugün (:date) için planlanmış olan \":piggy_bank_name\" adlı kumbaranız için #:saving_number numaralı :amount :currency tutarındaki birikiminiz için bir hatırlatmadır.",
+    "saving_reminder_message": "Bu, bugün (:date) için planlanmış olan kumbaranız: :piggy_bank_name için #:saving_number numaralı :amount :currency tutarındaki birikiminiz için bir hatırlatmadır.",
     "view_piggy_bank": "Kumbarayı Görüntüle",
     "saving_reminder_closing": "İyi birikimler!",
     "saving_reminder_unsubscribe_notice": "Bu hatırlatmaları almak istemiyorsanız, kumbara ayarlarınızdan bildirim tercihlerinizi güncelleyebilirsiniz."
