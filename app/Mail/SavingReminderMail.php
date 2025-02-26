@@ -48,8 +48,8 @@ class SavingReminderMail extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
-        // Use a hardcoded development URL for testing
-        $baseUrl = 'http://127.0.0.1:8000';
+        // Retrieve the application URL from the config
+        $baseUrl = config('app.url');
         $piggyBankUrl = $baseUrl . '/piggy-banks/' . $this->piggyBank->id;
 
         // Format the date
