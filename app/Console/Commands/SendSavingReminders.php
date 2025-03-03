@@ -32,7 +32,7 @@ class SendSavingReminders extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $this->info('Starting to process saving reminders...');
 
@@ -75,7 +75,7 @@ class SendSavingReminders extends Command
     /**
      * Process a group of savings for users in the same timezone
      */
-    protected function processTimezoneGroup(string $timezone, $savings)
+    protected function processTimezoneGroup(string $timezone, $savings): void
     {
         $this->info("Processing {$savings->count()} savings for timezone: {$timezone}");
 
@@ -119,7 +119,7 @@ class SendSavingReminders extends Command
     /**
      * Process an individual scheduled saving
      */
-    protected function processSaving(ScheduledSaving $saving)
+    protected function processSaving(ScheduledSaving $saving): void
     {
         $piggyBank = $saving->piggyBank;
         $user = $piggyBank->user;
