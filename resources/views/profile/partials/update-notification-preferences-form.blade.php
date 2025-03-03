@@ -16,8 +16,9 @@
         <div class="space-y-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <x-input-label for="email_notifications" :value="__('Email Reminders')" />
-                    <p class="text-sm text-gray-600">{{ __('Receive notifications via email') }}</p>
+                    <label for="email_notifications" class="text-sm text-gray-900 font-medium">
+                        {{ __('Receive notifications via email') }}
+                    </label>
                 </div>
                 <input id="email_notifications" name="email_notifications" type="checkbox" value="true" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded auto-save-pref"
                     {{ isset(Auth::user()->notification_preferences['email']['enabled']) && Auth::user()->notification_preferences['email']['enabled'] ? 'checked' : '' }}>
@@ -25,21 +26,30 @@
 
             <div class="flex items-center justify-between">
                 <div>
-                    <x-input-label for="sms_notifications" :value="__('SMS Reminders')" />
-                    <p class="text-sm text-gray-600">{{ __('Receive notifications via SMS') }}</p>
+                    <label for="sms_notifications" class="text-sm text-gray-600 font-medium">
+                        {{ __('Receive notifications via SMS') }}
+                    </label>
+                    <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-xs text-gray-600 font-medium px-3 py-1 min-w-[120px] text-center rounded-full shadow-md">
+                        {{ __('Coming Soon with Premium ✨') }}
+                    </span>
                 </div>
-                <input id="sms_notifications" name="sms_notifications" type="checkbox" value="true" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded auto-save-pref"
-                    {{ isset(Auth::user()->notification_preferences['sms']['enabled']) && Auth::user()->notification_preferences['sms']['enabled'] ? 'checked' : '' }}>
+                <input id="sms_notifications" name="sms_notifications" type="checkbox" value="true" disabled class="w-4 h-4 text-gray-400 bg-gray-100 border-gray-300 rounded cursor-not-allowed">
             </div>
+
 
             <div class="flex items-center justify-between">
                 <div>
-                    <x-input-label for="push_notifications" :value="__('Push Notifications')" />
-                    <p class="text-sm text-gray-600">{{ __('Receive notifications via push notifications') }}</p>
+                    <label for="push_notifications" class="text-sm text-gray-600 font-medium">
+                        {{ __('Receive notifications via push notifications') }}
+                    </label>
+                    <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-600 text-xs font-medium px-2 py-1 rounded-full shadow-md">
+                        {{ __('Coming Soon with Premium ✨') }}
+                    </span>
                 </div>
-                <input id="push_notifications" name="push_notifications" type="checkbox" value="true" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded auto-save-pref"
-                    {{ isset(Auth::user()->notification_preferences['push']['enabled']) && Auth::user()->notification_preferences['push']['enabled'] ? 'checked' : '' }}>
+                <input id="push_notifications" name="push_notifications" type="checkbox" value="true" disabled class="w-4 h-4 text-gray-400 bg-gray-100 border-gray-300 rounded cursor-not-allowed">
             </div>
+
+
         </div>
 
         <div id="save-status" class="text-sm text-gray-600 hidden">
@@ -51,7 +61,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const checkboxes = document.querySelectorAll('.auto-save-pref');
+            const checkboxes = document.querySelectorAll('.auto-save-pref:not(:disabled)');
             const form = document.getElementById('preferences-form');
             const saveStatus = document.getElementById('save-status');
             const savingIndicator = saveStatus.querySelector('.saving-indicator');

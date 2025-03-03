@@ -22,8 +22,8 @@ Artisan::command('logs:clear', function () {
 
 
 
-Schedule::exec('php artisan app:send-saving-reminders --force --date=2025-03-04')
-    ->dailyAt('14:08')
+Schedule::exec('php artisan app:send-saving-reminders --force --date=2025-03-07')
+    ->dailyAt('14:12')
     ->appendOutputTo(storage_path('logs/scheduler.log'))
     ->description('Send saving reminders to users');
 
