@@ -164,5 +164,16 @@
     "saving_reminder_message": "Bu, bugün (:date) için planlanmış olan kumbaranız: :piggy_bank_name için #:saving_number numaralı :amount :currency tutarındaki birikiminiz için bir hatırlatmadır.",
     "view_piggy_bank": "Kumbarayı Görüntüle",
     "saving_reminder_closing": "İyi birikimler!",
-    "saving_reminder_unsubscribe_notice": "Bu hatırlatmaları almak istemiyorsanız, kumbara ayarlarınızdan bildirim tercihlerinizi güncelleyebilirsiniz."
+    "saving_reminder_unsubscribe_notice": "Bu hatırlatmaları almak istemiyorsanız, kumbara ayarlarınızdan bildirim tercihlerinizi güncelleyebilirsiniz.",
+    "Notification Preferences": "Bildirim Tercihleri",
+    "Manage how you receive notifications about your piggy banks.": "Kumbaralarınız hakkında bildirimleri nasıl alacağınızı yönetin.",
+    "Email Reminders": "E-Posta Hatırlatmaları",
+    "Receive notifications via email": "Bildirimleri e-posta ile alın",
+    "SMS Reminders": "SMS Hatırlatmaları",
+    "Receive notifications via SMS": "Bildirimleri SMS ile alın",
+    "Push Notifications": "Anlık Bildirimler",
+    "Receive notifications via push notifications": "Bildirimleri anlık bildirimler ile alın",
+    "Saving...": "Kaydediliyor...",
+    "Preferences saved": "Tercihler kaydedildi",
+    "Error saving preferences": "Tercihleri kaydederken hata oluştu"
 }

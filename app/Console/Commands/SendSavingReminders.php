@@ -149,7 +149,7 @@ class SendSavingReminders extends Command
 
         // Check notification preferences
         $preferences = $this->getNotificationPreferences($piggyBank);
-        if (!$preferences['email']['enabled']) {
+        if (!isset($preferences['email']) || !$preferences['email']['enabled']) {
             $this->info("Skipping saving #{$saving->id}: email notifications disabled");
             return;
         }
@@ -207,22 +207,24 @@ class SendSavingReminders extends Command
     /**
      * Get notification preferences for a piggy bank
      */
-    protected function getNotificationPreferences(PiggyBank $piggyBank)
+    public function getNotificationPreferences(PiggyBank $piggyBank): array
     {
-        // Get notification preferences from database
-        $preferences = DB::table('notification_preferences')
-            ->where('piggy_bank_id', $piggyBank->id)
-            ->first();
+        $user = $piggyBank->user; // Get the user who owns the piggy bank
 
-        if ($preferences && $preferences->channel_preferences) {
-            return json_decode($preferences->channel_preferences, true);
+        if (!$user) {
+            return []; // If no user is found, return an empty array
         }
 
-        // Default preferences if none found
-        return [
-            'email' => ['enabled' => true],
-            'sms' => ['enabled' => true],
-            'push' => ['enabled' => true]
-        ];
+        $preferences = $user->notification_preferences; // Fetch the column
+
+        // Ensure it's an array
+        if (is_string($preferences)) {
+            $preferences = json_decode($preferences, true);
+        }
+
+        // Return an empty array if it's still not valid
+        return is_array($preferences) ? $preferences : [];
+
     }
+
 }

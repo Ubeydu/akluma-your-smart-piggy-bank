@@ -21,14 +21,9 @@ Artisan::command('logs:clear', function () {
 })->describe('Clear the content of storage/logs/laravel.log');
 
 
-//// Register commands using class names
-//Schedule::command(SendSavingReminders::class)->dailyAt('17:00')
-//    ->description('Send saving reminders to users');
 
-
-
-Schedule::exec('php artisan app:send-saving-reminders --force --date=2025-03-06')
-    ->dailyAt('09:51')
+Schedule::exec('php artisan app:send-saving-reminders --force --date=2025-03-04')
+    ->dailyAt('14:08')
     ->appendOutputTo(storage_path('logs/scheduler.log'))
     ->description('Send saving reminders to users');
 
