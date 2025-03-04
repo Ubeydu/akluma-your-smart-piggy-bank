@@ -104,11 +104,19 @@ class SendSavingReminders extends Command
             // Get current time in UTC
             $now = Carbon::now();
 
+
+            // DEVELOPMENT CODE - Modify for production
             // Only send at 9AM UTC unless --force is used
             if (!$this->option('force') && $now->hour != 9) {
                 $this->info("Skipping: current UTC hour is {$now->hour}, not 9AM");
                 return;
             }
+
+            // PRODUCTION CODE - Uncomment before deployment
+            // if ($now->hour != 9) {
+            //     $this->info("Skipping timezone {$timezone}: current hour is {$now->hour}, not 9AM");
+            //     return;
+            // }
 
             foreach ($savings as $saving) {
                 $this->processSaving($saving);
