@@ -1,5 +1,7 @@
 <?php
 
+use App\Console\Commands\RetryFailedReminders;
+use App\Console\Commands\SendSavingReminders;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -17,4 +19,26 @@ Artisan::command('logs:clear', function () {
         $this->error('The file storage/logs/laravel.log does not exist.');
     }
 })->describe('Clear the content of storage/logs/laravel.log');
+
+
+// DEVELOPMENT CONFIGURATION - Comment out before production
+Schedule::exec('php artisan app:send-saving-reminders --force --date=2025-03-07')
+    ->dailyAt('14:12')
+    ->appendOutputTo(storage_path('logs/scheduler.log'))
+    ->description('Send saving reminders to users');
+
+// PRODUCTION CONFIGURATION - Uncomment before deployment
+// Schedule::command(SendSavingReminders::class)
+//     ->dailyAt('00:00')
+//     ->appendOutputTo(storage_path('logs/scheduler.log'))
+//     ->description('Send saving reminders to users');
+//
+// Schedule::command(RetryFailedReminders::class)
+//     ->dailyAt('12:00')
+//     ->appendOutputTo(storage_path('logs/scheduler.log'))
+//     ->description('Retry failed saving reminders');
+
+
+Schedule::command(RetryFailedReminders::class)->dailyAt('09:00')
+    ->description('Retry failed saving reminders');
 

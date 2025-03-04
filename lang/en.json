@@ -62,5 +62,18 @@
     "You have successfully completed your savings goal.": "You have successfully completed your savings goal.",
     "in_piggy_bank": "Saved in piggy bank",
     "edit_cancelled_message": "You cancelled editing. The changes you made weren't saved.",
-    "piggy_bank_ID": "Piggy Bank ID"
+    "piggy_bank_ID": "Piggy Bank ID",
+    "saving_reminder_subject": "Reminder: Save for :name",
+    "saving_reminder_title": "Saving Reminder",
+    "saving_reminder_greeting": "Hello :name,",
+    "saving_reminder_message": "This is a reminder for your saving #:saving_number of :amount :currency for your piggy bank \":piggy_bank_name\" scheduled for today (:date).",
+    "view_piggy_bank": "View Piggy Bank",
+    "saving_reminder_closing": "Happy saving!",
+    "saving_reminder_unsubscribe_notice": "If you would like to stop receiving these reminders, you can update your notification preferences in your piggy bank settings.",
+    "Turkish Lira": "Turkish Lira",
+    "US Dollar": "US Dollar",
+    "British Pound": "British Pound",
+    "Euro": "Euro",
+    "West African CFA franc": "West African CFA franc",
+    "Central African CFA franc": "Central African CFA franc"
 }

@@ -61,6 +61,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::patch('/preferences/update', [App\Http\Controllers\UserPreferencesController::class, 'updatePreferences'])
+        ->name('preferences.update');
+
 //    Route::get('/test-piggy-full/{piggyBankId}', [TestController::class, 'testPiggyBank'])
 //        ->name('test.piggy-full');
 
@@ -270,5 +273,20 @@ Route::get('/test-currency-helper', function () {
     dump('Current currency (' . $currentCurrency . ') has decimals: ' .
         (App\Helpers\CurrencyHelper::hasDecimalPlaces($currentCurrency) ? 'true' : 'false'));
 });
+
+if (app()->environment('local')) {
+    Route::get('/email/preview/saving-reminder', function () {
+        $user = App\Models\User::first();
+        $piggyBank = $user->piggyBanks()->first();
+        $scheduledSaving = $piggyBank->scheduledSavings()->first();
+
+        return new App\Mail\SavingReminderMail(
+            $user,
+            $piggyBank,
+            $scheduledSaving
+        );
+    });
+}
+
 
 require __DIR__.'/auth.php';

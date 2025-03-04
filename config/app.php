@@ -105,6 +105,10 @@ return [
             'name' => 'West African CFA franc',
             'decimal_places' => 0,
         ],
+        'XAF' => [
+            'name' => 'Central African CFA franc',
+            'decimal_places' => 0,
+        ]
     ],
 
 
