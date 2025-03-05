@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
 
-class GuestLayoutMiddleware
+class ConditionalLayoutMiddleware
 {
     /**
      * Handle an incoming request.

@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Middleware\CurrencySwitcher;
-use App\Http\Middleware\GuestLayoutMiddleware;
+use App\Http\Middleware\ConditionalLayoutMiddleware;
 use App\Http\Middleware\LanguageSwitcher;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: CurrencySwitcher::class);
 
         $middleware->alias([
-            'guest.layout' => GuestLayoutMiddleware::class,
+            'guest.layout' => ConditionalLayoutMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
