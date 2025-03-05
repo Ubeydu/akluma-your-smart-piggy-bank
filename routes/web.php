@@ -134,7 +134,10 @@ Route::get('/current-currency', function () {
 
 
 // Create piggy bank routes
-Route::prefix('create-piggy-bank')->name('create-piggy-bank.')->group(function () {
+Route::prefix('create-piggy-bank')
+    ->name('create-piggy-bank.')
+    ->middleware(['conditional.layout'])
+    ->group(function () {
     Route::get('/step-1', [PiggyBankCreateController::class, 'step1'])->name('step-1');
 
     Route::post('/clear', function() {

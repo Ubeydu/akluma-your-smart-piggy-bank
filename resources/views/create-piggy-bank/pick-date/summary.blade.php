@@ -294,7 +294,7 @@
                                         type="button"
                                         onclick="window.location='{{ route('login', ['intended' => url()->current()]) }}'"
                                         class="w-[200px] sm:w-auto justify-center sm:justify-start">
-                                        {{ __('Login to Create') }}
+                                        {{ __('Log in to Create') }}
                                     </x-secondary-button>
                                 </div>
                             @endauth

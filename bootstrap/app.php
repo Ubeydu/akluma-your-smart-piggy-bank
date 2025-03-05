@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: CurrencySwitcher::class);
 
         $middleware->alias([
-            'guest.layout' => ConditionalLayoutMiddleware::class,
+            'conditional.layout' => ConditionalLayoutMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

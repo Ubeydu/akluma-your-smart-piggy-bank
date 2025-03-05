@@ -17,9 +17,9 @@ class ConditionalLayoutMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // For guests, add a flag to hide the regular navigation
+        // For guests, set the flag to use welcome layout
         if (!Auth::check()) {
-            View::share('hideNavigation', true);
+            View::share('useWelcomeLayout', true);
         }
 
         return $next($request);
