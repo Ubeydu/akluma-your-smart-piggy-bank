@@ -1,6 +1,8 @@
 {
     "Already registered?": "Daha önceden kaydolduysan buraya tıkla",
-    "Confirm Password": "Yeni Şifreni Tekrar Gir",
+    "Never registered?": "Kayıt olmadıysan tıkla",
+    "or": "veya",
+    "Confirm Password": "Şifreni Tekrar Gir",
     "Dashboard": "Panelim",
     "Email": "E-posta",
     "English": "İngilizce",
@@ -18,7 +20,7 @@
     "Turkish": "Türkçe",
     "Welcome": "Hoşgeldin Sayfası",
     "project_name": "Akluma",
-    "tagline": "Akluma, Akıllı Kumbaran",
+    "tagline": "Akluma, Online Kumbaran",
     "update_profile_information": "Profil bilgilerini ve eposta adresini güncelle.",
     "price": "Fiyat",
     "starting_amount": "Başlangıç miktarı",
@@ -102,7 +104,6 @@
     "price_whole_length_exceeded": "En fazla 10 haneli bir değer girebilirsin.",
     "starting_amount_numbers_only": "Bu kısma rakam haricinde hiç bir şey yazamazsın.",
     "starting_amount_length_exceeded": "En fazla 10 haneli bir değer girebilirsin.",
-    "Create Piggy Bank": "Kumbaranı Oluştur",
     "Product Details": "Detaylar",
     "Product Name": "Almak için para biriktirdiğin şey",
     "Product Price": "Fiyatı",
@@ -125,7 +126,6 @@
     "Amount": "Miktar",
     "Saving options have been calculated for :date": "Birikim seçeneklerini bu tarih için hesapladık: :date",
     "Your piggy bank has been created successfully.": "Tebrikler. Kumbaranı başarılı bir şekilde oluşturdun.",
-    "confirm_password": "Şifreni tekrar gir",
     "Already_registered": "Daha önce kaydolduysan buraya tıkla",
     "You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.": "Bu bilgilerle bir kumbara oluşturduğun için, tekrar olmasın diye seni kumbaralarım sayfasına yönlendirdik.",
     "Piggy Bank Details": "Kumbaranın Detayları",
@@ -176,5 +176,6 @@
     "Saving...": "Kaydediliyor...",
     "Preferences saved": "Tercihler kaydedildi",
     "Error saving preferences": "Tercihleri kaydederken hata oluştu",
-    "Coming Soon with Premium ✨": "Yakında premium üyelikle ✨"
+    "Coming Soon with Premium ✨": "Yakında premium üyelikle ✨",
+    "Register to Create": "Tamamlamak için kaydol"
 }

@@ -133,8 +133,11 @@ Route::get('/current-currency', function () {
 });
 
 
-// Create piggy bank routes
-Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('create-piggy-bank.')->group(function () {
+// Create New Piggy Bank routes
+Route::prefix('create-piggy-bank')
+    ->name('create-piggy-bank.')
+    ->middleware(['conditional.layout'])
+    ->group(function () {
     Route::get('/step-1', [PiggyBankCreateController::class, 'step1'])->name('step-1');
 
     Route::post('/clear', function() {
@@ -191,7 +194,9 @@ Route::middleware(['auth', 'verified'])->prefix('create-piggy-bank')->name('crea
         Route::post('/store-frequency', [PiggyBankCreateController::class, 'storeSelectedFrequency'])->name('store-frequency');
         Route::post('/show-summary', [PiggyBankCreateController::class, 'showSummary'])->name('show-summary');
         Route::get('/summary', [PiggyBankCreateController::class, 'showSummary'])->name('summary');
-        Route::post('/store', [PiggyBankCreateController::class, 'storePiggyBank'])->name('store');
+        Route::post('/store', [PiggyBankCreateController::class, 'storePiggyBank'])
+            ->middleware(['auth', 'verified'])
+            ->name('store');
     });
 
     // Flash message check route

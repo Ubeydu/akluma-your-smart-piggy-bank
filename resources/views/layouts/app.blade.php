@@ -19,7 +19,15 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-200">
-            @include('layouts.navigation')
+            @if(Auth::check() || !isset($useWelcomeLayout))
+                @include('layouts.navigation')
+            @else
+
+                    <div class="w-full">
+                        <x-unauthenticated-header />
+                    </div>
+
+            @endif
 
             <!-- Page Heading -->
             @isset($header)
