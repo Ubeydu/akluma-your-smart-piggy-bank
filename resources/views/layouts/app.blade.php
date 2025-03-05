@@ -22,11 +22,11 @@
             @if(Auth::check() || !isset($useWelcomeLayout))
                 @include('layouts.navigation')
             @else
-                <div class="bg-gray-50 text-black/50">
-                    <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl mx-auto">
+
+                    <div class="w-full">
                         <x-unauthenticated-header />
                     </div>
-                </div>
+
             @endif
 
             <!-- Page Heading -->
