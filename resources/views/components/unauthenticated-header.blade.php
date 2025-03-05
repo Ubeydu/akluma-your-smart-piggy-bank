@@ -55,7 +55,7 @@
             @if (Route::has('login'))
                 <div class="hidden sm:flex items-center space-x-4">
                     <a href="{{ route('create-piggy-bank.step-1') }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]">
-                        {{ __('Create Piggy Bank') }}
+                        {{ __('Create New Piggy Bank') }}
                     </a>
 
                     <div class="custom-language-dropdown">
@@ -99,7 +99,7 @@
                 {{ __('Welcome') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('create-piggy-bank.step-1')" :active="request()->routeIs('create-piggy-bank.step-1')">
-                {{ __('Create Piggy Bank') }}
+                {{ __('Create New Piggy Bank') }}
             </x-responsive-nav-link>
             @auth
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">

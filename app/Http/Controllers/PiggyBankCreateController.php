@@ -640,10 +640,18 @@ class PiggyBankCreateController extends Controller
             // Clear strategy-specific data
             $request->session()->forget(['pick_date_step3', 'enter_saving_step3']);
 
-            // Add an informative flash message
-            return redirect()
-                ->route('piggy-banks.index')
-                ->with('warning', __('You cancelled creating your piggy bank.'));
+            // Check if user is authenticated
+            if (auth()->check()) {
+                // If authenticated, redirect to index page
+                return redirect()
+                    ->route('piggy-banks.index')
+                    ->with('warning', __('You cancelled creating your piggy bank.'));
+            } else {
+                // If not authenticated, redirect to welcome page
+                return redirect()
+                    ->route('welcome')
+                    ->with('warning', __('You cancelled creating your piggy bank.'));
+            }
 
         } catch (Exception $e) {
             Log::error('Error during piggy bank creation cancellation:', [

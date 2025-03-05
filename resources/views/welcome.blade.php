@@ -20,6 +20,9 @@
         @endif
     </head>
     <body class="font-sans antialiased">
+
+    @include('components.flash-message')
+
         <div class="bg-gray-50 text-black/50">
             <div class="relative min-h-screen flex flex-col items-center justify-start selection:bg-[#FF2D20] selection:text-white">
                 <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
@@ -74,7 +77,7 @@
                                 href="{{ route('create-piggy-bank.step-1') }}"
                                 class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
                                 >
-                                {{ __('Create Piggy Bank') }}
+                                {{ __('Create New Piggy Bank') }}
                                 </a>
 
 
