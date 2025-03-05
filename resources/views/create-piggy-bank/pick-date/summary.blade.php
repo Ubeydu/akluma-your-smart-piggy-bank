@@ -281,12 +281,23 @@
 
 
 
-                            <form method="POST" action="{{ route('create-piggy-bank.pick-date.store') }}" class="mt-4">
-                                @csrf
-                                <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
-                                    {{ __('Create Piggy Bank') }}
-                                </x-primary-button>
-                            </form>
+                            @auth
+                                <form method="POST" action="{{ route('create-piggy-bank.pick-date.store') }}" class="mt-4">
+                                    @csrf
+                                    <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                        {{ __('Create Piggy Bank') }}
+                                    </x-primary-button>
+                                </form>
+                            @else
+                                <div class="mt-4">
+                                    <x-secondary-button
+                                        type="button"
+                                        onclick="window.location='{{ route('login', ['intended' => url()->current()]) }}'"
+                                        class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                        {{ __('Login to Create') }}
+                                    </x-secondary-button>
+                                </div>
+                            @endauth
 
                         </div>
                     </div>
