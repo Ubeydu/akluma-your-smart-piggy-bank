@@ -22,7 +22,7 @@
                         {{ __('My Piggy Banks') }}
                     </x-nav-link>
                     <x-nav-link :href="route('create-piggy-bank.step-1')"
-                                :active="request()->routeIs('create-piggy-bank.step-1')">
+                                :active="request()->routeIs('create-piggy-bank.*')">
                         {{ __('Create New Piggy Bank') }}
                     </x-nav-link>
                     <x-nav-link :href="route('welcome')"
@@ -116,6 +116,12 @@
                                    :active="request()->routeIs('piggy-banks.index')">
                 {{ __('My Piggy Banks') }}
             </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('create-piggy-bank.step-1')"
+                                   :active="request()->routeIs('create-piggy-bank.*')">
+                {{ __('Create New Piggy Bank') }}
+            </x-responsive-nav-link>
+
             <x-responsive-nav-link :href="route('welcome')"
                                    :active="request()->routeIs('welcome')">
                 {{ __('Welcome') }}
