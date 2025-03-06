@@ -137,8 +137,6 @@
                                     {{ __('Welcome') }}
                                 </x-responsive-nav-link>
 
-                                <span style="color:red; font-size:8px;">Current route: {{ request()->route()->getName() }}</span>
-
                                 <x-responsive-nav-link :href="route('create-piggy-bank.step-1')"
                                                        :active="request()->routeIs('create-piggy-bank.*')">
                                     {{ __('Create New Piggy Bank') }}
