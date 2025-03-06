@@ -75,5 +75,6 @@
     "British Pound": "British Pound",
     "Euro": "Euro",
     "West African CFA franc": "West African CFA franc",
-    "Central African CFA franc": "Central African CFA franc"
+    "Central African CFA franc": "Central African CFA franc",
+    "account_deleted": "Your account has been successfully deleted with all its data."
 }
