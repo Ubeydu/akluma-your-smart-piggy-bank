@@ -23,20 +23,23 @@
 
     @include('components.flash-message')
 
-        <div class="bg-gray-50 text-black/50">
-            <div class="relative min-h-screen flex flex-col items-center justify-start selection:bg-[#FF2D20] selection:text-white">
-                <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                    <header class="flex items-center justify-between py-10">
-                        <div class="flex justify-start">
-                            <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                 viewBox="0 0 512 512" class="w-full h-auto max-w-[60px]" fill="currentColor"  xml:space="preserve">
-                                    <style type="text/css">
-                                        <![CDATA[[
-                                        .st0{fill:#000000;}
-                                        ]]>
-                                    </style>
-                                        <g>
-                                            <path class="st0" d="M508.488,169.344c-6.422-14.469-20.484-23.844-35.766-23.844l-1.813,0.047l-10.344,0.547
+    <div class="bg-gray-50 text-black/50">
+        <div class="relative min-h-screen flex flex-col items-center justify-start selection:bg-[#FF2D20] selection:text-white">
+            <div class="w-full bg-white">
+                <div class="relative max-w-2xl px-6 lg:max-w-7xl mx-auto">
+                    <header x-data="{ open: false }">
+
+                        <div class="flex items-center justify-between py-10">
+                            <div class="flex justify-start">
+                                <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                     viewBox="0 0 512 512" class="w-full h-auto max-w-[40px] sm:max-w-[60px]" fill="currentColor"  xml:space="preserve">
+                    <style type="text/css">
+                        <![CDATA[[
+                        .st0{fill:#000000;}
+                        ]]>
+                    </style>
+                                    <g>
+                                        <path class="st0" d="M508.488,169.344c-6.422-14.469-20.484-23.844-35.766-23.844l-1.813,0.047l-10.344,0.547
 		                                        c-23.219-32.281-55.765-57.156-94.968-72.438c-25.625-10.031-54.203-16-84.938-17.719c-6.391-0.344-12.891-0.531-19.391-0.531
 		                                        c-4.672,0-9.438,0.094-14.281,0.266c-14.297,0.547-28.422,2.391-42,5.484c-2.172,0.5-4.375,1.031-6.563,1.594
 		                                        c-27.203-15.969-53.781-19.563-72.203-19.563c-1.531,0-3.016,0.031-4.438,0.063c-3.766,0.125-6.516,0.266-8.594,0.5
@@ -63,54 +66,110 @@
 		                                        c5.313-1.688,10.828-3.219,16.547-4.531c11.688-2.656,24.063-4.344,37.188-4.844c4.5-0.172,8.938-0.25,13.297-0.25
 		                                        c6.109,0,12.078,0.156,17.906,0.469c29.313,1.688,54.859,7.375,76.906,16c42.781,16.656,72.421,44.344,90.921,74.938
 		                                        c13.734-0.688,15.797-0.797,25.188-1.281h0.531C482.77,171.688,491.801,185.578,480.848,197.719z"/>
-                                            <path class="st0" d="M125.458,224.313c-10.781,0-19.516,8.719-19.516,19.516c0,10.766,8.734,19.516,19.516,19.516
+                                        <path class="st0" d="M125.458,224.313c-10.781,0-19.516,8.719-19.516,19.516c0,10.766,8.734,19.516,19.516,19.516
 		                                        s19.516-8.75,19.516-19.516C144.973,233.031,136.239,224.313,125.458,224.313z"/>
-                                            <path class="st0" d="M248.942,106.547l-1.344,24.297c2.125,0.063,4.547,0.188,7.531,0.344c22.125,1.188,56.031,3.125,98.141,14.75
+                                        <path class="st0" d="M248.942,106.547l-1.344,24.297c2.125,0.063,4.547,0.188,7.531,0.344c22.125,1.188,56.031,3.125,98.141,14.75
 		                                        l1.375-25.094c-43.672-11.094-75.781-12.688-98.188-13.938C253.598,106.75,251.098,106.656,248.942,106.547z"/>
-                                        </g>
-                            </svg>
-                        </div>
-                        @if (Route::has('login'))
-                            <nav class="-mx-3 flex flex-1 justify-end">
+                                    </g>
+            </svg>
+                            </div>
 
-                                <a
-                                href="{{ route('create-piggy-bank.step-1') }}"
-                                class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
-                                >
-                                {{ __('Create New Piggy Bank') }}
-                                </a>
+                            <!-- Desktop navigation -->
+                            @if (Route::has('login'))
+                                <nav class="hidden sm:flex -mx-3 flex-1 justify-end">
 
-
-                                <div class="custom-language-dropdown">
-                                    <x-language-dropdown />
-                                </div>
-                                @auth
                                     <a
+                                    href="{{ route('create-piggy-bank.step-1') }}"
+                                    class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
+                                    >
+                                    {{ __('Create New Piggy Bank') }}
+                                    </a>
+
+                                    <div class="custom-language-dropdown">
+                                        <x-language-dropdown />
+                                    </div>
+                                    @auth
+
+                                        <a
                                         href="{{ url('/dashboard') }}"
                                         class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
-                                    >
+                                        >
                                         {{ __('Dashboard') }}
-                                    </a>
-                                @else
-                                    <a
+                                        </a>
+                                    @else
+
+                                        <a
                                         href="{{ route('login') }}"
                                         class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
-                                    >
+                                        >
                                         {{ __('Log in') }}
-                                    </a>
+                                        </a>
 
-                                    @if (Route::has('register'))
-                                        <a
+                                        @if (Route::has('register'))
+
+                                            <a
                                             href="{{ route('register') }}"
                                             class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
-                                        >
+                                            >
                                             {{ __('Register') }}
-                                        </a>
+                                            </a>
+                                        @endif
+                                    @endauth
+                                </nav>
+                            @endif
+
+                            <!-- Mobile menu button -->
+                            <div class="flex items-center sm:hidden">
+                                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-600 transition duration-150 ease-in-out">
+                                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                                        <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5M3.75 12h16.5M3.75 18.75h16.5"/>
+                                        <path :class="{ 'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Mobile navigation menu -->
+                        <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+                            <div class="pt-2 pb-3 space-y-1">
+                                <x-responsive-nav-link :href="route('welcome')"
+                                                       :active="request()->routeIs('welcome')">
+                                    {{ __('Welcome') }}
+                                </x-responsive-nav-link>
+
+                                <x-responsive-nav-link :href="route('create-piggy-bank.step-1')"
+                                                       :active="request()->routeIs('create-piggy-bank.*')">
+                                    {{ __('Create New Piggy Bank') }}
+                                </x-responsive-nav-link>
+                                @auth
+                                    <x-responsive-nav-link :href="route('dashboard')"
+                                                           :active="request()->routeIs('dashboard')">
+                                        {{ __('Dashboard') }}
+                                    </x-responsive-nav-link>
+                                @else
+                                    <x-responsive-nav-link :href="route('login')"
+                                                           :active="request()->routeIs('login')">
+                                        {{ __('Log in') }}
+                                    </x-responsive-nav-link>
+                                    @if (Route::has('register'))
+                                        <x-responsive-nav-link :href="route('register')"
+                                                               :active="request()->routeIs('register')">
+                                            {{ __('Register') }}
+                                        </x-responsive-nav-link>
                                     @endif
                                 @endauth
-                            </nav>
-                        @endif
+                                <div class="pl-3 pr-4 py-2">
+                                    <x-language-dropdown />
+                                </div>
+                            </div>
+                        </div>
                     </header>
+                </div>
+            </div>
+            <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl mx-auto">
+
+
+
                     <main class="mt-6 min-h-[50vh] text-6xl font-bold">
                         {{ __('tagline') }}
                     </main>
@@ -125,7 +184,7 @@
                                 rel="noopener noreferrer"
                                 class="text-blue-500 hover:underline"
                             >
-                                Ubeydullah.
+                                Ubeydullah Keleş
                             </a>
                         </span>
                     </footer>

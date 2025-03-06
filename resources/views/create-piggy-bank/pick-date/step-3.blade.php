@@ -152,7 +152,7 @@ $currentPlaceholder = $placeholders[$language];
 
                         <form method="POST" action="{{ route('create-piggy-bank.pick-date.show-summary') }}">
                             @csrf
-                            <x-primary-button type="submit" id="nextButton" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                            <x-primary-button type="submit" id="nextButton" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start disabled:bg-gray-400 disabled:cursor-not-allowed  disabled:hover:bg-gray-300">
                                 {{ __('Next') }}
                             </x-primary-button>
                         </form>

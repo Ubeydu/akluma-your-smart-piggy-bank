@@ -98,7 +98,7 @@
             <x-responsive-nav-link :href="route('welcome')">
                 {{ __('Welcome') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('create-piggy-bank.step-1')" :active="request()->routeIs('create-piggy-bank.step-1')">
+            <x-responsive-nav-link :href="route('create-piggy-bank.step-1')" :active="request()->routeIs('create-piggy-bank.*')">
                 {{ __('Create New Piggy Bank') }}
             </x-responsive-nav-link>
             @auth
