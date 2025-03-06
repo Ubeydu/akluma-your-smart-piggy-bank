@@ -7,6 +7,7 @@ use App\Policies\PiggyBankPolicy;
 use App\Services\LinkPreviewService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -30,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(PiggyBank::class, PiggyBankPolicy::class);
+
+        Auth::user()?->language && App::setLocale(Auth::user()->language);
 
 
         if (app()->environment('local') && session()->has('test_date')) {

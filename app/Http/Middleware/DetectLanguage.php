@@ -18,13 +18,13 @@ class DetectLanguage
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
-            // Authenticated users use their saved language
-            App::setLocale(auth()->user()->language);
+            Session::put('locale', auth()->user()->language ?? 'en');
+            App::setLocale(auth()->user()->language ?? 'en');
         } else {
             // Check session first
-            if (Session::has('app_locale')) {
-                App::setLocale(Session::get('app_locale'));
-            } else {
+            if (Session::has('locale')) {
+                App::setLocale(Session::get('locale'));
+            } elseif (!$request->session()->has('locale')) { // Only detect if session is empty
                 // Detect browser language
                 $browserLanguage = substr($request->server('HTTP_ACCEPT_LANGUAGE'), 0, 2);
                 $availableLanguages = ['tr', 'en', 'fr'];
@@ -33,7 +33,7 @@ class DetectLanguage
                 $language = in_array($browserLanguage, $availableLanguages) ? $browserLanguage : 'en';
 
                 // Store in session
-                Session::put('app_locale', $language);
+                Session::put('locale', $language);
                 App::setLocale($language);
             }
         }

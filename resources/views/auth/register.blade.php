@@ -54,5 +54,16 @@
             document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
         </script>
 
+
+        <input type="hidden" name="language" id="language" value="{{ app()->getLocale() }}">
+        <script>
+            // Get browser language (like "en-US" or "fr-FR")
+            let browserLang = navigator.language;
+            // Extract just the 2-character language code
+            let langCode = browserLang.split('-')[0];
+            document.getElementById('language').value = langCode;
+        </script>
+
+
     </form>
 </x-guest-layout>
