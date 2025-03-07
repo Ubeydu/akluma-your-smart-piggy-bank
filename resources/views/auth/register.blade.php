@@ -55,13 +55,23 @@
         </script>
 
 
-        <input type="hidden" name="language" id="language" value="{{ app()->getLocale() }}">
+        <input type="hidden" name="language" id="language" value="{{ session('locale') ?? app()->getLocale() }}">
         <script>
-            // Get browser language (like "en-US" or "fr-FR")
-            let browserLang = navigator.language;
-            // Extract just the 2-character language code
-            let langCode = browserLang.split('-')[0];
-            document.getElementById('language').value = langCode;
+            // Only override with browser language if locale wasn't manually selected
+            // Check if the locale was set via the language switcher
+            const hasManuallySelectedLanguage = {{ session()->has('locale') ? 'true' : 'false' }};
+
+            if (!hasManuallySelectedLanguage) {
+                // Get browser language (like "en-US" or "fr-FR")
+                let browserLang = navigator.language;
+                // Extract just the 2-character language code
+                let langCode = browserLang.split('-')[0];
+                // Check if it's a supported language
+                const supportedLanguages = ['en', 'fr', 'tr'];
+                if (supportedLanguages.includes(langCode)) {
+                    document.getElementById('language').value = langCode;
+                }
+            }
         </script>
 
 

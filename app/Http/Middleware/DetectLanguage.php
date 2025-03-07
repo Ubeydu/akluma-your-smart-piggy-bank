@@ -27,6 +27,11 @@ class DetectLanguage
             } elseif (!$request->session()->has('locale')) { // Only detect if session is empty
                 // Detect browser language
                 $browserLanguage = substr($request->server('HTTP_ACCEPT_LANGUAGE'), 0, 2);
+
+//                // Add this after the line that gets the browser language
+//                \Log::info('Browser language detected: ' . $browserLanguage);
+//                \Log::info('Full HTTP_ACCEPT_LANGUAGE: ' . $request->server('HTTP_ACCEPT_LANGUAGE'));
+
                 $availableLanguages = ['tr', 'en', 'fr'];
 
                 // Use detected language if supported; otherwise, default to English

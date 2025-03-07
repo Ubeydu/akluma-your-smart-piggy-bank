@@ -193,3 +193,10 @@
         </div>
     </body>
 </html>
+
+<!-- At the bottom of a Blade view -->
+@if(config('app.debug'))
+    <script>
+        console.log('Session data:', @json(session()->all()));
+    </script>
+@endif
