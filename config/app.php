@@ -82,7 +82,7 @@ return [
         'French' => 'fr',
     ],
 
-    'default_currency' => env('APP_DEFAULT_CURRENCY', 'TRY'),
+    'default_currency' => env('APP_DEFAULT_CURRENCY', 'USD'),
 
     'currencies' => [
         'TRY' => [
