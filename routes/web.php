@@ -80,12 +80,17 @@ Route::middleware('auth')->group(function () {
 
 });
 
-// Language switching route
-Route::get('/language/{locale}', function ($locale) {
+Route::get('/language/{locale}', function ($locale, Request $request) {
     $availableLocales = array_values(config('app.available_languages', []));
 
     if (in_array($locale, $availableLocales)) {
-        session()->put('locale', $locale);
+        // Store in session
+        Session::put('locale', $locale);
+
+        // Persist in DB for authenticated users
+        if (Auth::check()) {
+            Auth::user()->update(['language' => $locale]);
+        }
     }
 
     return redirect()->back();

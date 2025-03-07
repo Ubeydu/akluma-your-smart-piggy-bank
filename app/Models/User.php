@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property mixed $language
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -23,7 +26,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'timezone'
+        'timezone',
+        'language',
     ];
 
     /**

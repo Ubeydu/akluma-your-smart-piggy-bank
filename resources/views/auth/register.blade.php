@@ -54,5 +54,26 @@
             document.getElementById('timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
         </script>
 
+
+        <input type="hidden" name="language" id="language" value="{{ session('locale') ?? app()->getLocale() }}">
+        <script>
+            // Only override with browser language if locale wasn't manually selected
+            // Check if the locale was set via the language switcher
+            const hasManuallySelectedLanguage = {{ session()->has('locale') ? 'true' : 'false' }};
+
+            if (!hasManuallySelectedLanguage) {
+                // Get browser language (like "en-US" or "fr-FR")
+                let browserLang = navigator.language;
+                // Extract just the 2-character language code
+                let langCode = browserLang.split('-')[0];
+                // Check if it's a supported language
+                const supportedLanguages = ['en', 'fr', 'tr'];
+                if (supportedLanguages.includes(langCode)) {
+                    document.getElementById('language').value = langCode;
+                }
+            }
+        </script>
+
+
     </form>
 </x-guest-layout>
