@@ -38,18 +38,21 @@ class RegisteredUserController extends Controller
             'language' => ['nullable', 'string'],
         ]);
 
+        // Get current locale from session or default
+        $currentLocale = session('locale', app()->getLocale());
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'timezone' => $request->timezone ?? 'UTC',
-            'language' => $request->language ?? 'en',
+            'language' => $currentLocale,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('verification.notice', absolute: false));
     }
 }

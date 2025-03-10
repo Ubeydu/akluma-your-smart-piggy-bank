@@ -56,7 +56,7 @@ Route::post('/piggy-banks/{piggyBank}/cancel', [PiggyBankController::class, 'can
     ->name('piggy-banks.cancel');
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -253,7 +253,7 @@ Route::get('/format-date', function (Request $request) {
 
 Route::post('/update-timezone', [UserPreferencesController::class, 'updateTimezone'])
     ->name('update-timezone')
-    ->middleware('auth');
+    ->middleware(['auth', 'verified']);
 
 Route::get('/test-money', function() {
     try {

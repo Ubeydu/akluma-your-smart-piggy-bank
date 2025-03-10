@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,7 +14,7 @@ use Illuminate\Notifications\Notifiable;
  * @property mixed $language
  * @property string $currency
  */
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -94,4 +95,25 @@ class User extends Authenticatable
             $user->save();
         });
     }
+
+
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        // Set the application locale to the user's preferred language
+        $previousLocale = app()->getLocale();
+        app()->setLocale($this->language);
+
+        // Send the notification
+        $this->notify(new VerifyEmail);
+
+        // Restore the previous locale
+        app()->setLocale($previousLocale);
+    }
+
+
 }
