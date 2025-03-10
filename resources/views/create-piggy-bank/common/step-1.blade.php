@@ -358,9 +358,10 @@
                                         type="text"
                                         class="block w-full text-center"
                                         readonly
-                                        value="{{ session('currency') }}"
+                                        value="{{ auth()->check() ? auth()->user()->currency : session('currency') }}"
                                     />
                                 </div>
+
 
                             </div>
 
