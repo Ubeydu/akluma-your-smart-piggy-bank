@@ -46,7 +46,7 @@
     "minimum amount 100": "min. 100",
     "price_whole_numbers_only": "You can put only numbers in this field. No comma, no dot, no letters",
     "Current Balance": "Current balance",
-    "Final Total": "Final total",
+    "Final Total": "Final amount you will have when you open your piggy bank",
     "Total Savings": "Sum of Periodic Savings",
     "Extra Savings Tooltip Info": "We rounded your savings amount to avoid dealing with fractional contributions in your periodic deposits. This extra amount comes from that adjustment.",
     "paused_message": "Piggy bank is paused. Activate it first to change the status of your savings.",
