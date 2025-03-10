@@ -110,6 +110,13 @@ Route::get('currency/switch/{currency}', function ($currency) {
         // Store the currency in session
         session(['currency' => $currency]);
 
+        // Store in user record if authenticated
+        if (auth()->check()) {
+            $user = auth()->user();
+            $user->currency = $currency;
+            $user->save();
+        }
+
         // Get the translated name
         $currencyName = __(config('app.currencies')[$currency]['name']);
 

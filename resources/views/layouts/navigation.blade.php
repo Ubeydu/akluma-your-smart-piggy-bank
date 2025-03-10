@@ -200,7 +200,7 @@
                     <x-slot name="content">
                         @foreach (config('app.currencies') as $currency => $currencyData)
                             <x-responsive-nav-link :href="route('currency.switch', ['currency' => $currency])"
-                                                   :class="session('currency', config('app.default_currency')) == $currency ? 'font-bold text-gray-900' : ''">
+                                                   :class="(auth()->check() ? auth()->user()->currency : session('currency', config('app.default_currency'))) == $currency ? 'font-bold text-gray-900' : ''">
                                 {{ __($currencyData['name']) }}
                             </x-responsive-nav-link>
                         @endforeach

@@ -147,7 +147,7 @@
                                     @foreach(config('app.currencies') as $code => $currencyData)
                                         <option
                                             value="{{ $code }}"
-                                            {{ session('currency') === $code ? 'selected' : '' }}
+                                            {{ (auth()->check() ? auth()->user()->currency : session('currency')) === $code ? 'selected' : '' }}
                                         >
                                             {{ $code }} - {{ __($currencyData['name']) }}
                                         </option>
