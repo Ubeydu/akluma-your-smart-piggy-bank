@@ -178,5 +178,8 @@
     "Error saving preferences": "Tercihleri kaydederken hata oluştu",
     "Coming Soon with Premium ✨": "Yakında premium üyelikle ✨",
     "Register to Create": "Tamamlamak için kaydol",
-    "account_deleted": "Hesabınız bütün bilgilerinizle birlikte silindi."
+    "account_deleted": "Hesabınız bütün bilgilerinizle birlikte silindi.",
+    "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\\'t receive the email, we will gladly send you another.": "Kaydolduğunuz için teşekkürler! Başlamadan önce, sana az önce e-posta ile gönderdiğimiz bağlantıya tıklayarak e-posta adresini doğrular mısın? Eğer e-postayı almadıysan, sana yenisini göndermekten memnuniyet duyarız.",
+    "A new verification link has been sent to the email address you provided during registration.": "Kayıt sırasında verdiğin e-posta adresine yeni bir doğrulama bağlantısı gönderdik.",
+    "A new verification link has been sent to your email address.": "E-posta adresine yeni bir doğrulama bağlantısı gönderdik."
 }
