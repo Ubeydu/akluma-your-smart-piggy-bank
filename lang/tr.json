@@ -205,5 +205,8 @@
     "This is a secure area of the application. Please confirm your password before continuing.": "Burası uygulamanın güvenli bir alanı. Devam etmeden önce lütfen şifreni onayla.",
     "If you did not request a password reset, no further action is required.": "Eğer şifre sıfırlama talebinde bulunmadıysan, herhangi bir işlem yapmana gerek yok.",
     "You successfully changed your password.": "Başarılı bir şekilde şifreni değiştirdin.",
-    "Saved.": "Kaydedildi."
+    "Saved.": "Kaydedildi.",
+    "piggybank.empty_state.title": "Henüz Bir Kumbara Yok",
+    "piggybank.empty_state.message": "İlk kumbaranı oluşturarak hedeflerin için bugün birikim yapmaya başla!",
+    "piggybank.empty_state.button_text": "Kumbaranı Oluştur"
 }

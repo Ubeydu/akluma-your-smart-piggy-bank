@@ -76,5 +76,8 @@
     "Euro": "Euro",
     "West African CFA franc": "West African CFA franc",
     "Central African CFA franc": "Central African CFA franc",
-    "account_deleted": "Your account has been successfully deleted with all its data."
+    "account_deleted": "Your account has been successfully deleted with all its data.",
+    "piggybank.empty_state.title": "No Piggy Banks Yet",
+    "piggybank.empty_state.message": "Start saving for your goals today by creating your first piggy bank!",
+    "piggybank.empty_state.button_text": "Create Your Piggy Bank"
 }
