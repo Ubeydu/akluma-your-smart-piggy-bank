@@ -12,6 +12,7 @@
     "Log in": "Giriş yap",
     "Name": "İsim",
     "Password": "Şifre",
+    "password": "Şifre",
     "My Piggy Banks": "Kumbaralarım",
     "Profile": "Profilim",
     "Register": "Kaydol",
@@ -190,5 +191,17 @@
     "Reset Password Notification": "Şifre Sıfırlama Bildirimi",
     "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser:": "\":actionText\" düğmesine tıklamakta sorun yaşıyorsan, aşağıdaki URL'yi kopyalayıp web tarayıcına yapıştırabilirsin:",
     "Hello!": "Merhaba!",
-    "Regards,": "Saygılar,"
+    "Regards,": "Saygılar,",
+    "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": "Şifreni mi unuttun? E-posta adresini gir, sana şifre sıfırlama bağlantısı gönderelim.",
+    "Email Password Reset Link": "Şifre Sıfırlama Linki",
+    "You are receiving this email because we received a password reset request for your account.": "Bu e-postayı, hesabın için bir şifre sıfırlama isteği aldığımız için alıyorsun.",
+    "You're logged in!": "Giriş yaptın!",
+    "Your email address is unverified.": "E-posta adresin doğrulanmamış.",
+    "This password reset link will expire in :count minutes.": "Bu şifre sıfırlama bağlantısı :count dakika içinde geçersiz olacaktır.",
+    "The given data was invalid.": "Verilen veriler geçersizdi.",
+    "The response is not a streamed response.": "Yanıt, akışlı bir yanıt değil.",
+    "The response is not a view.": "Yanıt, bir görünüm değil.",
+    "This action is unauthorized.": "Malesef bu işlemi yapmak için yetkin yok.",
+    "This is a secure area of the application. Please confirm your password before continuing.": "Burası uygulamanın güvenli bir alanı. Devam etmeden önce lütfen şifreni onayla.",
+    "If you did not request a password reset, no further action is required.": "Eğer şifre sıfırlama talebinde bulunmadıysan, herhangi bir işlem yapmana gerek yok."
 }
