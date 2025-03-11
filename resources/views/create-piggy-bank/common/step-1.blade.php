@@ -316,7 +316,11 @@
 
                                             return true;
                                         }).call(this, window.event || arguments[0])"
-                                        oninput="document.getElementById('starting_amount_cents').value = (this.value === '' || this.value === '0') ? '' : '00'; updateFormattedPrice(this.value, 'formatted_starting_amount_whole');"
+                                        oninput="
+                                            const centsInput = document.getElementById('starting_amount_cents');
+                                            if (centsInput) centsInput.value = (this.value === '' || this.value === '0') ? '' : '00';
+                                            updateFormattedPrice(this.value, 'formatted_starting_amount_whole');
+                                        "
                                         class="block w-full"
                                     />
 
