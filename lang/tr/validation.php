@@ -35,7 +35,7 @@ return [
     'can' => ':attribute yetkisiz bir değer içermektedir.',
     'confirmed' => ':attribute onayı eşleşmiyor.',
     'contains' => ':attribute gerekli bir değeri içermemektedir.',
-    'current_password' => 'Parola yanlış.',
+    'current_password' => 'şifre yanlış.',
     'date' => ':attribute geçerli bir tarih olmalıdır.',
     'date_equals' => ':attribute, :date ile eşit bir tarih olmalıdır.',
     'date_format' => ':attribute, :format formatıyla eşleşmelidir.',
@@ -198,6 +198,7 @@ return [
         'currency' => 'para birimi',
         'link' => 'bağlantı',
         'details' => 'detaylar',
+        'password' => 'şifre',
     ],
 
 ];
