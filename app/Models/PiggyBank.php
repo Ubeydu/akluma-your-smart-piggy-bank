@@ -39,7 +39,7 @@ class PiggyBank extends Model
 {
     use HasFactory;
 
-    public const STATUS_OPTIONS = ['active', 'paused', 'done', 'cancelled'];
+    public const STATUS_OPTIONS = ['active', 'paused', 'done', 'cancelled'], MAX_ACTIVE_PIGGY_BANKS = 10;
 
     protected $fillable = [
         'user_id',

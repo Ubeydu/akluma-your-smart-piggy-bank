@@ -523,12 +523,23 @@ class PiggyBankCreateController extends Controller
             }
         }
 
+        // Check if user has reached the maximum number of active/paused piggy banks
+        $activePiggyBanksCount = 0;
+        if (auth()->check()) {
+            $activePiggyBanksCount = PiggyBank::where('user_id', auth()->id())
+                ->whereIn('status', ['active', 'paused'])
+                ->count();
+        }
+
+
         // Return view with all necessary data
         return view('create-piggy-bank.pick-date.summary', [
             'summary' => $summary,
             'paymentSchedule' => $paymentSchedule,
             'dateMessage' => $dateMessage,
-            'savingCompletionDate' => $savingCompletionDate->format('Y-m-d')
+            'savingCompletionDate' => $savingCompletionDate->format('Y-m-d'),
+            'activePiggyBanksCount' => $activePiggyBanksCount,
+            'maxActivePiggyBanks' => PiggyBank::MAX_ACTIVE_PIGGY_BANKS
         ]);
     }
 
@@ -543,6 +554,16 @@ class PiggyBankCreateController extends Controller
             return redirect()
                 ->route('piggy-banks.index')
                 ->with('warning', __('You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.'));
+        }
+
+        // Check if user has reached the maximum number of active/paused piggy banks
+        $activePiggyBanksCount = PiggyBank::where('user_id', auth()->id())
+            ->whereIn('status', ['active', 'paused'])
+            ->count();
+
+
+        if ($activePiggyBanksCount >= PiggyBank::MAX_ACTIVE_PIGGY_BANKS) {
+            return back();
         }
 
 
