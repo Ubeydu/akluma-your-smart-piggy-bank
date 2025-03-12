@@ -1,4 +1,18 @@
 <x-guest-layout>
+    <div class="mb-6 p-4 bg-indigo-50 border-l-4 border-indigo-400 text-indigo-700 rounded">
+        <p class="text-sm">
+            {!! __('Currently, our website is completely free.<br><br>We\'re launching an MVP (Minimum Viable Product) first to gauge how useful this tool is for our users. If we see strong engagement, we may introduce premium features later.<br><br>But for now—enjoy, save money, and help us grow!') !!}
+        </p>
+
+        <p class="mt-4 text-sm text-indigo-600">
+            &mdash;
+            <a href="https://www.linkedin.com/in/ubeydullah-kele%C5%9F-2221a915/" target="_blank" rel="noopener noreferrer" class="text-indigo-700 hover:underline font-medium">
+                Ubeydullah Keleş, {{ __('founder') }}
+            </a>
+        </p>
+    </div>
+
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 

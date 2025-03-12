@@ -110,5 +110,7 @@
     "piggybank.empty_state.button_text": "Créer votre tirelire",
     "Minimum 8 characters.": "Minimum 8 caractères.",
     "You have reached the maximum limit of :limit active or paused piggy banks. Please complete or cancel some existing piggy banks before creating a new one.": "Vous avez atteint la limite maximale de :limit tirelires actives ou mises en pause. Veuillez terminer ou annuler certaines tirelires existantes avant d'en créer une nouvelle.",
-    "Coming Soon ✨": "Bientôt disponible ✨"
+    "Coming Soon ✨": "Bientôt disponible ✨",
+    "Currently, our website is completely free.<br><br>We're launching an MVP (Minimum Viable Product) first to gauge how useful this tool is for our users. If we see strong engagement, we may introduce premium features later.<br><br>But for now—enjoy, save money, and help us grow!": "Pour l'instant, notre site est entièrement gratuit.<br><br>Nous lançons d'abord un MVP (Produit Minimum Viable) afin de mesurer l'intérêt réel de cet outil pour nos utilisateurs. Si l'intérêt est élevé, nous pourrions introduire plus tard des fonctionnalités premium.<br><br>Mais pour le moment—profitez-en, économisez et aidez-nous à grandir !",
+    "founder": "fondateur"
 }
