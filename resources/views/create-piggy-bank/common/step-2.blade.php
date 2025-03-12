@@ -24,7 +24,7 @@
                         </form>
 
                         <!-- Enter Saving Amount Strategy -->
-                        <form method="POST" class="relative w-full">
+                        <form method="POST" action="{{ route('create-piggy-bank.choose-strategy') }}" class="relative w-full">
                             @csrf
                             <input type="hidden" name="strategy" value="enter-saving-amount">
 
