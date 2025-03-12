@@ -107,5 +107,6 @@
     "You successfully changed your password.": "Votre mot de passe a été changé avec succès.",
     "piggybank.empty_state.title": "Aucune tirelire pour l'instant",
     "piggybank.empty_state.message": "Commencez dès aujourd'hui à économiser pour vos objectifs en créant votre première tirelire !",
-    "piggybank.empty_state.button_text": "Créer votre tirelire"
+    "piggybank.empty_state.button_text": "Créer votre tirelire",
+    "Minimum 8 characters.": "Minimum 8 caractères."
 }

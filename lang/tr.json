@@ -208,5 +208,6 @@
     "Saved.": "Kaydedildi.",
     "piggybank.empty_state.title": "Henüz Bir Kumbara Yok",
     "piggybank.empty_state.message": "İlk kumbaranı oluşturarak hedeflerin için bugün birikim yapmaya başla!",
-    "piggybank.empty_state.button_text": "Kumbaranı Oluştur"
+    "piggybank.empty_state.button_text": "Kumbaranı Oluştur",
+    "Minimum 8 characters.": "En az 8 karakter."
 }
