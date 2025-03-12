@@ -29,7 +29,7 @@
                     <label for="sms_notifications" class="text-sm text-gray-600 font-medium">
                         {{ __('Receive notifications via SMS') }}
                     </label>
-                    <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-xs text-gray-600 font-medium px-3 py-1 min-w-[120px] text-center rounded-full shadow-md">
+                    <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-xs text-gray-600 font-medium px-3 py-1 min-w-[120px] text-center rounded-full shadow-md" style="background: linear-gradient(to right, #FBBF24, #F97316);">
                         {{ __('Coming Soon with Premium ✨') }}
                     </span>
                 </div>
@@ -42,7 +42,7 @@
                     <label for="push_notifications" class="text-sm text-gray-600 font-medium">
                         {{ __('Receive notifications via push notifications') }}
                     </label>
-                    <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-600 text-xs font-medium px-2 py-1 rounded-full shadow-md">
+                    <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-600 text-xs font-medium px-2 py-1 rounded-full shadow-md" style="background: linear-gradient(to right, #FBBF24, #F97316);">
                         {{ __('Coming Soon with Premium ✨') }}
                     </span>
                 </div>

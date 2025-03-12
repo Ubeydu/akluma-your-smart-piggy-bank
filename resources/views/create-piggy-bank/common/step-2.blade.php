@@ -24,14 +24,30 @@
                         </form>
 
                         <!-- Enter Saving Amount Strategy -->
-                        <form action="{{ route('create-piggy-bank.choose-strategy') }}" method="POST">
+                        <form method="POST" class="relative w-full">
                             @csrf
                             <input type="hidden" name="strategy" value="enter-saving-amount">
-                            <button type="submit" class="w-full p-6 text-left border rounded-lg hover:border-indigo-500 focus:outline-none focus:border-indigo-500 transition-colors duration-200">
-                                <h3 class="text-xl font-semibold mb-3">{{ __('Enter Saving Amount') }}</h3>
-                                <p class="text-gray-600">{{ __('enter_saving_amount_strategy_definition') }}</p>
+
+                            <!-- Button with grayed out text and background -->
+                            <button
+                                type="submit"
+                                disabled
+                                class="w-full p-6 text-left border rounded-lg transition-colors duration-200 cursor-not-allowed pointer-events-none bg-gray-100"
+                            >
+                                <h3 class="text-xl font-semibold mb-3 text-gray-500">{{ __('Enter Saving Amount') }}</h3>
+                                <p class="text-gray-500">{{ __('enter_saving_amount_strategy_definition') }}</p>
                             </button>
+
+                            <!-- Badge positioned well above the title -->
+                            <span class="absolute right-0 z-10" style="top: -12px;">
+                                <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-sm text-gray-700 font-medium px-4 py-2 rounded-full shadow-lg" style="background: linear-gradient(to right, #FBBF24, #F97316);">
+                                    {{ __('Coming Soon with Premium ✨') }}
+                                </span>
+                            </span>
+
                         </form>
+
+
                     </div>
 
                     <!-- Action Buttons -->
