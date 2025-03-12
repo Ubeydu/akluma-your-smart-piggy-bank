@@ -41,7 +41,7 @@
                             <!-- Badge positioned well above the title -->
                             <span class="absolute right-0 z-10" style="top: -12px;">
                                 <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-sm text-gray-700 font-medium px-4 py-2 rounded-full shadow-lg" style="background: linear-gradient(to right, #FBBF24, #F97316);">
-                                    {{ __('Coming Soon with Premium ✨') }}
+                                    {{ __('Coming Soon ✨') }}
                                 </span>
                             </span>
 

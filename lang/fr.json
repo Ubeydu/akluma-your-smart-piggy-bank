@@ -109,5 +109,6 @@
     "piggybank.empty_state.message": "Commencez dès aujourd'hui à économiser pour vos objectifs en créant votre première tirelire !",
     "piggybank.empty_state.button_text": "Créer votre tirelire",
     "Minimum 8 characters.": "Minimum 8 caractères.",
-    "You have reached the maximum limit of :limit active or paused piggy banks. Please complete or cancel some existing piggy banks before creating a new one.": "Vous avez atteint la limite maximale de :limit tirelires actives ou mises en pause. Veuillez terminer ou annuler certaines tirelires existantes avant d'en créer une nouvelle."
+    "You have reached the maximum limit of :limit active or paused piggy banks. Please complete or cancel some existing piggy banks before creating a new one.": "Vous avez atteint la limite maximale de :limit tirelires actives ou mises en pause. Veuillez terminer ou annuler certaines tirelires existantes avant d'en créer une nouvelle.",
+    "Coming Soon ✨": "Bientôt disponible ✨"
 }

@@ -30,7 +30,7 @@
                         {{ __('Receive notifications via SMS') }}
                     </label>
                     <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-xs text-gray-600 font-medium px-3 py-1 min-w-[120px] text-center rounded-full shadow-md" style="background: linear-gradient(to right, #FBBF24, #F97316);">
-                        {{ __('Coming Soon with Premium ✨') }}
+                        {{ __('Coming Soon ✨') }}
                     </span>
                 </div>
                 <input id="sms_notifications" name="sms_notifications" type="checkbox" value="true" disabled class="w-4 h-4 text-gray-400 bg-gray-100 border-gray-300 rounded cursor-not-allowed">
@@ -43,7 +43,7 @@
                         {{ __('Receive notifications via push notifications') }}
                     </label>
                     <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-600 text-xs font-medium px-2 py-1 rounded-full shadow-md" style="background: linear-gradient(to right, #FBBF24, #F97316);">
-                        {{ __('Coming Soon with Premium ✨') }}
+                        {{ __('Coming Soon ✨') }}
                     </span>
                 </div>
                 <input id="push_notifications" name="push_notifications" type="checkbox" value="true" disabled class="w-4 h-4 text-gray-400 bg-gray-100 border-gray-300 rounded cursor-not-allowed">

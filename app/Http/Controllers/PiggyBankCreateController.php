@@ -309,9 +309,9 @@ class PiggyBankCreateController extends Controller
             'strategy' => 'required|in:pick-date,enter-saving-amount',
         ]);
 
-        // Check if user is trying to access the premium-only feature
+        // Check if user is trying to access the feature that is not yet available
         if ($validated['strategy'] === 'enter-saving-amount') {
-            return redirect()->back()->with('error', 'This feature is coming soon with premium subscription.');
+            return redirect()->back()->with('error', 'This feature is coming soon.');
         }
 
         // Store the chosen strategy in the session
