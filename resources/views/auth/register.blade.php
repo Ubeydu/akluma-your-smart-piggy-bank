@@ -18,15 +18,19 @@
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <div class="flex justify-between items-center">
+                <x-input-label for="password" :value="__('Password')" />
+                <span class="text-sm text-gray-600">{{ __('Minimum 8 characters.') }}</span>
+            </div>
 
             <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
+                          type="password"
+                          name="password"
+                          required autocomplete="new-password" />
 
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
+
 
         <!-- Confirm Password -->
         <div class="mt-4">

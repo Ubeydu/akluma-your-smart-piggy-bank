@@ -14,10 +14,10 @@
                     <div class="mt-4">
                         @if($piggyBanks->isEmpty())
                             <x-empty-state
-                                title="No Piggy Banks Yet"
-                                message="Start saving for your goals today by creating your first piggy bank!"
-                                buttonText="Create Your Piggy Bank"
-                                buttonLink="{{ route('piggy-banks.index') }}"
+                                :title="__('piggybank.empty_state.title')"
+                                :message="__('piggybank.empty_state.message')"
+                                :buttonText="__('piggybank.empty_state.button_text')"
+                                buttonLink="{{ route('create-piggy-bank.step-1') }}"
                             />
                         @else
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

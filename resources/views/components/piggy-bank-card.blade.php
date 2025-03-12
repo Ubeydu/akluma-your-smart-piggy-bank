@@ -4,6 +4,9 @@
 <div class="p-4 border rounded-lg shadow bg-rose-50 hover:bg-rose-100 transition-colors duration-300
     {{ $newPiggyBankId == $piggyBank->id ? 'highlight-new' : '' }}">
     <h3 class="text-lg font-bold">{{ $piggyBank->name }}</h3>
+    <h3 class="text-lg font-bold">
+        {{ __('piggy_bank_ID') }} {{ $piggyBank->id }}
+    </h3>
     <div class="flex flex-col gap-y-4 mt-4">
         <div class="flex flex-col lg:flex-row">
             <div class="relative w-full lg:w-64">

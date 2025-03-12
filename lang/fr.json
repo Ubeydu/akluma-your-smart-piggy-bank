@@ -20,7 +20,7 @@
     "Encrypted environment file already exists.": "Encrypted environment file already exists.",
     "Encrypted environment file not found.": "Encrypted environment file not found.",
     "English": "Anglais",
-    "Ensure your account is using a long, random password to stay secure.": "Assurez-vous d'utiliser un mot de passe long et aléatoire pour sécuriser votre compte.",
+    "Ensure your account is using a long, random password to stay secure. Minimum 8 characters.": "Assurez-vous d'utiliser un mot de passe long et aléatoire pour sécuriser votre compte. Minimum 8 caractères.",
     "Environment file already exists.": "Environment file already exists.",
     "Environment file not found.": "Environment file not found.",
     "errors": "les erreurs",
@@ -103,5 +103,10 @@
     "British Pound": "Livre sterling",
     "Euro": "Euro",
     "West African CFA franc": "Franc CFA d'Afrique de l'Ouest",
-    "Central African CFA franc": "Franc CFA d'Afrique centrale"
+    "Central African CFA franc": "Franc CFA d'Afrique centrale",
+    "You successfully changed your password.": "Votre mot de passe a été changé avec succès.",
+    "piggybank.empty_state.title": "Aucune tirelire pour l'instant",
+    "piggybank.empty_state.message": "Commencez dès aujourd'hui à économiser pour vos objectifs en créant votre première tirelire !",
+    "piggybank.empty_state.button_text": "Créer votre tirelire",
+    "Minimum 8 characters.": "Minimum 8 caractères."
 }

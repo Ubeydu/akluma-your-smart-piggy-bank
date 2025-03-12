@@ -309,14 +309,17 @@ class PiggyBankCreateController extends Controller
             'strategy' => 'required|in:pick-date,enter-saving-amount',
         ]);
 
+        // Check if user is trying to access the premium-only feature
+        if ($validated['strategy'] === 'enter-saving-amount') {
+            return redirect()->back()->with('error', 'This feature is coming soon with premium subscription.');
+        }
+
         // Store the chosen strategy in the session
         $request->session()->put('chosen_strategy', $validated['strategy']);
 
         // Redirect to the appropriate Step 3
         if ($validated['strategy'] === 'pick-date') {
             return redirect()->route('create-piggy-bank.pick-date.step-3');
-        } elseif ($validated['strategy'] === 'enter-saving-amount') {
-            return redirect()->route('create-piggy-bank.enter-saving-amount.step-3');
         }
 
         return redirect()->back()->withErrors(['strategy' => 'Invalid strategy selected.']);
