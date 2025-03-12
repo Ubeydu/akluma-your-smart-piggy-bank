@@ -282,11 +282,17 @@
 
 
                             @auth
-                                <form method="POST" action="{{ route('create-piggy-bank.pick-date.store') }}" class="mt-4">
+                                <form method="POST" action="{{ route('create-piggy-bank.pick-date.store') }}">
                                     @csrf
-                                    <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
-                                        {{ __('Create New Piggy Bank') }}
-                                    </x-primary-button>
+                                    @if($activePiggyBanksCount >= $maxActivePiggyBanks)
+                                        <x-primary-button type="button" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start opacity-50 cursor-not-allowed">
+                                            {{ __('Create New Piggy Bank') }}
+                                        </x-primary-button>
+                                    @else
+                                        <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                            {{ __('Create New Piggy Bank') }}
+                                        </x-primary-button>
+                                    @endif
                                 </form>
                             @else
                                 <div class="mt-4">
@@ -301,6 +307,17 @@
 
                         </div>
                     </div>
+
+
+                    <!-- Error message outside of button layout -->
+                    @auth
+                        @if($activePiggyBanksCount >= $maxActivePiggyBanks)
+                            <a href="{{ route('piggy-banks.index') }}" class="block text-sm mt-4 text-center sm:text-left" style="color: #ef4444;" onmouseover="this.style.color='#1e3a8a'; this.style.textDecoration='underline';" onmouseout="this.style.color='#ef4444'; this.style.textDecoration='none';">
+                                {{ __('You have reached the maximum limit of :limit active or paused piggy banks. Please complete or cancel some existing piggy banks before creating a new one.', ['limit' => $maxActivePiggyBanks]) }}
+                            </a>
+                        @endif
+                    @endauth
+
                 </div>
             </div>
         </div>

@@ -177,7 +177,7 @@
     "Saving...": "Kaydediliyor...",
     "Preferences saved": "Tercihler kaydedildi",
     "Error saving preferences": "Tercihleri kaydederken hata oluştu",
-    "Coming Soon with Premium ✨": "Yakında premium üyelikle ✨",
+    "Coming Soon ✨": "Çok Yakında ✨",
     "Register to Create": "Tamamlamak için kaydol",
     "account_deleted": "Hesabınız bütün bilgilerinizle birlikte silindi.",
     "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.": "Kaydolduğunuz için teşekkürler! Başlamadan önce, sana az önce e-posta ile gönderdiğimiz bağlantıya tıklayarak e-posta adresini doğrular mısın? Eğer e-postayı almadıysan, yenisini göndermemiz için aşağıdaki butona tıkla.",
@@ -209,5 +209,8 @@
     "piggybank.empty_state.title": "Henüz Bir Kumbara Yok",
     "piggybank.empty_state.message": "İlk kumbaranı oluşturarak hedeflerin için bugün birikim yapmaya başla!",
     "piggybank.empty_state.button_text": "Kumbaranı Oluştur",
-    "Minimum 8 characters.": "En az 8 karakter."
+    "Minimum 8 characters.": "En az 8 karakter.",
+    "You have reached the maximum limit of :limit active or paused piggy banks. Please complete or cancel some existing piggy banks before creating a new one.": "Maksimum :limit aktif veya duraklatılmış kumbara sınırına ulaştın. Yeni bir kumbara oluşturmadan önce mevcut kumbaralarından bazılarını tamamla veya iptal et.",
+    "Currently, our website is completely free.<br><br>We're launching an MVP (Minimum Viable Product) first to gauge how useful this tool is for our users. If we see strong engagement, we may introduce premium features later.<br><br>But for now—enjoy, save money, and help us grow!": "Şu anda web sitemiz tamamen ücretsiz.<br><br>Bu aracın kullanıcılarımız için ne kadar faydalı olduğunu görmek adına önce bir MVP (asgari çalışır ürün) yayınlıyoruz. Eğer yoğun bir ilgi görürsek, daha sonra ücretli özellikler ekleyebiliriz.<br><br>Fakat şimdilik—keyfini çıkar, para biriktir ve büyümemize yardımcı ol!",
+    "founder": "kurucu"
 }
