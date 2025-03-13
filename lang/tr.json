@@ -217,5 +217,7 @@
     "step1_link_placeholder": "örn. https://www.trendyol.com/samsung/galaxy-s25-256-gb-lacivert-cep-telefonu",
     "step1_details_placeholder": "Buraya birikim hedefinle ilgili notlar veya detaylar ekleyebilirsin. Örneğin; 'Parayı gardırobumdaki ahşap kutuda saklayacağım' ya da 'Parayı çok sık kullanmadığım Enpara hesabıma yatıracağım.'",
     "step1_starting_amount_whole_placeholder": "Bu hedef için şimdiden biraz para biriktirdiysen bu miktarı buraya yazabilirsin. Böylece birikim planını oluştururken bu tutarı da hesaba katabiliriz.",
-    "I already saved some money Tooltip Info": "Bu hedef için şimdiden biraz para biriktirdiysen bu miktarı buraya yazabilirsin. Böylece birikim planını oluştururken bu tutarı da hesaba katabiliriz."
+    "I already saved some money Tooltip Info": "Bu hedef için şimdiden biraz para biriktirdiysen bu miktarı buraya yazabilirsin. Böylece birikim planını oluştururken bu tutarı da hesaba katabiliriz.",
+    "Show Details": "Detayları Göster",
+    "Hide Details": "Detayları Gizle"
 }

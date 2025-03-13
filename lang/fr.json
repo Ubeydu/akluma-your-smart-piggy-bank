@@ -122,5 +122,7 @@
     "2. Price of the item (required field)": "2. Prix de l'article <span class='text-red-500'>(champ obligatoire)</span>",
     "5. I already saved some money (optional field)": "5. Montant déjà économisé (champ facultatif)",
     "step1_starting_amount_whole_placeholder": "Si vous avez déjà mis de côté un montant pour cet objectif, indiquez-le ici afin que nous puissions en tenir compte dans votre plan d'épargne.",
-    "I already saved some money Tooltip Info": "Si vous avez déjà mis de côté un montant pour cet objectif, indiquez-le ici afin que nous puissions en tenir compte dans votre plan d'épargne."
+    "I already saved some money Tooltip Info": "Si vous avez déjà mis de côté un montant pour cet objectif, indiquez-le ici afin que nous puissions en tenir compte dans votre plan d'épargne.",
+    "Show Details": "Afficher les détails",
+    "Hide Details": "Masquer les détails"
 }
