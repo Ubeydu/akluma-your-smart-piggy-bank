@@ -169,10 +169,10 @@
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <button type="button" id="detailsToggle" class="text-indigo-500 hover:text-indigo-800 font-medium flex items-center">
-                                <span id="toggleText">{{  __('Show Details') }}</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1 transition-transform" id="toggleIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div class="flex justify-center mb-6 mt-4">
+                            <button type="button" id="detailsToggle" class="w-[200px] sm:w-auto inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-gray-50 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 border border-gray-200 shadow-sm transition-colors duration-200">
+                                <span id="toggleText">{{ __('Show Details') }}</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 transition-transform" id="toggleIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
@@ -493,36 +493,6 @@
     </div>
 
     <script>
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     console.log('DOM fully loaded');
-        //
-        //     const detailsToggle = document.getElementById('detailsToggle');
-        //     const detailsContainer = document.getElementById('detailsContainer');
-        //     const toggleText = document.getElementById('toggleText');
-        //     const toggleIcon = document.getElementById('toggleIcon');
-        //
-        //     console.log('Elements:', {
-        //         detailsToggle,
-        //         detailsContainer,
-        //         toggleText,
-        //         toggleIcon
-        //     });
-        //
-        //     if (detailsToggle) {
-        //         console.log('Adding click event listener to button');
-        //         detailsToggle.addEventListener('click', function() {
-        //             console.log('Button clicked');
-        //             detailsContainer.classList.toggle('hidden');
-        //             if (detailsContainer.classList.contains('hidden')) {
-        //                 toggleText.textContent = 'Show Details';
-        //                 toggleIcon.classList.remove('rotate-180');
-        //             } else {
-        //                 toggleText.textContent = 'Hide Details';
-        //                 toggleIcon.classList.add('rotate-180');
-        //             }
-        //         });
-        //     }
-        // });
 
         const translations = {
             formattedPrice: @json(__('formatted: :value')),
