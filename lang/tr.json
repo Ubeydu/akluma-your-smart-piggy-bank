@@ -46,9 +46,9 @@
     "Provide information about your goal": "Lütfen kumbaranı oluşturmak için bazı bilgiler gir",
     "1. I am saving for a (required field)": "1. Ne almak için para biriktiriyorsun? <span class='text-red-500'>(zorunlu bilgi)</span>",
     "2. Price of the item (required field)": "2. Almak istediğin şeyin fiyatını paylaş <span class='text-red-500'>(zorunlu bilgi)</span>",
-    "3. Product link": "3. Ürün linki",
-    "4. Details": "4. Başka detaylar girmek istersen",
-    "5. I already saved some money": "5. Kumbarana önden biraz para koymak istersen",
+    "3. Product link (optional field)": "3. Ürün linki (doldurulması zorunlu değil)",
+    "4. Details (optional field)": "4. Başka detaylar girmek istersen (doldurulması zorunlu değil)",
+    "5. I already saved some money (optional field)": "5. Kumbarana önden biraz para koymak istersen (doldurulması zorunlu değil)",
     "Are you sure you want to cancel?": "İşlemi iptal etmek istediğinden emin misin?",
     "Next": "Devam",
     "Currency": "Para Birimi",
@@ -212,5 +212,10 @@
     "Minimum 8 characters.": "En az 8 karakter.",
     "You have reached the maximum limit of :limit active or paused piggy banks. Please complete or cancel some existing piggy banks before creating a new one.": "Maksimum :limit aktif veya duraklatılmış kumbara sınırına ulaştın. Yeni bir kumbara oluşturmadan önce mevcut kumbaralarından bazılarını tamamla veya iptal et.",
     "Currently, our website is completely free.<br><br>We're launching an MVP (Minimum Viable Product) first to gauge how useful this tool is for our users. If we see strong engagement, we may introduce premium features later.<br><br>But for now—enjoy, save money, and help us grow!": "Şu anda web sitemiz tamamen ücretsiz.<br><br>Bu aracın kullanıcılarımız için ne kadar faydalı olduğunu görmek adına önce bir MVP (asgari çalışır ürün) yayınlıyoruz. Eğer yoğun bir ilgi görürsek, daha sonra ücretli özellikler ekleyebiliriz.<br><br>Fakat şimdilik—keyfini çıkar, para biriktir ve büyümemize yardımcı ol!",
-    "founder": "kurucu"
+    "founder": "kurucu",
+    "step1_name_placeholder": "örn. okul taksidi, Samsung Galaxy S25, mutfağa almak istediğin o harika cihaz, ya da iş kurmak için sermaye ...",
+    "step1_link_placeholder": "örn. https://www.trendyol.com/samsung/galaxy-s25-256-gb-lacivert-cep-telefonu",
+    "step1_details_placeholder": "Buraya birikim hedefinle ilgili notlar veya detaylar ekleyebilirsin. Örneğin; 'Parayı gardırobumdaki ahşap kutuda saklayacağım' ya da 'Parayı çok sık kullanmadığım Enpara hesabıma yatıracağım.'",
+    "step1_starting_amount_whole_placeholder": "Bu hedef için şimdiden biraz para biriktirdiysen bu miktarı buraya yazabilirsin. Böylece birikim planını oluştururken bu tutarı da hesaba katabiliriz.",
+    "I already saved some money Tooltip Info": "Bu hedef için şimdiden biraz para biriktirdiysen bu miktarı buraya yazabilirsin. Böylece birikim planını oluştururken bu tutarı da hesaba katabiliriz."
 }

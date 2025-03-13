@@ -20,7 +20,7 @@
                             <x-input-label for="name">
                                 {!! __('1. I am saving for a (required field)') !!}
                             </x-input-label>
-                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required maxlength="255" autocomplete="on" :value="old('name', session('pick_date_step1.name'))" />
+                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required maxlength="255" autocomplete="on" :value="old('name', session('pick_date_step1.name'))" placeholder="{{ __('step1_name_placeholder') }}"/>
                             <p id="name-count" class="text-gray-500 text-sm mt-1">0 / 255</p>
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
@@ -173,7 +173,7 @@
 
                         <!-- Link (Optional) -->
                         <div class="mb-4">
-                            <x-input-label for="link" :value="__('3. Product link')" />
+                            <x-input-label for="link" :value="__('3. Product link (optional field)')" />
                             <div class="flex flex-col md:flex-row gap-4">
                                 <div class="flex-grow">
                                     <x-text-input
@@ -183,6 +183,7 @@
                                         class="mt-1 block w-full"
                                         maxlength="1000"
                                         :value="old('link', session('pick_date_step1.link'))"
+                                        placeholder="{{ __('step1_link_placeholder') }}"
                                     />
                                     <p id="link-count" class="text-gray-500 text-sm mt-1">0 / 1000</p>
                                     <x-input-error :messages="$errors->get('link')" class="mt-2" />
@@ -236,8 +237,8 @@
 
                         <!-- Details (Optional) -->
                         <div class="mb-4">
-                            <x-input-label for="details" :value="__('4. Details')" />
-                            <textarea id="details" name="details" rows="4" maxlength="5000" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:ring focus:ring-opacity-50">{{ old('details', session('pick_date_step1.details')) }}</textarea>
+                            <x-input-label for="details" :value="__('4. Details (optional field)')" />
+                            <textarea id="details" name="details" rows="4" maxlength="5000" class="mt-1 block w-full rounded-md shadow-sm border-gray-300 focus:ring focus:ring-opacity-50" placeholder="{{ __('step1_details_placeholder') }}">{{ old('details', session('pick_date_step1.details')) }}</textarea>
                             <p id="details-count" class="text-gray-500 text-sm mt-1">0 / 5000</p>
                             <x-input-error :messages="$errors->get('details')" class="mt-2" />
                         </div>
@@ -245,16 +246,51 @@
 
                         <!-- Starting Amount (Optional) -->
                         <div class="mb-4">
-                            <x-input-label for="starting_amount_whole" :value="__('5. I already saved some money')" />
+                            <x-input-label for="starting_amount_whole" class="flex items-center gap-1">
+                                {{ __('5. I already saved some money (optional field)') }}
+                                <span x-data="{ showTooltip: false }" class="relative cursor-help block sm:hidden">
+                                    <svg @mouseenter="showTooltip = true"
+                                         @mouseleave="showTooltip = false"
+                                         xmlns="http://www.w3.org/2000/svg"
+                                         fill="none"
+                                         viewBox="0 0 24 24"
+                                         stroke-width="2"
+                                         stroke="currentColor"
+                                         class="w-4 h-4 text-gray-500 hover:text-gray-800 transition-colors duration-200">
+                                        <path stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                    </svg>
+
+                                    <div x-show="showTooltip"
+                                         x-cloak
+                                         class="absolute z-10 w-64 px-4 py-2 mt-2 text-sm bg-gray-900 text-white rounded-lg shadow-lg right-0 left-auto sm:left-1/2 sm:-translate-x-1/2"
+                                         style="max-width: calc(100vw - 1rem);"
+                                         role="tooltip">
+                                        {{ __('I already saved some money Tooltip Info') }}
+                                    </div>
+                                </span>
+                            </x-input-label>
+
                             <div class="flex gap-2 items-start mt-1">
                                 <!-- Whole number part -->
                                 <div class="flex-1 min-w-0">
+                                    <style>
+                                        @media (max-width: 640px) {
+                                            #starting_amount_whole::placeholder {
+                                                color: transparent !important;
+                                                opacity: 0 !important;
+                                            }
+                                        }
+                                    </style>
+
                                     <x-text-input
                                         id="starting_amount_whole"
                                         name="starting_amount_whole"
                                         type="text"
                                         inputmode="numeric"
                                         pattern="[0-9]{1,9}"
+                                        placeholder="{{ __('step1_starting_amount_whole_placeholder') }}"
                                         :value="old('starting_amount_whole', session('pick_date_step1.starting_amount') ? explode('.', session('pick_date_step1.starting_amount')->getAmount())[0] : '')"
                                         onkeypress="return (function(evt) {
                                             const value = this.value;
@@ -451,7 +487,5 @@
         const linkPreviewUrl = '{{ route('create-piggy-bank.api.link-preview') }}';
     </script>
 
-
     @vite(['resources/js/create-piggy.js'])
-
 </x-app-layout>
