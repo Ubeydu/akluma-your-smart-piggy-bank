@@ -1,66 +1,140 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Piggy Bank Savings Application
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A web application built with Laravel that helps users create piggy banks to save money for products they want to purchase.
 
-## About Laravel
+## About The Project
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This application allows users to:
+- Create virtual piggy banks for saving towards specific goals
+- Track savings progress visually
+- Set target dates and amounts
+- Monitor current balances and progress
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Framework**: Laravel 12
+- **Frontend**: Blade templates, Tailwind CSS
+- **JavaScript**: Vanilla JS, Alpine.js
+- **Database**: MySQL
+- **PHP Version**: 8.4.4
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. Clone the repository
+2. Copy `.env.example` to `.env` and configure your database
+3. Start the Docker environment: `./vendor/bin/sail up -d`
+    - If this is your first time installing, run `docker run --rm -v $(pwd):/app composer install` first
+4. Run `./vendor/bin/sail artisan key:generate`
+5. Run `./vendor/bin/sail artisan migrate`
+6. Run `./vendor/bin/sail npm install && ./vendor/bin/sail npm run build`
+7. Access the application at http://localhost
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+[MIT License](LICENSE)
+
+This README now includes:
+1. A basic project description
+2. Tech stack information
+3. Your detailed browser navigation handling documentation
+4. Basic installation instructions
+5. A license reference
+
+You can expand this with more sections as your project grows, such as:
+- Screenshots
+- API documentation
+- Deployment instructions
+- Testing information
+- Contribution guidelines
+
+## Development Notes
+
+### Handling Browser Navigation Flash Data and UI State Persistence
+
+#### Problem
+When a user creates a new item and is redirected to a list page with success message and highlighted item, using browser back/forward navigation can cause these visual elements to reappear incorrectly.
+
+#### Solution Components
+
+##### Server-Side (Controller)
+- Added timestamp to flash session in `PiggyBankCreateController@storePiggyBank`:
+  ```php
+  return redirect()
+      ->route('piggy-banks.index')
+      ->with('newPiggyBankId', $piggyBank->id)
+      ->with('newPiggyBankCreatedTime', time())
+      ->with('success', __('Your piggy bank has been created successfully.'));
+
+
+- Ensured session clearing in `PiggyBankController@index`:
+  ```php
+  $newPiggyBankId = session('newPiggyBankId');
+  $newPiggyBankCreatedTime = session('newPiggyBankCreatedTime');
+  
+  session()->forget(['newPiggyBankId', 'newPiggyBankCreatedTime']);
+  ```
+
+##### Component Markup (piggy-bank-card.blade.php)
+- Added data attributes to store IDs and timestamps:
+  ```php
+  @props(['piggyBank', 'newPiggyBankId' => null, 'newPiggyBankCreatedTime' => null])
+  
+  <div class="... piggy-bank-card"
+       data-piggy-bank-id="{{ $piggyBank->id }}" 
+       data-new-piggy-bank-id="{{ $newPiggyBankId }}"
+       data-new-piggy-bank-time="{{ $newPiggyBankCreatedTime }}">
+  ```
+
+##### Client-Side (resources/js/piggy-bank-highlight.js)
+- Created dedicated JS file with two main functions:
+    1. Track highlighted elements using localStorage
+    2. Detect and handle browser navigation events
+
+- Key code for cards:
+  ```javascript
+  const storageKey = 'highlighted_piggy_bank_' + newPiggyBankId;
+  const hasBeenHighlighted = localStorage.getItem(storageKey);
+  
+  if (!hasBeenHighlighted) {
+      card.classList.add('highlight-new', 'border-indigo-500', 'ring-2', 'ring-indigo-200');
+      localStorage.setItem(storageKey, 'true');
+  } else {
+      card.classList.remove('highlight-new', 'border-indigo-500', 'ring-2', 'ring-indigo-200');
+  }
+  ```
+
+- Key code for Alpine.js flash messages:
+  ```javascript
+  const successContainer = document.querySelector('[x-data*="show: true"]');
+  if (successContainer) {
+      const navigationType = performance.getEntriesByType('navigation')[0].type;
+      if (navigationType === 'back_forward') {
+          if (window.Alpine && successContainer.__x) {
+              successContainer.__x.setData('show', false);
+          } else {
+              successContainer.style.display = 'none';
+          }
+      }
+  }
+  ```
+
+#### How It Works
+1. Server generates flash data and ID for the newly created item
+2. JavaScript checks if item was already highlighted using localStorage
+3. For success messages, detects back/forward navigation using Performance API
+4. For Alpine.js components, interacts with the data model instead of just hiding elements
+
+#### Future Reference
+When implementing redirects with flash messages or highlighted items:
+- Always use flash session data (->with()) instead of regular session
+- Consider tracking UI state in localStorage/sessionStorage for persistence across page loads
+- Use data attributes to pass IDs and timestamps to JavaScript
+- Use the Performance API to detect navigation types (performance.getEntriesByType('navigation')[0].type)
+- When working with UI frameworks like Alpine.js, interact with their data model rather than manipulating the DOM directly
+
+#### Files Modified
+- `app/Http/Controllers/PiggyBankCreateController.php` (add timestamp to session)
+- `app/Http/Controllers/PiggyBankController.php` (retrieve and clear session)
+- `resources/views/components/piggy-bank-card.blade.php` (add data attributes)
+- `resources/js/piggy-bank-highlight.js` (create new file)
+- `resources/views/piggy-banks/index.blade.php` (include JS file)

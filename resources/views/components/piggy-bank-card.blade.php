@@ -1,8 +1,10 @@
-@props(['piggyBank', 'newPiggyBankId' => null])
+@props(['piggyBank', 'newPiggyBankId' => null, 'newPiggyBankCreatedTime' => null])
 
 <a href="{{ route('piggy-banks.show', $piggyBank) }}" class="block text-current hover:no-underline">
-    <div class="p-5 border rounded-lg shadow-md bg-white hover:bg-gray-50 transition-all duration-300
-        {{ $newPiggyBankId == $piggyBank->id ? 'highlight-new border-indigo-500 ring-2 ring-indigo-200' : 'border-gray-200' }}">
+    <div class="p-5 border rounded-lg shadow-md bg-white hover:bg-gray-50 transition-all duration-300 piggy-bank-card"
+         data-piggy-bank-id="{{ $piggyBank->id }}"
+         data-new-piggy-bank-id="{{ $newPiggyBankId }}"
+         data-new-piggy-bank-time="{{ $newPiggyBankCreatedTime }}">
 
         <div class="flex items-start mb-4">
             <!-- Piggy Bank Image -->

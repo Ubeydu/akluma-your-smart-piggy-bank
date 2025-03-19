@@ -25,6 +25,7 @@
                                     <x-piggy-bank-card
                                         :piggyBank="$piggyBank"
                                         :newPiggyBankId="$newPiggyBankId ?? null"
+                                        :newPiggyBankCreatedTime="$newPiggyBankCreatedTime ?? null"
                                     />
                                 @endforeach
                             </div>
@@ -34,4 +35,11 @@
             </div>
         </div>
     </div>
+
+    @if(isset($newPiggyBankId) && $newPiggyBankId)
+        <!-- Hidden input to pass data to JS -->
+        <input type="hidden" id="newPiggyBankId" value="{{ $newPiggyBankId }}">
+    @endif
+
+    @vite('resources/js/piggy-bank-highlight.js')
 </x-app-layout>

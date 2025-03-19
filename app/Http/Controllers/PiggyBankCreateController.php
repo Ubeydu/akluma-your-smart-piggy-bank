@@ -634,7 +634,9 @@ class PiggyBankCreateController extends Controller
 //            ]);
 
             return redirect()
-                ->route('piggy-banks.index')
+                ->route('piggy-banks.index', ['from_creation' => true])
+                ->with('newPiggyBankId', $piggyBank->id)
+                ->with('newPiggyBankCreatedTime', time())
                 ->with('success', __('Your piggy bank has been created successfully.'));
 
         } catch (Exception $e) {
