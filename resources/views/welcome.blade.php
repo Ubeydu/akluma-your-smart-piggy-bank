@@ -85,9 +85,7 @@
                                     {{ __('Create New Piggy Bank') }}
                                     </a>
 
-                                    <div class="custom-language-dropdown">
-                                        <x-language-dropdown />
-                                    </div>
+
                                     @auth
 
                                         <a
@@ -115,6 +113,20 @@
                                             </a>
                                         @endif
                                     @endauth
+
+
+                                    <a
+                                        href="#"
+                                        id="getHelpBtn"
+                                        class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
+                                    >
+                                        {{ __('Get Help') }}
+                                    </a>
+
+                                    <div class="custom-language-dropdown">
+                                        <x-language-dropdown />
+                                    </div>
+
                                 </nav>
                             @endif
 
@@ -132,10 +144,6 @@
                         <!-- Mobile navigation menu -->
                         <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
                             <div class="pt-2 pb-3 space-y-1">
-                                <x-responsive-nav-link :href="route('welcome')"
-                                                       :active="request()->routeIs('welcome')">
-                                    {{ __('Welcome') }}
-                                </x-responsive-nav-link>
 
                                 <x-responsive-nav-link :href="route('create-piggy-bank.step-1')"
                                                        :active="request()->routeIs('create-piggy-bank.*')">
@@ -158,6 +166,11 @@
                                         </x-responsive-nav-link>
                                     @endif
                                 @endauth
+
+                                <x-responsive-nav-link href="#" id="getHelpBtnMobile">
+                                    {{ __('Get Help') }}
+                                </x-responsive-nav-link>
+
                                 <div class="pl-3 pr-4 py-2">
                                     <x-language-dropdown />
                                 </div>
@@ -363,7 +376,32 @@
                 </div>
             </div>
         </div>
+
+    <!-- Help Popup -->
+    <div id="helpPopup" class="help-popup">
+        <div class="help-popup-content">
+            <span class="help-close-btn">&times;</span>
+            <p>{{ __('help_popup_message') }}
+                <span class="help-email">u.keles@gmail.com</span>
+                <button class="help-copy-btn" title="{{ __('copy_email_title') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                </button>
+            </p>
+            <p class="mt-4 text-sm">
+                &mdash;
+                <span class="font-medium">Ubeydullah Keleş, {{ __('founder') }}</span>
+            </p>
+        </div>
+    </div>
+
+
     </body>
+
+    @vite(['resources/js/help-popup.js'])
+
 </html>
 
 {{--<!-- At the bottom of a Blade view -->--}}
