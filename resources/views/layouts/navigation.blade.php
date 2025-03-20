@@ -6,7 +6,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('piggy-banks.index') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-900"/>
                     </a>
                 </div>

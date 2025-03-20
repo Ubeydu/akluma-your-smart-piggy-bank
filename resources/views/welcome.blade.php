@@ -91,10 +91,10 @@
                                     @auth
 
                                         <a
-                                        href="{{ url('/dashboard') }}"
-                                        class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
+                                            href="{{ route('piggy-banks.index') }}"
+                                            class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]"
                                         >
-                                        {{ __('Dashboard') }}
+                                            {{ __('My Piggy Banks') }}
                                         </a>
                                     @else
 
@@ -142,9 +142,9 @@
                                     {{ __('Create New Piggy Bank') }}
                                 </x-responsive-nav-link>
                                 @auth
-                                    <x-responsive-nav-link :href="route('dashboard')"
-                                                           :active="request()->routeIs('dashboard')">
-                                        {{ __('Dashboard') }}
+                                    <x-responsive-nav-link :href="route('piggy-banks.index')"
+                                                           :active="request()->routeIs('piggy-banks.index')">
+                                        {{ __('My Piggy Banks') }}
                                     </x-responsive-nav-link>
                                 @else
                                     <x-responsive-nav-link :href="route('login')"
