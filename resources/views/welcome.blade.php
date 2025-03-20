@@ -173,7 +173,7 @@
                     <main class="min-h-[50vh] text-6xl font-bold">
 
 
-                        <!-- How Akuma Works Section - Add this after your tagline section -->
+                        <!-- How Akluma Works Section - Add this after your tagline section -->
                         <div class="py-16 relative overflow-hidden">
                             <!-- Fun background pattern -->
                             <div class="absolute inset-0 opacity-5">
@@ -185,7 +185,7 @@
                             <!-- Section heading with animation -->
                             <div class="text-center mb-16 relative">
                                 <h2 class="text-3xl md:text-4xl font-bold mb-4 inline-block relative">
-                                    {{ __('How Akuma Helps You Save') }}
+                                    {{ __('How Akluma, Your Online Piggy Bank Helps You Save') }}
                                     <span class="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-indigo-500 to-green-400 transform scale-x-0 transition-transform duration-700 group-hover:scale-x-100 animate-width"></span>
                                 </h2>
                                 <p class="text-lg text-gray-600 max-w-2xl mx-auto">{{ __('Four simple steps to reach your savings goals') }}</p>
@@ -219,11 +219,11 @@
 
                                             <!-- Content -->
                                             <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Set Your Goal') }}</h3>
-                                            <p class="text-gray-600 text-center text-sm">{{ __('Choose what to buy and let us fetch product details') }}</p>
+                                            <p class="text-gray-600 text-center text-sm">{{ __('Enter details of your saving goal') }}</p>
 
                                             <!-- Hidden extra content that shows on hover -->
                                             <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
-                                                <p class="text-yellow-600 text-sm italic text-center pt-2">{{ __('Adding images makes saving more motivating!') }}</p>
+                                                <p class="text-yellow-600 text-sm italic text-center pt-2">{{ __('If you add product link, we may be able to fetch its photo') }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -254,7 +254,7 @@
 
                                             <!-- Hidden extra content that shows on hover -->
                                             <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
-                                                <p class="text-indigo-600 text-sm italic text-center pt-2">{{ __('We\'ll create a personalized saving plan just for you!') }}</p>
+                                                <p class="text-indigo-600 text-sm italic text-center pt-2">{{ __('We\'ll create a personalized saving plan for you') }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -289,7 +289,7 @@
 
                                             <!-- Hidden extra content that shows on hover -->
                                             <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
-                                                <p class="text-green-600 text-sm italic text-center pt-2">{{ __('We\'ll help you stay consistent with friendly reminders!') }}</p>
+                                                <p class="text-green-600 text-sm italic text-center pt-2">{{ __('We\'ll help you stay consistent with friendly reminders') }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -325,7 +325,7 @@
 
                                             <!-- Hidden extra content that shows on hover -->
                                             <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
-                                                <p class="text-purple-600 text-sm italic text-center pt-2">{{ __('Your hard work pays off! Time to enjoy your reward!') }}</p>
+                                                <p class="text-purple-600 text-sm italic text-center pt-2">{{ __('Your hard work paid off. Time to enjoy your reward') }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -349,7 +349,7 @@
                             <br/>
                         @endif
                         <span>
-                            Made with passion by
+                            {{ __('Made with passion by') }}
                             <a
                                 href="https://www.linkedin.com/in/ubeydullah-kele%C5%9F-2221a915/"
                                 target="_blank"
