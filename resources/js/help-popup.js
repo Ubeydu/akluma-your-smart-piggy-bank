@@ -62,4 +62,13 @@
 }, 1000);
 });
 }
+
+        // Add event listener for the Escape key
+        document.addEventListener('keydown', function(e) {
+            if (helpPopup && helpPopup.style.display === 'flex' && e.key === 'Escape') {
+                helpPopup.style.display = 'none';
+            }
+        });
+
+
 });

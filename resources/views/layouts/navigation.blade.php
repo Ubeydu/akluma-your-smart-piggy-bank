@@ -64,6 +64,11 @@
                         <!-- Currency switch -->
                         <x-currency-dropdown/>
 
+                        <!-- Get Help Link -->
+                        <x-dropdown-link href="#" id="getHelpBtn">
+                            {{ __('Get Help') }}
+                        </x-dropdown-link>
+
                         <!-- Authentication -->
                         <form method="POST"
                               action="{{ route('logout') }}">
@@ -208,6 +213,12 @@
                 </x-dropdown>
 
 
+                <!-- Get Help Link (Mobile) -->
+                <x-responsive-nav-link href="#" id="getHelpBtnMobile">
+                    {{ __('Get Help') }}
+                </x-responsive-nav-link>
+
+
                 <!-- Authentication -->
                 <form method="POST"
                       action="{{ route('logout') }}">
@@ -222,5 +233,7 @@
             </div>
         </div>
     </div>
+
+    @vite(['resources/js/help-popup.js'])
 </nav>
 
