@@ -86,5 +86,7 @@
     "step1_starting_amount_whole_placeholder": "If you've already saved some money for this goal, enter the amount here and we'll include it when creating your savings plan.",
     "I already saved some money Tooltip Info": "If you've already saved some money for this goal, enter the amount here and we'll include it when creating your savings plan.",
     "Show Details": "Show Details",
-    "Hide Details": "Hide Details"
+    "Hide Details": "Hide Details",
+    "help_popup_message": "To ask anything about this product, simply drop me an email at",
+    "copy_email_title": "Copy email"
 }
