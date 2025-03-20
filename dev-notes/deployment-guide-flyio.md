@@ -5,9 +5,9 @@ This guide covers deploying your Laravel application on Fly.io with:
 2. **Launching Your Laravel Application**
 3. **Configuring Environment Variables and Secrets**
 4. **Specifying PHP and Node.js Versions**
-5. **Configuring Laravel Scheduler and Queues**
-6. **Deploying the Application**
-7. **Setting Up MySQL Database (Staging and Production)**
+5. **Deploying the Basic Application**
+6. **Setting Up MySQL Database (Staging and Production)**
+7. **Configuring Laravel Scheduler and Queues**
 8. **Post-Deployment Management**
 9. **Continuous Deployment with GitHub Actions**
 
@@ -98,75 +98,31 @@ fly deploy --build-arg "PHP_VERSION=8.4" --build-arg "NODE_VERSION=20"
 
 ---
 
-### 5. **Configuring Laravel Scheduler and Queues**
-
-Laravel applications often need to run scheduled tasks (via cron) and process queued jobs. Fly.io handles these through process groups in your `fly.toml` file.
-
-#### **Setting Up Process Groups**
-
-Update your `fly.toml` to define different process groups:
-
-```toml
-[processes]
-  app = ""         # Web server (default process)
-  cron = "cron -f" # Scheduler process
-  worker = "php artisan queue:listen" # Queue worker
-```
-
-- **app**: The empty string means it will use the default entrypoint script to run Nginx/PHP-FPM
-- **cron**: Runs the cron daemon, which executes Laravel's scheduler
-- **worker**: Runs the Laravel queue worker
-
-You can customize the queue worker command with additional parameters:
-```toml
-worker = "php artisan queue:listen --tries=3 --timeout=90"
-```
-
-#### **Process Configuration**
-
-For the web server process, ensure your `fly.toml` has the correct HTTP service configuration:
-
-```toml
-[http_service]
-  internal_port = 8080
-  force_https = true
-  auto_stop_machines = true
-  auto_start_machines = true
-  min_machines_running = 0
-  processes = ["app"]  # Only applies to the app process
-```
-
-#### **Scaling Process Groups**
-
-You can scale different process groups independently:
-
-```bash
-# Scale web servers to 2 instances and workers to 4
-fly scale count app=2 worker=4 -a myapp-prod
-```
-
----
-
-### 6. **Deploying the Application**
+### 5. **Deploying the Basic Application**
 Deploy your application to Fly.io:
 
 ```bash
-fly deploy
+fly deploy -a myapp-prod
+```
+
+For the staging app:
+```bash
+fly deploy -a myapp-staging
 ```
 
 You can monitor logs to ensure everything is running:
 ```bash
-fly logs
+fly logs -a myapp-prod
 ```
 
 Try these other useful commands:
-* `fly apps open` - Open your deployed app in a browser
-* `fly status` - View your app's current deployment status
-* `fly ssh console` - Open a terminal on your VM
+* `fly apps open -a myapp-prod` - Open your deployed app in a browser
+* `fly status -a myapp-prod` - View your app's current deployment status
+* `fly ssh console -a myapp-prod` - Open a terminal on your VM
 
 ---
 
-### 7. **Setting Up MySQL Database (Staging and Production)**
+### 6. **Setting Up MySQL Database (Staging and Production)**
 
 Fly.io allows you to run MySQL as a Fly App.
 
@@ -216,6 +172,11 @@ Fly.io allows you to run MySQL as a Fly App.
      -a myapp-prod
    ```
 
+3. **Redeploy to apply the database configuration:**
+   ```bash
+   fly deploy -a myapp-prod
+   ```
+
 #### ✅ **Staging Database Configuration:**
 You can use the same MySQL instance but with a different database name or create a separate staging MySQL app.
 
@@ -238,6 +199,9 @@ fly secrets set \
   DB_USERNAME=laravel_user \
   DB_PASSWORD=your_secure_password \
   -a myapp-staging
+
+# Redeploy staging app to apply changes
+fly deploy -a myapp-staging
 ```
 
 **Option 2: Create separate MySQL instance for staging:**
@@ -284,6 +248,63 @@ DB_PASSWORD=your_secure_password
 To connect locally, use:
 ```bash
 fly proxy 3306 -a myapp-mysql
+```
+
+---
+
+### 7. **Configuring Laravel Scheduler and Queues**
+
+After your basic application is deployed and connected to the database, you can add scheduler and queue workers.
+
+#### **Setting Up Process Groups**
+
+Update your `fly.toml` file to define different process groups:
+
+```toml
+[processes]
+  app = ""         # Web server (default process)
+  cron = "cron -f" # Scheduler process
+  worker = "php artisan queue:listen" # Queue worker
+```
+
+- **app**: The empty string means it will use the default entrypoint script to run Nginx/PHP-FPM
+- **cron**: Runs the cron daemon, which executes Laravel's scheduler
+- **worker**: Runs the Laravel queue worker
+
+You can customize the queue worker command with additional parameters:
+```toml
+worker = "php artisan queue:listen --tries=3 --timeout=90"
+```
+
+#### **Process Configuration**
+
+Ensure your `fly.toml` has the correct HTTP service configuration:
+
+```toml
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]  # Only applies to the app process
+```
+
+#### **Deploying Process Groups**
+
+After configuring process groups, redeploy your application to apply the changes:
+
+```bash
+fly deploy -a myapp-prod
+```
+
+#### **Scaling Process Groups**
+
+Once your application with multiple process groups is deployed, you can scale them independently:
+
+```bash
+# Scale web servers to 2 instances and workers to 4
+fly scale count app=2 worker=4 -a myapp-prod
 ```
 
 ---
@@ -353,7 +374,7 @@ fly volumes create app_logs --region mad --size 1 -a myapp-prod
 ],
 ```
 
-5. Redeploy:
+5. Redeploy to apply logging changes:
 ```bash
 fly deploy -a myapp-prod
 ```
@@ -437,3 +458,14 @@ jobs:
    ```
 
 ---
+```
+
+This revised guide now has a clearer timeline and flow:
+
+1. Initial setup and configuration
+2. Basic deployment 
+3. Database setup with redeployment to apply changes
+4. Adding and deploying process groups for scheduler and queues
+5. Post-deployment management and scaling
+
+Each step now explicitly shows when to redeploy after configuration changes, making the sequence more logical and preventing potential confusion about when changes take effect.
