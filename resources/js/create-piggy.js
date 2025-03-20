@@ -5,12 +5,37 @@
  */
 
 document.addEventListener('DOMContentLoaded', function () {
+
     const form = document.querySelector('form');
     const nextButton = document.getElementById('nextButton');
     const priceWholeInput = document.getElementById('price_whole');
     const startingAmountWholeInput = document.getElementById('starting_amount_whole');
     const amountWarning = document.getElementById('amount-warning'); // Reference to the warning message
     const differenceAmountWarning = document.getElementById('difference-amount-warning');
+
+
+    // Move the details toggle functionality here (at the beginning)
+    const detailsToggle = document.getElementById('detailsToggle');
+    const detailsContainer = document.getElementById('detailsContainer');
+    const toggleText = document.getElementById('toggleText');
+    const toggleIcon = document.getElementById('toggleIcon');
+
+
+
+    if (detailsToggle) {
+        detailsToggle.addEventListener('click', function() {
+            detailsContainer.classList.toggle('hidden');
+            if (detailsContainer.classList.contains('hidden')) {
+                toggleText.textContent = translations.showDetails;
+                toggleIcon.classList.remove('rotate-180');
+            } else {
+                toggleText.textContent = translations.hideDetails;
+                toggleIcon.classList.add('rotate-180');
+            }
+        });
+    }
+
+
 
     setTimeout(() => validateAmounts(), 0);
 

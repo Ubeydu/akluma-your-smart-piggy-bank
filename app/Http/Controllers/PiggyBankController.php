@@ -15,13 +15,24 @@ class PiggyBankController extends Controller
             ->latest()
             ->get();
 
-        // Get the value before clearing
+        // Get the values before clearing
         $newPiggyBankId = session('newPiggyBankId');
+        $newPiggyBankCreatedTime = session('newPiggyBankCreatedTime');
 
-        // Clear it after getting the value
-        session()->forget('newPiggyBankId');
+        // Debug output to laravel.log
+        \Log::info('Piggy Bank Index Page Loaded', [
+            'session_has_newPiggyBankId' => session()->has('newPiggyBankId'),
+            'newPiggyBankId' => $newPiggyBankId,
+            'newPiggyBankCreatedTime' => $newPiggyBankCreatedTime,
+            'url' => request()->fullUrl(),
+            'session_id' => session()->getId(),
+            'time' => now()->toDateTimeString()
+        ]);
 
-        return view('piggy-banks.index', compact('piggyBanks', 'newPiggyBankId'));
+        // Clear them after getting the values
+        session()->forget(['newPiggyBankId', 'newPiggyBankCreatedTime']);
+
+        return view('piggy-banks.index', compact('piggyBanks', 'newPiggyBankId', 'newPiggyBankCreatedTime'));
     }
 
 

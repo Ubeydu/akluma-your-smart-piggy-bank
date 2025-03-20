@@ -79,5 +79,12 @@
     "account_deleted": "Your account has been successfully deleted with all its data.",
     "piggybank.empty_state.title": "No Piggy Banks Yet",
     "piggybank.empty_state.message": "Start saving for your goals today by creating your first piggy bank!",
-    "piggybank.empty_state.button_text": "Create Your Piggy Bank"
+    "piggybank.empty_state.button_text": "Create Your Piggy Bank",
+    "step1_name_placeholder": "e.g. school fee, Samsung Galaxy S25, that awesome gadget for kitchen, or capital for launching business, ...",
+    "step1_link_placeholder": "e.g. https://www.ebay.com/itm/167340412147?_skw=SAMSUNG+Galaxy+S25",
+    "step1_details_placeholder": "You can add notes or details about your saving goal here. For example: 'I'll keep the savings in the wooden box inside my wardrobe,' or 'I'll deposit the savings into my Bank of America account that I rarely use.'",
+    "step1_starting_amount_whole_placeholder": "If you've already saved some money for this goal, enter the amount here and we'll include it when creating your savings plan.",
+    "I already saved some money Tooltip Info": "If you've already saved some money for this goal, enter the amount here and we'll include it when creating your savings plan.",
+    "Show Details": "Show Details",
+    "Hide Details": "Hide Details"
 }
