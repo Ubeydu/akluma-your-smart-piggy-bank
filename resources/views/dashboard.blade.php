@@ -20,15 +20,6 @@
                 <!-- No blur, just opacity -->
                 <div class="absolute inset-0 bg-white/40 z-10"></div>
 
-                <!-- Actual dashboard content (now blurred by the overlay) -->
-{{--                <div class="relative">--}}
-{{--                    <!-- Your existing dashboard content goes here -->--}}
-{{--                    <!-- Metric Cards Section -->--}}
-{{--                    <div class="mb-6">--}}
-{{--                        <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Overview') }}</h2>--}}
-{{--                        <!-- etc... -->--}}
-{{--                    </div>--}}
-
     <div class="py-4 px-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Metric Cards Section -->
