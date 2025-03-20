@@ -85,9 +85,7 @@
                                     {{ __('Create New Piggy Bank') }}
                                     </a>
 
-                                    <div class="custom-language-dropdown">
-                                        <x-language-dropdown />
-                                    </div>
+
                                     @auth
 
                                         <a
@@ -115,6 +113,11 @@
                                             </a>
                                         @endif
                                     @endauth
+
+                                    <div class="custom-language-dropdown">
+                                        <x-language-dropdown />
+                                    </div>
+
                                 </nav>
                             @endif
 
@@ -132,10 +135,6 @@
                         <!-- Mobile navigation menu -->
                         <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
                             <div class="pt-2 pb-3 space-y-1">
-                                <x-responsive-nav-link :href="route('welcome')"
-                                                       :active="request()->routeIs('welcome')">
-                                    {{ __('Welcome') }}
-                                </x-responsive-nav-link>
 
                                 <x-responsive-nav-link :href="route('create-piggy-bank.step-1')"
                                                        :active="request()->routeIs('create-piggy-bank.*')">
