@@ -6,20 +6,23 @@
          data-new-piggy-bank-id="{{ $newPiggyBankId }}"
          data-new-piggy-bank-time="{{ $newPiggyBankCreatedTime }}">
 
-        <div class="flex items-start mb-4">
-            <!-- Piggy Bank Image -->
+        <!-- Change the parent div from "flex items-start mb-4" to include flex-wrap -->
+        <div class="flex items-start flex-wrap mb-4">
+
+            <!-- Piggy Bank Image - keep as is -->
             <div class="mr-4 w-16 h-16 flex-shrink-0">
                 <img src="{{ asset($piggyBank->preview_image) }}" alt="{{ $piggyBank->name }}" class="w-full h-full object-cover rounded-lg shadow-sm">
             </div>
 
-            <!-- Title Section -->
-            <div class="flex-1">
-                <h3 class="text-lg font-bold text-gray-900 mb-0.5">{{ $piggyBank->name }}</h3>
+            <!-- Title Section - add w-[calc(100%-5rem)] to limit width on small screens -->
+            <div class="flex-1 w-[calc(100%-5rem)]">
+                <!-- Add truncate to the h3 to prevent overflow -->
+                <h3 class="text-lg font-bold text-gray-900 mb-0.5 truncate">{{ $piggyBank->name }}</h3>
                 <div class="text-sm text-gray-500">{{ __('piggy_bank_ID') }} {{ $piggyBank->id }}</div>
             </div>
 
-            <!-- Status Badge -->
-            <div class="ml-2">
+            <!-- Status Badge - move to below title on small screens -->
+            <div class="mt-2 md:mt-0 md:ml-2">
                 @php
                     $statusColors = [
                         'active' => 'bg-green-100 text-green-800',
@@ -30,8 +33,8 @@
                     $statusColor = $statusColors[$piggyBank->status] ?? 'bg-gray-100 text-gray-800';
                 @endphp
                 <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColor }}">
-                    {{ __(strtolower($piggyBank->status)) }}
-                </span>
+            {{ __(strtolower($piggyBank->status)) }}
+        </span>
             </div>
         </div>
 
