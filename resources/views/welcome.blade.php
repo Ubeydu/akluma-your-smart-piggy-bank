@@ -170,12 +170,184 @@
 
 
 
-                    <main class="mt-6 min-h-[50vh] text-6xl font-bold">
-                        {{ __('tagline') }}
+                    <main class="min-h-[50vh] text-6xl font-bold">
+
+
+                        <!-- How Akuma Works Section - Add this after your tagline section -->
+                        <div class="py-16 relative overflow-hidden">
+                            <!-- Fun background pattern -->
+                            <div class="absolute inset-0 opacity-5">
+                                <div class="absolute -top-10 -right-10 w-40 h-40 bg-yellow-400 rounded-full"></div>
+                                <div class="absolute top-40 -left-20 w-60 h-60 bg-indigo-400 rounded-full"></div>
+                                <div class="absolute bottom-10 right-20 w-40 h-40 bg-green-400 rounded-full"></div>
+                            </div>
+
+                            <!-- Section heading with animation -->
+                            <div class="text-center mb-16 relative">
+                                <h2 class="text-3xl md:text-4xl font-bold mb-4 inline-block relative">
+                                    {{ __('How Akuma Helps You Save') }}
+                                    <span class="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-indigo-500 to-green-400 transform scale-x-0 transition-transform duration-700 group-hover:scale-x-100 animate-width"></span>
+                                </h2>
+                                <p class="text-lg text-gray-600 max-w-2xl mx-auto">{{ __('Four simple steps to reach your savings goals') }}</p>
+                            </div>
+
+                            <!-- Steps container -->
+                            <div class="max-w-6xl mx-auto px-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+                                    <!-- Connection lines (visible on desktop only) -->
+                                    <div class="hidden lg:block absolute top-1/2 left-0 w-full h-1 bg-gray-200 -translate-y-1/2 z-0"></div>
+
+                                    <!-- Step 1 -->
+                                    <div class="relative z-10 group">
+                                        <div class="bg-white rounded-lg shadow-lg p-6 transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-xl">
+                                            <!-- Icon container with animated background -->
+                                            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-yellow-100 flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-300">
+                                                <!-- Animated background -->
+                                                <div class="absolute inset-0 bg-gradient-to-r from-yellow-200 to-yellow-400 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                                                <!-- Piggy Bank Icon -->
+                                                <svg class="w-12 h-12 text-yellow-600 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+
+                                                <!-- Animated ring -->
+                                                <div class="absolute inset-0 border-4 border-yellow-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></div>
+                                            </div>
+
+                                            <!-- Step number badge -->
+                                            <div class="absolute -top-4 -right-4 w-14 h-14 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg transform rotate-0 group-hover:rotate-12 transition-transform duration-300">1</div>
+
+                                            <!-- Content -->
+                                            <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Set Your Goal') }}</h3>
+                                            <p class="text-gray-600 text-center text-sm">{{ __('Choose what to buy and let us fetch product details') }}</p>
+
+                                            <!-- Hidden extra content that shows on hover -->
+                                            <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
+                                                <p class="text-yellow-600 text-sm italic text-center pt-2">{{ __('Adding images makes saving more motivating!') }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Step 2 -->
+                                    <div class="relative z-10 group">
+                                        <div class="bg-white rounded-lg shadow-lg p-6 transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-xl">
+                                            <!-- Icon container with animated background -->
+                                            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-indigo-100 flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-300">
+                                                <!-- Animated background -->
+                                                <div class="absolute inset-0 bg-gradient-to-r from-indigo-200 to-indigo-400 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                                                <!-- Calendar/Strategy Icon -->
+                                                <svg class="w-12 h-12 text-indigo-600 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                </svg>
+
+                                                <!-- Animated ring -->
+                                                <div class="absolute inset-0 border-4 border-indigo-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></div>
+                                            </div>
+
+                                            <!-- Step number badge -->
+                                            <div class="absolute -top-4 -right-4 w-14 h-14 bg-indigo-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg transform rotate-0 group-hover:rotate-12 transition-transform duration-300">2</div>
+
+                                            <!-- Content -->
+                                            <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Choose Strategy') }}</h3>
+                                            <p class="text-gray-600 text-center text-sm">{{ __('Pick a date or define how much you can save') }}</p>
+
+                                            <!-- Hidden extra content that shows on hover -->
+                                            <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
+                                                <p class="text-indigo-600 text-sm italic text-center pt-2">{{ __('We\'ll create a personalized saving plan just for you!') }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Step 3 -->
+                                    <div class="relative z-10 group">
+                                        <div class="bg-white rounded-lg shadow-lg p-6 transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-xl">
+                                            <!-- Icon container with animated background -->
+                                            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-300">
+                                                <!-- Animated background -->
+                                                <div class="absolute inset-0 bg-gradient-to-r from-green-200 to-green-400 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                                                <!-- Money/Savings Icon -->
+                                                <svg class="w-12 h-12 text-green-600 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+
+                                                <!-- Animated coins -->
+                                                <div class="absolute top-1/2 left-1/2 w-4 h-4 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-coin1"></div>
+                                                <div class="absolute top-1/2 left-1/2 w-3 h-3 bg-yellow-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-coin2"></div>
+
+                                                <!-- Animated ring -->
+                                                <div class="absolute inset-0 border-4 border-green-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></div>
+                                            </div>
+
+                                            <!-- Step number badge -->
+                                            <div class="absolute -top-4 -right-4 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg transform rotate-0 group-hover:rotate-12 transition-transform duration-300">3</div>
+
+                                            <!-- Content -->
+                                            <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Save Regularly') }}</h3>
+                                            <p class="text-gray-600 text-center text-sm">{{ __('Track your progress with reminders and feedback') }}</p>
+
+                                            <!-- Hidden extra content that shows on hover -->
+                                            <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
+                                                <p class="text-green-600 text-sm italic text-center pt-2">{{ __('We\'ll help you stay consistent with friendly reminders!') }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Step 4 -->
+                                    <div class="relative z-10 group">
+                                        <div class="bg-white rounded-lg shadow-lg p-6 transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-xl">
+                                            <!-- Icon container with animated background -->
+                                            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-purple-100 flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-300">
+                                                <!-- Animated background -->
+                                                <div class="absolute inset-0 bg-gradient-to-r from-purple-200 to-purple-400 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                                                <!-- Trophy/Achievement Icon -->
+                                                <svg class="w-12 h-12 text-purple-600 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                                                </svg>
+
+                                                <!-- Animated stars -->
+                                                <div class="absolute top-0 left-1/4 w-2 h-2 bg-yellow-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-star1"></div>
+                                                <div class="absolute bottom-1/4 right-0 w-2 h-2 bg-yellow-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-star2"></div>
+                                                <div class="absolute bottom-0 left-1/3 w-2 h-2 bg-yellow-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-star3"></div>
+
+                                                <!-- Animated ring -->
+                                                <div class="absolute inset-0 border-4 border-purple-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></div>
+                                            </div>
+
+                                            <!-- Step number badge -->
+                                            <div class="absolute -top-4 -right-4 w-14 h-14 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg transform rotate-0 group-hover:rotate-12 transition-transform duration-300">4</div>
+
+                                            <!-- Content -->
+                                            <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Celebrate Success') }}</h3>
+                                            <p class="text-gray-600 text-center text-sm">{{ __('Buy your dream item and enjoy your achievement') }}</p>
+
+                                            <!-- Hidden extra content that shows on hover -->
+                                            <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
+                                                <p class="text-purple-600 text-sm italic text-center pt-2">{{ __('Your hard work pays off! Time to enjoy your reward!') }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Call to action button -->
+                            <div class="text-center mt-16">
+                                <a href="{{ route('create-piggy-bank.step-1') }}" class="inline-block px-6 py-3 md:px-7 md:py-3.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold text-sm md:text-base rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                                    {{ __('Create New Piggy Bank') }}
+                                    <span class="ml-2 inline-block">→</span>
+                                </a>
+                            </div>
+
+                        </div>
+
                     </main>
                     <footer class="py-16 text-center text-sm text-black/50">
-                        Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
-                        <br/>
+                        @if(config('app.env') !== 'production')
+                            Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+                            <br/>
+                        @endif
                         <span>
                             Made with passion by
                             <a
