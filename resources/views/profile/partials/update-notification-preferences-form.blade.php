@@ -20,7 +20,7 @@
                         {{ __('Receive notifications via email') }}
                     </label>
                 </div>
-                <input id="email_notifications" name="email_notifications" type="checkbox" value="true" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm auto-save-pref"
+                <input id="email_notifications" name="email_notifications" type="checkbox" value="true" class="w-4 h-4 text-blue-600 focus:ring-blue-500 checked:bg-blue-600 border-gray-300 rounded-sm auto-save-pref cursor-pointer"
                     {{ isset(Auth::user()->notification_preferences['email']['enabled']) && Auth::user()->notification_preferences['email']['enabled'] ? 'checked' : '' }}>
             </div>
 
@@ -33,7 +33,7 @@
                         {{ __('Coming Soon ✨') }}
                     </span>
                 </div>
-                <input id="sms_notifications" name="sms_notifications" type="checkbox" value="true" disabled class="w-4 h-4 text-gray-400 bg-gray-100 border-gray-300 rounded-sm cursor-not-allowed">
+                <input id="sms_notifications" name="sms_notifications" type="checkbox" value="true" disabled class="w-4 h-4 bg-gray-100 text-gray-400 focus:ring-blue-500 checked:bg-blue-600 border-gray-300 rounded-sm cursor-not-allowed">
             </div>
 
 
@@ -46,7 +46,7 @@
                         {{ __('Coming Soon ✨') }}
                     </span>
                 </div>
-                <input id="push_notifications" name="push_notifications" type="checkbox" value="true" disabled class="w-4 h-4 text-gray-400 bg-gray-100 border-gray-300 rounded-sm cursor-not-allowed">
+                <input id="push_notifications" name="push_notifications" type="checkbox" value="true" disabled class="w-4 h-4 bg-gray-100 text-gray-400 focus:ring-blue-500 checked:bg-blue-600 border-gray-300 rounded-sm cursor-not-allowed">
             </div>
 
 

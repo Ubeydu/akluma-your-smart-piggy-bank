@@ -180,7 +180,7 @@
                                                 {{ __('Change Status To') }}
                                             </label>
                                             <select id="piggy-bank-status-{{ $piggyBank->id }}"
-                                                    class="block w-full text-base border-gray-300 rounded-md shadow-xs focus:ring-blue-500 focus:border-blue-500 {{ in_array($piggyBank->status, ['done', 'cancelled']) ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                    class="block w-full text-base border-gray-300 rounded-md shadow-xs focus:ring-blue-500 focus:border-blue-500 cursor-pointer {{ in_array($piggyBank->status, ['done', 'cancelled']) ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                     data-initial-status="{{ $piggyBank->status }}"
                                                     {{ in_array($piggyBank->status, ['done', 'cancelled']) ? 'disabled' : '' }}>
                                                 @foreach(\App\Models\PiggyBank::getStatusOptions() as $statusOption)

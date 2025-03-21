@@ -195,11 +195,14 @@
                                 <div class="absolute bottom-10 right-20 w-40 h-40 bg-green-400 rounded-full"></div>
                             </div>
 
-                            <!-- Section heading with animation -->
-                            <div class="text-center mb-16 relative">
+
+
+
+                                                        <!-- Section heading with animation -->
+                            <div class="text-center mb-16 relative group">
                                 <h2 class="text-3xl md:text-4xl font-bold mb-4 inline-block relative">
                                     {{ __('How Akluma, Your Online Piggy Bank Helps You Save') }}
-                                    <span class="absolute -bottom-2 left-0 w-full h-1 bg-linear-to-r from-yellow-400 via-indigo-500 to-green-400 transform scale-x-0 transition-transform duration-700 group-hover:scale-x-100 animate-width"></span>
+                                    <span class="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-indigo-500 to-green-400 transform scale-x-0 transition-transform duration-700 group-hover:scale-x-100 animate-[width-grow_0.7s_ease-in-out_forwards]"></span>
                                 </h2>
                                 <p class="text-lg text-gray-600 max-w-2xl mx-auto">{{ __('Four simple steps to reach your savings goals') }}</p>
                             </div>
