@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 relative">
             <!-- Single Coming Soon Badge for the entire dashboard -->
             <span class="absolute right-0 z-20" style="top: -12px;">
-            <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-sm text-gray-700 font-medium px-4 py-2 rounded-full shadow-lg" style="background: linear-gradient(to right, #FBBF24, #F97316);">
+            <span class="inline-block bg-linear-to-r from-yellow-400 to-orange-500 text-sm text-gray-700 font-medium px-4 py-2 rounded-full shadow-lg" style="background: linear-gradient(to right, #FBBF24, #F97316);">
                 {{ __('Coming Soon ✨') }}
             </span>
         </span>
@@ -110,7 +110,7 @@
             <div class="mb-6">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Recent Activity') }}</h2>
 
-                <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+                <div class="bg-white overflow-hidden shadow-xs rounded-lg">
                     <div class="p-5">
                         <div class="space-y-3">
                             <div class="flex items-center justify-between pb-3 border-b">
@@ -162,7 +162,7 @@
                 <div>
                     <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Upcoming Payments') }}</h2>
 
-                    <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+                    <div class="bg-white overflow-hidden shadow-xs rounded-lg">
                         <div class="p-5">
                             <div class="space-y-3">
                                 <div class="flex items-center justify-between pb-3 border-b">
@@ -208,7 +208,7 @@
 
                     <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Savings Distribution') }}</h2>
 
-                    <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+                    <div class="bg-white overflow-hidden shadow-xs rounded-lg">
                         <div class="p-5">
                             <div class="flex items-center justify-center h-48">
                                 <!-- Placeholder for pie chart -->

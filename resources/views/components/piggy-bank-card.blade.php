@@ -10,8 +10,8 @@
         <div class="flex items-start flex-wrap mb-4">
 
             <!-- Piggy Bank Image - keep as is -->
-            <div class="mr-4 w-16 h-16 flex-shrink-0">
-                <img src="{{ asset($piggyBank->preview_image) }}" alt="{{ $piggyBank->name }}" class="w-full h-full object-cover rounded-lg shadow-sm">
+            <div class="mr-4 w-16 h-16 shrink-0">
+                <img src="{{ asset($piggyBank->preview_image) }}" alt="{{ $piggyBank->name }}" class="w-full h-full object-cover rounded-lg shadow-xs">
             </div>
 
             <!-- Title Section - add w-[calc(100%-5rem)] to limit width on small screens -->

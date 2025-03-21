@@ -7,7 +7,7 @@
 
     <div class="py-4 px-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+            <div class="bg-white overflow-hidden shadow-xs rounded-lg">
                 <div class="py-4 px-6">
                     <h1 class="text-lg font-semibold mb-8">{{ __('Step 1 of 3') }}</h1>
 
@@ -140,7 +140,7 @@
                                 <select
                                     id="currency"
                                     name="currency"
-                                    class="block w-24 text-center border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                    class="block w-24 text-center border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-xs cursor-pointer"
                                     onchange="clearFormAndSwitchCurrency(this.value);"
                                 >
                                     @foreach(config('app.currencies') as $code => $currencyData)
@@ -170,7 +170,7 @@
                         </div>
 
                         <div class="flex justify-center mb-6 mt-4">
-                            <button type="button" id="detailsToggle" class="w-[200px] sm:w-auto inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-gray-50 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 border border-gray-200 shadow-sm transition-colors duration-200">
+                            <button type="button" id="detailsToggle" class="w-[200px] sm:w-auto inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-gray-50 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 border border-gray-200 shadow-xs transition-colors duration-200 cursor-pointer">
                                 <span id="toggleText">{{ __('Show Details') }}</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 transition-transform" id="toggleIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -184,7 +184,7 @@
                         <div class="mb-8">
                             <x-input-label for="link" :value="__('3. Product link (optional field)')" class="font-semibold text-gray-900" />
                             <div class="flex flex-col md:flex-row gap-4 mt-2">
-                                <div class="flex-grow">
+                                <div class="grow">
                                     <x-text-input
                                         id="link"
                                         name="link"
@@ -203,7 +203,7 @@
                                         $preview = session('pick_date_step1.preview');
                                         $imageUrl = $preview['image'] ?? asset('images/default_piggy_bank.png');
                                     @endphp
-                                    <div class="aspect-square h-32 md:aspect-auto md:h-48 relative overflow-hidden rounded-lg shadow-sm bg-gray-50">
+                                    <div class="aspect-square h-32 md:aspect-auto md:h-48 relative overflow-hidden rounded-lg shadow-xs bg-gray-50">
                                         <!-- Loading spinner overlay -->
                                         <div
                                             id="preview-loading"
@@ -247,7 +247,7 @@
                         <!-- Details (Optional) -->
                         <div class="mb-8">
                             <x-input-label for="details" :value="__('4. Details (optional field)')" class="font-semibold text-gray-900" />
-                            <textarea id="details" name="details" rows="4" maxlength="5000" class="mt-2 block w-full rounded-md shadow-sm border-gray-300 focus:ring focus:ring-opacity-50" placeholder="{{ __('step1_details_placeholder') }}">{{ old('details', session('pick_date_step1.details')) }}</textarea>
+                            <textarea id="details" name="details" rows="4" maxlength="5000" class="mt-2 block w-full rounded-md shadow-xs border-gray-300 focus:ring-3 focus:ring-opacity-50" placeholder="{{ __('step1_details_placeholder') }}">{{ old('details', session('pick_date_step1.details')) }}</textarea>
                             <p id="details-count" class="text-gray-400 text-xs mt-1">0 / 5000</p>
                             <x-input-error :messages="$errors->get('details')" class="mt-2" />
                         </div>
@@ -444,7 +444,7 @@
                     <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-between sm:space-y-0 mt-6">
                         <div x-data="{ showConfirmCancel: false }">
                             <!-- Cancel button -->
-                            <x-danger-button @click="showConfirmCancel = true" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                            <x-danger-button @click="showConfirmCancel = true" class="w-[200px] sm:w-auto justify-center sm:justify-start cursor-pointer">
                                 {{ __('Cancel') }}
                             </x-danger-button>
 
@@ -458,14 +458,14 @@
                                     <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
                                         <form action="{{ route('create-piggy-bank.cancel') }}" method="POST" class="block">
                                             @csrf
-                                            <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                            <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start cursor-pointer">
                                                 {{ __('Yes, cancel') }}
                                             </x-danger-button>
                                         </form>
 
                                         <x-secondary-button
                                             @click="showConfirmCancel = false"
-                                            class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                            class="w-[200px] sm:w-auto justify-center sm:justify-start cursor-pointer"
                                         >
                                             {{ __('No, continue') }}
                                         </x-secondary-button>
@@ -476,12 +476,12 @@
 
                         <form action="{{ route('create-piggy-bank.clear') }}" method="POST">
                             @csrf
-                            <x-secondary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                            <x-secondary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start cursor-pointer">
                                 {{ __('Clear') }}
                             </x-secondary-button>
                         </form>
 
-                        <x-primary-button form="mainForm" type="submit" id="nextButton" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start disabled:bg-gray-400 disabled:cursor-not-allowed  disabled:hover:bg-gray-300">
+                        <x-primary-button form="mainForm" type="submit" id="nextButton" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start disabled:bg-gray-400 disabled:cursor-not-allowed  disabled:hover:bg-gray-300 cursor-pointer">
                             {{ __('Next') }}
                         </x-primary-button>
                     </div>

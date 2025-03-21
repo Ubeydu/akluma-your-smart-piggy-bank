@@ -8,7 +8,7 @@
 
     <div class="py-4 px-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+            <div class="bg-white overflow-hidden shadow-xs rounded-lg">
                 <div class="py-6 px-8">
                     <h1 class="text-2xl font-semibold mb-6">{{ __('Summary') }}</h1>
 
@@ -39,7 +39,7 @@
                             </div>
 
                             <div class="w-48 mx-auto mt-1">
-                                <div class="aspect-square h-32 md:aspect-auto md:h-32 relative overflow-hidden rounded-lg shadow-sm bg-gray-50 mx-auto">
+                                <div class="aspect-square h-32 md:aspect-auto md:h-32 relative overflow-hidden rounded-lg shadow-xs bg-gray-50 mx-auto">
                                     <div class="relative w-full h-full">
                                         @php
                                             $previewImage = $summary['pick_date_step1']['preview']['image'] ?? null;

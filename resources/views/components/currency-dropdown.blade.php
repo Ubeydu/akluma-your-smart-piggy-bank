@@ -1,6 +1,6 @@
 <x-dropdown>
     <x-slot name="trigger">
-        <div x-data="{ open: false }" @click="open = !open" class="block flex w-full px-4 py-2 text-start text-sm leading-5 text-gray-600 hover:bg-gray-100 hover:rounded-sm focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out cursor-pointer items-center justify-between whitespace-nowrap">
+        <div x-data="{ open: false }" @click="open = !open" class="block flex w-full px-4 py-2 text-start text-sm leading-5 text-gray-600 hover:bg-gray-100 hover:rounded-xs focus:outline-hidden focus:bg-gray-100 transition duration-150 ease-in-out cursor-pointer items-center justify-between whitespace-nowrap">
             <span class="flex">
                 {{ __('Currency') }}
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.3" stroke="currentColor" class="size-5 ml-2">
