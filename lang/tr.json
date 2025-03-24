@@ -309,5 +309,7 @@
     "Too Many Requests": "Çok Fazla İstek",
     "Unauthorized": "Yetkisiz",
     "Update your account's profile information and email address.": "Hesabınızın profil bilgilerini ve e-posta adresini güncelleyin.",
-    "Whoops!": "Hata!"
+    "Whoops!": "Hata!",
+    "saving_marked_as_saved": "Bu tasarrufunuzu başarıyla kaydedilmiş olarak işaretlediniz.",
+    "saving_marked_as_unsaved": "Planlı tasarrufunuzu başarıyla beklemeye aldınız."
 }

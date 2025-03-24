@@ -106,12 +106,17 @@ class ScheduledSavingController extends Controller
 
             $updatedPiggyBank = PiggyBank::find($validatedData['piggy_bank_id']);
 
+            $messageKey = $validatedData['status'] === 'saved'
+                ? 'saving_marked_as_saved'
+                : 'saving_marked_as_unsaved';
+
             return response()->json([
                 'status' => $validatedData['status'],
                 'translated_status' => __(strtolower($validatedData['status'])),
                 'new_balance' => $updatedPiggyBank->current_balance,
                 'remaining_amount' => $updatedPiggyBank->remaining_amount,
-                'piggy_bank_status' => $updatedPiggyBank->status, // Send updated piggy bank status
+                'piggy_bank_status' => $updatedPiggyBank->status,
+                'message' => __($messageKey),
             ], 200);
 
         } catch (\Exception $e) {

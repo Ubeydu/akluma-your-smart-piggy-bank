@@ -99,6 +99,12 @@ async function handleCheckboxChange(checkbox) {
 
         console.log("Piggy Bank Status Returned:", data.piggy_bank_status);
 
+        // Show the appropriate message from the response
+        if (data.message) {
+            // Use your existing showFlashMessage function
+            showFlashMessage(data.message, 'info');
+        }
+
         if (data.piggy_bank_status === 'done') {
             showFlashMessage(window.piggyBankTranslations['goal_completed'] || 'Congratulations! You have successfully completed your savings goal.');
             updateSelectAfterStatusChange(piggyBankId, 'done');

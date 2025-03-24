@@ -309,5 +309,7 @@
     "Are you sure you want to cancel this paused piggy bank?": "Êtes-vous sûr de vouloir annuler cette tirelire en pause ?",
     "Are you sure you want to resume this piggy bank? Dates in your saving schedule may be updated if you proceed.": "Êtes-vous sûr de vouloir reprendre cette tirelire ? Les dates de votre programme d'épargne peuvent être mises à jour si vous continuez.",
     "Register to Create": "Inscrivez-vous pour créer",
-    "account_deleted": "Votre compte a été supprimé avec toutes vos informations."
+    "account_deleted": "Votre compte a été supprimé avec toutes vos informations.",
+    "saving_marked_as_saved": "Vous avez marqué votre épargne comme enregistrée avec succès.",
+    "saving_marked_as_unsaved": "Vous avez marqué votre épargne planifiée comme en attente avec succès."
 }

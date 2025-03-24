@@ -180,7 +180,7 @@
                                                 {{ __('Change Status To') }}
                                             </label>
                                             <select id="piggy-bank-status-{{ $piggyBank->id }}"
-                                                    class="block w-full text-base border-gray-300 rounded-md shadow-xs focus:ring-blue-500 focus:border-blue-500 cursor-pointer {{ in_array($piggyBank->status, ['done', 'cancelled']) ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                    class="block w-full text-base border-gray-300 rounded-md shadow-xs focus:ring-blue-500 focus:border-blue-500 cursor-pointer disabled:cursor-not-allowed {{ in_array($piggyBank->status, ['done', 'cancelled']) ? 'opacity-50 cursor-not-allowed' : '' }}"
                                                     data-initial-status="{{ $piggyBank->status }}"
                                                     {{ in_array($piggyBank->status, ['done', 'cancelled']) ? 'disabled' : '' }}>
                                                 @foreach(\App\Models\PiggyBank::getStatusOptions() as $statusOption)
@@ -328,6 +328,8 @@
             confirm_cancel_paused: "{{ __('Are you sure you want to cancel this paused piggy bank?') }}",
             confirm_resume: "{{ __('Are you sure you want to resume this piggy bank? Dates in your saving schedule may be updated if you proceed.') }}",
             piggy_bank_cancelled: "{{ __('Piggy bank has been cancelled.') }}",
+            saving_marked_as_saved: "{{ __('You successfully marked your saving as saved.') }}",
+            saving_marked_as_unsaved: "{{ __('You successfully marked your scheduled saving as pending.') }}"
         };
     </script>
 
