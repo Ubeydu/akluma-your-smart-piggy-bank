@@ -17,7 +17,7 @@
                         <form action="{{ route('create-piggy-bank.choose-strategy') }}" method="POST">
                             @csrf
                             <input type="hidden" name="strategy" value="pick-date">
-                            <button type="submit" class="w-full p-6 text-left border rounded-lg hover:border-indigo-500 focus:outline-hidden focus:border-indigo-500 transition-colors duration-200">
+                            <button type="submit" class="w-full p-6 text-left border rounded-lg hover:border-indigo-500 focus:outline-hidden focus:border-indigo-500 transition-colors duration-200 cursor-pointer">
                                 <h3 class="text-xl font-semibold mb-3">{{ __('Pick Date') }}</h3>
                                 <p class="text-gray-600">{{ __('pick_date_strategy_definition') }}</p>
                             </button>

@@ -58,8 +58,9 @@
     <div id="helpPopup" class="help-popup">
         <div class="help-popup-content">
             <span class="help-close-btn">&times;</span>
-            <p>{{ __('help_popup_message') }}</p>
-            <p class="help-email-container">
+            <p>
+                {{ __('help_popup_message_part1') }}
+                <span class="inline-flex items-center space-x-1">
                 <span class="help-email">u.keles@gmail.com</span>
                 <button class="help-copy-btn" title="{{ __('copy_email_title') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -67,13 +68,22 @@
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                     </svg>
                 </button>
+            </span>
+                {{ __('help_popup_message_part2') }}
             </p>
+
             <p class="mt-4 text-sm">
                 &mdash;
-                <span class="font-medium">Ubeydullah Keleş, {{ __('founder') }}</span>
+                <a
+                    href="https://www.linkedin.com/in/ubeydullah-kele%C5%9F-2221a915/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="font-medium text-blue-500 hover:underline"
+                >
+                    Ubeydullah Keleş, {{ __('founder') }}
+                </a>
             </p>
         </div>
     </div>
-
 
 </html>
