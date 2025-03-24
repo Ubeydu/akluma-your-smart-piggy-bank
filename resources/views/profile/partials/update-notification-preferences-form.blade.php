@@ -20,7 +20,7 @@
                         {{ __('Receive notifications via email') }}
                     </label>
                 </div>
-                <input id="email_notifications" name="email_notifications" type="checkbox" value="true" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded auto-save-pref"
+                <input id="email_notifications" name="email_notifications" type="checkbox" value="true" class="w-4 h-4 text-blue-600 focus:ring-blue-500 checked:bg-blue-600 border-gray-300 rounded-sm auto-save-pref cursor-pointer"
                     {{ isset(Auth::user()->notification_preferences['email']['enabled']) && Auth::user()->notification_preferences['email']['enabled'] ? 'checked' : '' }}>
             </div>
 
@@ -29,11 +29,11 @@
                     <label for="sms_notifications" class="text-sm text-gray-600 font-medium">
                         {{ __('Receive notifications via SMS') }}
                     </label>
-                    <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-xs text-gray-600 font-medium px-3 py-1 min-w-[120px] text-center rounded-full shadow-md" style="background: linear-gradient(to right, #FBBF24, #F97316);">
+                    <span class="inline-block bg-linear-to-r from-yellow-400 to-orange-500 text-xs text-gray-600 font-medium px-3 py-1 min-w-[120px] text-center rounded-full shadow-md" style="background: linear-gradient(to right, #FBBF24, #F97316);">
                         {{ __('Coming Soon ✨') }}
                     </span>
                 </div>
-                <input id="sms_notifications" name="sms_notifications" type="checkbox" value="true" disabled class="w-4 h-4 text-gray-400 bg-gray-100 border-gray-300 rounded cursor-not-allowed">
+                <input id="sms_notifications" name="sms_notifications" type="checkbox" value="true" disabled class="w-4 h-4 bg-gray-100 text-gray-400 focus:ring-blue-500 checked:bg-blue-600 border-gray-300 rounded-sm cursor-not-allowed">
             </div>
 
 
@@ -42,11 +42,11 @@
                     <label for="push_notifications" class="text-sm text-gray-600 font-medium">
                         {{ __('Receive notifications via push notifications') }}
                     </label>
-                    <span class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-600 text-xs font-medium px-2 py-1 rounded-full shadow-md" style="background: linear-gradient(to right, #FBBF24, #F97316);">
+                    <span class="inline-block bg-linear-to-r from-yellow-400 to-orange-500 text-gray-600 text-xs font-medium px-2 py-1 rounded-full shadow-md" style="background: linear-gradient(to right, #FBBF24, #F97316);">
                         {{ __('Coming Soon ✨') }}
                     </span>
                 </div>
-                <input id="push_notifications" name="push_notifications" type="checkbox" value="true" disabled class="w-4 h-4 text-gray-400 bg-gray-100 border-gray-300 rounded cursor-not-allowed">
+                <input id="push_notifications" name="push_notifications" type="checkbox" value="true" disabled class="w-4 h-4 bg-gray-100 text-gray-400 focus:ring-blue-500 checked:bg-blue-600 border-gray-300 rounded-sm cursor-not-allowed">
             </div>
 
 

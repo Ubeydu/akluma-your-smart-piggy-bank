@@ -19,7 +19,7 @@ $currentPlaceholder = $placeholders[$language];
 
     <div class="py-4 px-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+            <div class="bg-white overflow-hidden shadow-xs rounded-lg">
                 <div class="py-4 px-6">
                     <h1 class="text-lg font-semibold mb-4">{{ __('Step 3 of 3') }}</h1>
 
@@ -29,7 +29,7 @@ $currentPlaceholder = $placeholders[$language];
                             {{ __('Pick Date') }}
                         </label>
                         <input type="date" id="saving_date" name="saving_date"
-                               class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                               class="w-full border-gray-300 rounded-lg shadow-xs focus:border-blue-500 focus:ring-blue-500"
                                min="{{ \Carbon\Carbon::now()->addDay()->format('Y-m-d') }}"
                                 value="{{ session('pick_date_step3.date', '') }}" />
                         <p id="dateError" class="text-red-500 text-sm mt-1 hidden">

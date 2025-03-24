@@ -87,6 +87,9 @@
     "I already saved some money Tooltip Info": "If you've already saved some money for this goal, enter the amount here and we'll include it when creating your savings plan.",
     "Show Details": "Show Details",
     "Hide Details": "Hide Details",
-    "help_popup_message": "To ask anything about this product, simply drop me an email at",
-    "copy_email_title": "Copy email"
+    "help_popup_message_part1": "To ask anything about this product, simply drop me an email at ",
+    "help_popup_message_part2": " or click my name to send a message on LinkedIn.",
+    "copy_email_title": "Copy email",
+    "saving_marked_as_saved": "You successfully marked your saving as saved.",
+    "saving_marked_as_unsaved": "You successfully marked your scheduled saving as pending."
 }

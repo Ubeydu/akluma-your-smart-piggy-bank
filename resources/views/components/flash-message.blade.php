@@ -27,7 +27,7 @@
             <div class="relative rounded-md bg-green-100 border border-green-200 p-4 shadow-md">
                 <button
                     @click="show = false"
-                    class="absolute top-2 right-2 text-green-600 hover:text-green-800"
+                    class="absolute top-2 right-2 text-green-600 hover:text-green-800 cursor-pointer"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -43,7 +43,7 @@
                 <div class="relative rounded-md bg-red-100 border border-red-200 p-4 shadow-md">
                     <button
                         @click="show = false"
-                        class="absolute top-2 right-2 text-red-600 hover:text-red-800"
+                        class="absolute top-2 right-2 text-red-600 hover:text-red-800 cursor-pointer"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -59,7 +59,7 @@
                 <div class="relative rounded-md bg-yellow-100 border border-yellow-200 p-4 shadow-md">
                     <button
                         @click="show = false"
-                        class="absolute top-2 right-2 text-yellow-600 hover:text-yellow-800"
+                        class="absolute top-2 right-2 text-yellow-600 hover:text-yellow-800 cursor-pointer"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -76,7 +76,7 @@
                 <div class="relative rounded-md bg-blue-100 border border-blue-200 p-4 shadow-md">
                     <button
                         @click="show = false"
-                        class="absolute top-2 right-2 text-blue-600 hover:text-blue-800"
+                        class="absolute top-2 right-2 text-blue-600 hover:text-blue-800 cursor-pointer"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
