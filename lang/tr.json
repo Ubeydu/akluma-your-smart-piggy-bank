@@ -271,6 +271,7 @@
     "Start Your Piggy Bank": "Kumbaranı Başlat",
     "Made with passion by": "Tasarım ve geliştirme",
     "Get Help": "Yardım Alın",
-    "help_popup_message": "Bu ürün hakkında herhangi bir şey sormak için bana e-posta göndermeniz yeterli:",
+    "help_popup_message_part1": "Bu ürün hakkında herhangi bir şey sormak için bana e-posta gönderebilir: ",
+    "help_popup_message_part2": " ya da ismime tıklayarak LinkedIn'den mesaj atabilirsiniz.",
     "copy_email_title": "E-postayı kopyala"
 }
