@@ -49,7 +49,7 @@ mkdir -p fly/production fly/staging
 
 2. **Create the production app:**
 ```bash
-fly launch --name myapp-prod --generate-name --dockerfile Dockerfile
+fly launch --name myapp-prod --generate-name --no-deploy
 ```
 - Choose a region (e.g., `mad` for Madrid).
 - When asked to deploy now, say **No**.
@@ -62,7 +62,7 @@ mv fly.toml fly/production/fly.toml
 
 4. **Create the staging app:**
 ```bash
-fly launch --name myapp-staging --generate-name --dockerfile Dockerfile
+fly launch --name myapp-staging --generate-name --no-deploy
 ```
 - Choose the same region as your production app.
 - When asked to deploy now, say **No**.
