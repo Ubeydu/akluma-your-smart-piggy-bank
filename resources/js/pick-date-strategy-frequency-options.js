@@ -378,12 +378,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 body: JSON.stringify({frequency_type: e.target.value})
             });
 
+            const responseData = await response.json();
+
             if (response.ok) {
                 const nextButton = document.getElementById('nextButton');
                 nextButton.disabled = false;
+                console.log('Success:', responseData);
             }
         } catch (error) {
             console.error('Error storing frequency:', error);
+            console.error('Response Body:', responseData);
         }
     });
 
