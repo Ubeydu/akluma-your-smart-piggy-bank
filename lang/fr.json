@@ -311,5 +311,6 @@
     "Register to Create": "Inscrivez-vous pour créer",
     "account_deleted": "Votre compte a été supprimé avec toutes vos informations.",
     "saving_marked_as_saved": "Vous avez marqué votre épargne comme enregistrée avec succès.",
-    "saving_marked_as_unsaved": "Vous avez marqué votre épargne planifiée comme en attente avec succès."
+    "saving_marked_as_unsaved": "Vous avez marqué votre épargne planifiée comme en attente avec succès.",
+    "Please verify your email address to unlock all features.": "Veuillez vérifier votre adresse e-mail pour débloquer toutes les fonctionnalités."
 }

@@ -185,6 +185,21 @@
 
                     <main class="min-h-[50vh] text-6xl font-bold">
 
+                        @auth
+                            @if (!auth()->user()->hasVerifiedEmail())
+                                <div class="mb-6 w-full rounded-md bg-yellow-100 p-4 text-sm text-yellow-800 shadow-md border border-yellow-300">
+                                    {{ __('Please verify your email address to unlock all features.') }}
+                                    <a
+                                        href="{{ route('verification.notice') }}"
+                                        class="underline font-medium hover:text-yellow-900 ml-1"
+                                    >
+                                        {{ __('Resend Verification Email') }}
+                                    </a>
+                                </div>
+                            @endif
+                        @endauth
+
+
 
                         <!-- How Akluma Works Section - Add this after your tagline section -->
                         <div class="py-16 relative overflow-hidden">
