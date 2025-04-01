@@ -255,41 +255,44 @@ Route::post('/update-timezone', [UserPreferencesController::class, 'updateTimezo
     ->name('update-timezone')
     ->middleware(['auth', 'verified']);
 
-Route::get('/test-money', function() {
-    try {
-        // Test XOF with decimal
-        $xof_decimal = Money::of('1000.00', 'XOF');
-        dump("XOF with decimal: " . $xof_decimal->getAmount());
-        dump("XOF with decimal (minor units): " . $xof_decimal->getMinorAmount()->toInt());
+if (app()->environment('local')) {
+    Route::get('/test-money', function () {
+        try {
+            // Test XOF with decimal
+            $xof_decimal = Money::of('1000.00', 'XOF');
+            dump("XOF with decimal: ".$xof_decimal->getAmount());
+            dump("XOF with decimal (minor units): ".$xof_decimal->getMinorAmount()->toInt());
 
-        // Test XOF without decimal
-        $xof_whole = Money::of('1000', 'XOF');
-        dump("XOF without decimal: " . $xof_whole->getAmount());
-        dump("XOF without decimal (minor units): " . $xof_whole->getMinorAmount()->toInt());
+            // Test XOF without decimal
+            $xof_whole = Money::of('1000', 'XOF');
+            dump("XOF without decimal: ".$xof_whole->getAmount());
+            dump("XOF without decimal (minor units): ".$xof_whole->getMinorAmount()->toInt());
 
-        // Compare with EUR for reference
-        $eur = Money::of('1000.00', 'EUR');
-        dump("EUR: " . $eur->getAmount());
-        dump("EUR (minor units): " . $eur->getMinorAmount()->toInt());
+            // Compare with EUR for reference
+            $eur = Money::of('1000.00', 'EUR');
+            dump("EUR: ".$eur->getAmount());
+            dump("EUR (minor units): ".$eur->getMinorAmount()->toInt());
 
-    } catch (\Exception $e) {
-        dump("Error: " . $e->getMessage());
-    }
-});
+        } catch (\Exception $e) {
+            dump("Error: ".$e->getMessage());
+        }
+    });
+}
 
+if (app()->environment('local')) {
+    Route::get('/test-currency-helper', function () {
+        // Test with XOF (should return false)
+        dump('XOF has decimals: '.(App\Helpers\CurrencyHelper::hasDecimalPlaces('XOF') ? 'true' : 'false'));
 
-Route::get('/test-currency-helper', function () {
-    // Test with XOF (should return false)
-    dump('XOF has decimals: ' . (App\Helpers\CurrencyHelper::hasDecimalPlaces('XOF') ? 'true' : 'false'));
+        // Test with EUR (should return true)
+        dump('EUR has decimals: '.(App\Helpers\CurrencyHelper::hasDecimalPlaces('EUR') ? 'true' : 'false'));
 
-    // Test with EUR (should return true)
-    dump('EUR has decimals: ' . (App\Helpers\CurrencyHelper::hasDecimalPlaces('EUR') ? 'true' : 'false'));
-
-    // Test with your current session currency
-    $currentCurrency = session('currency', config('app.default_currency'));
-    dump('Current currency (' . $currentCurrency . ') has decimals: ' .
-        (App\Helpers\CurrencyHelper::hasDecimalPlaces($currentCurrency) ? 'true' : 'false'));
-});
+        // Test with your current session currency
+        $currentCurrency = session('currency', config('app.default_currency'));
+        dump('Current currency ('.$currentCurrency.') has decimals: '.
+            (App\Helpers\CurrencyHelper::hasDecimalPlaces($currentCurrency) ? 'true' : 'false'));
+    });
+}
 
 if (app()->environment('local')) {
     Route::get('/email/preview/saving-reminder', function () {
