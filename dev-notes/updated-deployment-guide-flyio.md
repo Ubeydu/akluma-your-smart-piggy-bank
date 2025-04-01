@@ -40,39 +40,36 @@ git checkout -b setup/fly-deployment
 
 #### ✅ **Setting Up Multiple Fly Apps**
 
-Fly.io supports managing multiple applications from a single codebase using configuration files in different directories. Here's how to properly set it up:
+Fly.io supports managing multiple applications from a single codebase using separate configuration files. Here's how to properly set it up:
 
-1. **Create directories for each environment:**
+1. **Create the production app:**
 ```bash
-mkdir -p fly/production fly/staging
-```
-
-2. **Create the production app:**
-```bash
-fly launch --name myapp-prod --generate-name --dockerfile Dockerfile
+fly launch --name myapp-prod --generate-name --no-deploy
 ```
 - Choose a region (e.g., `mad` for Madrid).
-- When asked to deploy now, say **No**.
-- This creates `fly.toml` and other files.
+- This creates `fly.toml` and other files (Dockerfile, .dockerignore, etc.).
 
-3. **Move the production configuration:**
+2. **Rename the production configuration file:**
 ```bash
-mv fly.toml fly/production/fly.toml
+mv fly.toml fly.production.toml
 ```
 
-4. **Create the staging app:**
+3. **Create a staging configuration by copying the production one:**
 ```bash
-fly launch --name myapp-staging --generate-name --dockerfile Dockerfile
-```
-- Choose the same region as your production app.
-- When asked to deploy now, say **No**.
-
-5. **Move the staging configuration:**
-```bash
-mv fly.toml fly/staging/fly.toml
+cp fly.production.toml fly.staging.toml
 ```
 
-Now you have separate configuration files for each environment with the rest of the files (Dockerfile, .dockerignore, etc.) shared between environments.
+4. **Edit the staging configuration file** to change:
+    - The app name to "myapp-staging"
+    - Set environment variables (e.g., `APP_ENV = "staging"`)
+    - Make any other environment-specific adjustments
+
+5. **Create the staging app in Fly:**
+```bash
+fly apps create myapp-staging
+```
+
+Now you have separate configuration files for each environment while sharing the same Docker configuration.
 
 #### ✅ **Deploying to Different Environments**
 
@@ -80,13 +77,13 @@ When deploying, simply specify which configuration file to use:
 
 ```bash
 # Deploy to production
-fly deploy -c fly/production/fly.toml
+fly deploy --config ./fly.production.toml
 
 # Deploy to staging
-fly deploy -c fly/staging/fly.toml
+fly deploy --config ./fly.staging.toml
 ```
 
-**Note:** In your GitHub Actions workflows, you'll use these commands with the `-c` flag to specify which configuration to use, eliminating the need for manual file copying.
+**Note:** In your GitHub Actions workflows, you'll use these commands with the `--config` flag to specify which configuration to use.
 
 After setting up the configuration, commit these changes:
 
@@ -95,7 +92,7 @@ git add .
 git commit -m "Add Fly.io deployment configuration"
 git checkout main
 git merge setup/fly-deployment
-git push origin main  # This will trigger deployment to staging
+git push origin main
 ```
 
 ---

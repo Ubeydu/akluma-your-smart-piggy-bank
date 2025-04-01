@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -38,5 +39,10 @@ class AppServiceProvider extends ServiceProvider
         if (app()->environment('local') && session()->has('test_date')) {
             Carbon::setTestNow(Carbon::parse(session('test_date')));
         }
+
+        if($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
     }
 }

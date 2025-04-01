@@ -26,3 +26,7 @@ yarn-error.log
 # Project exclude paths
 /storage/app/
 /storage/framework/
+
+dev-notes/fly-notes.txt
+dev-notes/prod-deploy-log.txt
+dev-notes/actual-deployment-steps-followed-flyio.md
