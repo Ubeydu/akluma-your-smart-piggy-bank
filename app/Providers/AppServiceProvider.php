@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
             Carbon::setTestNow(Carbon::parse(session('test_date')));
         }
 
-        if($this->app->environment('production')) {
+        if($this->app->environment(['production', 'staging'])) {
             URL::forceScheme('https');
         }
 
