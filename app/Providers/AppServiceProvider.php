@@ -31,18 +31,47 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+//        // 🔧 System boot log for debugging
+//        \Log::emergency('VERIFY EMAIL DEBUG: Boot method executed');
+//        \Log::emergency('VERIFY EMAIL DEBUG: APP ENV = ' . app()->environment());
+
+        // 🔐 Authorization policies
         Gate::policy(PiggyBank::class, PiggyBankPolicy::class);
 
+        // 🌐 Set locale if user has one
         Auth::user()?->language && App::setLocale(Auth::user()->language);
 
-
+        // 🧪 Set test time if session override exists (local only)
         if (app()->environment('local') && session()->has('test_date')) {
             Carbon::setTestNow(Carbon::parse(session('test_date')));
         }
 
-        if($this->app->environment(['production', 'staging'])) {
+        // 🌍 Force HTTPS on production and staging
+        if ($this->app->environment(['production', 'staging'])) {
             URL::forceScheme('https');
         }
 
+        // 🐛 Debug macro for inspecting signed URLs
+        URL::macro('debugSignedRoute', function ($name, $parameters = [], $expiration = null, $absolute = true) {
+            $temporarySignedURL = URL::temporarySignedRoute($name, $expiration, $parameters, $absolute);
+            \Log::debug('Signed URL debug', [
+                'url' => $temporarySignedURL,
+                'name' => $name,
+                'parameters' => $parameters,
+                'expiration' => $expiration
+            ]);
+            return $temporarySignedURL;
+        });
+
+        // 🔐 Log info about URL signing key (for signature validation debugging)
+        URL::setKeyResolver(function () {
+            $key = config('app.key');
+            \Log::debug('URL signing key info', [
+                'key_length' => strlen($key),
+                'key_prefix' => substr($key, 0, 7)
+            ]);
+            return $key;
+        });
     }
+
 }
