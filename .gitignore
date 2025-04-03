@@ -30,3 +30,4 @@ yarn-error.log
 dev-notes/fly-notes.txt
 dev-notes/prod-deploy-log.txt
 dev-notes/actual-deployment-steps-followed-flyio.md
+dev-notes/prod-db-access.md

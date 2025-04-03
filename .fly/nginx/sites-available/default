@@ -1,3 +1,8 @@
+map $http_x_forwarded_proto $is_https {
+    default off;
+    https on;
+}
+
 server {
     listen 8080 default_server;
     listen [::]:8080 default_server;
@@ -24,6 +29,8 @@ server {
         fastcgi_pass unix:/var/run/php/php-fpm.sock;
         fastcgi_buffers  16 16k;
         fastcgi_buffer_size  32k;
+
+        fastcgi_param HTTPS $is_https;
     }
 
     location = /favicon.ico {
