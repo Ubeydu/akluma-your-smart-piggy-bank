@@ -33,11 +33,12 @@ jobs:
 
       - name: Laravel Optimize
         run: |
-          flyctl exec -a akluma-staging -- \
-            sh -c "php artisan optimize:clear &&
-                   php artisan config:cache &&
-                   php artisan view:cache &&
-                   php artisan route:cache"
+          flyctl ssh console -a akluma-staging --pty --command 'sh -c "
+            php artisan optimize:clear &&
+            php artisan config:cache &&
+            php artisan view:cache &&
+            php artisan route:cache
+          "'
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
 
