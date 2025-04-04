@@ -426,15 +426,27 @@ fly deploy -a myapp-prod
 
 ---
 
-### 9. **Continuous Deployment with GitHub Actions**
+Perfect — thank you for the detailed setup. Based on all that, here’s your **updated Section 9** for your deployment guide with the `dev` branch added and everything renamed using your actual app names.
 
-#### **Branch Strategy**
+---
+
+## **9. Continuous Deployment with GitHub Actions**
+
+### **Branch Strategy**
+
 This deployment guide uses the following branch strategy:
-* **Main Branch (`main`)**: Used for active development. Pushing to this branch triggers deployment to the **staging environment** on Fly.io.
-* **Production Branch (`prod`)**: Used for stable, production-ready code. Pushing to this branch triggers deployment to the **production environment** on Fly.io.
-* **Feature Branches**: Created from `main` for development work and merged back into `main` when completed.
 
-#### **Staging Workflow (.github/workflows/fly-staging.yml)**
+- **`feature/*` branches**: Used for building new features. These are created from `dev` and merged back into `dev` when completed.
+- **`dev` branch**: Primary development branch. This is where all new features are integrated and tested locally.
+- **`main` branch**: Staging-ready code. Merging into this branch triggers deployment to the **staging environment** on Fly.io (`akluma-staging`).
+- **`prod` branch**: Production-ready code. Merging into this branch triggers deployment to the **production environment** on Fly.io (`akluma-prod`).
+
+This flow allows for testing at multiple levels: local development (`dev`), staging deployment (`main`), and production deployment (`prod`).
+
+---
+
+### **Staging Workflow (.github/workflows/fly-staging.yml)**
+
 ```yaml
 name: Fly Staging Deploy
 
@@ -454,12 +466,15 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
       - name: Run Migrations
-        run: flyctl ssh console -a myapp-staging --command "php artisan migrate --force"
+        run: flyctl ssh console -a akluma-staging --command "php artisan migrate --force"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
 ```
 
-#### **Production Workflow (.github/workflows/fly-prod.yml)**
+---
+
+### **Production Workflow (.github/workflows/fly-prod.yml)**
+
 ```yaml
 name: Fly Production Deploy
 
@@ -479,7 +494,7 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
       - name: Run Migrations
-        run: flyctl ssh console -a myapp-prod --command "php artisan migrate --force"
+        run: flyctl ssh console -a akluma-prod --command "php artisan migrate --force"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 ```
@@ -487,51 +502,61 @@ jobs:
 ---
 
 ### ✅ **Final Adjustments and Verification**
-1. **Test Staging Environment:**
-   ```bash
-   git checkout main
-   # Make your changes
-   git add .
-   git commit -m "Update feature for staging testing"
-   git push origin main
-   ```
-    - This will trigger deployment to: `https://myapp-staging.fly.dev`
 
-2. **Test Production Deployment:**
-   ```bash
-   # After verifying changes in staging
-   git checkout prod
-   git merge main
-   git push origin prod
-   ```
-    - This will trigger deployment to: `https://myapp-prod.fly.dev`
+#### **1. Feature Branch Workflow**
 
-3. **Feature Branch Workflow:**
-   ```bash
-   # Create feature branch from main
-   git checkout main
-   git checkout -b feature/new-feature
-   
-   # Work on your feature
-   # ...
-   
-   # Commit changes
-   git add .
-   git commit -m "Implement new feature"
-   
-   # Push to remote (optional)
-   git push origin feature/new-feature
-   
-   # When ready, merge back to main
-   git checkout main
-   git merge feature/new-feature
-   git push origin main  # This triggers staging deployment
-   ```
+```bash
+# In your project root directory
+cd ~/path/to/your/laravel/project
 
-4. **Check Logs:**
-   ```bash
-   fly logs -a myapp-prod
-   fly logs -a myapp-staging
-   ```
+# Start from the latest dev branch
+git checkout dev
+
+# Create a new feature branch
+git checkout -b feature/some-new-feature
+
+# Work on your feature
+# ...
+
+# Commit your changes
+git add .
+git commit -m "Implement some new feature"
+
+# Push to remote (optional)
+git push origin feature/some-new-feature
+```
+
+#### **2. Merge into dev for local testing**
+
+```bash
+# In project root
+git checkout dev
+git merge feature/some-new-feature
+# Test everything locally
+```
+
+#### **3. Promote to Staging**
+
+```bash
+# In project root
+git checkout main
+git merge dev
+git push origin main
+```
+
+> This will trigger deployment to:  
+> 🟡 `https://akluma-staging.fly.dev`
+
+#### **4. Promote to Production**
+
+```bash
+# In project root
+git checkout prod
+git merge main
+git push origin prod
+```
+
+> This will trigger deployment to:  
+> 🟢 `https://akluma-prod.fly.dev`
 
 ---
