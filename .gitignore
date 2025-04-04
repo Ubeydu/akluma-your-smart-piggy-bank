@@ -26,6 +26,9 @@ yarn-error.log
 # Project exclude paths
 /storage/app/
 /storage/framework/
+!storage/framework/
+!storage/framework/views/
+!storage/framework/views/.gitkeep
 
 dev-notes/fly-notes.txt
 dev-notes/prod-deploy-log.txt
