@@ -12,9 +12,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only -c fly.production.toml
+
+      - name: Deploy to Fly.io
+        run: flyctl deploy --remote-only -c fly.production.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Ensure Laravel required directories exist (after deploy)
+        run: |
+          flyctl ssh console -a akluma-prod --command 'sh -c "
+            mkdir -p storage/framework/views &&
+            mkdir -p storage/framework/cache &&
+            mkdir -p storage/framework/sessions &&
+            mkdir -p storage/framework/testing &&
+            mkdir -p bootstrap/cache &&
+            chmod -R 775 storage bootstrap/cache
+          "'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Laravel Optimize
+        run: |
+          flyctl ssh console -a akluma-prod --pty --command 'sh -c "
+            php artisan optimize:clear &&
+            php artisan config:cache &&
+            php artisan view:cache &&
+            php artisan route:cache
+          "'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
       - name: Run Migrations
         run: flyctl ssh console -a akluma-prod --command "php artisan migrate --force"
         env:
