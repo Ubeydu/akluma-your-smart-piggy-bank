@@ -13,7 +13,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Ensure Laravel required directories exist (before deploy)
+      - name: Deploy to Fly.io
+        run: flyctl deploy --remote-only -c fly.staging.toml
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
+
+      - name: Ensure Laravel required directories exist (after deploy)
         run: |
           flyctl ssh console -a akluma-staging --command 'sh -c "
             mkdir -p storage/framework/views &&
@@ -23,11 +28,6 @@ jobs:
             mkdir -p bootstrap/cache &&
             chmod -R 775 storage bootstrap/cache
           "'
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
-
-      - name: Deploy to Fly.io
-        run: flyctl deploy --remote-only -c fly.staging.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
 
@@ -46,4 +46,3 @@ jobs:
         run: flyctl ssh console -a akluma-staging --command "php artisan migrate --force"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
-      
