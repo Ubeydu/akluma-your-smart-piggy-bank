@@ -85,24 +85,53 @@ mkdir -p .github/workflows
 name: Fly Staging Deploy
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 jobs:
-  deploy:
-    name: Deploy to Staging
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only -c fly.staging.toml
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
-      - name: Run Migrations
-        run: flyctl ssh console -a akluma-staging --command "php artisan migrate --force"
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
+    deploy:
+        name: Deploy to Staging
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: superfly/flyctl-actions/setup-flyctl@master
+
+            - name: Deploy to Fly.io
+              run: flyctl deploy --remote-only -c fly.staging.toml
+              env:
+                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
+
+            - name: Ensure Laravel required directories exist
+              run: |
+                  flyctl ssh console -a akluma-staging --command 'sh -c "
+                    mkdir -p storage/framework/views &&
+                    mkdir -p storage/framework/cache &&
+                    mkdir -p storage/framework/sessions &&
+                    mkdir -p storage/framework/testing &&
+                    mkdir -p bootstrap/cache &&
+                    chmod -R 775 storage bootstrap/cache
+                  "'
+              env:
+                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
+
+            - name: Laravel Optimize
+              run: |
+                  flyctl ssh console -a akluma-staging --command 'sh -c "
+                    php artisan optimize:clear &&
+                    php artisan config:cache &&
+                    php artisan view:cache &&
+                    php artisan route:cache
+                  "'
+              env:
+                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
+
+            - name: Run Migrations
+              run: flyctl ssh console -a akluma-staging --command "php artisan migrate --force"
+              env:
+                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
+
+
 ```
 
 #### `fly-prod.yml`
