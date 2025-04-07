@@ -117,3 +117,6 @@ You can test everything end to end:
 4. Merge `main` → `prod`, auto deploys to `akluma-prod`
 
 ---
+
+Just leaving this here to see if auto-deploy actually skips deployment when 
+only change is in an .md file.
