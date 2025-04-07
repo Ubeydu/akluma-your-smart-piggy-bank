@@ -23,10 +23,10 @@ jobs:
 
             ONLY_DOCS=true
             for file in $CHANGED_FILES; do
-            if [[ "$file" != *.md && "$file" != dev-notes/* ]]; then
-             ONLY_DOCS=false
-             break
-            fi
+              if [[ "$file" != *.md && "$file" != dev-notes/* ]]; then
+                ONLY_DOCS=false
+                break
+              fi
             done
 
             echo "only_docs=$ONLY_DOCS" >> $GITHUB_OUTPUT
