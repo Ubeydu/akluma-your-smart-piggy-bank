@@ -44,8 +44,8 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
 
-      - name: Wait for Fly VM to become healthy
-        run: flyctl wait --app akluma-staging --timeout 60
+      - name: Wait for app to become ready
+        run: sleep 30
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
 
