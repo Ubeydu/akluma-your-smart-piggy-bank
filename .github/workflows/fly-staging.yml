@@ -11,14 +11,50 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if only docs were changed
+        id: check_files
+        run: |
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          # Check if only doc files changed
+          ONLY_DOCS="true"
+          for file in $CHANGED_FILES; do
+            if [[ ! "$file" =~ \.(md)$ && ! "$file" =~ ^dev-notes/ ]]; then
+              ONLY_DOCS="false"
+              break
+            fi
+          done
+
+          echo "only_docs=${ONLY_DOCS}" >> "$GITHUB_OUTPUT"
+
+          if [[ "$ONLY_DOCS" == "true" ]]; then
+            echo "Only documentation files were changed. Deployment will be skipped."
+          else
+            echo "Non-documentation files were changed. Deployment will proceed."
+          fi
+
       - uses: superfly/flyctl-actions/setup-flyctl@master
+        if: steps.check_files.outputs.only_docs != 'true'
 
       - name: Deploy to Fly.io
+        if: steps.check_files.outputs.only_docs != 'true'
         run: flyctl deploy --remote-only -c fly.staging.toml
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
 
+      - name: Wait for app to become ready
+        if: steps.check_files.outputs.only_docs != 'true'
+        run: sleep 30
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
+
       - name: Ensure Laravel required directories exist (after deploy)
+        if: steps.check_files.outputs.only_docs != 'true'
         run: |
           flyctl ssh console -a akluma-staging --command 'sh -c "
             mkdir -p storage/framework/views &&
@@ -32,6 +68,7 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
 
       - name: Laravel Optimize
+        if: steps.check_files.outputs.only_docs != 'true'
         run: |
           flyctl ssh console -a akluma-staging --pty --command 'sh -c "
             php artisan optimize:clear &&
@@ -43,6 +80,7 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
 
       - name: Run Migrations
+        if: steps.check_files.outputs.only_docs != 'true'
         run: flyctl ssh console -a akluma-staging --command "php artisan migrate --force"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}

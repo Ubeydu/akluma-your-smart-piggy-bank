@@ -1,8 +1,10 @@
-Perfect. Since you're starting from **zero** with GitHub Actions, and your deployment to Fly.io (staging and production) already works manually, we'll now set up **end-to-end Continuous Deployment (CD)**.
+# ✅ Initial Setup Guide for Continuous Deployment (CD) with GitHub Actions + Fly.io
+
+This guide documents the **one-time setup** steps used to configure end-to-end Continuous Deployment (CD) for the Akluma project using GitHub Actions and Fly.io.
 
 ---
 
-## ✅ **Overview of What We’ll Do**
+## ✅ Overview of What We’ll Do
 
 You’ve already done:
 - ✅ Manual deployment to `akluma-staging` and `akluma-prod`
@@ -17,9 +19,7 @@ Now we will:
 
 ---
 
-## ✅ **Step-by-step Setup Instructions**
-
-### **🧱 Step 1 — Create the `dev` branch**
+## 🧱 Step 1 — Create the `dev` Branch
 
 > 💻 In your Laravel project directory
 
@@ -37,10 +37,11 @@ git checkout -b dev
 # Push dev branch to remote
 git push -u origin dev
 ```
+⚠️ You don’t need to create the `prod` branch yet — it will be created manually later once staging is working.
 
 ---
 
-### 🔐 **Step 2 — Add Secrets to GitHub**
+## 🔐 Step 2 — Add Secrets to GitHub
 
 Go to your repository on GitHub:
 
@@ -54,22 +55,23 @@ Add the following secrets:
 2. **Name:** `FLY_API_TOKEN`  
    **Value:** your Fly.io token for `akluma-prod`
 
-> To get tokens, run:
-> ```bash
-> fly tokens create deploy -a akluma-staging
-> ```
-> and
-> ```bash
-> fly tokens create deploy -a akluma-prod
-> ```
+To get tokens, run:
+
+```bash
+fly tokens create deploy -a akluma-staging
+```
+
+and
+
+```bash
+fly tokens create deploy -a akluma-prod
+```
 
 Save these secrets in GitHub.
 
 ---
 
-### ⚙️ **Step 3 — Add GitHub Actions Workflows**
-
-In your Laravel project:
+## ⚙️ Step 3 — Add GitHub Actions Workflows
 
 > 💻 In your Laravel project root
 
@@ -77,94 +79,19 @@ In your Laravel project:
 mkdir -p .github/workflows
 ```
 
-#### `fly-staging.yml`
+Then create the two files:
 
-> 📄 Create file: `.github/workflows/fly-staging.yml`
+### 📄 `.github/workflows/fly-staging.yml`
 
-```yaml
-name: Fly Staging Deploy
+(*already up to date — not shown here*)
 
-on:
-    push:
-        branches:
-            - main
+### 📄 `.github/workflows/fly-prod.yml`
 
-jobs:
-    deploy:
-        name: Deploy to Staging
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: superfly/flyctl-actions/setup-flyctl@master
-
-            - name: Deploy to Fly.io
-              run: flyctl deploy --remote-only -c fly.staging.toml
-              env:
-                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
-
-            - name: Ensure Laravel required directories exist
-              run: |
-                  flyctl ssh console -a akluma-staging --command 'sh -c "
-                    mkdir -p storage/framework/views &&
-                    mkdir -p storage/framework/cache &&
-                    mkdir -p storage/framework/sessions &&
-                    mkdir -p storage/framework/testing &&
-                    mkdir -p bootstrap/cache &&
-                    chmod -R 775 storage bootstrap/cache
-                  "'
-              env:
-                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
-
-            - name: Laravel Optimize
-              run: |
-                  flyctl ssh console -a akluma-staging --command 'sh -c "
-                    php artisan optimize:clear &&
-                    php artisan config:cache &&
-                    php artisan view:cache &&
-                    php artisan route:cache
-                  "'
-              env:
-                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
-
-            - name: Run Migrations
-              run: flyctl ssh console -a akluma-staging --command "php artisan migrate --force"
-              env:
-                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
-
-
-```
-
-#### `fly-prod.yml`
-
-> 📄 Create file: `.github/workflows/fly-prod.yml`
-
-```yaml
-name: Fly Production Deploy
-
-on:
-  push:
-    branches:
-      - prod
-
-jobs:
-  deploy:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only -c fly.production.toml
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-      - name: Run Migrations
-        run: flyctl ssh console -a akluma-prod --command "php artisan migrate --force"
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-```
+(*already up to date — not shown here*)
 
 ---
 
-### 💾 **Step 4 — Commit and Push Workflows**
+## 💾 Step 4 — Commit and Push Workflows
 
 > 💻 In your Laravel project root
 
@@ -174,17 +101,22 @@ git commit -m "Add GitHub Actions for Fly staging and production deploy"
 git push origin dev
 ```
 
-> ✅ You’ve now added the CD system to the `dev` branch — the logic is ready but not triggered until you merge `dev` → `main` or `main` → `prod`.
+✅ The CD system is now added to the `dev` branch.
+
+**The logic is ready but not triggered until you merge `dev` → `main` or `main` → `prod`.**
 
 ---
 
-### 🧪 **Step 5 — (Optional) Test Full CD Flow**
+## 🧪 Step 5 — (Optional) Test Full CD Flow
 
-Would you like to walk through a **test flow** now?
-
-It would go like this:
+You can test everything end to end:
 
 1. Create a small commit on a `feature/test-deploy` branch
 2. Merge it into `dev`, test locally
 3. Merge `dev` → `main`, auto deploys to `akluma-staging`
 4. Merge `main` → `prod`, auto deploys to `akluma-prod`
+
+---
+
+Just leaving this here to see if auto-deploy actually skips deployment when 
+only change is in an .md file.
