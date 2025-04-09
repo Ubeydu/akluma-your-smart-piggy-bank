@@ -32,3 +32,8 @@ console_command = 'php /var/www/html/artisan tinker'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
+
+[processes]
+  app = ""
+  cron = "cron -f"
+  worker = "php artisan queue:work --tries=3 --max-time=3600"
