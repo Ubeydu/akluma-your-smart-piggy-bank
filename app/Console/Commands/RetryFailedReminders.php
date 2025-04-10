@@ -2,13 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\SavingReminderMail;
+use App\Jobs\SendSavingReminderJob;
 use App\Models\ScheduledSaving;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class RetryFailedReminders extends Command
 {
@@ -17,8 +16,6 @@ class RetryFailedReminders extends Command
      *
      * @var string
      */
-//    protected $signature = 'app:retry-failed-reminders {--days=1 : Number of days to look back}';
-
     protected $signature = 'app:retry-failed-reminders {--days=1 : Number of days to look back} {--date= : Override current date for testing}';
 
     /**
@@ -34,10 +31,6 @@ class RetryFailedReminders extends Command
     public function handle()
     {
         $this->info('Starting to retry failed saving reminders...');
-
-//        $lookBackDays = (int) $this->option('days');
-//        $startDate = Carbon::now()->subDays($lookBackDays)->startOfDay();
-//        $endDate = Carbon::now()->endOfDay();
 
         $baseDate = $this->option('date') ? Carbon::parse($this->option('date')) : Carbon::now();
         $lookBackDays = (int) $this->option('days');
@@ -64,110 +57,49 @@ class RetryFailedReminders extends Command
         $retryCount = 0;
 
         foreach ($scheduledSavings as $saving) {
-            $notificationStatuses = json_decode($saving->notification_statuses, true);
-            $notificationAttempts = json_decode($saving->notification_attempts, true);
+            $notificationStatuses = json_decode($saving->notification_statuses, true) ?: [];
+            $notificationAttempts = json_decode($saving->notification_attempts, true) ?: [
+                'email' => 0,
+                'sms' => 0,
+                'push' => 0
+            ];
 
             // Only retry if:
             // 1. Email was attempted (attempts > 0)
-            // 2. Email was not successfully sent (sent = false)
+            // 2. Email was not successfully sent (sent = false or status doesn't exist)
             // 3. Max retry limit not reached (attempts < 3)
-            if ($notificationAttempts['email'] > 0 &&
-                !$notificationStatuses['email']['sent'] &&
-                $notificationAttempts['email'] < 3) {
+            $emailSent = isset($notificationStatuses['email']) && isset($notificationStatuses['email']['sent']) ?
+                $notificationStatuses['email']['sent'] : false;
+            $emailAttempts = isset($notificationAttempts['email']) ? $notificationAttempts['email'] : 0;
 
-                $this->retryEmailReminder($saving);
-                $retryCount++;
+            if ($emailAttempts > 0 && !$emailSent && $emailAttempts < 3) {
+                $this->info("Dispatching retry job for saving #{$saving->id} (Attempt #{$emailAttempts})");
+
+                // Use the new job to handle the email sending
+                try {
+                    // Dispatch the job instead of directly queueing
+                    SendSavingReminderJob::dispatch($saving);
+                    $retryCount++;
+
+                    $this->info("Successfully dispatched retry job for saving #{$saving->id}");
+                } catch (\Exception $e) {
+                    $this->error("Failed to dispatch retry job for saving #{$saving->id}: {$e->getMessage()}");
+                    Log::error("Failed to dispatch retry job", [
+                        'saving_id' => $saving->id,
+                        'exception' => $e->getMessage()
+                    ]);
+                }
+            } else {
+                $this->info("Skipping saving #{$saving->id}: " .
+                    ($emailSent ? "already sent" :
+                        ($emailAttempts >= 3 ? "too many attempts ({$emailAttempts})" :
+                            "no previous attempts")));
             }
 
             // For future SMS implementation
             // FUTURE: Add similar logic for SMS retries here
-            // FUTURE: Check if user has paid subscription before retrying SMS
         }
 
         $this->info("Completed retry process. Attempted to retry {$retryCount} reminders.");
-    }
-
-    /**
-     * Retry sending email for a specific scheduled saving
-     */
-    protected function retryEmailReminder(ScheduledSaving $saving)
-    {
-        $piggyBank = $saving->piggyBank;
-        $user = $piggyBank->user;
-
-        // Skip if user has no email
-        if (empty($user->email)) {
-            $this->info("Skipping retry for saving #{$saving->id}: user has no email address");
-            return;
-        }
-
-        // Check notification preferences
-        $preferences = $this->getNotificationPreferences($piggyBank);
-        if (!$preferences['email']['enabled']) {
-            $this->info("Skipping retry for saving #{$saving->id}: email notifications disabled");
-            return;
-        }
-
-        try {
-            $this->info("Retrying email for saving #{$saving->id}");
-
-            // Queue the email
-            Mail::to($user)->queue(new SavingReminderMail(
-                $user,
-                $piggyBank,
-                $saving
-            ));
-
-            // Update notification status on success
-            $notificationStatuses = json_decode($saving->notification_statuses, true);
-            $notificationStatuses['email']['sent'] = true;
-            $notificationStatuses['email']['sent_at'] = Carbon::now()->toDateTimeString();
-
-            $notificationAttempts = json_decode($saving->notification_attempts, true);
-            $notificationAttempts['email'] += 1;
-
-            $saving->notification_statuses = json_encode($notificationStatuses);
-            $saving->notification_attempts = json_encode($notificationAttempts);
-            $saving->save();
-
-            $this->info("Successfully queued retry email for saving #{$saving->id}");
-
-        } catch (\Exception $e) {
-            $this->error("Failed to retry email for saving #{$saving->id}: {$e->getMessage()}");
-            Log::error("Failed to retry saving reminder", [
-                'saving_id' => $saving->id,
-                'piggy_bank_id' => $piggyBank->id,
-                'user_id' => $user->id,
-                'exception' => $e->getMessage()
-            ]);
-
-            // Update attempt count
-            $notificationAttempts = json_decode($saving->notification_attempts, true);
-            $notificationAttempts['email'] += 1;
-            $saving->notification_attempts = json_encode($notificationAttempts);
-            $saving->save();
-        }
-    }
-
-    /**
-     * Get notification preferences for a piggy bank
-     */
-    protected function getNotificationPreferences($piggyBank)
-    {
-        // Get notification preferences from database
-        $preferences = DB::table('notification_preferences')
-            ->where('piggy_bank_id', $piggyBank->id)
-            ->first();
-
-        if ($preferences && $preferences->channel_preferences) {
-            return json_decode($preferences->channel_preferences, true);
-        }
-
-        // Default preferences if none found
-        return [
-            'email' => ['enabled' => true],
-            'sms' => ['enabled' => true],
-            'push' => ['enabled' => true]
-        ];
     }
 }

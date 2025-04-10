@@ -22,8 +22,19 @@ Artisan::command('logs:clear', function () {
 
 
 // Environment-aware scheduling configuration
-if (app()->environment('production')) {
-    // Production configuration
+if (app()->environment('local', 'development')) {
+    // Development configuration only
+    Schedule::command('app:send-saving-reminders')
+        ->dailyAt('09:00')
+        ->appendOutputTo(storage_path('logs/scheduler.log'))
+        ->description('Send saving reminders to users');
+
+    Schedule::command(RetryFailedReminders::class)
+        ->dailyAt('15:00')
+        ->appendOutputTo(storage_path('logs/scheduler.log'))
+        ->description('Retry failed saving reminders');
+} else {
+    // Production AND Staging configuration
     Schedule::command(SendSavingReminders::class)
         ->dailyAt('00:00')
         ->appendOutputTo(storage_path('logs/scheduler.log'))
@@ -33,15 +44,5 @@ if (app()->environment('production')) {
         ->dailyAt('12:00')
         ->appendOutputTo(storage_path('logs/scheduler.log'))
         ->description('Retry failed saving reminders');
-} else {
-    // Development/Staging configuration
-    Schedule::exec('php artisan app:send-saving-reminders --force --date=2025-03-07')
-        ->dailyAt('14:12')
-        ->appendOutputTo(storage_path('logs/scheduler.log'))
-        ->description('Send saving reminders to users');
 }
-
-
-Schedule::command(RetryFailedReminders::class)->dailyAt('09:00')
-    ->description('Retry failed saving reminders');
 
