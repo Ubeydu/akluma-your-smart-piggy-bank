@@ -38,4 +38,4 @@ console_command = 'php /var/www/html/artisan tinker'
 [processes]
   app = ""
   cron = "cron -f"
-  worker = "php artisan queue:work --tries=3 --max-time=3600"
+  worker = "php artisan queue:work --tries=3"
