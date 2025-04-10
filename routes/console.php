@@ -25,24 +25,24 @@ Artisan::command('logs:clear', function () {
 if (app()->environment('local', 'development')) {
     // Development configuration only
     Schedule::command('app:send-saving-reminders')
-        ->dailyAt('09:00')
+        ->hourly()
         ->appendOutputTo(storage_path('logs/scheduler.log'))
-        ->description('Send saving reminders to users');
+        ->description('Send saving reminders to users (development hourly check)');
 
     Schedule::command(RetryFailedReminders::class)
-        ->dailyAt('15:00')
+        ->twiceDaily(6, 18) // Run at 6 AM and 6 PM
         ->appendOutputTo(storage_path('logs/scheduler.log'))
-        ->description('Retry failed saving reminders');
+        ->description('Retry failed saving reminders (development twice daily)');
 } else {
     // Production AND Staging configuration
     Schedule::command(SendSavingReminders::class)
-        ->dailyAt('00:00')
+        ->hourly()
         ->appendOutputTo(storage_path('logs/scheduler.log'))
-        ->description('Send saving reminders to users');
+        ->description('Send saving reminders to users (hourly check)');
 
     Schedule::command(RetryFailedReminders::class)
-        ->dailyAt('12:00')
+        ->twiceDaily(6, 18) // Run at 6 AM and 6 PM
         ->appendOutputTo(storage_path('logs/scheduler.log'))
-        ->description('Retry failed saving reminders');
+        ->description('Retry failed saving reminders (twice daily)');
 }
 
