@@ -38,6 +38,8 @@ console_command = 'php /var/www/html/artisan tinker'
   cron = "cron -f"
   worker = "php artisan queue:work --tries=3 --max-time=3600"
 
-[processes.worker]
-  auto_stop_machines = false
-  min_machines_running = 1
+[processes.worker.auto_stop_machines]
+  enabled = false
+
+[processes.worker.min_machines_running]
+  count = 1
