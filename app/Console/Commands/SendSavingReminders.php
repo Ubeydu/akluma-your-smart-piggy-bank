@@ -166,52 +166,22 @@ class SendSavingReminders extends Command
         }
 
         try {
-            // Queue the email
-            Mail::to($user)->queue(new SavingReminderMail(
-                $user,
-                $piggyBank,
-                $saving
-            ));
+            // Dispatch the job instead of directly queueing the email
+            \App\Jobs\SendSavingReminderJob::dispatch($saving);
 
-            // Update notification status
-            $notificationStatuses = json_decode($saving->notification_statuses, true);
-            $notificationStatuses['email']['sent'] = true;
-            $notificationStatuses['email']['sent_at'] = Carbon::now()->toDateTimeString();
-
-            // Update notification status
-            $notificationAttempts = json_decode($saving->notification_attempts, true);
-            if (!is_array($notificationAttempts)) {
-                $notificationAttempts = [
-                    'email' => 0,
-                    'sms' => 0,
-                    'push' => 0
-                ];
-            }
-            $notificationAttempts['email'] += 1;
-
-            $saving->notification_statuses = json_encode($notificationStatuses);
-            $saving->notification_attempts = json_encode($notificationAttempts);
-            $saving->save();
-
-            $this->info("Successfully queued email for saving #{$saving->id}");
+            $this->info("Successfully dispatched email job for saving #{$saving->id}");
 
             // For future SMS implementation
             // FUTURE: If user has SMS enabled and is on paid plan, send SMS here
 
         } catch (\Exception $e) {
-            $this->error("Failed to send email for saving #{$saving->id}: {$e->getMessage()}");
-            Log::error("Failed to send saving reminder", [
+            $this->error("Failed to dispatch email job for saving #{$saving->id}: {$e->getMessage()}");
+            Log::error("Failed to dispatch saving reminder job", [
                 'saving_id' => $saving->id,
                 'piggy_bank_id' => $piggyBank->id,
                 'user_id' => $user->id,
                 'exception' => $e->getMessage()
             ]);
-
-            // Update attempt count
-            $notificationAttempts = json_decode($saving->notification_attempts, true);
-            $notificationAttempts['email'] += 1;
-            $saving->notification_attempts = json_encode($notificationAttempts);
-            $saving->save();
         }
     }
 
