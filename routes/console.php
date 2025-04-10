@@ -34,9 +34,9 @@ if (app()->environment('local', 'development')) {
         ->appendOutputTo(storage_path('logs/scheduler.log'))
         ->description('Retry failed saving reminders (development twice daily)');
 } else {
-    // Production AND Staging configuration, change everyTenMinutes() to hourly() once done with testing
+    // Production AND Staging configuration
     Schedule::command(SendSavingReminders::class)
-        ->everyTenMinutes()
+        ->hourly()
         ->appendOutputTo(storage_path('logs/scheduler.log'))
         ->description('Send saving reminders to users (hourly check)');
 
