@@ -83,11 +83,13 @@ class SendSavingReminders extends Command
             // Get current time in user's timezone
             $now = Carbon::now()->timezone($timezone);
 
-            // Only send at 9AM unless --force is used
-            if (!$this->option('force') && $now->hour != 9) {
+            $isTestMode = env('REMINDERS_TEST_MODE', false);
+
+            if (!$this->option('force') && !$isTestMode && $now->hour != 9) {
                 $this->info("Skipping timezone {$timezone}: current hour is {$now->hour}, not 9AM");
                 return;
             }
+
 
             foreach ($savings as $saving) {
                 $this->processSaving($saving);
