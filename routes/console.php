@@ -25,7 +25,7 @@ Artisan::command('logs:clear', function () {
 if (app()->environment('local', 'development')) {
     // Development configuration only
     Schedule::command('app:send-saving-reminders')
-        ->everyTenMinutes()
+        ->hourly()
         ->appendOutputTo(storage_path('logs/scheduler.log'))
         ->description('Send saving reminders to users (development hourly check)');
 
@@ -36,7 +36,7 @@ if (app()->environment('local', 'development')) {
 } else {
     // Production AND Staging configuration
     Schedule::command(SendSavingReminders::class)
-        ->hourly()
+        ->everyTenMinutes()
         ->appendOutputTo(storage_path('logs/scheduler.log'))
         ->description('Send saving reminders to users (hourly check)');
 
