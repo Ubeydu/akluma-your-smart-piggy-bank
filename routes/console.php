@@ -21,28 +21,14 @@ Artisan::command('logs:clear', function () {
 })->describe('Clear the content of storage/logs/laravel.log');
 
 
-// Environment-aware scheduling configuration
-if (app()->environment('local', 'development')) {
-    // Development configuration only
-    Schedule::command('app:send-saving-reminders')
-        ->hourly()
-        ->appendOutputTo(storage_path('logs/scheduler.log'))
-        ->description('Send saving reminders to users (development hourly check)');
+// Scheduling
+Schedule::command(SendSavingReminders::class)
+    ->everyTenMinutes()
+    ->appendOutputTo(storage_path('logs/scheduler.log'))
+    ->description('Send saving reminders to users (every ten minutes)');
 
-    Schedule::command(RetryFailedReminders::class)
-        ->twiceDaily(6, 18) // Run at 6 AM and 6 PM
-        ->appendOutputTo(storage_path('logs/scheduler.log'))
-        ->description('Retry failed saving reminders (development twice daily)');
-} else {
-    // Production AND Staging configuration
-    Schedule::command(SendSavingReminders::class)
-        ->everyTenMinutes()
-        ->appendOutputTo(storage_path('logs/scheduler.log'))
-        ->description('Send saving reminders to users (hourly check)');
-
-    Schedule::command(RetryFailedReminders::class)
-        ->twiceDaily(6, 18) // Run at 6 AM and 6 PM
-        ->appendOutputTo(storage_path('logs/scheduler.log'))
-        ->description('Retry failed saving reminders (twice daily)');
-}
+Schedule::command(RetryFailedReminders::class)
+    ->everyTenMinutes()
+    ->appendOutputTo(storage_path('logs/scheduler.log'))
+    ->description('Retry failed saving reminders (every ten minutes)');
 
