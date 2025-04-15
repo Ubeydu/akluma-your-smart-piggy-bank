@@ -83,7 +83,7 @@ class SendSavingReminders extends Command
             // Get current time in user's timezone
             $now = Carbon::now()->timezone($timezone);
 
-            $isTestMode = env('REMINDERS_TEST_MODE', false);
+            $isTestMode = config('app.reminders_test_mode');
 
             if (!$this->option('force') && !$isTestMode && $now->hour != 9) {
                 $this->info("Skipping timezone {$timezone}: current hour is {$now->hour}, not 9AM");

@@ -168,4 +168,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'reminders_test_mode' => env('REMINDERS_TEST_MODE', false),
+
 ];
