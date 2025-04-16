@@ -93,6 +93,12 @@ class SendSavingReminderJob implements ShouldQueue
         // Save the current app locale
         $previousLocale = App::getLocale();
 
+        Log::info('Reminder Job User Locale Check', [
+            'user_id' => $user->id,
+            'user_language' => $user->language,
+            'current_app_locale' => App::getLocale()
+        ]);
+
         // Set user’s preferred locale
         App::setLocale($user->language ?? config('app.locale'));
 
