@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
@@ -89,12 +90,21 @@ class SendSavingReminderJob implements ShouldQueue
             return;
         }
 
-        // Send the email
+        // Save the current app locale
+        $previousLocale = App::getLocale();
+
+        // Set user’s preferred locale
+        App::setLocale($user->language ?? config('app.locale'));
+
         Mail::to($user)->send(new SavingReminderMail(
             $user,
             $piggyBank,
             $saving
         ));
+
+        // Restore the previous locale
+        App::setLocale($previousLocale);
+
 
         // Update notification status after successful send
         $notificationStatuses = json_decode($saving->notification_statuses, true);
