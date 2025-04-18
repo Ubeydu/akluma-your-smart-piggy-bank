@@ -157,7 +157,8 @@ class SendSavingReminders extends Command
         }
 
         // Skip if already sent
-        if (!isset($notificationStatuses['email']) || $notificationStatuses['email']['sent'] ?? false) {
+        $notificationStatuses = json_decode($saving->notification_statuses, true);
+        if (!is_array($notificationStatuses)) {
             // Initialize with default structure if null or invalid
             $notificationStatuses = [
                 'email' => ['sent' => false, 'sent_at' => null],
