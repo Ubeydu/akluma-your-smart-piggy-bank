@@ -15,7 +15,7 @@ EOF
     chmod +x /var/www/html/load-env.sh
 
     # Register cron job
-    echo "* * * * * cd /var/www/html && /var/www/html/load-env.sh php artisan schedule:run >> /dev/null 2>&1" | crontab -
+    # echo "* * * * * cd /var/www/html && /var/www/html/load-env.sh php artisan schedule:run >> /dev/null 2>&1" | crontab -
 
     echo "✅ Cron job registered successfully."
 fi
