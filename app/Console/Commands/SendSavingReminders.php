@@ -30,6 +30,12 @@ class SendSavingReminders extends Command
     protected $description = 'Send email reminders for scheduled savings due today';
 
     /**
+     * @var int
+     */
+    protected int $savingDispatchCounter = 0;
+
+
+    /**
      * Execute the console command.
      */
     public function handle(): void
@@ -66,10 +72,15 @@ class SendSavingReminders extends Command
         });
 
         foreach ($savingsByTimezone as $timezone => $timezoneGroup) {
+            Log::info("🕐 Timezone group {$timezone} contains saving IDs: " . $timezoneGroup->pluck('id')->implode(', '));
+        }
+
+        foreach ($savingsByTimezone as $timezone => $timezoneGroup) {
             $this->processTimezoneGroup($timezone, $timezoneGroup);
         }
 
         $this->info('Reminder processing completed.');
+        Log::info("🧮 Total processSaving() calls in this run: {$this->savingDispatchCounter}");
     }
 
     /**
@@ -93,6 +104,7 @@ class SendSavingReminders extends Command
 
             foreach ($savings as $saving) {
                 $this->processSaving($saving);
+                $this->savingDispatchCounter++;
             }
 
         } catch (\Exception $e) {
@@ -133,6 +145,8 @@ class SendSavingReminders extends Command
      */
     protected function processSaving(ScheduledSaving $saving): void
     {
+        Log::info("🧪 Entering processSaving() for saving ID {$saving->id}");
+
         $piggyBank = $saving->piggyBank;
         $user = $piggyBank->user;
 
@@ -143,8 +157,7 @@ class SendSavingReminders extends Command
         }
 
         // Skip if already sent
-        $notificationStatuses = json_decode($saving->notification_statuses, true);
-        if (!is_array($notificationStatuses)) {
+        if (!isset($notificationStatuses['email']) || $notificationStatuses['email']['sent'] ?? false) {
             // Initialize with default structure if null or invalid
             $notificationStatuses = [
                 'email' => ['sent' => false, 'sent_at' => null],
