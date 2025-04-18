@@ -171,6 +171,8 @@ class SendSavingReminders extends Command
             // Dispatch the job instead of directly queueing the email
             \App\Jobs\SendSavingReminderJob::dispatch($saving);
 
+            Log::info("✅ Dispatched reminder for saving ID {$saving->id} from SendSavingReminders");
+
             $this->info("Successfully dispatched email job for saving #{$saving->id}");
 
             // For future SMS implementation

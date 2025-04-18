@@ -81,6 +81,8 @@ class SendSavingReminderJob implements ShouldQueue
         $piggyBank = PiggyBank::find($this->piggyBankId);
         $saving = $this->saving->fresh();
 
+        Log::info('📬 Reminder Job started for user ID ' . $this->userId . ' and saving ID ' . $this->saving->id);
+
         if (!$user || !$piggyBank) {
             Log::error("Could not find user or piggy bank for saving reminder", [
                 'saving_id' => $saving->id,
