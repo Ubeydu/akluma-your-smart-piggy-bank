@@ -50,7 +50,7 @@ COPY .fly/fpm/ /etc/php/${PHP_VERSION}/fpm/
 COPY .fly/supervisor/ /etc/supervisor/
 COPY .fly/entrypoint.sh /entrypoint
 COPY .fly/start-nginx.sh /usr/local/bin/start-nginx
-COPY .fly/scripts/ /.fly/scripts/
+COPY .fly/scripts/ /var/www/html/.fly/scripts/
 RUN chmod 754 /usr/local/bin/start-nginx
 
 # 3. Copy application code, skipping files based on .dockerignore
@@ -138,5 +138,4 @@ RUN rsync -ar /var/www/html/public-npm/ /var/www/html/public/ \
 # 5. Setup Entrypoint
 EXPOSE 8080
 
-ENTRYPOINT ["/bin/bash", "-c", ".fly/scripts/setup-cron.sh && /entrypoint"]
-
+ENTRYPOINT ["/bin/bash", "-c", "/var/www/html/.fly/scripts/setup-cron.sh && /entrypoint"]
