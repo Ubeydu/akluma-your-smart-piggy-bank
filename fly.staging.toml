@@ -38,5 +38,5 @@ console_command = 'php /var/www/html/artisan tinker'
 
 [processes]
   app = ""
-  cron = "cron -f"
+  cron = "bash -c '/var/www/html/.fly/scripts/setup-cron.sh && tail -f /dev/null'"
   worker = "php artisan queue:work --tries=3"

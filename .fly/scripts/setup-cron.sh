@@ -17,5 +17,8 @@ EOF
     # Register cron job
     echo "* * * * * cd /var/www/html && /var/www/html/load-env.sh php artisan schedule:run >> /var/www/html/storage/logs/scheduler.log 2>&1" | crontab -
 
+    # Make sure cron service is running
+    service cron start
+
     echo "✅ Cron job registered successfully."
 fi
