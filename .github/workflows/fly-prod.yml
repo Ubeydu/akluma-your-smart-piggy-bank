@@ -81,6 +81,11 @@ jobs:
 
       - name: Ensure cron machine is updated to trigger setup script
         if: steps.check_files.outputs.only_docs != 'true'
-        run: flyctl machines update 90802551c57e87 --app akluma-prod
+        run: |
+          TIMESTAMP=$(date +%s)
+          flyctl machines update 90802551c57e87 \
+          --app akluma-prod \
+          --metadata manual_restart=${TIMESTAMP}
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
