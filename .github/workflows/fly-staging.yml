@@ -84,3 +84,9 @@ jobs:
         run: flyctl ssh console -a akluma-staging --command "php artisan migrate --force"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
+
+      - name: Ensure staging cron machine is updated to trigger setup script
+        if: steps.check_files.outputs.only_docs != 'true'
+        run: flyctl machines update 56832331a56268 --app akluma-staging
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}

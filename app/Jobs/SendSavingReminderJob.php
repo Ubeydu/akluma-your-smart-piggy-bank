@@ -92,26 +92,28 @@ class SendSavingReminderJob implements ShouldQueue
             return;
         }
 
-        // Save the current app locale
-        $previousLocale = App::getLocale();
-
-        Log::info('Reminder Job User Locale Check', [
-            'user_id' => $user->id,
-            'user_language' => $user->language,
-            'current_app_locale' => App::getLocale()
+        Log::info('🌐 Locale Debug Start', [
+            'saving_id' => $this->saving->id,
+            'user_id' => $this->userId,
+            'piggy_bank_id' => $this->piggyBankId,
+            'expected_locale' => $user->language,
+            'app_locale_before_set' => App::getLocale()
         ]);
+        $previousLocale = App::getLocale(); // ⬅️ still here, just moved down
 
-        // Set user’s preferred locale
         App::setLocale($user->language ?? config('app.locale'));
+
+        Log::info('🌐 Locale Debug After Set', [
+            'user_id' => $user->id,
+            'app_locale_after_set' => App::getLocale()
+        ]);
 
         Mail::to($user)
             ->locale($user->language ?? config('app.locale'))
             ->send(new SavingReminderMail($user, $piggyBank, $saving));
 
-
         // Restore the previous locale
         App::setLocale($previousLocale);
-
 
         // Update notification status after successful send
         $notificationStatuses = json_decode($saving->notification_statuses, true);
