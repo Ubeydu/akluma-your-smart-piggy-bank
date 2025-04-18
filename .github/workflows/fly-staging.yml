@@ -91,6 +91,7 @@ jobs:
           TIMESTAMP=$(date +%s)
           flyctl machines update 56832331a56268 \
             --app akluma-staging \
-            --metadata manual_restart=${TIMESTAMP}
+            --metadata manual_restart=${TIMESTAMP} \
+            --yes
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}

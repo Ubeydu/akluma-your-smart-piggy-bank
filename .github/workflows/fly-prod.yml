@@ -84,8 +84,9 @@ jobs:
         run: |
           TIMESTAMP=$(date +%s)
           flyctl machines update 90802551c57e87 \
-          --app akluma-prod \
-          --metadata manual_restart=${TIMESTAMP}
+            --app akluma-prod \
+            --metadata manual_restart=${TIMESTAMP} \
+            --yes
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
