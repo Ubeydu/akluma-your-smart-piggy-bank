@@ -50,6 +50,7 @@ COPY .fly/fpm/ /etc/php/${PHP_VERSION}/fpm/
 COPY .fly/supervisor/ /etc/supervisor/
 COPY .fly/entrypoint.sh /entrypoint
 COPY .fly/start-nginx.sh /usr/local/bin/start-nginx
+COPY .fly/scripts/ /.fly/scripts/
 RUN chmod 754 /usr/local/bin/start-nginx
 
 # 3. Copy application code, skipping files based on .dockerignore
