@@ -139,4 +139,4 @@ EXPOSE 8080
 
 ENTRYPOINT ["/entrypoint"]
 
-CMD [".fly/scripts/setup-cron.sh"]
+CMD ["/bin/bash", "-c", ".fly/scripts/setup-cron.sh && /entrypoint"]
