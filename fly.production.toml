@@ -20,6 +20,7 @@ console_command = 'php /var/www/html/artisan tinker'
   SESSION_DRIVER = 'cookie'
   SESSION_SECURE_COOKIE = 'true'
   REMINDERS_TEST_MODE = "true"
+  FLY_DEPLOY_TAG = "force-setup-001"
 
 [http_service]
   internal_port = 8080
