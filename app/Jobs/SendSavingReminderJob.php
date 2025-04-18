@@ -104,11 +104,10 @@ class SendSavingReminderJob implements ShouldQueue
         // Set user’s preferred locale
         App::setLocale($user->language ?? config('app.locale'));
 
-        Mail::to($user)->send(new SavingReminderMail(
-            $user,
-            $piggyBank,
-            $saving
-        ));
+        Mail::to($user)
+            ->locale($user->language ?? config('app.locale'))
+            ->send(new SavingReminderMail($user, $piggyBank, $saving));
+
 
         // Restore the previous locale
         App::setLocale($previousLocale);

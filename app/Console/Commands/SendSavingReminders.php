@@ -123,9 +123,8 @@ class SendSavingReminders extends Command
                 }
             }
 
-            foreach ($savings as $saving) {
-                $this->processSaving($saving);
-            }
+            $this->error("Skipping processing for timezone '{$timezone}' due to error: {$e->getMessage()}");
+            // Don't reprocess to avoid duplicate job dispatch
         }
     }
 
