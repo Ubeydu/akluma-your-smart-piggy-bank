@@ -23,7 +23,7 @@ Artisan::command('logs:clear', function () {
 
 // Scheduling
 Schedule::command(SendSavingReminders::class)
-    ->everyTenMinutes()
+    ->everyFiveMinutes()
     ->before(function () {
         Log::info('🕒 schedule:run is executing (SendSavingReminders)');
     })
