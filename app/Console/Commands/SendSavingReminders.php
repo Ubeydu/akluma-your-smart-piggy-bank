@@ -119,18 +119,18 @@ class SendSavingReminders extends Command
             $now = Carbon::now();
 
 
-            // In the processTimezoneGroup method, replace the current dev/prod code blocks with this:
             // Check current hour based on environment
             if (app()->environment('production')) {
-                // Production behavior - only send at 9AM in user's timezone
+                // Production behavior - only send at 9AM in the user's timezone
                 if (!$this->option('force') && $now->hour != 9) {
-                    $this->info("Skipping timezone {$timezone}: current hour is {$now->hour}, not 9AM");
+                    $this->info("Skipping timezone {$timezone} [PRODUCTION]: current hour is {$now->hour}, not 9AM");
                     return;
                 }
             } else {
-                // Development/Staging behavior - more flexible for testing
+                // Development/Staging behavior - same logic but with different messaging
+                $envName = app()->environment();  // Will return 'local', 'staging', etc.
                 if (!$this->option('force') && $now->hour != 9) {
-                    $this->info("Skipping: current UTC hour is {$now->hour}, not 9AM");
+                    $this->info("Skipping timezone {$timezone} [{$envName}]: current hour is {$now->hour}, not 9AM");
                     return;
                 }
             }

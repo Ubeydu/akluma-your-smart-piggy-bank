@@ -19,7 +19,7 @@ console_command = 'php /var/www/html/artisan tinker'
   LOG_STDERR_FORMATTER = 'Monolog\Formatter\JsonFormatter'
   SESSION_DRIVER = 'cookie'
   SESSION_SECURE_COOKIE = 'true'
-  REMINDERS_TEST_MODE = "true"
+  REMINDERS_TEST_MODE = "false"
 
 [http_service]
   internal_port = 8080
