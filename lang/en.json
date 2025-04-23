@@ -91,5 +91,7 @@
     "help_popup_message_part2": " or click my name to send a message on LinkedIn.",
     "copy_email_title": "Copy email",
     "saving_marked_as_saved": "You successfully marked your saving as saved.",
-    "saving_marked_as_unsaved": "You successfully marked your scheduled saving as pending."
+    "saving_marked_as_unsaved": "You successfully marked your scheduled saving as pending.",
+    "created_at": "Created At",
+    "updated_at": "Updated At"
 }
