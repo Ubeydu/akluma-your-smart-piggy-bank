@@ -19,7 +19,7 @@ console_command = 'php /var/www/html/artisan tinker'
   LOG_STDERR_FORMATTER = 'Monolog\Formatter\JsonFormatter'
   SESSION_DRIVER = 'cookie'
   SESSION_SECURE_COOKIE = true
-  REMINDERS_TEST_MODE = "true"
+  REMINDERS_TEST_MODE = "false"
 
 [http_service]
   internal_port = 8080
@@ -33,8 +33,7 @@ console_command = 'php /var/www/html/artisan tinker'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
-  auto_stop_machines = false
-  min_machines_running = 1
+
 
 [processes]
   app = ""
