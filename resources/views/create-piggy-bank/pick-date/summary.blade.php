@@ -295,7 +295,7 @@
                                     @endif
                                 </form>
                             @else
-                                <div class="mt-4">
+                                <div>
                                     <x-secondary-button
                                         type="button"
                                         onclick="window.location='{{ route('register', ['intended' => url()->current()]) }}'"
