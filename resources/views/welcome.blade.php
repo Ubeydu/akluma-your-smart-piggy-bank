@@ -6,9 +6,19 @@
 
         <title>{{ __('project_name') }}</title>
 
+        <link rel="canonical" href="{{ str_replace('https://www.akluma.com', 'https://akluma.com', url()->current()) }}" />
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+        <!-- Favicons and Icons -->
+        <link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96" />
+        <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}" />
+        <meta name="apple-mobile-web-app-title" content="Akluma" />
+        <link rel="manifest" href="{{ asset('site.webmanifest') }}" />
 
         <!-- Styles / Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))

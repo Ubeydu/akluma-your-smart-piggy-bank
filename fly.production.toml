@@ -29,8 +29,8 @@ console_command = 'php /var/www/html/artisan tinker'
   min_machines_running = 1
   processes = ['app']
   [[http_service.redirects]]
-    from = "www.akluma.com"
-    to = "https://akluma.com"
+    source = "www.akluma.com"
+    destination = "https://akluma.com"
     status_code = 301
 
 [[vm]]
