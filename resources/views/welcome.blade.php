@@ -6,12 +6,7 @@
 
         <title>{{ __('project_name') }}</title>
 
-        @php
-            $currentUrl = url()->current();
-            $canonicalUrl = str_replace('https://www.akluma.com', 'https://akluma.com', $currentUrl);
-            echo "<!-- Debug: Current URL: $currentUrl, Canonical URL: $canonicalUrl -->";
-        @endphp
-        <link rel="canonical" href="{{ $canonicalUrl }}" />
+        <link rel="canonical" href="{{ str_replace('https://www.akluma.com', 'https://akluma.com', url()->current()) }}" />
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
