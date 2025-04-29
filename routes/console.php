@@ -28,7 +28,7 @@ Schedule::command(SendSavingReminders::class)
         Log::info('🕒 schedule:run is executing (SendSavingReminders)');
     })
     ->appendOutputTo(storage_path('logs/scheduler.log'))
-    ->description('Send saving reminders to users (every ten minutes)');
+    ->description('Send saving reminders to users (every five minutes)');
 
 Schedule::command(RetryFailedReminders::class)
     ->everyTenMinutes()
