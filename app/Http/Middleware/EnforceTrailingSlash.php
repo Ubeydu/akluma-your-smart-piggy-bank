@@ -15,24 +15,29 @@ class EnforceTrailingSlash
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $path = $request->path(); // Use ->path() instead of ->getPathInfo()
-
-        // Early return for homepage (empty path) or already has slash
-        if ($path === '' || str_ends_with($path, '/')) {
+        // Only force trailing slash for GET requests
+        if ($request->method() !== 'GET') {
             return $next($request);
         }
 
-        // Early return for files (e.g., .css, .js, .png)
+        $path = $request->path(); // e.g., 'about', 'about/'
+
+        // Skip homepage
+        if ($path === '') {
+            return $next($request);
+        }
+
+        // Skip files (like .css, .js, .png, etc.)
         if (str_contains($path, '.') && preg_match('/\.\w+$/', $path)) {
             return $next($request);
         }
 
-        // Force redirect with trailing slash
-        $url = $request->fullUrl();
-        if (!str_ends_with($url, '/')) {
-            $url .= '/';
+        // Skip if already ends with a slash
+        if (str_ends_with($path, '/')) {
+            return $next($request);
         }
 
-        return redirect($url, 301);
+        // Force redirect with trailing slash
+        return redirect($request->fullUrl() . '/', 301);
     }
 }
