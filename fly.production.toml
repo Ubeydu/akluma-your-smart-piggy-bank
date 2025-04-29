@@ -28,6 +28,10 @@ console_command = 'php /var/www/html/artisan tinker'
   auto_start_machines = true
   min_machines_running = 1
   processes = ['app']
+  [[http_service.redirects]]
+    source = "www.akluma.com"
+    destination = "https://akluma.com"
+    status_code = 301
 
 [[vm]]
   memory = '1gb'

@@ -1,0 +1,3 @@
+middleware registration file:
+
+bootstrap/app.php
