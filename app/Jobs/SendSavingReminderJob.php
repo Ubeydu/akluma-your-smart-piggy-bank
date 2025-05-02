@@ -83,8 +83,6 @@ class SendSavingReminderJob implements ShouldQueue
 
         Log::info('📬 Reminder Job started for user ID ' . $this->userId . ' and saving ID ' . $this->saving->id);
 
-        throw new \Exception("💣 Simulated failure for testing the failed() method");
-
         if (!$user || !$piggyBank) {
             Log::error("Could not find user or piggy bank for saving reminder", [
                 'saving_id' => $saving->id,
