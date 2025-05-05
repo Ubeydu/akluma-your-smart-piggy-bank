@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class RetryFailedReminders extends Command
 {
@@ -72,12 +73,44 @@ class RetryFailedReminders extends Command
                 $notificationStatuses['email']['sent'] : false;
             $emailAttempts = isset($notificationAttempts['email']) ? $notificationAttempts['email'] : 0;
 
-            if ($emailAttempts > 0 && !$emailSent && $emailAttempts < 3) {
+//            if ($emailAttempts > 0 && !$emailSent && $emailAttempts < 3) {
+//                $this->info("Dispatching retry job for saving #{$saving->id} (Attempt #{$emailAttempts})");
+//
+//                // Use the new job to handle the email sending
+//                try {
+//                    // Dispatch the job instead of directly queueing
+//                    SendSavingReminderJob::dispatch($saving);
+//
+//                    Log::info("🔁 Retrying reminder for saving ID {$saving->id} from RetryFailedReminders");
+//
+//                    $retryCount++;
+//
+//                    $this->info("Successfully dispatched retry job for saving #{$saving->id}");
+//                } catch (\Exception $e) {
+//                    $this->error("Failed to dispatch retry job for saving #{$saving->id}: {$e->getMessage()}");
+//                    Log::error("Failed to dispatch retry job", [
+//                        'saving_id' => $saving->id,
+//                        'exception' => $e->getMessage()
+//                    ]);
+//                }
+//            } else {
+//                $this->info("Skipping saving #{$saving->id}: " .
+//                    ($emailSent ? "already sent" :
+//                        ($emailAttempts >= 3 ? "too many attempts ({$emailAttempts})" :
+//                            "no previous attempts")));
+//            }
+
+            if ($emailAttempts > 0 && !$emailSent) {
+                if ($emailAttempts >= 100) {
+                    Log::alert("🚨 Saving #{$saving->id} has {$emailAttempts} failed email attempts and still not sent.");
+                    Mail::to('your@email.com')->send(
+                        new \App\Mail\AdminRetryAlert($saving, $emailAttempts)
+                    );
+                }
+
                 $this->info("Dispatching retry job for saving #{$saving->id} (Attempt #{$emailAttempts})");
 
-                // Use the new job to handle the email sending
                 try {
-                    // Dispatch the job instead of directly queueing
                     SendSavingReminderJob::dispatch($saving);
 
                     Log::info("🔁 Retrying reminder for saving ID {$saving->id} from RetryFailedReminders");
@@ -93,11 +126,13 @@ class RetryFailedReminders extends Command
                     ]);
                 }
             } else {
-                $this->info("Skipping saving #{$saving->id}: " .
-                    ($emailSent ? "already sent" :
-                        ($emailAttempts >= 3 ? "too many attempts ({$emailAttempts})" :
-                            "no previous attempts")));
+                $reason = $emailSent
+                    ? "already sent"
+                    : ($emailAttempts === 0 ? "no previous attempts" : "unknown condition");
+
+                $this->info("Skipping saving #{$saving->id}: {$reason}");
             }
+
 
             // For future SMS implementation
             // FUTURE: Add similar logic for SMS retries here
