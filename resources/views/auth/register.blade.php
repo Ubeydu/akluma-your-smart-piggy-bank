@@ -57,12 +57,39 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        <!-- Policy Checkboxes -->
+        <div class="mt-4">
+            <label class="flex items-start space-x-2">
+                <input type="checkbox" name="terms" id="terms"
+                       class="mt-1 border-gray-300 focus:ring-indigo-500 rounded"
+                       onchange="toggleRegisterButton()" />
+                <span class="text-sm text-gray-700">
+            {!! __('auth.accept_terms', ['url' => route('terms')]) !!}
+        </span>
+            </label>
+            <x-input-error :messages="$errors->get('terms')" class="mt-2" />
+        </div>
+
+        <div class="mt-2">
+            <label class="flex items-start space-x-2">
+                <input type="checkbox" name="privacy" id="privacy"
+                       class="mt-1 border-gray-300 focus:ring-indigo-500 rounded"
+                       onchange="toggleRegisterButton()" />
+                <span class="text-sm text-gray-700">
+            {!! __('auth.accept_privacy', ['url' => route('privacy')]) !!}
+        </span>
+            </label>
+            <x-input-error :messages="$errors->get('privacy')" class="mt-2" />
+        </div>
+
+
+
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
             </a>
 
-            <x-primary-button class="ms-4">
+            <x-primary-button class="ms-4" id="register-btn" disabled>
                 {{ __('Register') }}
             </x-primary-button>
         </div>
@@ -94,4 +121,7 @@
 
 
     </form>
+
+    @vite(['resources/js/register-policy-check.js'])
+
 </x-guest-layout>

@@ -140,9 +140,68 @@ class SendSavingReminders extends Command
         }
     }
 
-    /**
-     * Process an individual scheduled saving
-     */
+//    /**
+//     * Process an individual scheduled saving
+//     */
+//    protected function processSaving(ScheduledSaving $saving): void
+//    {
+//        Log::info("🧪 Entering processSaving() for saving ID {$saving->id}");
+//
+//        $piggyBank = $saving->piggyBank;
+//        $user = $piggyBank->user;
+//
+//        // Skip if user has no email
+//        if (empty($user->email)) {
+//            $this->info("Skipping saving #{$saving->id}: user has no email address");
+//            return;
+//        }
+//
+//        // Skip if already sent
+//        $notificationStatuses = json_decode($saving->notification_statuses, true);
+//        if (!is_array($notificationStatuses)) {
+//            // Initialize with default structure if null or invalid
+//            $notificationStatuses = [
+//                'email' => ['sent' => false, 'sent_at' => null],
+//                'sms' => ['sent' => false, 'sent_at' => null],
+//                'push' => ['sent' => false, 'sent_at' => null]
+//            ];
+//            $saving->notification_statuses = json_encode($notificationStatuses);
+//            $saving->save();
+//            $this->info("Fixed missing notification_statuses for saving #{$saving->id}");
+//        } else if ($notificationStatuses['email']['sent']) {
+//            $this->info("Skipping saving #{$saving->id}: email already sent");
+//            return;
+//        }
+//
+//        // Check notification preferences
+//        $preferences = $this->getNotificationPreferences($piggyBank);
+//        if (!isset($preferences['email']) || !$preferences['email']['enabled']) {
+//            $this->info("Skipping saving #{$saving->id}: email notifications disabled");
+//            return;
+//        }
+//
+//        try {
+//            // Dispatch the job instead of directly queueing the email
+//            \App\Jobs\SendSavingReminderJob::dispatch($saving);
+//
+//            Log::info("✅ Dispatched reminder for saving ID {$saving->id} from SendSavingReminders");
+//
+//            $this->info("Successfully dispatched email job for saving #{$saving->id}");
+//
+//            // For future SMS implementation
+//            // FUTURE: If user has SMS enabled and is on paid plan, send SMS here
+//
+//        } catch (\Exception $e) {
+//            $this->error("Failed to dispatch email job for saving #{$saving->id}: {$e->getMessage()}");
+//            Log::error("Failed to dispatch saving reminder job", [
+//                'saving_id' => $saving->id,
+//                'piggy_bank_id' => $piggyBank->id,
+//                'user_id' => $user->id,
+//                'exception' => $e->getMessage()
+//            ]);
+//        }
+//    }
+
     protected function processSaving(ScheduledSaving $saving): void
     {
         Log::info("🧪 Entering processSaving() for saving ID {$saving->id}");
@@ -168,8 +227,9 @@ class SendSavingReminders extends Command
             $saving->notification_statuses = json_encode($notificationStatuses);
             $saving->save();
             $this->info("Fixed missing notification_statuses for saving #{$saving->id}");
-        } else if ($notificationStatuses['email']['sent']) {
-            $this->info("Skipping saving #{$saving->id}: email already sent");
+        } else if ($notificationStatuses['email']['sent'] || ($notificationStatuses['email']['processing'] ?? false)) {
+            $this->info("Skipping saving #{$saving->id}: email already " .
+                ($notificationStatuses['email']['sent'] ? "sent" : "being processed"));
             return;
         }
 
@@ -181,17 +241,23 @@ class SendSavingReminders extends Command
         }
 
         try {
-            // Dispatch the job instead of directly queueing the email
+            // IMPORTANT: Mark as processing to prevent duplicate dispatches
+            $notificationStatuses['email']['processing'] = true;
+            $saving->notification_statuses = json_encode($notificationStatuses);
+            $saving->save();
+
+            // Dispatch the job
             \App\Jobs\SendSavingReminderJob::dispatch($saving);
 
             Log::info("✅ Dispatched reminder for saving ID {$saving->id} from SendSavingReminders");
-
             $this->info("Successfully dispatched email job for saving #{$saving->id}");
 
-            // For future SMS implementation
-            // FUTURE: If user has SMS enabled and is on paid plan, send SMS here
-
         } catch (\Exception $e) {
+            // Reset processing flag in case of error
+            $notificationStatuses['email']['processing'] = false;
+            $saving->notification_statuses = json_encode($notificationStatuses);
+            $saving->save();
+
             $this->error("Failed to dispatch email job for saving #{$saving->id}: {$e->getMessage()}");
             Log::error("Failed to dispatch saving reminder job", [
                 'saving_id' => $saving->id,

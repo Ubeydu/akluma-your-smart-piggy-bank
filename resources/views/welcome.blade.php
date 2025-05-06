@@ -400,6 +400,13 @@
                                 Ubeydullah Keleş
                             </a>
                         </span>
+
+                        <div class="mt-2">
+                            <a href="{{ route('terms') }}" class="hover:underline">{{ __('terms.title') }}</a>
+                            &nbsp;|&nbsp;
+                            <a href="{{ route('privacy') }}" class="hover:underline">{{ __('privacy.title') }}</a>
+                        </div>
+
                     </footer>
                 </div>
             </div>

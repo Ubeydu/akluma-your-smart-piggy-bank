@@ -128,6 +128,7 @@ class SendSavingReminderJob implements ShouldQueue
 
         $notificationStatuses['email']['sent'] = true;
         $notificationStatuses['email']['sent_at'] = Carbon::now()->toDateTimeString();
+        $notificationStatuses['email']['processing'] = false;
 
         // Update attempt count
         $notificationAttempts = json_decode($saving->notification_attempts, true);
@@ -161,6 +162,11 @@ class SendSavingReminderJob implements ShouldQueue
     {
         $saving = $this->saving->fresh();
 
+        $notificationStatuses = json_decode($saving->notification_statuses, true);
+        if (is_array($notificationStatuses) && isset($notificationStatuses['email']['processing'])) {
+            $notificationStatuses['email']['processing'] = false;
+        }
+
         // Only update attempt count in case of failure, don't mark as sent
         $notificationAttempts = json_decode($saving->notification_attempts, true);
         if (!is_array($notificationAttempts)) {
@@ -172,7 +178,9 @@ class SendSavingReminderJob implements ShouldQueue
         }
         $notificationAttempts['email'] += 1;
 
+        $saving->notification_statuses = json_encode($notificationStatuses);
         $saving->notification_attempts = json_encode($notificationAttempts);
+
         $saving->save();
 
         Log::error("Failed to send saving reminder email", [
