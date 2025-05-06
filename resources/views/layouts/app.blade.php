@@ -88,4 +88,5 @@
         </div>
     </div>
 
+    @vite(['resources/js/help-popup.js'])
 </html>
