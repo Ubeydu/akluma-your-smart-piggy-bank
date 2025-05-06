@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduledSavingController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserPreferencesController;
+use App\Models\User;
 use Brick\Money\Money;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
@@ -110,10 +111,14 @@ Route::get('currency/switch/{currency}', function ($currency) {
         // Store the currency in session
         session(['currency' => $currency]);
 
+        // Avoid PhpStorm warning about dynamic properties in PHP 8.2+
+        // setAttribute() is the safe Eloquent way to set model attributes
+
         // Store in user record if authenticated
         if (auth()->check()) {
+            /** @var User $user */
             $user = auth()->user();
-            $user->currency = $currency;
+            $user->setAttribute('currency', $currency);
             $user->save();
         }
 
@@ -254,6 +259,9 @@ Route::get('/format-date', function (Request $request) {
 Route::post('/update-timezone', [UserPreferencesController::class, 'updateTimezone'])
     ->name('update-timezone')
     ->middleware(['auth', 'verified']);
+
+Route::view('/terms-of-service', 'legal.terms')->name('terms');
+Route::view('/privacy-policy', 'legal.privacy')->name('privacy');
 
 if (app()->environment('local')) {
     Route::get('/test-money', function () {

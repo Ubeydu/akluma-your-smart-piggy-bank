@@ -36,6 +36,8 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'timezone' => ['nullable', 'string'],
             'language' => ['nullable', 'string'],
+            'terms' => ['accepted'],
+            'privacy' => ['accepted'],
         ]);
 
         // Get current locale from session or default
@@ -47,6 +49,8 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'timezone' => $request->timezone ?? 'UTC',
             'language' => $currentLocale,
+            'accepted_terms_at' => $request->boolean('terms') ? now() : null,
+            'accepted_privacy_at' => $request->boolean('privacy') ? now() : null,
         ]);
 
         event(new Registered($user));

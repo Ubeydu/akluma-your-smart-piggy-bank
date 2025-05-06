@@ -1,3 +1,24 @@
 middleware registration file:
 
 bootstrap/app.php
+
+to delete all data in a table run the following commands in order and one by one:
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+DELETE FROM piggy_banks WHERE id IN (
+    SELECT * FROM (
+        SELECT id FROM piggy_banks
+    ) AS temp_ids
+);
+
+DELETE FROM users WHERE id IN (
+    SELECT * FROM (
+        SELECT id FROM users
+    ) AS temp_ids
+);
+
+ALTER TABLE piggy_banks AUTO_INCREMENT = 1;
+ALTER TABLE users AUTO_INCREMENT = 1;
+
+SET FOREIGN_KEY_CHECKS = 1;

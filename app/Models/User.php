@@ -31,6 +31,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'timezone',
         'language',
         'currency',
+        'accepted_terms_at',
+        'accepted_privacy_at',
     ];
 
     /**
@@ -54,6 +56,8 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'notification_preferences' => 'array',
+            'accepted_terms_at' => 'datetime',
+            'accepted_privacy_at' => 'datetime',
         ];
     }
 
