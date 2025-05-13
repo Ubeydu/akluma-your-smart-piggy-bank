@@ -121,7 +121,7 @@
     "privacy.cookies_title": "Cookies",
     "privacy.cookies_text": "Only essential cookies for login and session handling.",
     "privacy.thirdparties_title": "Third Parties",
-    "privacy.thirdparties_text": "I use Mailgun for emails, Fly.io for hosting, Grafana for uptime logs, and Google Search Console for anonymous stats.",
+    "privacy.thirdparties_text": "I use [Email Provider] for emails, Fly.io for hosting, Grafana for uptime logs, and Google Search Console for anonymous stats.",
     "privacy.children_title": "Children",
     "privacy.children_text": "This site is not meant for children under 13. If you're a parent and believe your child signed up, contact me.",
     "privacy.storage_title": "Data Storage",
