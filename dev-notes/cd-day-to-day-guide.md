@@ -44,7 +44,7 @@ composer run dev
 ```bash
 git add .
 git commit -m "Add: some feature"
-git push origin feature/some-feature
+git push --set-upstream origin feature/some-feature
 ```
 
 ---

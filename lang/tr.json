@@ -340,7 +340,7 @@
     "privacy.cookies_title": "Çerezler",
     "privacy.cookies_text": "Sadece oturum açma ve oturum yönetimi için gerekli çerezler kullanılır.",
     "privacy.thirdparties_title": "Üçüncü Taraflar",
-    "privacy.thirdparties_text": "E-posta gönderimi için Mailgun, hosting için Fly.io, kesinti kayıtları için Grafana ve anonim istatistikler için Google Search Console kullanıyorum.",
+    "privacy.thirdparties_text": "E-posta gönderimi için [Email Provider], hosting için Fly.io, kesinti kayıtları için Grafana ve anonim istatistikler için Google Search Console kullanıyorum.",
     "privacy.children_title": "Çocuklar",
     "privacy.children_text": "Bu site 13 yaş altındaki çocuklar için tasarlanmadı. Ebeveynsen ve çocuğunun kayıt olduğunu düşünüyorsan, bana ulaş.",
     "privacy.storage_title": "Veri Saklama",
