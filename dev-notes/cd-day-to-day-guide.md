@@ -57,7 +57,16 @@ git push --set-upstream origin feature/some-feature
 
 ---
 
-### ✅ Step 4: Sync `dev` with `main` (if needed)
+### ✅ Step 4: Sync Local `dev` After GitHub Merge
+
+```bash
+git checkout dev
+git pull origin dev # <--- Pull the changes you just merged on GitHub into your local dev
+```
+
+---
+
+### ✅ Step 5: Sync `dev` with `main` (if needed)
 
 ```bash
 git checkout dev
@@ -69,7 +78,7 @@ Do this only if `main` has commits `dev` hasn’t seen yet.
 
 ---
 
-### ✅ Step 5: Deploy to Staging
+### ✅ Step 6: Deploy to Staging
 
 ```bash
 git checkout main
@@ -87,7 +96,7 @@ Visit the site and manually verify everything works.
 
 ---
 
-### ✅ Step 6: Promote to Production
+### ✅ Step 7: Promote to Production
 
 ```bash
 git checkout prod
