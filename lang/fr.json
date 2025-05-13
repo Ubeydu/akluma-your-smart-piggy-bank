@@ -340,7 +340,7 @@
     "privacy.cookies_title": "Cookies",
     "privacy.cookies_text": "Uniquement des cookies essentiels pour la connexion et la gestion de session.",
     "privacy.thirdparties_title": "Services tiers",
-    "privacy.thirdparties_text": "J'utilise Mailgun pour les e-mails, Fly.io pour l'hébergement, Grafana pour les journaux de disponibilité, et Google Search Console pour des statistiques anonymes.",
+    "privacy.thirdparties_text": "J'utilise [Email Provider] pour les e-mails, Fly.io pour l'hébergement, Grafana pour les journaux de disponibilité, et Google Search Console pour des statistiques anonymes.",
     "privacy.children_title": "Enfants",
     "privacy.children_text": "Ce site n'est pas destiné aux enfants de moins de 13 ans. Si vous êtes parent et pensez que votre enfant s’est inscrit, contactez-moi.",
     "privacy.storage_title": "Stockage des données",
