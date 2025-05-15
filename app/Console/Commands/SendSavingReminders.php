@@ -206,65 +206,83 @@ class SendSavingReminders extends Command
     {
         Log::info("🧪 Entering processSaving() for saving ID {$saving->id}");
 
-        $piggyBank = $saving->piggyBank;
-        $user = $piggyBank->user;
-
-        // Skip if user has no email
-        if (empty($user->email)) {
-            $this->info("Skipping saving #{$saving->id}: user has no email address");
-            return;
-        }
-
-        // Skip if already sent
-        $notificationStatuses = json_decode($saving->notification_statuses, true);
-        if (!is_array($notificationStatuses)) {
-            // Initialize with default structure if null or invalid
-            $notificationStatuses = [
-                'email' => ['sent' => false, 'sent_at' => null],
-                'sms' => ['sent' => false, 'sent_at' => null],
-                'push' => ['sent' => false, 'sent_at' => null]
-            ];
-            $saving->notification_statuses = json_encode($notificationStatuses);
-            $saving->save();
-            $this->info("Fixed missing notification_statuses for saving #{$saving->id}");
-        } else if ($notificationStatuses['email']['sent'] || ($notificationStatuses['email']['processing'] ?? false)) {
-            $this->info("Skipping saving #{$saving->id}: email already " .
-                ($notificationStatuses['email']['sent'] ? "sent" : "being processed"));
-            return;
-        }
-
-        // Check notification preferences
-        $preferences = $this->getNotificationPreferences($piggyBank);
-        if (!isset($preferences['email']) || !$preferences['email']['enabled']) {
-            $this->info("Skipping saving #{$saving->id}: email notifications disabled");
-            return;
-        }
-
         try {
-            // IMPORTANT: Mark as processing to prevent duplicate dispatches
-            $notificationStatuses['email']['processing'] = true;
-            $saving->notification_statuses = json_encode($notificationStatuses);
-            $saving->save();
+            DB::transaction(function () use ($saving) {
 
-            // Dispatch the job
-            \App\Jobs\SendSavingReminderJob::dispatch($saving);
+            // 🔥 Lock the saving in the database
+            $lockedSaving = ScheduledSaving::where('id', $saving->id)->lockForUpdate()->first();
 
-            Log::info("✅ Dispatched reminder for saving ID {$saving->id} from SendSavingReminders");
-            $this->info("Successfully dispatched email job for saving #{$saving->id}");
+            if (!$lockedSaving) {
+                $this->info("Saving no longer exists after lock attempt.");
+                return;
+            }
 
+            $piggyBank = $lockedSaving->piggyBank;
+            $user = $piggyBank->user;
+
+            // Skip if user has no email
+            if (empty($user->email)) {
+                $this->info("Skipping saving #{$lockedSaving->id}: user has no email address");
+                return;
+            }
+
+            // Skip if already sent
+            $notificationStatuses = json_decode($lockedSaving->notification_statuses, true);
+            if (!is_array($notificationStatuses)) {
+                // Initialize with default structure if null or invalid
+                $notificationStatuses = [
+                    'email' => ['sent' => false, 'sent_at' => null],
+                    'sms' => ['sent' => false, 'sent_at' => null],
+                    'push' => ['sent' => false, 'sent_at' => null]
+                ];
+                $lockedSaving->notification_statuses = json_encode($notificationStatuses);
+                $lockedSaving->save();
+                $this->info("Fixed missing notification_statuses for saving #{$lockedSaving->id}");
+            } else if ($notificationStatuses['email']['sent'] || ($notificationStatuses['email']['processing'] ?? false)) {
+                $this->info("Skipping saving #{$lockedSaving->id}: email already " .
+                    ($notificationStatuses['email']['sent'] ? "sent" : "being processed"));
+                return;
+            }
+
+            // Check notification preferences
+            $preferences = $this->getNotificationPreferences($piggyBank);
+            if (!isset($preferences['email']) || !$preferences['email']['enabled']) {
+                $this->info("Skipping saving #{$lockedSaving->id}: email notifications disabled");
+                return;
+            }
+
+            try {
+                // IMPORTANT: Mark as processing to prevent duplicate dispatches
+                $notificationStatuses['email']['processing'] = true;
+                $lockedSaving->notification_statuses = json_encode($notificationStatuses);
+                $lockedSaving->save();
+
+                // Dispatch the job
+                \App\Jobs\SendSavingReminderJob::dispatch($lockedSaving);
+
+                Log::info("✅ Dispatched reminder for saving ID {$lockedSaving->id} from SendSavingReminders");
+                $this->info("Successfully dispatched email job for saving #{$lockedSaving->id}");
+
+            } catch (\Exception $e) {
+                // Reset processing flag in case of error
+                $notificationStatuses['email']['processing'] = false;
+                $lockedSaving->notification_statuses = json_encode($notificationStatuses);
+                $lockedSaving->save();
+
+                $this->error("Failed to dispatch email job for saving #{$lockedSaving->id}: {$e->getMessage()}");
+                Log::error("Failed to dispatch saving reminder job", [
+                    'saving_id' => $lockedSaving->id,
+                    'piggy_bank_id' => $piggyBank->id,
+                    'user_id' => $user->id,
+                    'exception' => $e->getMessage()
+                ]);
+            }
+            }, 3); // 3 retry attempts
         } catch (\Exception $e) {
-            // Reset processing flag in case of error
-            $notificationStatuses['email']['processing'] = false;
-            $saving->notification_statuses = json_encode($notificationStatuses);
-            $saving->save();
-
-            $this->error("Failed to dispatch email job for saving #{$saving->id}: {$e->getMessage()}");
-            Log::error("Failed to dispatch saving reminder job", [
-                'saving_id' => $saving->id,
-                'piggy_bank_id' => $piggyBank->id,
-                'user_id' => $user->id,
-                'exception' => $e->getMessage()
+            Log::error("Transaction failed for saving #{$saving->id}", [
+                'exception' => $e->getMessage(),
             ]);
+            $this->error("Transaction failed for saving #{$saving->id}: {$e->getMessage()}");
         }
     }
 
