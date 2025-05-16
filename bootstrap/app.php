@@ -2,7 +2,6 @@
 
 use App\Http\Middleware\CurrencySwitcher;
 use App\Http\Middleware\ConditionalLayoutMiddleware;
-use App\Http\Middleware\DetectLanguage;
 use App\Http\Middleware\LanguageSwitcher;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,10 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: LanguageSwitcher::class);
         $middleware->web(append: CurrencySwitcher::class);
-        $middleware->web(append: DetectLanguage::class);
+
 
         $middleware->alias([
             'conditional.layout' => ConditionalLayoutMiddleware::class,
+            'locale' => \App\Http\Middleware\SetLocaleFromUrl::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
