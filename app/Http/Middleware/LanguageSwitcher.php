@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App;
 use Closure;
 use Illuminate\Http\Request;
+use Session;
 use Symfony\Component\HttpFoundation\Response;
 
 class LanguageSwitcher
@@ -11,12 +13,12 @@ class LanguageSwitcher
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(Request): (Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         $availableLanguages = config('app.available_languages', []);
-        $locale = \Session::get('locale');
+        $locale = Session::get('locale');
 
 //        \Log::info('Debugging Locale Check:', [
 //            'locale' => $locale,
@@ -24,7 +26,7 @@ class LanguageSwitcher
 //        ]);
 
         if ($locale && in_array($locale, $availableLanguages)) {
-            \App::setLocale($locale);
+            App::setLocale($locale);
         }
 
         return $next($request);

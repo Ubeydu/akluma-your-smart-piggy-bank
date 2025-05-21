@@ -8,13 +8,13 @@ const STATUS_TRANSITIONS = {
         },
         'paused': {
             type: 'PWUC',
-            endpoint: '/piggy-banks/{id}/pause',
+            endpoint: '/{locale}/piggy-banks/{id}/pause',
             confirmMessage: window.piggyBankTranslations['confirm_pause'],
             successMessage: window.piggyBankTranslations['piggy_bank_paused_info']
         },
         'cancelled': {
             type: 'PWUC',
-            endpoint: '/piggy-banks/{id}/update-status-cancelled',
+            endpoint: '/{locale}/piggy-banks/{id}/update-status-cancelled',
             method: 'PATCH',
             confirmMessage: window.piggyBankTranslations['confirm_cancel'],
             successMessage: window.piggyBankTranslations['piggy_bank_cancelled']
@@ -23,7 +23,7 @@ const STATUS_TRANSITIONS = {
     'paused': {
         'active': {
             type: 'PWUC',
-            endpoint: '/piggy-banks/{id}/resume',
+            endpoint: '/{locale}/piggy-banks/{id}/resume',
             confirmMessage: window.piggyBankTranslations['confirm_resume'],
             successMessage: window.piggyBankTranslations['piggy_bank_resumed_schedule_not_updated_info']
         },
@@ -32,7 +32,7 @@ const STATUS_TRANSITIONS = {
         },
         'cancelled': {
             type: 'PWUC',
-            endpoint: '/piggy-banks/{id}/update-status-cancelled',
+            endpoint: '/{locale}/piggy-banks/{id}/update-status-cancelled',
             method: 'PATCH',
             confirmMessage: window.piggyBankTranslations['confirm_cancel_paused'],
             successMessage: window.piggyBankTranslations['piggy_bank_cancelled']
@@ -64,6 +64,10 @@ const STATUS_TRANSITIONS = {
 
 // console.log('Full STATUS_TRANSITIONS:', STATUS_TRANSITIONS);
 
+function getCurrentLocale() {
+    return document.documentElement.lang || 'en';
+}
+
 
 async function handleCheckboxChange(checkbox) {
     const savingId = checkbox.dataset.savingId;
@@ -72,7 +76,8 @@ async function handleCheckboxChange(checkbox) {
     const newStatus = checkbox.checked ? 'saved' : 'pending';
 
     try {
-        const response = await fetch(`/scheduled-savings/${savingId}`, {
+        const locale = getCurrentLocale();
+        const response = await fetch(`/${locale}/scheduled-savings/${savingId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -225,7 +230,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     dialogContainer._x_dataStack[0].statusChangeMessage = transition.confirmMessage;
                     dialogContainer._x_dataStack[0].statusChangeAction = async function() {
                         try {
-                            const endpoint = transition.endpoint.replace('{id}', piggyBankId);
+                            const locale = getCurrentLocale();
+                            const endpoint = transition.endpoint
+                                .replace('{locale}', locale)
+                                .replace('{id}', piggyBankId);
                             console.log('Making request to endpoint:', endpoint);
 
                             await updatePiggyBankStatus(piggyBankId, endpoint, currentStatus, transition.method || 'PATCH');
@@ -381,7 +389,8 @@ async function updateUIElements(piggyBankId, data) {
 // Helper function to update schedule
 async function updateSchedule(piggyBankId, statusData) {  // <-- Accept statusData parameter
     try {
-        const response = await fetch(`/piggy-banks/${piggyBankId}/schedule`);
+        const locale = getCurrentLocale();
+        const response = await fetch(`/${locale}/piggy-banks/${piggyBankId}/schedule`);
         const html = await response.text();
 
         const scheduleContainer = document.getElementById('schedule-container');

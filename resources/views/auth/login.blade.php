@@ -2,7 +2,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('localized.login', ['locale' => app()->getLocale()]) }}">
         @csrf
 
         <!-- Email Address -->
@@ -38,17 +38,17 @@
             </x-primary-button>
 
             <div class="w-full flex flex-wrap justify-end gap-2">
-                @if (Route::has('register'))
+                @if (Route::has('localized.register'))
                     <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                       href="{{ route('register') }}">
+                       href="{{ route('localized.register', ['locale' => app()->getLocale()]) }}">
                         {{ __('Never registered?') }}
                     </a>
                     <span class="text-gray-600">{{ __('or') }}</span>
                 @endif
 
-                @if (Route::has('password.request'))
+                @if (Route::has('localized.password.request'))
                     <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                       href="{{ route('password.request') }}">
+                       href="{{ route('localized.password.request', ['locale' => app()->getLocale()]) }}">
                         {{ __('Forgot your password?') }}
                     </a>
                 @endif

@@ -353,5 +353,7 @@
     "privacy.changes_text": "Politika değişirse, sana e-posta ile bildiriyor olacağım.",
     "privacy.contact_title": "İletişim",
     "privacy.contact_intro": "Bana şu adresten e-posta atabilirsin:",
-    "privacy.contact_linkedin": " ya da LinkedIn üzerinden bana ulaşabilirsin:"
+    "privacy.contact_linkedin": " ya da LinkedIn üzerinden bana ulaşabilirsin:",
+    "auth.accept_terms": "<a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Hizmet Şartları</a>’nı kabul ediyorum.",
+    "auth.accept_privacy": "<a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Gizlilik Politikasını</a> kabul ediyorum."
 }

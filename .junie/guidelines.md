@@ -11,6 +11,8 @@ It is not Kernel.php. Kernel.php exists in older Laravel versions. Mine is Larav
 - Whenever I give you a task, first try to guess what type of task it is and then follow the rules outlined below accordingly, do this each and every time:
 
 ## Task: General Coding & Implementation
+- Always make code change suggestions in "change this, to this" format. Meaning, always, explicitly show, exactly which
+- lines of code that need to be changed, and then what they should be changed to.
 - Nothing more nothing less.
 - Let's not touch anything else while doing this. I need surgical attention.
 - Stick to what exactly I am asking and do not propose optimizations unless I explicitly ask for.

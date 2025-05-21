@@ -100,19 +100,114 @@ document.addEventListener("DOMContentLoaded", function () {
             //     responseData: data
             // });
 
-            const flashResponse = await fetch('/create-piggy-bank/check-flash-messages');
-            const flashHtml = await flashResponse.text();
+            // const flashResponse = await fetch('/create-piggy-bank/check-flash-messages');
+            // const flashHtml = await flashResponse.text();
+            //
+            // // Find existing flash message container
+            // let flashContainer = document.querySelector('div.fixed.inset-x-0.top-4');
+            //
+            // if (flashContainer) {
+            //     // If container exists, update it
+            //     flashContainer.outerHTML = flashHtml;
+            // } else {
+            //     // If no container exists, create a new one at the top of the body
+            //     document.body.insertAdjacentHTML('afterbegin', flashHtml);
+            // }
 
-            // Find existing flash message container
-            let flashContainer = document.querySelector('div.fixed.inset-x-0.top-4');
+            /**
+             * Fetches flash messages via AJAX and displays them safely without triggering unwanted side effects.
+             * This function uses a JSON endpoint to avoid loading HTML that could contain scripts or components.
+             * @async
+             * @returns {Promise<void>}
+             */
+            const fetchFlashMessages = async () => {
+                try {
+                    const response = await fetch(`/${window.Laravel.locale}/create-piggy-bank/get-flash-messages`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
 
-            if (flashContainer) {
-                // If container exists, update it
-                flashContainer.outerHTML = flashHtml;
-            } else {
-                // If no container exists, create a new one at the top of the body
-                document.body.insertAdjacentHTML('afterbegin', flashHtml);
-            }
+                    if (!response.ok) return;
+
+                    const flashData = await response.json();
+
+                    // Check if we have any messages
+                    if (!flashData.success && !flashData.error && !flashData.warning && !flashData.info) {
+                        return;
+                    }
+
+                    const container = document.createElement('div');
+                    container.className = 'fixed inset-x-0 top-4 z-50 mx-4 sm:mx-auto sm:max-w-md';
+
+                    // Helper function to create message
+                    const createMessage = (type, text) => {
+                        if (!text) return null;
+
+                        const colors = {
+                            success: { bg: 'bg-green-100', border: 'border-green-200', text: 'text-green-800', button: 'text-green-600 hover:text-green-800' },
+                            error: { bg: 'bg-red-100', border: 'border-red-200', text: 'text-red-800', button: 'text-red-600 hover:text-red-800' },
+                            warning: { bg: 'bg-yellow-100', border: 'border-yellow-200', text: 'text-yellow-800', button: 'text-yellow-600 hover:text-yellow-800' },
+                            info: { bg: 'bg-blue-100', border: 'border-blue-200', text: 'text-blue-800', button: 'text-blue-600 hover:text-blue-800' }
+                        };
+
+                        const color = colors[type];
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `relative rounded-md ${color.bg} border ${color.border} p-4 shadow-md mb-2`;
+
+                        const closeBtn = document.createElement('button');
+                        closeBtn.className = `absolute top-2 right-2 ${color.button} cursor-pointer`;
+                        closeBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            `;
+                        closeBtn.addEventListener('click', () => messageDiv.remove());
+
+                        const textP = document.createElement('p');
+                        textP.className = `${color.text} text-sm font-medium pr-6`;
+                        textP.textContent = text;
+
+                        messageDiv.appendChild(closeBtn);
+                        messageDiv.appendChild(textP);
+
+                        return messageDiv;
+                    };
+
+                    // Add all message types
+                    const successMsg = createMessage('success', flashData.success);
+                    const errorMsg = createMessage('error', flashData.error);
+                    const warningMsg = createMessage('warning', flashData.warning);
+                    const infoMsg = createMessage('info', flashData.info);
+
+                    // Add messages to container
+                    [successMsg, errorMsg, warningMsg, infoMsg].forEach(msg => {
+                        if (msg) container.appendChild(msg);
+                    });
+
+                    // Find existing message and replace, or add to body
+                    const existingContainer = document.querySelector('div.fixed.inset-x-0.top-4');
+                    if (existingContainer) {
+                        existingContainer.replaceWith(container);
+                    } else {
+                        document.body.prepend(container);
+                    }
+
+                    // Auto-hide after 5 seconds
+                    setTimeout(() => {
+                        container.style.opacity = '0';
+                        container.style.transition = 'opacity 0.3s';
+                        setTimeout(() => container.remove(), 300);
+                    }, 5000);
+                } catch (error) {
+                    console.error('Error fetching flash messages:', error);
+                }
+            };
+
+            // Instead of the old flash message code:
+            // const flashResponse = await fetch('/create-piggy-bank/check-flash-messages')...
+            // Use our new safer implementation:
+            await fetchFlashMessages();
 
             const container = document.querySelector('#frequencyOptions .space-y-6');
 

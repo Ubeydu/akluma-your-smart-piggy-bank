@@ -13,7 +13,7 @@
     </div>
 
 
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('localized.register', ['locale' => app()->getLocale()]) }}">
         @csrf
 
         <!-- Name -->
@@ -64,7 +64,7 @@
                        class="mt-1 border-gray-300 focus:ring-indigo-500 rounded"
                        onchange="toggleRegisterButton()" />
                 <span class="text-sm text-gray-700">
-            {!! __('auth.accept_terms', ['url' => route('terms')]) !!}
+            {!! __('auth.accept_terms', ['url' => route('localized.terms', ['locale' => app()->getLocale()])]) !!}
         </span>
             </label>
             <x-input-error :messages="$errors->get('terms')" class="mt-2" />
@@ -76,7 +76,7 @@
                        class="mt-1 border-gray-300 focus:ring-indigo-500 rounded"
                        onchange="toggleRegisterButton()" />
                 <span class="text-sm text-gray-700">
-            {!! __('auth.accept_privacy', ['url' => route('privacy')]) !!}
+            {!! __('auth.accept_privacy', ['url' => route('localized.privacy', ['locale' => app()->getLocale()])]) !!}
         </span>
             </label>
             <x-input-error :messages="$errors->get('privacy')" class="mt-2" />
@@ -85,7 +85,7 @@
 
 
         <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
+            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('localized.login', ['locale' => app()->getLocale()]) }}">
                 {{ __('Already registered?') }}
             </a>
 

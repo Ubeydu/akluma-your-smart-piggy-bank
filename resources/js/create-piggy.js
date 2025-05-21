@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.clearFormAndSwitchCurrency = async function(currency) {
         try {
             // First, make request to clear the form
-            const response = await fetch('/create-piggy-bank/clear', {
+            const response = await fetch(`/${window.Laravel.locale}/create-piggy-bank/clear`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
@@ -259,8 +259,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 // console.log('Empty URL, resetting to default');
                 hideLoading();
                 hideError();
-                currentImage.src = '/images/default_piggy_bank.png';
-                nextImage.src = '/images/default_piggy_bank.png';
+                currentImage.src = window.Laravel.defaultImage || '/images/default_piggy_bank.png';
+                nextImage.src = window.Laravel.defaultImage || '/images/default_piggy_bank.png';
                 return;
             }
 
@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             debounceTimer = setTimeout(() => {
                 // console.log('Making fetch request');
-                fetch('/create-piggy-bank/api/link-preview', {
+                fetch(`/${window.Laravel.locale}/create-piggy-bank/api/link-preview`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     .catch((error) => {
                         console.error('Error:', error);
                         showError();
-                        updatePreviewImage('/images/default_piggy_bank.png');
+                        updatePreviewImage(window.Laravel.defaultImage || '/images/default_piggy_bank.png');
                     })
             }, 500);
         });

@@ -36,8 +36,10 @@ class PiggyBankController extends Controller
     }
 
 
-    public function update(Request $request, PiggyBank $piggyBank)
+    public function update(Request $request, $piggy_id)
     {
+        $piggyBank = PiggyBank::findOrFail($piggy_id);
+
         if (! Gate::allows('update', $piggyBank)) {
             abort(403);
         }
@@ -55,87 +57,55 @@ class PiggyBankController extends Controller
         ]);
 
         return redirect()
-            ->route('piggy-banks.show', $piggyBank)
+            ->route('localized.piggy-banks.show', ['locale' => app()->getLocale(), 'piggy_id' => $piggyBank->id])
             ->with('status', __('You updated your piggy bank successfully'))
             ->with('success', __('You updated your piggy bank successfully'));
     }
 
 
-    public function show(PiggyBank $piggyBank): View
+    public function show($piggy_id): View
     {
-        if (! Gate::allows('update', $piggyBank)) {
-            abort(403);
-        }
+        try {
+            $piggyBank = PiggyBank::findOrFail($piggy_id);
 
-        if (request()->has('cancelled')) {
-            session()->flash('info', __('edit_cancelled_message'));
-        }
+            if (! Gate::allows('update', $piggyBank)) {
+                \Log::info('Gate check failed');
+                abort(403);
+            }
 
-        return view('piggy-banks.show', [
-            'piggyBank' => $piggyBank
-        ]);
+            if (request()->has('cancelled')) {
+                session()->flash('info', __('edit_cancelled_message'));
+            }
+
+            return view('piggy-banks.show', [
+                'piggyBank' => $piggyBank
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error in show method', ['error' => $e->getMessage()]);
+            throw $e;
+        }
     }
 
 
-    public function cancel(PiggyBank $piggyBank)
+    public function cancel($piggy_id)
     {
+        $piggyBank = PiggyBank::findOrFail($piggy_id);
+
         if (! Gate::allows('update', $piggyBank)) {
             abort(403);
         }
 
         return redirect()
-            ->route('piggy-banks.show', $piggyBank)
+            ->route('localized.piggy-banks.show', ['locale' => app()->getLocale(), 'piggy_id' => $piggyBank->id])
             ->with('status', __('Changes cancelled'))
             ->with('warning', __('You cancelled editing your piggy bank details.'));
     }
 
-//    public function pause(PiggyBank $piggyBank)
-//    {
-//        if ($piggyBank->status !== 'active') {
-//            return response()->json([
-//                'error' => __('Cannot pause piggy bank that is not active.')
-//            ], 422);
-//        }
-//
-//        try {
-//            $piggyBank->update(['status' => 'paused']);
-//
-//            return response()->json([
-//                'status' => 'paused',
-//                'message' => __('Piggy bank has been paused successfully.')
-//            ]);
-//        } catch (\Exception $e) {
-//            return response()->json([
-//                'error' => __('Failed to pause piggy bank.')
-//            ], 500);
-//        }
-//    }
-//
-//    public function resume(PiggyBank $piggyBank)
-//    {
-//        if ($piggyBank->status !== 'paused') {
-//            return response()->json([
-//                'error' => __('Cannot resume piggy bank that is not paused.')
-//            ], 422);
-//        }
-//
-//        try {
-//            $piggyBank->update(['status' => 'active']);
-//
-//            return response()->json([
-//                'status' => 'active',
-//                'message' => __('Piggy bank has been activated successfully.')
-//            ]);
-//        } catch (\Exception $e) {
-//            return response()->json([
-//                'error' => __('Failed to activate piggy bank.')
-//            ], 500);
-//        }
-//    }
 
-
-    public function updateStatusToCancelled(PiggyBank $piggyBank)
+    public function updateStatusToCancelled($piggy_id)
     {
+        $piggyBank = PiggyBank::findOrFail($piggy_id);
+
         if (! Gate::allows('update', $piggyBank)) {
             abort(403);
         }

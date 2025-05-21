@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->route('piggy-banks.index');
+        return redirect()->route('localized.piggy-banks.index', ['locale' => app()->getLocale()]);
     }
 
     /**
@@ -42,6 +42,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/' . app()->getLocale());
     }
 }

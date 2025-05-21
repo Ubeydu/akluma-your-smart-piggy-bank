@@ -353,5 +353,7 @@
     "privacy.changes_text": "En cas de modification de cette politique, je vous en informerai par e-mail.",
     "privacy.contact_title": "Contact",
     "privacy.contact_intro": "Écrivez-moi à l’adresse",
-    "privacy.contact_linkedin": " ou contactez-moi sur LinkedIn à"
+    "privacy.contact_linkedin": " ou contactez-moi sur LinkedIn à",
+    "auth.accept_terms": "J’accepte les <a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Conditions d’utilisation</a>.",
+    "auth.accept_privacy": "J’accepte la <a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Politique de confidentialité</a>."
 }

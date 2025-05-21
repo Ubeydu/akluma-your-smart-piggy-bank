@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('password.store') }}">
+    <form method="POST" action="{{ route('localized.password.store', ['locale' => app()->getLocale()]) }}">
         @csrf
 
         <!-- Password Reset Token -->
