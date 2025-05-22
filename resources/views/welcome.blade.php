@@ -85,11 +85,11 @@
                             </div>
 
                             <!-- Desktop navigation -->
-                            @if (Route::has('login'))
-                                <nav class="hidden sm:flex -mx-3 flex-1 justify-end">
+                            @if (Route::has('localized.login'))
+                                <nav class="hidden flex-1 -mx-3 justify-end sm:flex">
 
                                     <a
-                                    href="{{ route('create-piggy-bank.step-1') }}"
+                                    href="{{ route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()]) }}"
                                     class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                     >
                                     {{ __('Create New Piggy Bank') }}
@@ -99,7 +99,7 @@
                                     @auth
 
                                         <a
-                                            href="{{ route('piggy-banks.index') }}"
+                                            href="{{ route('localized.piggy-banks.index', ['locale' => app()->getLocale()]) }}"
                                             class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                         >
                                             {{ __('My Piggy Banks') }}
@@ -107,16 +107,16 @@
                                     @else
 
                                         <a
-                                        href="{{ route('login') }}"
+                                        href="{{ route('localized.login', ['locale' => app()->getLocale()]) }}"
                                         class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                         >
                                         {{ __('Log in') }}
                                         </a>
 
-                                        @if (Route::has('register'))
+                                        @if (Route::has('localized.register'))
 
                                             <a
-                                            href="{{ route('register') }}"
+                                            href="{{ route('localized.register', ['locale' => app()->getLocale()]) }}"
                                             class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                             >
                                             {{ __('Register') }}
@@ -155,23 +155,23 @@
                         <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
                             <div class="pt-2 pb-3 space-y-1">
 
-                                <x-responsive-nav-link :href="route('create-piggy-bank.step-1')"
+                                <x-responsive-nav-link :href="route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()])"
                                                        :active="request()->routeIs('create-piggy-bank.*')">
                                     {{ __('Create New Piggy Bank') }}
                                 </x-responsive-nav-link>
                                 @auth
-                                    <x-responsive-nav-link :href="route('piggy-banks.index')"
+                                    <x-responsive-nav-link :href="route('localized.piggy-banks.index', ['locale' => app()->getLocale()])"
                                                            :active="request()->routeIs('piggy-banks.index')">
                                         {{ __('My Piggy Banks') }}
                                     </x-responsive-nav-link>
                                 @else
-                                    <x-responsive-nav-link :href="route('login')"
-                                                           :active="request()->routeIs('login')">
+                                    <x-responsive-nav-link :href="route('localized.login', ['locale' => app()->getLocale()])"
+                                                           :active="request()->routeIs('localized.login')">
                                         {{ __('Log in') }}
                                     </x-responsive-nav-link>
-                                    @if (Route::has('register'))
-                                        <x-responsive-nav-link :href="route('register')"
-                                                               :active="request()->routeIs('register')">
+                                    @if (Route::has('localized.register'))
+                                        <x-responsive-nav-link :href="route('localized.register', ['locale' => app()->getLocale()])"
+                                                               :active="request()->routeIs('localized.register')">
                                             {{ __('Register') }}
                                         </x-responsive-nav-link>
                                     @endif
@@ -200,7 +200,7 @@
                                 <div class="mb-6 w-full rounded-md bg-yellow-100 p-4 text-sm text-yellow-800 shadow-md border border-yellow-300">
                                     {{ __('Please verify your email address to unlock all features.') }}
                                     <a
-                                        href="{{ route('verification.notice') }}"
+                                        href="{{ route('localized.verification.notice', ['locale' => app()->getLocale()]) }}"
                                         class="underline font-medium hover:text-yellow-900 ml-1"
                                     >
                                         {{ __('Resend Verification Email') }}
@@ -375,7 +375,7 @@
 
                             <!-- Call to action button -->
                             <div class="text-center mt-16">
-                                <a href="{{ route('create-piggy-bank.step-1') }}" class="inline-block px-6 py-3 md:px-7 md:py-3.5 bg-linear-to-r from-indigo-500 to-purple-600 text-white font-bold text-sm md:text-base rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                                <a href="{{ route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()]) }}" class="inline-block px-6 py-3 md:px-7 md:py-3.5 bg-linear-to-r from-indigo-500 to-purple-600 text-white font-bold text-sm md:text-base rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                                     {{ __('Create New Piggy Bank') }}
                                     <span class="ml-2 inline-block">→</span>
                                 </a>
@@ -402,9 +402,9 @@
                         </span>
 
                         <div class="mt-2">
-                            <a href="{{ route('terms') }}" class="hover:underline">{{ __('terms.title') }}</a>
+                            <a href="{{ route('localized.terms', ['locale' => app()->getLocale()]) }}" class="hover:underline">{{ __('terms.title') }}</a>
                             &nbsp;|&nbsp;
-                            <a href="{{ route('privacy') }}" class="hover:underline">{{ __('privacy.title') }}</a>
+                            <a href="{{ route('localized.privacy', ['locale' => app()->getLocale()]) }}" class="hover:underline">{{ __('privacy.title') }}</a>
                         </div>
 
                     </footer>
@@ -453,9 +453,3 @@
 
 </html>
 
-{{--<!-- At the bottom of a Blade view -->--}}
-{{--@if(config('app.debug'))--}}
-{{--    <script>--}}
-{{--        console.log('Session data:', @json(session()->all()));--}}
-{{--    </script>--}}
-{{--@endif--}}

@@ -14,10 +14,10 @@
 
     <x-slot name="content">
 {{--        <div class="border-t border-gray-100"></div>--}}
-        @foreach (config('app.available_languages') as $language => $locale)
-            <x-dropdown-link :href="route('language.switch', ['locale' => $locale])"
+        @foreach (config('app.available_languages') as $locale => $label)
+            <x-dropdown-link :href="route('global.language.switch', ['locale' => $locale])"
                              :class="App::getLocale() == $locale ? 'font-bold text-gray-900' : ''">
-                {{ __($language) }}
+                {{ __($label) }}
             </x-dropdown-link>
         @endforeach
     </x-slot>

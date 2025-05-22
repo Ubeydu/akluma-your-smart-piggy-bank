@@ -57,6 +57,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('verification.notice', absolute: false));
+        return redirect(route('localized.verification.notice', ['locale' => app()->getLocale()], absolute: false));
     }
 }

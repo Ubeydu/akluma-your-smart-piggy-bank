@@ -10,6 +10,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DetectLanguage
 {
+    // This middleware was previously used to detect and set the locale based on session or browser language.
+    // It is now unused because the application uses SetLocaleFromUrl, which determines the locale from the URL (e.g., /en, /fr).
+    // This file is retained in case future non-URL-based detection is needed (e.g., API routes or fallback logic).
+
     /**
      * Handle an incoming request.
      *

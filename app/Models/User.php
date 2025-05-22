@@ -108,14 +108,12 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function sendEmailVerificationNotification(): void
     {
-        // Set the application locale to the user's preferred language
         $previousLocale = app()->getLocale();
         app()->setLocale($this->language);
 
-        // Send the notification
-        $this->notify(new VerifyEmail);
+        // Change this line
+        $this->notify(new \App\Notifications\LocalizedVerifyEmail);
 
-        // Restore the previous locale
         app()->setLocale($previousLocale);
     }
 

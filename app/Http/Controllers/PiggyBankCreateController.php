@@ -319,7 +319,7 @@ class PiggyBankCreateController extends Controller
 
         // Redirect to the appropriate Step 3
         if ($validated['strategy'] === 'pick-date') {
-            return redirect()->route('create-piggy-bank.pick-date.step-3');
+            return redirect()->route('localized.create-piggy-bank.pick-date.step-3', ['locale' => app()->getLocale()]);
         }
 
         return redirect()->back()->withErrors(['strategy' => 'Invalid strategy selected.']);
@@ -339,7 +339,7 @@ class PiggyBankCreateController extends Controller
             return view('create-piggy-bank.enter-saving-amount.step-3');
         }
 
-        return redirect()->route('create-piggy-bank.step-1')->with('error', 'Invalid strategy chosen.');
+        return redirect()->route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()])->with('error', 'Invalid strategy chosen.');
     }
 
     /**
@@ -451,7 +451,7 @@ class PiggyBankCreateController extends Controller
 
         // Handle POST request - keeping this part unchanged
         if ($request->isMethod('post')) {
-            return redirect()->route('create-piggy-bank.pick-date.summary');
+            return redirect()->route('localized.create-piggy-bank.pick-date.summary', ['locale' => app()->getLocale()]);
         }
 
         // Get the necessary data for generating payment schedule
@@ -552,7 +552,7 @@ class PiggyBankCreateController extends Controller
     {
         if (!$request->session()->has('pick_date_step3')) {
             return redirect()
-                ->route('piggy-banks.index')
+                ->route('localized.piggy-banks.index', ['locale' => app()->getLocale()])
                 ->with('warning', __('You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.'));
         }
 
@@ -634,7 +634,7 @@ class PiggyBankCreateController extends Controller
 //            ]);
 
             return redirect()
-                ->route('piggy-banks.index', ['from_creation' => true])
+                ->route('localized.piggy-banks.index', ['locale' => app()->getLocale(), 'from_creation' => true])
                 ->with('newPiggyBankId', $piggyBank->id)
                 ->with('newPiggyBankCreatedTime', time())
                 ->with('success', __('Your piggy bank has been created successfully.'));
@@ -670,12 +670,12 @@ class PiggyBankCreateController extends Controller
             if (auth()->check()) {
                 // If authenticated, redirect to index page
                 return redirect()
-                    ->route('piggy-banks.index')
+                    ->route('localized.piggy-banks.index', ['locale' => app()->getLocale()])
                     ->with('warning', __('You cancelled creating your piggy bank.'));
             } else {
                 // If not authenticated, redirect to welcome page
                 return redirect()
-                    ->route('welcome')
+                    ->route('localized.welcome', ['locale' => app()->getLocale()])
                     ->with('warning', __('You cancelled creating your piggy bank.'));
             }
 

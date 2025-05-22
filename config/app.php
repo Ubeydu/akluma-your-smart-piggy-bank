@@ -77,9 +77,9 @@ return [
     */
 
     'available_languages' => [
-        'Turkish' => 'tr',
-        'English' => 'en',
-        'French' => 'fr',
+        'tr' => 'Turkish',
+        'en' => 'English',
+        'fr' => 'French',
     ],
 
     'default_currency' => env('APP_DEFAULT_CURRENCY', 'USD'),
@@ -123,9 +123,9 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'tr'),
+    'locale' => env('APP_LOCALE', 'en'),
 
-    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'tr'),
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'tr_TR'),
 

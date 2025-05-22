@@ -129,9 +129,9 @@ class ScheduledSavingController extends Controller
     /**
      * Pause a piggy bank (stopping scheduled savings temporarily)
      */
-    public function pausePiggyBank($piggyBankId)
+    public function pausePiggyBank($piggy_id)
     {
-        $piggyBank = PiggyBank::findOrFail($piggyBankId);
+        $piggyBank = PiggyBank::findOrFail($piggy_id);
 
         // Ensure we do not pause a completed or cancelled piggy bank
         if (in_array($piggyBank->status, ['done', 'cancelled'])) {
@@ -146,11 +146,11 @@ class ScheduledSavingController extends Controller
     /**
      * Resume a piggy bank and recalculate the pending savings schedule with cycle preservation
      */
-    public function resumePiggyBank($piggyBankId)
+    public function resumePiggyBank($piggy_id)
     {
         \Log::info("Resume called with test date: " . session('test_date'));
 
-        $piggyBank = PiggyBank::findOrFail($piggyBankId);
+        $piggyBank = PiggyBank::findOrFail($piggy_id);
 
         $scheduleUpdated = false;
 
@@ -284,8 +284,9 @@ class ScheduledSavingController extends Controller
 
 
 
-    public function getSchedulePartial(PiggyBank $piggyBank)
+    public function getSchedulePartial($piggy_id)
     {
+        $piggyBank = PiggyBank::findOrFail($piggy_id);
         return view('partials.schedule', compact('piggyBank'));
     }
 
