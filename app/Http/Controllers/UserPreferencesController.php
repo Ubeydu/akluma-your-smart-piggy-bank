@@ -43,7 +43,7 @@ class UserPreferencesController extends Controller
         }
 
         // Otherwise, redirect with status
-        return redirect()->route('profile.edit')
+        return redirect()->route('localized.profile.edit', ['locale' => app()->getLocale()])
             ->with('status', 'preferences-updated');
     }
 

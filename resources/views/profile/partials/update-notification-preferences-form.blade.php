@@ -9,7 +9,7 @@
         </p>
     </header>
 
-    <form id="preferences-form" method="post" action="{{ route('preferences.update') }}" class="mt-6 space-y-6">
+    <form id="preferences-form" method="post" action="{{ route('localized.preferences.update', ['locale' => app()->getLocale()]) }}" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 

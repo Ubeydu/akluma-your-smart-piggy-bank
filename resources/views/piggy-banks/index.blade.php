@@ -17,7 +17,7 @@
                                 :title="__('piggybank.empty_state.title')"
                                 :message="__('piggybank.empty_state.message')"
                                 :buttonText="__('piggybank.empty_state.button_text')"
-                                buttonLink="{{ route('create-piggy-bank.step-1') }}"
+                                buttonLink="{{ route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()]) }}"
                             />
                         @else
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

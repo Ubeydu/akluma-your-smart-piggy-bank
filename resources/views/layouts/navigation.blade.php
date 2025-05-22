@@ -7,12 +7,12 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     @auth
-                        <a href="{{ route('piggy-banks.index') }}">
-                            <x-application-logo class="block h-9 w-auto fill-current text-gray-900"/>
+                        <a href="{{ route('localized.piggy-banks.index', ['locale' => app()->getLocale()]) }}">
+                        <x-application-logo class="block h-9 w-auto fill-current text-gray-900"/>
                         </a>
                     @else
-                        <a href="{{ route('welcome') }}">
-                            <x-application-logo class="block h-9 w-auto fill-current text-gray-900"/>
+                        <a href="{{ route('localized.welcome', ['locale' => app()->getLocale()]) }}">
+                        <x-application-logo class="block h-9 w-auto fill-current text-gray-900"/>
                         </a>
                     @endauth
 
@@ -22,22 +22,22 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
 
                     @auth
-                    <x-nav-link :href="route('dashboard')"
-                                :active="request()->routeIs('dashboard')">
+                        <x-nav-link :href="route('localized.dashboard', ['locale' => app()->getLocale()])"
+                                    :active="request()->routeIs('localized.dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('piggy-banks.index')"
-                                :active="request()->routeIs('piggy-banks.index')">
+                        <x-nav-link :href="route('localized.piggy-banks.index', ['locale' => app()->getLocale()])"
+                                    :active="request()->routeIs('localized.piggy-banks.index')">
                         {{ __('My Piggy Banks') }}
                     </x-nav-link>
                     @endauth
 
-                    <x-nav-link :href="route('create-piggy-bank.step-1')"
-                                :active="request()->routeIs('create-piggy-bank.*')">
+                        <x-nav-link :href="route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()])"
+                                    :active="request()->routeIs('localized.create-piggy-bank.*')">
                         {{ __('Create New Piggy Bank') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('welcome')"
-                                :active="request()->routeIs('welcome')">
+                        <x-nav-link :href="route('localized.welcome', ['locale' => app()->getLocale()])"
+                                    :active="request()->routeIs('localized.welcome')">
                         {{ __('Welcome') }}
                     </x-nav-link>
                 </div>
@@ -68,8 +68,8 @@
 
                     <x-slot name="content">
 
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                        <x-dropdown-link :href="route('localized.profile.edit', ['locale' => app()->getLocale()])">
+                        {{ __('Profile') }}
                         </x-dropdown-link>
 
                         <!-- Language Switch -->
@@ -84,11 +84,10 @@
                         </x-dropdown-link>
 
                         <!-- Authentication -->
-                        <form method="POST"
-                              action="{{ route('logout') }}">
+                        <form method="POST" action="{{ route('localized.logout', ['locale' => app()->getLocale()]) }}">
                             @csrf
 
-                            <x-dropdown-link :href="route('logout')"
+                            <x-dropdown-link :href="route('localized.logout', ['locale' => app()->getLocale()])"
                                              onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 {{ __('Log Out') }}
@@ -130,23 +129,23 @@
         <div class="pt-2 pb-3 space-y-1">
 
             @auth
-            <x-responsive-nav-link :href="route('dashboard')"
-                                   :active="request()->routeIs('dashboard')">
+            <x-responsive-nav-link :href="route('localized.dashboard', ['locale' => app()->getLocale()])"
+                                   :active="request()->routeIs('localized.dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('piggy-banks.index')"
-                                   :active="request()->routeIs('piggy-banks.index')">
+            <x-responsive-nav-link :href="route('localized.piggy-banks.index', ['locale' => app()->getLocale()])"
+                                   :active="request()->routeIs('localized.piggy-banks.index')">
                 {{ __('My Piggy Banks') }}
             </x-responsive-nav-link>
             @endauth
 
-            <x-responsive-nav-link :href="route('create-piggy-bank.step-1')"
-                                   :active="request()->routeIs('create-piggy-bank.*')">
+            <x-responsive-nav-link :href="route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()])"
+                                   :active="request()->routeIs('localized.create-piggy-bank.*')">
                 {{ __('Create New Piggy Bank') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('welcome')"
-                                   :active="request()->routeIs('welcome')">
+            <x-responsive-nav-link :href="route('localized.welcome', ['locale' => app()->getLocale()])"
+                                   :active="request()->routeIs('localized.welcome')">
                 {{ __('Welcome') }}
             </x-responsive-nav-link>
         </div>
@@ -161,7 +160,7 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
+                <x-responsive-nav-link :href="route('localized.profile.edit', ['locale' => app()->getLocale()])">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
@@ -190,7 +189,7 @@
 
                     <x-slot name="content">
                         @foreach (config('app.available_languages') as $language => $locale)
-                            <x-responsive-nav-link :href="route('language.switch', ['locale' => $locale])"
+                            <x-responsive-nav-link :href="route('global.language.switch', ['locale' => $locale])"
                                                    :class="App::getLocale() == $locale ? 'font-bold text-gray-900' : ''">
                                 {{ __($language) }}
                             </x-responsive-nav-link>
@@ -224,7 +223,7 @@
 
                     <x-slot name="content">
                         @foreach (config('app.currencies') as $currency => $currencyData)
-                            <x-responsive-nav-link :href="route('currency.switch', ['currency' => $currency])"
+                            <x-responsive-nav-link :href="route('global.currency.switch', ['currency' => $currency])"
                                                    :class="(auth()->check() ? auth()->user()->currency : session('currency', config('app.default_currency'))) == $currency ? 'font-bold text-gray-900' : ''">
                                 {{ __($currencyData['name']) }}
                             </x-responsive-nav-link>
@@ -241,10 +240,10 @@
 
                 <!-- Authentication -->
                 <form method="POST"
-                      action="{{ route('logout') }}">
+                      action="{{ route('localized.logout', ['locale' => app()->getLocale()]) }}">
                     @csrf
 
-                    <x-responsive-nav-link :href="route('logout')"
+                    <x-responsive-nav-link :href="route('localized.logout', ['locale' => app()->getLocale()])"
                                            onclick="event.preventDefault();
                                         this.closest('form').submit();">
                         {{ __('Log Out') }}
@@ -259,4 +258,3 @@
 
     @vite(['resources/js/help-popup.js'])
 </nav>
-

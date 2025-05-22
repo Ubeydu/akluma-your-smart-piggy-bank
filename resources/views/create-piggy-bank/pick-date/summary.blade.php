@@ -255,7 +255,7 @@
 
                                 <x-slot:actions>
                                     <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
-                                        <form action="{{ route('create-piggy-bank.cancel') }}" method="POST" class="block">
+                                        <form action="{{ route('localized.create-piggy-bank.cancel', ['locale' => app()->getLocale()]) }}" method="POST" class="block">
                                             @csrf
                                             <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
                                                 {{ __('Yes, cancel') }}
@@ -275,14 +275,14 @@
 
                         <!-- Previous and Create buttons  -->
                         <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-                            <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ route('create-piggy-bank.pick-date.step-3') }}'">
+                            <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ route('localized.create-piggy-bank.pick-date.step-3', ['locale' => app()->getLocale()]) }}'">
                                 {{ __('Previous') }}
                             </x-secondary-button>
 
 
 
                             @auth
-                                <form method="POST" action="{{ route('create-piggy-bank.pick-date.store') }}">
+                                <form method="POST" action="{{ route('localized.create-piggy-bank.pick-date.store', ['locale' => app()->getLocale()]) }}">
                                     @csrf
                                     @if($activePiggyBanksCount >= $maxActivePiggyBanks)
                                         <x-primary-button type="button" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start opacity-50 cursor-not-allowed">
@@ -298,7 +298,7 @@
                                 <div>
                                     <x-secondary-button
                                         type="button"
-                                        onclick="window.location='{{ route('register', ['intended' => url()->current()]) }}'"
+                                        onclick="window.location='{{ route('localized.register', ['locale' => app()->getLocale(), 'intended' => url()->current()]) }}'"
                                         class="w-[200px] sm:w-auto justify-center sm:justify-start">
                                         {{ __('Register to Create') }}
                                     </x-secondary-button>
@@ -312,7 +312,7 @@
                     <!-- Error message outside of button layout -->
                     @auth
                         @if($activePiggyBanksCount >= $maxActivePiggyBanks)
-                            <a href="{{ route('piggy-banks.index') }}" class="block text-sm mt-4 text-center sm:text-left" style="color: #ef4444;" onmouseover="this.style.color='#1e3a8a'; this.style.textDecoration='underline';" onmouseout="this.style.color='#ef4444'; this.style.textDecoration='none';">
+                            <a href="{{ route('localized.piggy-banks.index', ['locale' => app()->getLocale()]) }}" class="block text-sm mt-4 text-center sm:text-left" style="color: #ef4444;" onmouseover="this.style.color='#1e3a8a'; this.style.textDecoration='underline';" onmouseout="this.style.color='#ef4444'; this.style.textDecoration='none';">
                                 {{ __('You have reached the maximum limit of :limit active or paused piggy banks. Please complete or cancel some existing piggy banks before creating a new one.', ['limit' => $maxActivePiggyBanks]) }}
                             </a>
                         @endif
@@ -323,6 +323,3 @@
         </div>
     </div>
 </x-app-layout>
-
-
-

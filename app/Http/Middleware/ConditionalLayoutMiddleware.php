@@ -18,8 +18,17 @@ class ConditionalLayoutMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // For guests, set the flag to use welcome layout
+        // BUT ONLY when on the exact locale route
         if (!Auth::check()) {
-            View::share('useWelcomeLayout', true);
+            $path = $request->path();
+            $segments = explode('/', $path);
+
+            // Only set welcome layout for exact locale path
+            if (count($segments) === 1) {
+                View::share('useWelcomeLayout', true);
+            } else {
+                View::share('useWelcomeLayout', false);
+            }
         }
 
         return $next($request);

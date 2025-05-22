@@ -5,84 +5,235 @@ use App\Http\Controllers\PiggyBankCreateController;
 use App\Http\Controllers\PiggyBankController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduledSavingController;
-use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserPreferencesController;
 use App\Models\User;
 use Brick\Money\Money;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
+
+// Redirect base URL to localized version
 Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+    // Get user's preferred locale or default to English
+    $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+    // Validate against available languages
+    $availableLocales = array_keys(config('app.available_languages', []));
+    if (!in_array($locale, $availableLocales)) {
+        $locale = 'en';
+    }
 
-Route::get('/piggy-banks', [PiggyBankController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('piggy-banks.index');
+    if (!request()->is($locale) && !request()->is($locale . '/*')) {
+        return redirect("/$locale");
+    }
 
-Route::get('/piggy-banks/{piggyBank}', [PiggyBankController::class, 'show'])
-    ->middleware(['auth', 'verified'])
-    ->name('piggy-banks.show');
-
-Route::put('/piggy-banks/{piggyBank}', [PiggyBankController::class, 'update'])
-    ->middleware(['auth', 'verified'])
-    ->name('piggy-banks.update');
-
-
-Route::patch('/piggy-banks/{piggyBank}/pause', [\App\Http\Controllers\ScheduledSavingController::class, 'pausePiggyBank'])
-    ->middleware(['auth', 'verified'])
-    ->name('piggy-banks.pause');
-
-Route::patch('/piggy-banks/{piggyBank}/resume', [\App\Http\Controllers\ScheduledSavingController::class, 'resumePiggyBank'])
-    ->middleware(['auth', 'verified'])
-    ->name('piggy-banks.resume');
-
-Route::patch('/piggy-banks/{piggyBank}/update-status-cancelled', [PiggyBankController::class, 'updateStatusToCancelled'])
-    ->middleware(['auth', 'verified'])
-    ->name('piggy-banks.update-status-cancelled');
-
-Route::get('/piggy-banks/{piggyBank}/schedule', [ScheduledSavingController::class, 'getSchedulePartial'])
-    ->middleware(['auth', 'verified'])
-    ->name('piggy-banks.schedule');
-
-
-
-Route::post('/piggy-banks/{piggyBank}/cancel', [PiggyBankController::class, 'cancel'])
-    ->middleware(['auth', 'verified'])
-    ->name('piggy-banks.cancel');
-
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    Route::patch('/preferences/update', [App\Http\Controllers\UserPreferencesController::class, 'updatePreferences'])
-        ->name('preferences.update');
-
-//    Route::get('/test-piggy-full/{piggyBankId}', [TestController::class, 'testPiggyBank'])
-//        ->name('test.piggy-full');
-
-
-    Route::post('/test-date/{piggyBank}', function(App\Models\PiggyBank $piggyBank, Request $request) {
-        session(['test_date' => $request->test_date]);
-        return back()->with('success', 'Test date set to: ' . $request->test_date);
-    })->name('test.set-date');
-
-    Route::post('/test-date/{piggyBank}/clear', function(App\Models\PiggyBank $piggyBank) {
-        session()->forget('test_date');
-        return back()->with('success', 'Test date cleared');
-    })->name('test.clear-date');
-
+    abort(404); // prevent infinite loop
 });
 
-Route::get('/language/{locale}', function ($locale, Request $request) {
-    $availableLocales = array_values(config('app.available_languages', []));
+// Localized route group
+Route::prefix('{locale}')
+    ->middleware('locale')
+    ->where(['locale' => '[a-z]{2}'])
+    ->group(function () {
+
+        // Localized welcome route
+        Route::get('/', function () {
+            return view('welcome');
+        })->name('localized.welcome');
+
+        // Localized dashboard route
+        Route::get('dashboard', [DashboardController::class, 'index'])
+            ->middleware(['auth', 'verified'])
+            ->name('localized.dashboard');
+
+        // Add other routes here (without leading slash) and use `localized.` prefix for route names
+        Route::get('piggy-banks', [PiggyBankController::class, 'index'])
+            ->middleware(['auth', 'verified'])
+            ->name('localized.piggy-banks.index');
+
+        Route::get('piggy-banks/{piggy_id}', [PiggyBankController::class, 'show'])
+            ->middleware(['auth', 'verified'])
+            ->name('localized.piggy-banks.show')
+            ->where('piggy_id', '[0-9]+');
+
+
+        Route::put('piggy-banks/{piggy_id}', [PiggyBankController::class, 'update'])
+            ->middleware(['auth', 'verified'])
+            ->name('localized.piggy-banks.update')
+            ->where('piggy_id', '[0-9]+');
+
+        Route::patch('piggy-banks/{piggy_id}/pause', [ScheduledSavingController::class, 'pausePiggyBank'])
+            ->middleware(['auth', 'verified'])
+            ->name('localized.piggy-banks.pause')
+            ->where('piggy_id', '[0-9]+');
+
+        Route::patch('piggy-banks/{piggy_id}/resume', [ScheduledSavingController::class, 'resumePiggyBank'])
+            ->middleware(['auth', 'verified'])
+            ->name('localized.piggy-banks.resume')
+            ->where('piggy_id', '[0-9]+');
+
+        Route::patch('piggy-banks/{piggy_id}/update-status-cancelled', [PiggyBankController::class, 'updateStatusToCancelled'])
+            ->middleware(['auth', 'verified'])
+            ->name('localized.piggy-banks.update-status-cancelled')
+            ->where('piggy_id', '[0-9]+');
+
+        Route::get('piggy-banks/{piggy_id}/schedule', [ScheduledSavingController::class, 'getSchedulePartial'])
+            ->middleware(['auth', 'verified'])
+            ->name('localized.piggy-banks.schedule')
+            ->where('piggy_id', '[0-9]+');
+
+        Route::post('piggy-banks/{piggy_id}/cancel', [PiggyBankController::class, 'cancel'])
+            ->middleware(['auth', 'verified'])
+            ->name('localized.piggy-banks.cancel')
+            ->where('piggy_id', '[0-9]+');
+
+        Route::middleware(['auth', 'verified'])->group(function () {
+            Route::get('profile', [ProfileController::class, 'edit'])->name('localized.profile.edit');
+            Route::patch('profile', [ProfileController::class, 'update'])->name('localized.profile.update');
+            Route::delete('profile', [ProfileController::class, 'destroy'])->name('localized.profile.destroy');
+
+            Route::patch('preferences/update',
+                [App\Http\Controllers\UserPreferencesController::class, 'updatePreferences'])
+                ->name('localized.preferences.update');
+
+            //    Route::get('/test-piggy-full/{piggyBankId}', [TestController::class, 'testPiggyBank'])
+            //        ->name('test.piggy-full');
+
+            Route::post('test-date/{piggy_id}', function ($piggy_id, Request $request) {
+                $piggyBank = App\Models\PiggyBank::findOrFail($piggy_id);
+                session(['test_date' => $request->test_date]);
+                return back()->with('success', 'Test date set to: '.$request->test_date);
+            })->name('localized.test.set-date')
+              ->where('piggy_id', '[0-9]+');
+
+            Route::post('test-date/{piggy_id}/clear', function () {
+                session()->forget('test_date');
+                return back()->with('success', 'Test date cleared');
+            })->name('localized.test.clear-date')
+              ->where('piggy_id', '[0-9]+');
+
+
+            Route::patch('scheduled-savings/{periodicSaving}', [ScheduledSavingController::class, 'update'])
+                ->middleware(['auth', 'verified'])
+                ->name('localized.scheduled-savings.update');
+
+        });
+
+        Route::view('terms-of-service', 'legal.terms')->name('localized.terms');
+        Route::view('privacy-policy', 'legal.privacy')->name('localized.privacy');
+
+        Route::prefix('create-piggy-bank')
+            ->name('localized.create-piggy-bank.')
+            ->middleware(['conditional.layout'])
+            ->group(function () {
+
+                Route::get('step-1', [PiggyBankCreateController::class, 'step1'])->name('step-1');
+
+                Route::post('clear', function () {
+                    try {
+                        session()->forget([
+                            'pick_date_step1.name',
+                            'pick_date_step1.price',
+                            'pick_date_step1.link',
+                            'pick_date_step1.details',
+                            'pick_date_step1.starting_amount',
+                            'pick_date_step1.preview',
+                            'pick_date_step1.currency',
+                            'pick_date_step3.date',
+                            'pick_date_step3.calculations'
+                        ]);
+                        session()->flash('success', __('You cleared the form.'));
+                    } catch (Exception) {
+                        session()->flash('error', __('There was an error during clearing the form. Refresh the page and try again.'));
+                    }
+                    return redirect()->back();
+                })->name('clear');
+
+                Route::post('api/link-preview', [PiggyBankCreateController::class, 'fetchLinkPreview'])->name('api.link-preview');
+                Route::post('cancel', [PiggyBankCreateController::class, 'cancelCreation'])->name('cancel');
+
+                Route::get('step-2', [PiggyBankCreateController::class, 'showStep2'])->name('step-2.get');
+                Route::post('step-2', [PiggyBankCreateController::class, 'step2'])->name('step-2');
+
+                Route::post('choose-strategy', [PiggyBankCreateController::class, 'storeStrategySelection'])->name('choose-strategy');
+
+                Route::prefix('pick-date')->name('pick-date.')->group(function () {
+                    Route::get('step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
+                    Route::post('calculate-frequencies', [PiggyBankCreateController::class, 'calculateFrequencyOptions'])->name('calculate-frequencies');
+                    Route::post('store-frequency', [PiggyBankCreateController::class, 'storeSelectedFrequency'])->name('store-frequency');
+                    Route::post('show-summary', [PiggyBankCreateController::class, 'showSummary'])->name('show-summary');
+                    Route::get('summary', [PiggyBankCreateController::class, 'showSummary'])->name('summary');
+                    Route::post('store', [PiggyBankCreateController::class, 'storePiggyBank'])
+                        ->middleware(['auth', 'verified'])
+                        ->name('store');
+                });
+
+
+                /**
+                 * Returns flash messages as JSON for AJAX requests.
+                 * This endpoint is specifically designed to avoid HTML injection and unwanted side effects.
+                 */
+                Route::get('get-flash-messages', function () {
+                    // Get message values
+                    $successMessage = session('success');
+                    $errorMessage = session('error');
+                    $warningMessage = session('warning');
+                    $infoMessage = session('info');
+
+                    // Clear the messages after reading them
+                    if ($successMessage || $errorMessage || $warningMessage || $infoMessage) {
+                        session()->forget(['success', 'error', 'warning', 'info']);
+                    }
+
+                    // Return just the data, not HTML that could contain scripts
+                    return response()->json([
+                        'success' => $successMessage,
+                        'error' => $errorMessage,
+                        'warning' => $warningMessage,
+                        'info' => $infoMessage
+                    ]);
+                })->name('get-flash-messages');
+
+                Route::prefix('enter-saving-amount')->name('enter-saving-amount.')->group(function () {
+                    Route::get('step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
+                });
+            });
+
+        Route::post('update-timezone', [UserPreferencesController::class, 'updateTimezone'])
+            ->name('localized.update-timezone')
+            ->middleware(['auth', 'verified']);
+
+        Route::get('format-date', function (Request $request) {
+            $date = $request->query('date');
+
+            if (!$date) {
+                return response()->json(['error' => 'Invalid date'], 400);
+            }
+
+            try {
+                $dateObject = new DateTime($date);
+
+                $locale = app()->getLocale();
+                $formatter = new IntlDateFormatter(
+                    $locale,
+                    IntlDateFormatter::LONG,
+                    IntlDateFormatter::NONE
+                );
+                $formattedDate = $formatter->format($dateObject);
+
+                return response()->json(['formatted_date' => $formattedDate]);
+            } catch (Exception $e) {
+                return response()->json(['error' => 'Date formatting failed: ' . $e->getMessage()], 500);
+            }
+        })->name('localized.format-date');
+
+    });
+
+
+Route::get('language/{locale}', function ($locale, Request $request) {
+    $availableLocales = array_keys(config('app.available_languages', []));
 
     if (in_array($locale, $availableLocales)) {
         // Store in session
@@ -92,27 +243,62 @@ Route::get('/language/{locale}', function ($locale, Request $request) {
         if (Auth::check()) {
             Auth::user()->update(['language' => $locale]);
         }
+
+        // If this is an AJAX request, just return JSON
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'locale' => $locale]);
+        }
+
+        // For normal (non-AJAX) requests, proceed with redirect
+        $segments = $request->segments();
+
+        if (count($segments) > 0 && in_array($segments[0], $availableLocales)) {
+            $segments[0] = $locale; // Replace existing locale
+        } else {
+            array_unshift($segments, $locale); // Add locale if missing
+        }
+
+        $redirectUrl = '/' . implode('/', $segments);
+
+        // Append query string if exists
+        if ($request->getQueryString()) {
+            $redirectUrl .= '?' . $request->getQueryString();
+        }
+
+        return redirect($redirectUrl);
     }
 
     return redirect()->back();
-})->name('language.switch');
+})->name('global.language.switch');
 
-//Route::get('/current-locale', function () {
-//    dd(app()->getLocale());
-//});
 
-Route::get('currency/switch/{currency}', function ($currency) {
+Route::get('currency/switch/{currency}', function ($currency, Request $request) {
     try {
+        // Debug locale information
+        $referer = $request->headers->get('referer');
+        $localeFromReferer = null;
+
+        if ($referer) {
+            // Extract locale from referer URL - look for /xx/ pattern
+            preg_match('/\/([a-z]{2})\//', $referer, $matches);
+            $localeFromReferer = $matches[1] ?? null;
+        }
+
+        // Try to set locale based on referer first
+        if ($localeFromReferer) {
+            app()->setLocale($localeFromReferer);
+            \Illuminate\Support\Facades\Log::info('Set locale from referer', [
+                'new_locale' => app()->getLocale()
+            ]);
+        }
+
         // Validate currency exists in config
         if (!isset(config('app.currencies')[$currency])) {
-            throw new \Exception('Invalid currency.');
+            throw new Exception('Invalid currency.');
         }
 
         // Store the currency in session
         session(['currency' => $currency]);
-
-        // Avoid PhpStorm warning about dynamic properties in PHP 8.2+
-        // setAttribute() is the safe Eloquent way to set model attributes
 
         // Store in user record if authenticated
         if (auth()->check()) {
@@ -122,19 +308,25 @@ Route::get('currency/switch/{currency}', function ($currency) {
             $user->save();
         }
 
-        // Get the translated name
+        // Get the translated name with debug
         $currencyName = __(config('app.currencies')[$currency]['name']);
 
-        session()->flash('success', __('You switched the currency to :currency', ['currency' => $currencyName]));
+        $successMessage = __('You switched the currency to :currency', ['currency' => $currencyName]);
+
+
+        session()->flash('success', $successMessage);
 
         return redirect()->back();
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         // If anything goes wrong with session storage or currency retrieval
+        \Illuminate\Support\Facades\Log::error('Currency switch error', [
+            'error' => $e->getMessage()
+        ]);
         session()->flash('error', __('There was a problem setting currency. Please reload the page and try again.'));
 
         return redirect()->back();
     }
-})->name('currency.switch');
+})->name('global.currency.switch');
 
 // Debug route for currency
 // visit this to test: http://127.0.0.1:8000/current-currency
@@ -150,118 +342,6 @@ Route::get('/current-currency', function () {
 });
 
 
-// Create New Piggy Bank routes
-Route::prefix('create-piggy-bank')
-    ->name('create-piggy-bank.')
-    ->middleware(['conditional.layout'])
-    ->group(function () {
-    Route::get('/step-1', [PiggyBankCreateController::class, 'step1'])->name('step-1');
-
-    Route::post('/clear', function() {
-
-//        // Simulate a random error 50% of the time for testing . Uncomment this to test the error message for translations.
-//        if (rand(0, 1) === 1) {
-//            session()->flash('error', __('There was an error during clearing the form. Refresh the page and try again.'));
-//            return redirect()->back();
-//        }
-
-        try {
-        // Clear all step 1 session data
-        session()->forget([
-            'pick_date_step1.name',
-            'pick_date_step1.price',
-            'pick_date_step1.link',
-            'pick_date_step1.details',
-            'pick_date_step1.starting_amount',
-            'pick_date_step1.preview',
-            'pick_date_step1.currency',
-        ]);
-
-            // Clear step 3 session data
-            session()->forget([
-                'pick_date_step3.date',
-                'pick_date_step3.calculations'
-            ]);
-
-        session()->flash('success', __('You cleared the form.'));
-
-    } catch (\Exception $e) {
-        // If anything goes wrong, set error message
-        session()->flash('error', __('There was an error during clearing the form. Refresh the page and try again.'));
-    }
-
-        return redirect()->back();
-    })->name('clear');
-
-    Route::post('/api/link-preview', [PiggyBankCreateController::class, 'fetchLinkPreview'])
-        ->name('api.link-preview');
-
-
-    Route::post('/cancel', [PiggyBankCreateController::class, 'cancelCreation'])
-        ->name('cancel');
-
-    Route::get('/step-2', [PiggyBankCreateController::class, 'showStep2'])->name('step-2.get');
-    Route::post('/step-2', [PiggyBankCreateController::class, 'step2'])->name('step-2');
-
-    // Strategy-specific Step 3 routes
-    Route::post('/choose-strategy', [PiggyBankCreateController::class, 'storeStrategySelection'])->name('choose-strategy');
-    Route::prefix('pick-date')->name('pick-date.')->group(function () {
-        Route::get('/step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
-        Route::post('/calculate-frequencies', [PiggyBankCreateController::class, 'calculateFrequencyOptions'])->name('calculate-frequencies');
-        Route::post('/store-frequency', [PiggyBankCreateController::class, 'storeSelectedFrequency'])->name('store-frequency');
-        Route::post('/show-summary', [PiggyBankCreateController::class, 'showSummary'])->name('show-summary');
-        Route::get('/summary', [PiggyBankCreateController::class, 'showSummary'])->name('summary');
-        Route::post('/store', [PiggyBankCreateController::class, 'storePiggyBank'])
-            ->middleware(['auth', 'verified'])
-            ->name('store');
-    });
-
-    // Flash message check route
-    Route::get('/check-flash-messages', function() {
-        return view('components.flash-message');
-    })->name('check-flash-messages');
-
-
-    Route::prefix('enter-saving-amount')->name('enter-saving-amount.')->group(function () {
-        Route::get('/step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
-    });
-});
-
-Route::patch('scheduled-savings/{periodicSaving}', [App\Http\Controllers\ScheduledSavingController::class, 'update'])
-    ->name('scheduled-savings.update');
-
-Route::get('/format-date', function (Request $request) {
-    $date = $request->query('date'); // Correct usage of query() method
-
-    if (!$date) {
-        return response()->json(['error' => 'Invalid date'], 400);
-    }
-
-    try {
-        // Parse the date into a DateTime object
-        $dateObject = new DateTime($date);
-
-        // Format the date based on the app's current locale
-        $locale = app()->getLocale(); // Get the current locale
-        $formatter = new IntlDateFormatter(
-            $locale, // Locale, e.g., 'en', 'fr', 'tr'
-            IntlDateFormatter::LONG, // Use a long date format
-            IntlDateFormatter::NONE // No time format
-        );
-        $formattedDate = $formatter->format($dateObject);
-
-        return response()->json(['formatted_date' => $formattedDate]);
-    } catch (Exception $e) {
-        return response()->json(['error' => 'Date formatting failed: ' . $e->getMessage()], 500);
-    }
-});
-
-Route::post('/update-timezone', [UserPreferencesController::class, 'updateTimezone'])
-    ->name('update-timezone')
-    ->middleware(['auth', 'verified']);
-
-Route::view('/terms-of-service', 'legal.terms')->name('terms');
-Route::view('/privacy-policy', 'legal.privacy')->name('privacy');
 
 if (app()->environment('local')) {
     Route::get('/test-money', function () {
@@ -281,7 +361,7 @@ if (app()->environment('local')) {
             dump("EUR: ".$eur->getAmount());
             dump("EUR (minor units): ".$eur->getMinorAmount()->toInt());
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             dump("Error: ".$e->getMessage());
         }
     });
@@ -316,5 +396,15 @@ if (app()->environment('local')) {
     });
 }
 
+Route::fallback(function () {
+    $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
+
+    $availableLocales = array_keys(config('app.available_languages', []));
+    if (!in_array($locale, $availableLocales)) {
+        $locale = 'en';
+    }
+
+    return redirect("/$locale");
+});
 
 require __DIR__.'/auth.php';

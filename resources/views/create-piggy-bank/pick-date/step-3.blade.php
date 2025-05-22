@@ -102,9 +102,10 @@ $currentPlaceholder = $placeholders[$language];
                             locale: "{{ app()->getLocale() }}",
                             translations: @json(trans()->getLoader()->load(app()->getLocale(), '*', '*')),
                             routes: {
-                                calculateFrequencies: '{{ route("create-piggy-bank.pick-date.calculate-frequencies") }}',
-                                storeFrequency: '{{ route("create-piggy-bank.pick-date.store-frequency") }}'
-                            }
+                                calculateFrequencies: '{{ route("localized.create-piggy-bank.pick-date.calculate-frequencies", ["locale" => app()->getLocale()]) }}',
+                                storeFrequency: '{{ route("localized.create-piggy-bank.pick-date.store-frequency", ["locale" => app()->getLocale()]) }}'
+                            },
+                            defaultImage: '{{ asset("images/default_piggy_bank.png") }}'
                         }
                     </script>
                     @vite(['resources/js/pick-date-strategy-frequency-options.js'])
@@ -126,7 +127,7 @@ $currentPlaceholder = $placeholders[$language];
 
                                 <x-slot:actions>
                                     <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
-                                        <form action="{{ route('create-piggy-bank.cancel') }}" method="POST" class="block">
+                                        <form action="{{ route('localized.create-piggy-bank.cancel', ['locale' => app()->getLocale()]) }}" method="POST" class="block">
                                             @csrf
                                             <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
                                                 {{ __('Yes, cancel') }}
@@ -144,13 +145,13 @@ $currentPlaceholder = $placeholders[$language];
                             </x-confirmation-dialog>
                         </div>
 
-                        <form method="GET" action="{{ route('create-piggy-bank.step-2.get') }}" class="inline">
+                        <form method="GET" action="{{ route('localized.create-piggy-bank.step-2.get', ['locale' => app()->getLocale()]) }}" class="inline">
                             <x-secondary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
                                 {{ __('Previous') }}
                             </x-secondary-button>
                         </form>
 
-                        <form method="POST" action="{{ route('create-piggy-bank.pick-date.show-summary') }}">
+                        <form method="POST" action="{{ route('localized.create-piggy-bank.pick-date.show-summary', ['locale' => app()->getLocale()]) }}">
                             @csrf
                             <x-primary-button type="submit" id="nextButton" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start disabled:bg-gray-400 disabled:cursor-not-allowed  disabled:hover:bg-gray-300">
                                 {{ __('Next') }}
@@ -163,3 +164,4 @@ $currentPlaceholder = $placeholders[$language];
         </div>
     </div>
 </x-app-layout>
+

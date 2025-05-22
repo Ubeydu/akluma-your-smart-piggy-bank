@@ -6,6 +6,7 @@ use App\Models\PiggyBank;
 use App\Policies\PiggyBankPolicy;
 use App\Services\LinkPreviewService;
 use Carbon\Carbon;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -72,6 +73,14 @@ class AppServiceProvider extends ServiceProvider
             ]);
             return $key;
         });
+
+
+        ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
+            return url("/reset-password/{$token}") .
+                '?email=' . urlencode($notifiable->getEmailForPasswordReset()) .
+                '&lang=' . urlencode($notifiable->language ?? 'en');
+        });
+
     }
 
 }
