@@ -407,4 +407,10 @@ Route::fallback(function () {
     return redirect("/$locale");
 });
 
+// Add this at the bottom of routes/web.php for testing
+Route::get('/test-route-config', function () {
+    $config = config('route-slugs');
+    dd($config);
+});
+
 require __DIR__.'/auth.php';
