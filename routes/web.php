@@ -407,10 +407,58 @@ Route::fallback(function () {
     return redirect("/$locale");
 });
 
-// Add this at the bottom of routes/web.php for testing
+
 Route::get('/test-route-config', function () {
+    // Test 1: Basic configuration loading
+    echo "<h2>1. Configuration Structure Test</h2>";
     $config = config('route-slugs');
-    dd($config);
+    echo "<pre>Config loaded: " . (empty($config) ? "❌ FAILED" : "✅ SUCCESS") . "</pre>";
+
+    // Test 2: Helper function tests
+    echo "<h2>2. Helper Function Tests</h2>";
+
+    // Test getting slugs for different locales
+    $testCases = [
+        ['piggy-banks', 'en'],
+        ['piggy-banks', 'tr'],
+        ['piggy-banks', 'fr'],
+        ['dashboard', 'en'],
+        ['dashboard', 'tr'],
+        ['profile', 'fr'],
+    ];
+
+    foreach ($testCases as [$routeKey, $locale]) {
+        $slug = App\Helpers\RouteSlugHelper::getSlug($routeKey, $locale);
+        echo "<pre>getSlug('{$routeKey}', '{$locale}') = '{$slug}'</pre>";
+    }
+
+    // Test 3: Parameter translation tests
+    echo "<h2>3. Parameter Translation Tests</h2>";
+    $paramTests = [
+        ['piggy_id', 'en'],
+        ['piggy_id', 'tr'],
+        ['piggy_id', 'fr'],
+        ['token', 'en'],
+    ];
+
+    foreach ($paramTests as [$paramKey, $locale]) {
+        $param = App\Helpers\RouteSlugHelper::getParameter($paramKey, $locale);
+        echo "<pre>getParameter('{$paramKey}', '{$locale}') = '{$param}'</pre>";
+    }
+
+    // Test 4: Fallback behavior tests
+    echo "<h2>4. Fallback Behavior Tests</h2>";
+    $fallbackTests = [
+        ['non-existent-route', 'en'],  // Should return 'non-existent-route'
+        ['piggy-banks', 'de'],         // Should fallback to English
+    ];
+
+    foreach ($fallbackTests as [$routeKey, $locale]) {
+        $slug = App\Helpers\RouteSlugHelper::getSlug($routeKey, $locale);
+        echo "<pre>getSlug('{$routeKey}', '{$locale}') = '{$slug}' (fallback test)</pre>";
+    }
+
+    echo "<h2>✅ All tests completed!</h2>";
 });
 
 require __DIR__.'/auth.php';
