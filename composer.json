@@ -41,7 +41,8 @@
         },
         "files": [
             "app/Helpers/CurrencyHelper.php",
-            "app/Helpers/MoneyFormatHelper.php"
+            "app/Helpers/MoneyFormatHelper.php",
+            "app/helpers_global.php"
         ]
     },
     "autoload-dev": {
