@@ -401,64 +401,64 @@ Route::fallback(function () {
     return redirect("/$locale");
 });
 
-Route::get('/test-localized-route-helper', function () {
-    echo '<h2>Testing Localized Route Helper Functions</h2>';
-    echo '<p><em>Note: This tests the helper functions only. URL slug translation comes in later issues.</em></p>';
+// Replace your old test route with this one
+Route::get('/test-route-service', function () {
+    echo '<h2>Testing LocalizedRouteService</h2>';
 
-    // Test 1: Helper function exists and works
-    echo '<h3>1. Function Availability Test</h3>';
-    if (function_exists('localizedRoute')) {
-        echo '<pre>✅ localizedRoute() function exists</pre>';
+    // Test 1: Check if class exists
+    if (class_exists('\App\Services\LocalizedRouteService')) {
+        echo '<pre>✅ LocalizedRouteService class exists</pre>';
     } else {
-        echo '<pre>❌ localizedRoute() function missing</pre>';
+        echo '<pre>❌ LocalizedRouteService class not found</pre>';
 
         return;
     }
 
-    // Test 2: Auto locale injection (the main feature we built)
-    echo '<h3>2. Auto Locale Injection Test</h3>';
-    echo '<p>Testing that locale gets automatically added to route parameters:</p>';
-
+    // Test 2: Check available locales method
     try {
-        $url = localizedRoute('localized.dashboard');
-        $hasLocale = str_contains($url, '/en/');
-        echo "<pre>localizedRoute('localized.dashboard') = '{$url}'</pre>";
-        echo '<pre>Locale auto-injected: '.($hasLocale ? '✅ YES' : '❌ NO').'</pre>';
+        $locales = \App\Services\LocalizedRouteService::getAvailableLocales();
+        echo '<pre>✅ Available locales: '.implode(', ', $locales).'</pre>';
     } catch (Exception $e) {
-        echo "<pre>❌ Error: {$e->getMessage()}</pre>";
+        echo "<pre>❌ Error getting locales: {$e->getMessage()}</pre>";
     }
 
-    // Test 3: Manual locale override
-    echo '<h3>3. Manual Locale Override Test</h3>';
-    $testLocales = ['tr', 'fr'];
-    foreach ($testLocales as $locale) {
-        try {
-            $url = localizedRoute('localized.dashboard', [], $locale);
-            $hasCorrectLocale = str_contains($url, "/{$locale}/");
-            echo "<pre>localizedRoute('localized.dashboard', [], '{$locale}') = '{$url}'</pre>";
-            echo '<pre>Correct locale prefix: '.($hasCorrectLocale ? '✅ YES' : '❌ NO').'</pre>';
-        } catch (Exception $e) {
-            echo "<pre>❌ Error for {$locale}: {$e->getMessage()}</pre>";
+    // Test 3: Test a simple route registration
+    echo '<h3>Testing Route Registration</h3>';
+    try {
+        \App\Services\LocalizedRouteService::register(
+            'get',
+            'dashboard',
+            function () {
+                return 'Test dashboard';
+            },
+            'test.dashboard'
+        );
+        echo '<pre>✅ Route registration completed without errors</pre>';
+    } catch (Exception $e) {
+        echo "<pre>❌ Route registration error: {$e->getMessage()}</pre>";
+    }
+
+    // Test 4: Check if routes were actually created
+    echo '<h3>Checking Registered Routes</h3>';
+    $routeCollection = Route::getRoutes();
+    $testRoutes = [];
+
+    foreach ($routeCollection as $route) {
+        if (str_contains($route->getName() ?? '', 'test.dashboard')) {
+            $testRoutes[] = $route->uri().' ('.$route->getName().')';
         }
     }
 
-    // Test 4: Parameters preservation
-    echo '<h3>4. Parameter Preservation Test</h3>';
-    try {
-        $url = localizedRoute('localized.piggy-banks.show', ['piggy_id' => 123]);
-        $hasParam = str_contains($url, '/123');
-        echo "<pre>localizedRoute('localized.piggy-banks.show', ['piggy_id' => 123]) = '{$url}'</pre>";
-        echo '<pre>Parameters preserved: '.($hasParam ? '✅ YES' : '❌ NO').'</pre>';
-    } catch (Exception $e) {
-        echo "<pre>❌ Error: {$e->getMessage()}</pre>";
+    if (! empty($testRoutes)) {
+        echo '<pre>✅ Found registered test routes:</pre>';
+        foreach ($testRoutes as $routeInfo) {
+            echo "<pre>  - {$routeInfo}</pre>";
+        }
+    } else {
+        echo '<pre>❌ No test routes found</pre>';
     }
 
-    echo '<h3>Summary</h3>';
-    echo '<pre>✅ Helper functions work correctly</pre>';
-    echo '<pre>✅ Locale auto-injection functional</pre>';
-    echo '<pre>✅ Manual locale override works</pre>';
-    echo '<pre>✅ Route parameters are preserved</pre>';
-    echo '<pre>⏳ URL slug translation will be implemented in Issues #3-4</pre>';
+    echo '<h3>✅ LocalizedRouteService tests completed!</h3>';
 });
 
 require __DIR__.'/auth.php';
