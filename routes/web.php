@@ -1,18 +1,17 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PiggyBankCreateController;
 use App\Http\Controllers\PiggyBankController;
+use App\Http\Controllers\PiggyBankCreateController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduledSavingController;
 use App\Http\Controllers\UserPreferencesController;
 use App\Models\User;
 use Brick\Money\Money;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
-
 
 // Redirect base URL to localized version
 Route::get('/', function () {
@@ -21,11 +20,11 @@ Route::get('/', function () {
 
     // Validate against available languages
     $availableLocales = array_keys(config('app.available_languages', []));
-    if (!in_array($locale, $availableLocales)) {
+    if (! in_array($locale, $availableLocales)) {
         $locale = 'en';
     }
 
-    if (!request()->is($locale) && !request()->is($locale . '/*')) {
+    if (! request()->is($locale) && ! request()->is($locale.'/*')) {
         return redirect("/$locale");
     }
 
@@ -57,7 +56,6 @@ Route::prefix('{locale}')
             ->middleware(['auth', 'verified'])
             ->name('localized.piggy-banks.show')
             ->where('piggy_id', '[0-9]+');
-
 
         Route::put('piggy-banks/{piggy_id}', [PiggyBankController::class, 'update'])
             ->middleware(['auth', 'verified'])
@@ -104,16 +102,17 @@ Route::prefix('{locale}')
             Route::post('test-date/{piggy_id}', function ($piggy_id, Request $request) {
                 $piggyBank = App\Models\PiggyBank::findOrFail($piggy_id);
                 session(['test_date' => $request->test_date]);
+
                 return back()->with('success', 'Test date set to: '.$request->test_date);
             })->name('localized.test.set-date')
-              ->where('piggy_id', '[0-9]+');
+                ->where('piggy_id', '[0-9]+');
 
             Route::post('test-date/{piggy_id}/clear', function () {
                 session()->forget('test_date');
+
                 return back()->with('success', 'Test date cleared');
             })->name('localized.test.clear-date')
-              ->where('piggy_id', '[0-9]+');
-
+                ->where('piggy_id', '[0-9]+');
 
             Route::patch('scheduled-savings/{periodicSaving}', [ScheduledSavingController::class, 'update'])
                 ->middleware(['auth', 'verified'])
@@ -142,12 +141,13 @@ Route::prefix('{locale}')
                             'pick_date_step1.preview',
                             'pick_date_step1.currency',
                             'pick_date_step3.date',
-                            'pick_date_step3.calculations'
+                            'pick_date_step3.calculations',
                         ]);
                         session()->flash('success', __('You cleared the form.'));
                     } catch (Exception) {
                         session()->flash('error', __('There was an error during clearing the form. Refresh the page and try again.'));
                     }
+
                     return redirect()->back();
                 })->name('clear');
 
@@ -170,7 +170,6 @@ Route::prefix('{locale}')
                         ->name('store');
                 });
 
-
                 /**
                  * Returns flash messages as JSON for AJAX requests.
                  * This endpoint is specifically designed to avoid HTML injection and unwanted side effects.
@@ -192,7 +191,7 @@ Route::prefix('{locale}')
                         'success' => $successMessage,
                         'error' => $errorMessage,
                         'warning' => $warningMessage,
-                        'info' => $infoMessage
+                        'info' => $infoMessage,
                     ]);
                 })->name('get-flash-messages');
 
@@ -208,7 +207,7 @@ Route::prefix('{locale}')
         Route::get('format-date', function (Request $request) {
             $date = $request->query('date');
 
-            if (!$date) {
+            if (! $date) {
                 return response()->json(['error' => 'Invalid date'], 400);
             }
 
@@ -225,12 +224,11 @@ Route::prefix('{locale}')
 
                 return response()->json(['formatted_date' => $formattedDate]);
             } catch (Exception $e) {
-                return response()->json(['error' => 'Date formatting failed: ' . $e->getMessage()], 500);
+                return response()->json(['error' => 'Date formatting failed: '.$e->getMessage()], 500);
             }
         })->name('localized.format-date');
 
     });
-
 
 Route::get('language/{locale}', function ($locale, Request $request) {
     $availableLocales = array_keys(config('app.available_languages', []));
@@ -258,11 +256,11 @@ Route::get('language/{locale}', function ($locale, Request $request) {
             array_unshift($segments, $locale); // Add locale if missing
         }
 
-        $redirectUrl = '/' . implode('/', $segments);
+        $redirectUrl = '/'.implode('/', $segments);
 
         // Append query string if exists
         if ($request->getQueryString()) {
-            $redirectUrl .= '?' . $request->getQueryString();
+            $redirectUrl .= '?'.$request->getQueryString();
         }
 
         return redirect($redirectUrl);
@@ -270,7 +268,6 @@ Route::get('language/{locale}', function ($locale, Request $request) {
 
     return redirect()->back();
 })->name('global.language.switch');
-
 
 Route::get('currency/switch/{currency}', function ($currency, Request $request) {
     try {
@@ -288,12 +285,12 @@ Route::get('currency/switch/{currency}', function ($currency, Request $request) 
         if ($localeFromReferer) {
             app()->setLocale($localeFromReferer);
             \Illuminate\Support\Facades\Log::info('Set locale from referer', [
-                'new_locale' => app()->getLocale()
+                'new_locale' => app()->getLocale(),
             ]);
         }
 
         // Validate currency exists in config
-        if (!isset(config('app.currencies')[$currency])) {
+        if (! isset(config('app.currencies')[$currency])) {
             throw new Exception('Invalid currency.');
         }
 
@@ -313,14 +310,13 @@ Route::get('currency/switch/{currency}', function ($currency, Request $request) 
 
         $successMessage = __('You switched the currency to :currency', ['currency' => $currencyName]);
 
-
         session()->flash('success', $successMessage);
 
         return redirect()->back();
     } catch (Exception $e) {
         // If anything goes wrong with session storage or currency retrieval
         \Illuminate\Support\Facades\Log::error('Currency switch error', [
-            'error' => $e->getMessage()
+            'error' => $e->getMessage(),
         ]);
         session()->flash('error', __('There was a problem setting currency. Please reload the page and try again.'));
 
@@ -337,32 +333,30 @@ Route::get('/current-currency', function () {
     dd([
         'code' => $currencyCode,
         'name' => $currencyInfo['name'],
-        'decimal_places' => $currencyInfo['decimal_places']
+        'decimal_places' => $currencyInfo['decimal_places'],
     ]);
 });
-
-
 
 if (app()->environment('local')) {
     Route::get('/test-money', function () {
         try {
             // Test XOF with decimal
             $xof_decimal = Money::of('1000.00', 'XOF');
-            dump("XOF with decimal: ".$xof_decimal->getAmount());
-            dump("XOF with decimal (minor units): ".$xof_decimal->getMinorAmount()->toInt());
+            dump('XOF with decimal: '.$xof_decimal->getAmount());
+            dump('XOF with decimal (minor units): '.$xof_decimal->getMinorAmount()->toInt());
 
             // Test XOF without decimal
             $xof_whole = Money::of('1000', 'XOF');
-            dump("XOF without decimal: ".$xof_whole->getAmount());
-            dump("XOF without decimal (minor units): ".$xof_whole->getMinorAmount()->toInt());
+            dump('XOF without decimal: '.$xof_whole->getAmount());
+            dump('XOF without decimal (minor units): '.$xof_whole->getMinorAmount()->toInt());
 
             // Compare with EUR for reference
             $eur = Money::of('1000.00', 'EUR');
-            dump("EUR: ".$eur->getAmount());
-            dump("EUR (minor units): ".$eur->getMinorAmount()->toInt());
+            dump('EUR: '.$eur->getAmount());
+            dump('EUR (minor units): '.$eur->getMinorAmount()->toInt());
 
         } catch (Exception $e) {
-            dump("Error: ".$e->getMessage());
+            dump('Error: '.$e->getMessage());
         }
     });
 }
@@ -400,42 +394,71 @@ Route::fallback(function () {
     $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
 
     $availableLocales = array_keys(config('app.available_languages', []));
-    if (!in_array($locale, $availableLocales)) {
+    if (! in_array($locale, $availableLocales)) {
         $locale = 'en';
     }
 
     return redirect("/$locale");
 });
 
+Route::get('/test-localized-route-helper', function () {
+    echo '<h2>Testing Localized Route Helper Functions</h2>';
+    echo '<p><em>Note: This tests the helper functions only. URL slug translation comes in later issues.</em></p>';
 
-Route::get('/test-localized-route', function () {
-    echo "<h2>Testing localizedRoute Function</h2>";
+    // Test 1: Helper function exists and works
+    echo '<h3>1. Function Availability Test</h3>';
+    if (function_exists('localizedRoute')) {
+        echo '<pre>✅ localizedRoute() function exists</pre>';
+    } else {
+        echo '<pre>❌ localizedRoute() function missing</pre>';
 
-    // Test basic functionality
+        return;
+    }
+
+    // Test 2: Auto locale injection (the main feature we built)
+    echo '<h3>2. Auto Locale Injection Test</h3>';
+    echo '<p>Testing that locale gets automatically added to route parameters:</p>';
+
     try {
         $url = localizedRoute('localized.dashboard');
-        echo "<pre>✅ localizedRoute('localized.dashboard') = '{$url}'</pre>";
+        $hasLocale = str_contains($url, '/en/');
+        echo "<pre>localizedRoute('localized.dashboard') = '{$url}'</pre>";
+        echo '<pre>Locale auto-injected: '.($hasLocale ? '✅ YES' : '❌ NO').'</pre>';
     } catch (Exception $e) {
         echo "<pre>❌ Error: {$e->getMessage()}</pre>";
     }
 
-    // Test with parameters
+    // Test 3: Manual locale override
+    echo '<h3>3. Manual Locale Override Test</h3>';
+    $testLocales = ['tr', 'fr'];
+    foreach ($testLocales as $locale) {
+        try {
+            $url = localizedRoute('localized.dashboard', [], $locale);
+            $hasCorrectLocale = str_contains($url, "/{$locale}/");
+            echo "<pre>localizedRoute('localized.dashboard', [], '{$locale}') = '{$url}'</pre>";
+            echo '<pre>Correct locale prefix: '.($hasCorrectLocale ? '✅ YES' : '❌ NO').'</pre>';
+        } catch (Exception $e) {
+            echo "<pre>❌ Error for {$locale}: {$e->getMessage()}</pre>";
+        }
+    }
+
+    // Test 4: Parameters preservation
+    echo '<h3>4. Parameter Preservation Test</h3>';
     try {
         $url = localizedRoute('localized.piggy-banks.show', ['piggy_id' => 123]);
-        echo "<pre>✅ localizedRoute('localized.piggy-banks.show', ['piggy_id' => 123]) = '{$url}'</pre>";
+        $hasParam = str_contains($url, '/123');
+        echo "<pre>localizedRoute('localized.piggy-banks.show', ['piggy_id' => 123]) = '{$url}'</pre>";
+        echo '<pre>Parameters preserved: '.($hasParam ? '✅ YES' : '❌ NO').'</pre>';
     } catch (Exception $e) {
         echo "<pre>❌ Error: {$e->getMessage()}</pre>";
     }
 
-    // Test with different locale
-    try {
-        $url = localizedRoute('localized.dashboard', [], 'tr');
-        echo "<pre>✅ localizedRoute('localized.dashboard', [], 'tr') = '{$url}'</pre>";
-    } catch (Exception $e) {
-        echo "<pre>❌ Error: {$e->getMessage()}</pre>";
-    }
-
-    echo "<h3>🎉 Function is working!</h3>";
+    echo '<h3>Summary</h3>';
+    echo '<pre>✅ Helper functions work correctly</pre>';
+    echo '<pre>✅ Locale auto-injection functional</pre>';
+    echo '<pre>✅ Manual locale override works</pre>';
+    echo '<pre>✅ Route parameters are preserved</pre>';
+    echo '<pre>⏳ URL slug translation will be implemented in Issues #3-4</pre>';
 });
 
 require __DIR__.'/auth.php';

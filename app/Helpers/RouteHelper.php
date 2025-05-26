@@ -7,10 +7,9 @@ class RouteHelper
     /**
      * Generate a localized route URL without manual locale passing
      *
-     * @param string $routeName The route name (e.g., 'localized.piggy-banks.index')
-     * @param array $parameters Route parameters
-     * @param string|null $locale Override locale (defaults to current)
-     * @return string
+     * @param  string  $routeName  The route name (e.g., 'localized.piggy-banks.index')
+     * @param  array  $parameters  Route parameters
+     * @param  string|null  $locale  Override locale (defaults to current)
      */
     public static function localizedRoute(string $routeName, array $parameters = [], ?string $locale = null): string
     {
@@ -25,10 +24,9 @@ class RouteHelper
     /**
      * Generate an absolute localized URL
      *
-     * @param string $routeName The route name
-     * @param array $parameters Route parameters
-     * @param string|null $locale Override locale
-     * @return string
+     * @param  string  $routeName  The route name
+     * @param  array  $parameters  Route parameters
+     * @param  string|null  $locale  Override locale
      */
     public static function localizedUrl(string $routeName, array $parameters = [], ?string $locale = null): string
     {
