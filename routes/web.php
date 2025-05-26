@@ -401,64 +401,45 @@ Route::fallback(function () {
     return redirect("/$locale");
 });
 
-// Replace your old test route with this one
-Route::get('/test-route-service', function () {
-    echo '<h2>Testing LocalizedRouteService</h2>';
+// Test route for route macros
+Route::get('/test-route-macro', function () {
+    echo '<h2>Testing Route Macros</h2>';
 
-    // Test 1: Check if class exists
-    if (class_exists('\App\Services\LocalizedRouteService')) {
-        echo '<pre>✅ LocalizedRouteService class exists</pre>';
-    } else {
-        echo '<pre>❌ LocalizedRouteService class not found</pre>';
-
-        return;
-    }
-
-    // Test 2: Check available locales method
+    // Test basic macro registration
+    echo '<h3>1. Testing localizedGet macro</h3>';
     try {
-        $locales = \App\Services\LocalizedRouteService::getAvailableLocales();
-        echo '<pre>✅ Available locales: '.implode(', ', $locales).'</pre>';
+        Route::localizedGet('profile', function () {
+            return 'Test profile';
+        })
+            ->name('test.profile')
+            ->middleware(['auth']);
+
+        echo '<pre>✅ localizedGet macro executed without errors</pre>';
     } catch (Exception $e) {
-        echo "<pre>❌ Error getting locales: {$e->getMessage()}</pre>";
+        echo "<pre>❌ localizedGet error: {$e->getMessage()}</pre>";
     }
 
-    // Test 3: Test a simple route registration
-    echo '<h3>Testing Route Registration</h3>';
-    try {
-        \App\Services\LocalizedRouteService::register(
-            'get',
-            'dashboard',
-            function () {
-                return 'Test dashboard';
-            },
-            'test.dashboard'
-        );
-        echo '<pre>✅ Route registration completed without errors</pre>';
-    } catch (Exception $e) {
-        echo "<pre>❌ Route registration error: {$e->getMessage()}</pre>";
-    }
-
-    // Test 4: Check if routes were actually created
-    echo '<h3>Checking Registered Routes</h3>';
+    // Check if routes were created
+    echo '<h3>2. Checking Created Routes</h3>';
     $routeCollection = Route::getRoutes();
-    $testRoutes = [];
+    $profileRoutes = [];
 
     foreach ($routeCollection as $route) {
-        if (str_contains($route->getName() ?? '', 'test.dashboard')) {
-            $testRoutes[] = $route->uri().' ('.$route->getName().')';
+        if (str_contains($route->getName() ?? '', 'test.profile')) {
+            $profileRoutes[] = $route->uri().' ('.$route->getName().') - middleware: '.json_encode($route->middleware());
         }
     }
 
-    if (! empty($testRoutes)) {
-        echo '<pre>✅ Found registered test routes:</pre>';
-        foreach ($testRoutes as $routeInfo) {
+    if (! empty($profileRoutes)) {
+        echo '<pre>✅ Found profile routes:</pre>';
+        foreach ($profileRoutes as $routeInfo) {
             echo "<pre>  - {$routeInfo}</pre>";
         }
     } else {
-        echo '<pre>❌ No test routes found</pre>';
+        echo '<pre>❌ No profile routes found</pre>';
     }
 
-    echo '<h3>✅ LocalizedRouteService tests completed!</h3>';
+    echo '<h3>✅ Route macro tests completed!</h3>';
 });
 
 require __DIR__.'/auth.php';
