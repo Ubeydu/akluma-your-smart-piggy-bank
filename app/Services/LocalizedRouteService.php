@@ -32,13 +32,14 @@ class LocalizedRouteService
             // Build the full URI pattern with locale prefix
             $uri = '{locale}/' . $translatedSlug;
 
-            // Create UNIQUE route name per locale: localized.dashboard.en, localized.dashboard.tr, etc.
+            // Create UNIQUE route name per locale
             $uniqueRouteName = $routeName . '.' . $locale;
 
-            // Create the route for this locale with specific locale constraint
+            // Create the route for this locale
             $route = Route::$method($uri, $action)
                 ->name($uniqueRouteName)
-                ->where('locale', $locale);  // Only match this specific locale
+                ->where('locale', '[a-z]{2}')
+                ->middleware('locale');
 
             // Apply any additional options
             if (!empty($options['middleware'])) {
@@ -50,6 +51,7 @@ class LocalizedRouteService
             }
         }
     }
+
 
     /**
      * Get all available locales from configuration

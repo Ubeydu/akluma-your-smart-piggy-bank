@@ -312,7 +312,7 @@
                     <!-- Error message outside of button layout -->
                     @auth
                         @if($activePiggyBanksCount >= $maxActivePiggyBanks)
-                            <a href="{{ route('localized.piggy-banks.index', ['locale' => app()->getLocale()]) }}" class="block text-sm mt-4 text-center sm:text-left" style="color: #ef4444;" onmouseover="this.style.color='#1e3a8a'; this.style.textDecoration='underline';" onmouseout="this.style.color='#ef4444'; this.style.textDecoration='none';">
+                            <a href="{{ localizedRoute('localized.piggy-banks.index') }}" class="block text-sm mt-4 text-center sm:text-left" style="color: #ef4444;" onmouseover="this.style.color='#1e3a8a'; this.style.textDecoration='underline';" onmouseout="this.style.color='#ef4444'; this.style.textDecoration='none';">
                                 {{ __('You have reached the maximum limit of :limit active or paused piggy banks. Please complete or cancel some existing piggy banks before creating a new one.', ['limit' => $maxActivePiggyBanks]) }}
                             </a>
                         @endif

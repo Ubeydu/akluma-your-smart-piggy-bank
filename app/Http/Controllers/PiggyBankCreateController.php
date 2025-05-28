@@ -551,8 +551,7 @@ class PiggyBankCreateController extends Controller
     public function storePiggyBank(Request $request)
     {
         if (!$request->session()->has('pick_date_step3')) {
-            return redirect()
-                ->route('localized.piggy-banks.index', ['locale' => app()->getLocale()])
+            return redirect(localizedRoute('localized.piggy-banks.index'))
                 ->with('warning', __('You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.'));
         }
 
@@ -633,8 +632,7 @@ class PiggyBankCreateController extends Controller
 //                'session_data' => session()->all()
 //            ]);
 
-            return redirect()
-                ->route('localized.piggy-banks.index', ['locale' => app()->getLocale(), 'from_creation' => true])
+            return redirect(localizedRoute('localized.piggy-banks.index', ['from_creation' => true]))
                 ->with('newPiggyBankId', $piggyBank->id)
                 ->with('newPiggyBankCreatedTime', time())
                 ->with('success', __('Your piggy bank has been created successfully.'));
@@ -669,8 +667,7 @@ class PiggyBankCreateController extends Controller
             // Check if user is authenticated
             if (auth()->check()) {
                 // If authenticated, redirect to index page
-                return redirect()
-                    ->route('localized.piggy-banks.index', ['locale' => app()->getLocale()])
+                return redirect(localizedRoute('localized.piggy-banks.index'))
                     ->with('warning', __('You cancelled creating your piggy bank.'));
             } else {
                 // If not authenticated, redirect to welcome page

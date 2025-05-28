@@ -7,7 +7,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     @auth
-                        <a href="{{ route('localized.piggy-banks.index', ['locale' => app()->getLocale()]) }}">
+                        <a href="{{ localizedRoute('localized.piggy-banks.index') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-900"/>
                         </a>
                     @else
@@ -26,8 +26,8 @@
                                     :active="request()->routeIs('localized.dashboard.*')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                        <x-nav-link :href="route('localized.piggy-banks.index', ['locale' => app()->getLocale()])"
-                                    :active="request()->routeIs('localized.piggy-banks.index')">
+                        <x-nav-link :href="localizedRoute('localized.piggy-banks.index')"
+                                    :active="request()->routeIs('localized.piggy-banks.index.*')">
                         {{ __('My Piggy Banks') }}
                     </x-nav-link>
                     @endauth
@@ -133,8 +133,8 @@
                                        :active="request()->routeIs('localized.dashboard.*')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('localized.piggy-banks.index', ['locale' => app()->getLocale()])"
-                                   :active="request()->routeIs('localized.piggy-banks.index')">
+                <x-responsive-nav-link :href="localizedRoute('localized.piggy-banks.index')"
+                                       :active="request()->routeIs('localized.piggy-banks.index.*')">
                 {{ __('My Piggy Banks') }}
             </x-responsive-nav-link>
             @endauth

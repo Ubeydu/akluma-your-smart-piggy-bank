@@ -69,6 +69,11 @@ Route::localizedGet('dashboard', [DashboardController::class, 'index'])
     ->name('localized.dashboard')
     ->middleware(['locale', 'auth', 'verified']);
 
+// Add this outside the localized route group, near the dashboard route
+Route::localizedGet('piggy-banks', [PiggyBankController::class, 'index'])
+    ->name('localized.piggy-banks.index')
+    ->middleware(['auth', 'verified']);
+
 // Localized route group
 Route::prefix('{locale}')
     ->middleware('locale')
@@ -79,11 +84,6 @@ Route::prefix('{locale}')
         Route::get('/', function () {
             return view('welcome');
         })->name('localized.welcome');
-
-        // Add other routes here (without leading slash) and use `localized.` prefix for route names
-        Route::get('piggy-banks', [PiggyBankController::class, 'index'])
-            ->middleware(['auth', 'verified'])
-            ->name('localized.piggy-banks.index');
 
         Route::get('piggy-banks/{piggy_id}', [PiggyBankController::class, 'show'])
             ->middleware(['auth', 'verified'])
@@ -463,6 +463,81 @@ Route::get('/debug-route-names', function () {
     echo "<h3>The Issue:</h3>";
     echo "<pre>Navigation expects: 'localized.dashboard'</pre>";
     echo "<pre>But we now have: 'localized.dashboard.en', 'localized.dashboard.tr', etc.</pre>";
+
+    return '';
+});
+
+
+Route::get('/debug-piggy-routes', function () {
+    echo "<h2>Piggy Banks Route Debug</h2>";
+
+    $routeCollection = Route::getRoutes();
+    $piggyRoutes = [];
+
+    foreach ($routeCollection as $route) {
+        $name = $route->getName() ?? 'unnamed';
+        if (str_contains($name, 'piggy-banks.index')) {
+            $piggyRoutes[] = [
+                'name' => $name,
+                'uri' => $route->uri(),
+                'locale_constraint' => $route->wheres['locale'] ?? 'none'
+            ];
+        }
+    }
+
+    echo "<h3>Piggy Banks Index Routes:</h3>";
+    foreach ($piggyRoutes as $route) {
+        echo "<pre>Name: {$route['name']} | URI: {$route['uri']} | Locale: {$route['locale_constraint']}</pre>";
+    }
+
+    return '';
+});
+
+// Replace the existing debug route with this enhanced version
+Route::get('/debug-locale-detection', function () {
+    echo "<h2>Locale Detection Debug</h2>";
+
+    echo "<h3>Current State:</h3>";
+    echo "<pre>app()->getLocale(): " . app()->getLocale() . "</pre>";
+    echo "<pre>session('locale'): " . (session('locale') ?? 'null') . "</pre>";
+    echo "<pre>Auth user language: " . (Auth::check() ? (Auth::user()->language ?? 'null') : 'not authenticated') . "</pre>";
+
+    echo "<h3>Request Info:</h3>";
+    echo "<pre>Request URL: " . request()->fullUrl() . "</pre>";
+    echo "<pre>Request segments: " . json_encode(request()->segments()) . "</pre>";
+    echo "<pre>Route name: " . (request()->route()->getName() ?? 'no name') . "</pre>";
+    echo "<pre>Route parameters: " . json_encode(request()->route()->parameters()) . "</pre>";
+
+    return '';
+});
+
+
+Route::get('/debug-route-constraints', function () {
+    echo "<h2>Route Constraints Debug</h2>";
+
+    $routeCollection = Route::getRoutes();
+    $piggyRoutes = [];
+
+    foreach ($routeCollection as $route) {
+        $name = $route->getName() ?? 'unnamed';
+        if (str_contains($name, 'piggy-banks.index')) {
+            $piggyRoutes[] = [
+                'name' => $name,
+                'uri' => $route->uri(),  // FIXED: use ->uri() method, not ['uri']
+                'wheres' => $route->wheres,
+                'middleware' => $route->middleware()
+            ];
+        }
+    }
+
+    echo "<h3>Piggy Banks Routes Analysis:</h3>";
+    foreach ($piggyRoutes as $route) {
+        echo "<pre>Name: {$route['name']}</pre>";
+        echo "<pre>URI: {$route['uri']}</pre>";
+        echo "<pre>Constraints: " . json_encode($route['wheres']) . "</pre>";
+        echo "<pre>Middleware: " . json_encode($route['middleware']) . "</pre>";
+        echo "<pre>---</pre>";
+    }
 
     return '';
 });
