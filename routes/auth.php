@@ -11,6 +11,17 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+// Non-localized login redirect for middleware
+Route::get('login', function () {
+    $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
+
+    $availableLocales = array_keys(config('app.available_languages', []));
+    if (! in_array($locale, $availableLocales)) {
+        $locale = 'en';
+    }
+
+    return redirect("/$locale/login");
+})->name('login');
 
 Route::prefix('{locale}')
     ->middleware('locale')

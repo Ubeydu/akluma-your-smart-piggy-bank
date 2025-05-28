@@ -68,7 +68,7 @@
 
                     <x-slot name="content">
 
-                        <x-dropdown-link :href="route('localized.profile.edit', ['locale' => app()->getLocale()])">
+                        <x-dropdown-link :href="localizedRoute('localized.profile.edit')">
                         {{ __('Profile') }}
                         </x-dropdown-link>
 
@@ -160,7 +160,7 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('localized.profile.edit', ['locale' => app()->getLocale()])">
+                <x-responsive-nav-link :href="localizedRoute('localized.profile.edit')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 

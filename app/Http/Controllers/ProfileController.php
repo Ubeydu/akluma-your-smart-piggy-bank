@@ -34,7 +34,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('localized.profile.edit', ['locale' => app()->getLocale()])->with('status', 'profile-updated');
+        return Redirect::to(localizedRoute('localized.profile.edit'))->with('status', 'profile-updated');
     }
 
     /**

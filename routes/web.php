@@ -74,6 +74,11 @@ Route::localizedGet('piggy-banks', [PiggyBankController::class, 'index'])
     ->name('localized.piggy-banks.index')
     ->middleware(['auth', 'verified']);
 
+Route::localizedGet('profile', [ProfileController::class, 'edit'])
+    ->name('localized.profile.edit')
+    ->middleware(['locale', 'auth', 'verified']);
+
+
 // Localized route group
 Route::prefix('{locale}')
     ->middleware('locale')
@@ -121,7 +126,7 @@ Route::prefix('{locale}')
             ->where('piggy_id', '[0-9]+');
 
         Route::middleware(['auth', 'verified'])->group(function () {
-            Route::get('profile', [ProfileController::class, 'edit'])->name('localized.profile.edit');
+
             Route::patch('profile', [ProfileController::class, 'update'])->name('localized.profile.update');
             Route::delete('profile', [ProfileController::class, 'destroy'])->name('localized.profile.destroy');
 
