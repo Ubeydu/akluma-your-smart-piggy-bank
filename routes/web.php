@@ -31,6 +31,44 @@ Route::get('/', function () {
     abort(404); // prevent infinite loop
 });
 
+// Place this OUTSIDE the localized route group, near the top of the file
+Route::get('/debug-url-generation', function () {
+    echo "<h2>URL Generation Debug</h2>";
+
+    // Test what localizedRoute generates for different locales
+    $locales = ['en', 'tr', 'fr'];
+
+    foreach ($locales as $locale) {
+        echo "<h3>Testing locale: {$locale}</h3>";
+
+        // Temporarily set the locale
+        app()->setLocale($locale);
+
+        try {
+            $url = localizedRoute('localized.dashboard');
+            echo "<pre>localizedRoute('localized.dashboard') = {$url}</pre>";
+        } catch (Exception $e) {
+            echo "<pre>❌ Error: {$e->getMessage()}</pre>";
+        }
+
+        // Also test the Laravel route() function directly
+        try {
+            $directUrl = route('localized.dashboard', ['locale' => $locale]);
+            echo "<pre>route('localized.dashboard', ['locale' => '{$locale}']) = {$directUrl}</pre>";
+        } catch (Exception $e) {
+            echo "<pre>❌ Direct route error: {$e->getMessage()}</pre>";
+        }
+
+        echo "<pre>---</pre>";
+    }
+
+    return '';
+});
+
+Route::localizedGet('dashboard', [DashboardController::class, 'index'])
+    ->name('localized.dashboard')
+    ->middleware(['locale', 'auth', 'verified']);
+
 // Localized route group
 Route::prefix('{locale}')
     ->middleware('locale')
@@ -41,11 +79,6 @@ Route::prefix('{locale}')
         Route::get('/', function () {
             return view('welcome');
         })->name('localized.welcome');
-
-        // Localized dashboard route
-        Route::get('dashboard', [DashboardController::class, 'index'])
-            ->middleware(['auth', 'verified'])
-            ->name('localized.dashboard');
 
         // Add other routes here (without leading slash) and use `localized.` prefix for route names
         Route::get('piggy-banks', [PiggyBankController::class, 'index'])
@@ -401,45 +434,35 @@ Route::fallback(function () {
     return redirect("/$locale");
 });
 
-// Test route for route macros
-Route::get('/test-route-macro', function () {
-    echo '<h2>Testing Route Macros</h2>';
-
-    // Test basic macro registration
-    echo '<h3>1. Testing localizedGet macro</h3>';
-    try {
-        Route::localizedGet('profile', function () {
-            return 'Test profile';
-        })
-            ->name('test.profile')
-            ->middleware(['auth']);
-
-        echo '<pre>✅ localizedGet macro executed without errors</pre>';
-    } catch (Exception $e) {
-        echo "<pre>❌ localizedGet error: {$e->getMessage()}</pre>";
-    }
-
-    // Check if routes were created
-    echo '<h3>2. Checking Created Routes</h3>';
-    $routeCollection = Route::getRoutes();
-    $profileRoutes = [];
-
-    foreach ($routeCollection as $route) {
-        if (str_contains($route->getName() ?? '', 'test.profile')) {
-            $profileRoutes[] = $route->uri().' ('.$route->getName().') - middleware: '.json_encode($route->middleware());
-        }
-    }
-
-    if (! empty($profileRoutes)) {
-        echo '<pre>✅ Found profile routes:</pre>';
-        foreach ($profileRoutes as $routeInfo) {
-            echo "<pre>  - {$routeInfo}</pre>";
-        }
-    } else {
-        echo '<pre>❌ No profile routes found</pre>';
-    }
-
-    echo '<h3>✅ Route macro tests completed!</h3>';
-});
 
 require __DIR__.'/auth.php';
+
+
+Route::get('/debug-route-names', function () {
+    echo "<h2>Current Route Names Debug</h2>";
+
+    $routeCollection = Route::getRoutes();
+    $dashboardRoutes = [];
+
+    foreach ($routeCollection as $route) {
+        $name = $route->getName() ?? 'unnamed';
+        if (str_contains($name, 'dashboard')) {
+            $dashboardRoutes[] = [
+                'name' => $name,
+                'uri' => $route->uri(),
+                'locale_constraint' => $route->wheres['locale'] ?? 'none'
+            ];
+        }
+    }
+
+    echo "<h3>Dashboard Routes Found:</h3>";
+    foreach ($dashboardRoutes as $route) {
+        echo "<pre>Name: {$route['name']} | URI: {$route['uri']} | Locale: {$route['locale_constraint']}</pre>";
+    }
+
+    echo "<h3>The Issue:</h3>";
+    echo "<pre>Navigation expects: 'localized.dashboard'</pre>";
+    echo "<pre>But we now have: 'localized.dashboard.en', 'localized.dashboard.tr', etc.</pre>";
+
+    return '';
+});

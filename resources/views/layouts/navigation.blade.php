@@ -22,8 +22,8 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
 
                     @auth
-                        <x-nav-link :href="route('localized.dashboard', ['locale' => app()->getLocale()])"
-                                    :active="request()->routeIs('localized.dashboard')">
+                        <x-nav-link :href="localizedRoute('localized.dashboard')"
+                                    :active="request()->routeIs('localized.dashboard.*')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
                         <x-nav-link :href="route('localized.piggy-banks.index', ['locale' => app()->getLocale()])"
@@ -129,8 +129,8 @@
         <div class="pt-2 pb-3 space-y-1">
 
             @auth
-            <x-responsive-nav-link :href="route('localized.dashboard', ['locale' => app()->getLocale()])"
-                                   :active="request()->routeIs('localized.dashboard')">
+                <x-responsive-nav-link :href="localizedRoute('localized.dashboard')"
+                                       :active="request()->routeIs('localized.dashboard.*')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('localized.piggy-banks.index', ['locale' => app()->getLocale()])"
@@ -242,7 +242,6 @@
                 <form method="POST"
                       action="{{ route('localized.logout', ['locale' => app()->getLocale()]) }}">
                     @csrf
-
                     <x-responsive-nav-link :href="route('localized.logout', ['locale' => app()->getLocale()])"
                                            onclick="event.preventDefault();
                                         this.closest('form').submit();">

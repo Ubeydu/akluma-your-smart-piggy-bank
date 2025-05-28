@@ -29,18 +29,23 @@ class LocalizedRouteService
             // Get translated slug for this locale
             $translatedSlug = RouteSlugHelper::getSlug($routeKey, $locale);
 
-            // Build the full URI pattern: {locale}/translated-slug
-            $uri = $translatedSlug;
+            // Build the full URI pattern with locale prefix
+            $uri = '{locale}/' . $translatedSlug;
 
-            // Create the route for this locale
-            $route = Route::$method($uri, $action)->name($routeName);
+            // Create UNIQUE route name per locale: localized.dashboard.en, localized.dashboard.tr, etc.
+            $uniqueRouteName = $routeName . '.' . $locale;
 
-            // Apply any additional options (middleware, constraints, etc.)
-            if (! empty($options['middleware'])) {
+            // Create the route for this locale with specific locale constraint
+            $route = Route::$method($uri, $action)
+                ->name($uniqueRouteName)
+                ->where('locale', $locale);  // Only match this specific locale
+
+            // Apply any additional options
+            if (!empty($options['middleware'])) {
                 $route->middleware($options['middleware']);
             }
 
-            if (! empty($options['where'])) {
+            if (!empty($options['where'])) {
                 $route->where($options['where']);
             }
         }
