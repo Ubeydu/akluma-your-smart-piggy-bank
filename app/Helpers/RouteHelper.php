@@ -15,13 +15,25 @@ class RouteHelper
     {
         $locale = $locale ?? app()->getLocale();
 
-        // Append locale to route name to get the language-specific route
-        $localizedRouteName = $routeName . '.' . $locale;
+        // The route names already include locale suffix (e.g., 'localized.dashboard.en')
+        // So we just need to check if the route exists with locale suffix
+        $localizedRouteName = \Route::has($routeName . '.' . $locale)
+            ? $routeName . '.' . $locale
+            : $routeName;
 
         // Always ensure locale is in parameters for localized routes
         $parameters['locale'] = $locale;
 
+//        \Log::debug('🔍 localizedRoute() debug', [
+//            'input_route' => $routeName,
+//            'locale' => $locale,
+//            'resolved_name' => $localizedRouteName,
+//            'parameters' => $parameters,
+//            'route_exists' => \Route::has($localizedRouteName),
+//        ]);
+
         return route($localizedRouteName, $parameters);
+
     }
 
 

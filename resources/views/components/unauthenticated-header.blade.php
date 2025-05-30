@@ -3,7 +3,7 @@
         <div class="flex justify-between h-16">
             <!-- Logo -->
             <div class="shrink-0 flex items-center text-black/50">
-                <a href="{{ route('localized.welcome', ['locale' => app()->getLocale()]) }}">
+                <a href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.welcome') }}">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-auto max-w-[40px] sm:max-w-[60px]" fill="currentColor">
 
                         <style type="text/css">

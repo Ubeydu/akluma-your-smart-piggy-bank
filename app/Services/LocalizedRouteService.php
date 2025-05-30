@@ -30,7 +30,11 @@ class LocalizedRouteService
             $translatedSlug = RouteSlugHelper::getSlug($routeKey, $locale);
 
             // Build the full URI pattern with locale prefix
-            $uri = '{locale}/' . $translatedSlug;
+            // Handle empty slugs properly
+            $uri = $translatedSlug === ''
+                ? '{locale}/home-' . $locale  // fallback to locale-specific URI
+                : '{locale}/' . $translatedSlug;
+
 
             // Create UNIQUE route name per locale
             $uniqueRouteName = $routeName . '.' . $locale;
@@ -38,8 +42,15 @@ class LocalizedRouteService
             // Create the route for this locale
             $route = Route::$method($uri, $action)
                 ->name($uniqueRouteName)
-                ->where('locale', '[a-z]{2}')
+                ->where('locale', $locale)
                 ->middleware('locale');
+
+            \Log::debug('REGISTERED ROUTE', [
+                'locale' => $locale,
+                'name' => $uniqueRouteName,
+                'uri' => $uri,
+            ]);
+
 
             // Apply any additional options
             if (!empty($options['middleware'])) {

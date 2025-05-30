@@ -13,31 +13,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
-Route::get('/debug-terms-routes', function () {
-    echo "<h2>Terms/Privacy Routes Debug</h2>";
-
-    $routeCollection = Route::getRoutes();
-    $termsRoutes = [];
-
-    foreach ($routeCollection as $route) {
-        $name = $route->getName() ?? 'unnamed';
-        if (str_contains($name, 'terms') || str_contains($name, 'privacy')) {
-            $termsRoutes[] = [
-                'name' => $name,
-                'uri' => $route->uri(),
-                'methods' => $route->methods()
-            ];
-        }
-    }
-
-    echo "<h3>Terms/Privacy Routes Found:</h3>";
-    foreach ($termsRoutes as $route) {
-        echo "<pre>Name: {$route['name']} | URI: {$route['uri']} | Methods: " . implode(',', $route['methods']) . "</pre>";
-    }
-
-    return '';
-});
-
 
 // Redirect base URL to localized version
 Route::get('/', function () {
@@ -57,39 +32,7 @@ Route::get('/', function () {
     abort(404); // prevent infinite loop
 });
 
-// Place this OUTSIDE the localized route group, near the top of the file
-Route::get('/debug-url-generation', function () {
-    echo "<h2>URL Generation Debug</h2>";
 
-    // Test what localizedRoute generates for different locales
-    $locales = ['en', 'tr', 'fr'];
-
-    foreach ($locales as $locale) {
-        echo "<h3>Testing locale: {$locale}</h3>";
-
-        // Temporarily set the locale
-        app()->setLocale($locale);
-
-        try {
-            $url = localizedRoute('localized.dashboard');
-            echo "<pre>localizedRoute('localized.dashboard') = {$url}</pre>";
-        } catch (Exception $e) {
-            echo "<pre>❌ Error: {$e->getMessage()}</pre>";
-        }
-
-        // Also test the Laravel route() function directly
-        try {
-            $directUrl = route('localized.dashboard', ['locale' => $locale]);
-            echo "<pre>route('localized.dashboard', ['locale' => '{$locale}']) = {$directUrl}</pre>";
-        } catch (Exception $e) {
-            echo "<pre>❌ Direct route error: {$e->getMessage()}</pre>";
-        }
-
-        echo "<pre>---</pre>";
-    }
-
-    return '';
-});
 
 Route::localizedGet('dashboard', [DashboardController::class, 'index'])
     ->name('localized.dashboard')
@@ -115,11 +58,24 @@ Route::localizedGet('privacy-policy', function () {
 })
     ->name('localized.privacy');
 
-// Welcome route (converted to localized macro)
-Route::localizedGet('welcome', function () {
+// The welcome route - handled manually to avoid URI conflicts
+Route::get('{locale}', function () {
     return view('welcome');
 })
-    ->name('localized.welcome');
+    ->name('localized.welcome')
+    ->where('locale', implode('|', array_keys(config('app.available_languages'))))
+    ->middleware('locale');
+
+
+// Create piggy bank step 1 - explicit for all locales
+Route::get('/en/create-piggy-bank/step-1', [PiggyBankCreateController::class, 'step1'])
+    ->name('localized.create-piggy-bank.step-1.en');
+
+Route::get('/tr/create-piggy-bank/step-1', [PiggyBankCreateController::class, 'step1'])
+    ->name('localized.create-piggy-bank.step-1.tr');
+
+Route::get('/fr/create-piggy-bank/step-1', [PiggyBankCreateController::class, 'step1'])
+    ->name('localized.create-piggy-bank.step-1.fr');
 
 
 // Localized route group
@@ -459,6 +415,44 @@ if (app()->environment('local')) {
     });
 }
 
+Route::get('/debug-route-registration', function () {
+    echo "<h1>🔍 Route Registration Debug</h1>";
+
+    // Clear existing routes to start fresh
+    echo "<h2>Clearing existing routes...</h2>";
+
+    // Re-register just the welcome route to see what happens
+    echo "<h2>Manually testing welcome route registration...</h2>";
+
+    // Test the macro directly
+    try {
+        $macro = Route::localizedGet('test-welcome', function () {
+            return 'test welcome';
+        })->name('localized.test-welcome');
+
+        // Force destructor
+        unset($macro);
+
+        echo "<pre>Welcome macro test completed</pre>";
+
+        // Check what routes were created
+        $routeCollection = Route::getRoutes();
+        foreach ($routeCollection as $route) {
+            $name = $route->getName() ?? 'unnamed';
+            if (str_contains($name, 'test-welcome')) {
+                echo "<pre>✅ Found: {$name} → {$route->uri()}</pre>";
+            }
+        }
+
+    } catch (Exception $e) {
+        echo "<pre>❌ Error: {$e->getMessage()}</pre>";
+    }
+
+    return '';
+});
+
+
+
 Route::fallback(function () {
     $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
 
@@ -472,108 +466,3 @@ Route::fallback(function () {
 
 
 require __DIR__.'/auth.php';
-
-
-Route::get('/debug-route-names', function () {
-    echo "<h2>Current Route Names Debug</h2>";
-
-    $routeCollection = Route::getRoutes();
-    $dashboardRoutes = [];
-
-    foreach ($routeCollection as $route) {
-        $name = $route->getName() ?? 'unnamed';
-        if (str_contains($name, 'dashboard')) {
-            $dashboardRoutes[] = [
-                'name' => $name,
-                'uri' => $route->uri(),
-                'locale_constraint' => $route->wheres['locale'] ?? 'none'
-            ];
-        }
-    }
-
-    echo "<h3>Dashboard Routes Found:</h3>";
-    foreach ($dashboardRoutes as $route) {
-        echo "<pre>Name: {$route['name']} | URI: {$route['uri']} | Locale: {$route['locale_constraint']}</pre>";
-    }
-
-    echo "<h3>The Issue:</h3>";
-    echo "<pre>Navigation expects: 'localized.dashboard'</pre>";
-    echo "<pre>But we now have: 'localized.dashboard.en', 'localized.dashboard.tr', etc.</pre>";
-
-    return '';
-});
-
-
-Route::get('/debug-piggy-routes', function () {
-    echo "<h2>Piggy Banks Route Debug</h2>";
-
-    $routeCollection = Route::getRoutes();
-    $piggyRoutes = [];
-
-    foreach ($routeCollection as $route) {
-        $name = $route->getName() ?? 'unnamed';
-        if (str_contains($name, 'piggy-banks.index')) {
-            $piggyRoutes[] = [
-                'name' => $name,
-                'uri' => $route->uri(),
-                'locale_constraint' => $route->wheres['locale'] ?? 'none'
-            ];
-        }
-    }
-
-    echo "<h3>Piggy Banks Index Routes:</h3>";
-    foreach ($piggyRoutes as $route) {
-        echo "<pre>Name: {$route['name']} | URI: {$route['uri']} | Locale: {$route['locale_constraint']}</pre>";
-    }
-
-    return '';
-});
-
-// Replace the existing debug route with this enhanced version
-Route::get('/debug-locale-detection', function () {
-    echo "<h2>Locale Detection Debug</h2>";
-
-    echo "<h3>Current State:</h3>";
-    echo "<pre>app()->getLocale(): " . app()->getLocale() . "</pre>";
-    echo "<pre>session('locale'): " . (session('locale') ?? 'null') . "</pre>";
-    echo "<pre>Auth user language: " . (Auth::check() ? (Auth::user()->language ?? 'null') : 'not authenticated') . "</pre>";
-
-    echo "<h3>Request Info:</h3>";
-    echo "<pre>Request URL: " . request()->fullUrl() . "</pre>";
-    echo "<pre>Request segments: " . json_encode(request()->segments()) . "</pre>";
-    echo "<pre>Route name: " . (request()->route()->getName() ?? 'no name') . "</pre>";
-    echo "<pre>Route parameters: " . json_encode(request()->route()->parameters()) . "</pre>";
-
-    return '';
-});
-
-
-Route::get('/debug-route-constraints', function () {
-    echo "<h2>Route Constraints Debug</h2>";
-
-    $routeCollection = Route::getRoutes();
-    $piggyRoutes = [];
-
-    foreach ($routeCollection as $route) {
-        $name = $route->getName() ?? 'unnamed';
-        if (str_contains($name, 'piggy-banks.index')) {
-            $piggyRoutes[] = [
-                'name' => $name,
-                'uri' => $route->uri(),  // FIXED: use ->uri() method, not ['uri']
-                'wheres' => $route->wheres,
-                'middleware' => $route->middleware()
-            ];
-        }
-    }
-
-    echo "<h3>Piggy Banks Routes Analysis:</h3>";
-    foreach ($piggyRoutes as $route) {
-        echo "<pre>Name: {$route['name']}</pre>";
-        echo "<pre>URI: {$route['uri']}</pre>";
-        echo "<pre>Constraints: " . json_encode($route['wheres']) . "</pre>";
-        echo "<pre>Middleware: " . json_encode($route['middleware']) . "</pre>";
-        echo "<pre>---</pre>";
-    }
-
-    return '';
-});

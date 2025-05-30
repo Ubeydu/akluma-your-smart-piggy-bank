@@ -8,11 +8,11 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     @auth
-                        <a href="{{ localizedRoute('localized.piggy-banks.index') }}">
+                        <a href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.piggy-banks.index') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-900"/>
                         </a>
                     @else
-                        <a href="{{ localizedRoute('localized.welcome') }}">
+                        <a href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.welcome') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-900"/>
                         </a>
                     @endauth
@@ -23,11 +23,11 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
 
                     @auth
-                        <x-nav-link href="{{ localizedRoute('localized.dashboard') }}"
+                        <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.dashboard') }}"
                                     :active="request()->routeIs('localized.dashboard.*')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                        <x-nav-link href="{{ localizedRoute('localized.piggy-banks.index') }}"
+                        <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.piggy-banks.index') }}"
                                     :active="request()->routeIs('localized.piggy-banks.index.*')">
                         {{ __('My Piggy Banks') }}
                     </x-nav-link>
@@ -37,7 +37,7 @@
                                     :active="request()->routeIs('localized.create-piggy-bank.*')">
                         {{ __('Create New Piggy Bank') }}
                     </x-nav-link>
-                        <x-nav-link href="{{ localizedRoute('localized.welcome') }}"
+                        <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.welcome') }}"
                                     :active="request()->routeIs('localized.welcome')">
                         {{ __('Welcome') }}
                     </x-nav-link>
@@ -69,7 +69,7 @@
 
                     <x-slot name="content">
 
-                        <x-dropdown-link href="{{ localizedRoute('localized.profile.edit') }}">
+                        <x-dropdown-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.profile.edit') }}">
                         {{ __('Profile') }}
                         </x-dropdown-link>
 
@@ -85,10 +85,10 @@
                         </x-dropdown-link>
 
                         <!-- Authentication -->
-                        <form method="POST" action="{{ localizedRoute('localized.logout') }}">
+                        <form method="POST" action="{{ \App\Helpers\RouteHelper::localizedRoute('localized.logout') }}">
                             @csrf
 
-                            <x-dropdown-link href="{{ localizedRoute('localized.logout') }}"
+                            <x-dropdown-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.logout') }}"
                                              onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 {{ __('Log Out') }}
@@ -130,11 +130,11 @@
         <div class="pt-2 pb-3 space-y-1">
 
             @auth
-                <x-responsive-nav-link href="{{ localizedRoute('localized.dashboard') }}"
+                <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.dashboard') }}"
                                        :active="request()->routeIs('localized.dashboard.*')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ localizedRoute('localized.piggy-banks.index') }}"
+                <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.piggy-banks.index') }}"
                                        :active="request()->routeIs('localized.piggy-banks.index.*')">
                 {{ __('My Piggy Banks') }}
             </x-responsive-nav-link>
@@ -145,7 +145,7 @@
                     {{ __('Create New Piggy Bank') }}
                 </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="{{ localizedRoute('localized.welcome') }}"
+            <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.welcome') }}"
                                    :active="request()->routeIs('localized.welcome')">
                 {{ __('Welcome') }}
             </x-responsive-nav-link>
@@ -161,7 +161,7 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link href="{{ localizedRoute('localized.profile.edit') }}">
+                <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.profile.edit') }}">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
@@ -241,9 +241,9 @@
 
                 <!-- Authentication -->
                 <form method="POST"
-                      action="{{ localizedRoute('localized.logout') }}">
+                      action="{{ \App\Helpers\RouteHelper::localizedRoute('localized.logout') }}">
                     @csrf
-                    <x-responsive-nav-link href="{{ localizedRoute('localized.logout') }}"
+                    <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.logout') }}"
                                            onclick="event.preventDefault();
                                         this.closest('form').submit();">
                         {{ __('Log Out') }}
