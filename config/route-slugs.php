@@ -13,6 +13,11 @@ return [
     */
 
     'routes' => [
+        'welcome' => [
+            'en' => '',
+            'tr' => '',
+            'fr' => '',
+        ],
         // Main application routes
         'dashboard' => [
             'en' => 'dashboard',

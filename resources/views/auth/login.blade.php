@@ -2,7 +2,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('localized.login', ['locale' => app()->getLocale()]) }}">
+    <form method="POST" action="{{ localizedRoute('localized.login.store') }}">
         @csrf
 
         <!-- Email Address -->

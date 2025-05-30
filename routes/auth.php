@@ -11,6 +11,25 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+// Localized GET routes (forms)
+Route::localizedGet('login', [AuthenticatedSessionController::class, 'create'])
+    ->name('localized.login')
+    ->middleware(['guest']);
+
+// Localized POST routes (form processing)
+Route::localizedPost('login', [AuthenticatedSessionController::class, 'store'])
+    ->name('localized.login.store')
+    ->middleware(['guest']);
+
+// Localized register routes
+Route::localizedGet('register', [RegisteredUserController::class, 'create'])
+    ->name('localized.register')
+    ->middleware(['guest']);
+
+Route::localizedPost('register', [RegisteredUserController::class, 'store'])
+    ->name('localized.register.store')
+    ->middleware(['guest']);
+
 // Non-localized login redirect for middleware
 Route::get('login', function () {
     $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
@@ -28,56 +47,55 @@ Route::prefix('{locale}')
     ->where(['locale' => '[a-z]{2}'])
     ->group(function () {
 
-    Route::middleware('guest')->group(function () {
+        Route::middleware('guest')->group(function () {
 
-    Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('localized.register');
+            //            Route::get('register', [RegisteredUserController::class, 'create'])
+            //                ->name('localized.register');
+            //
+            //            Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+            //    Route::get('login', [AuthenticatedSessionController::class, 'create'])
+            //        ->name('localized.login');
+            //
+            //    Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
-        ->name('localized.login');
+            Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
+                ->name('localized.password.request');
 
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+            Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+                ->name('localized.password.email');
 
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-        ->name('localized.password.request');
+            Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
+                ->name('localized.password.reset');
 
-    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-        ->name('localized.password.email');
+            Route::post('reset-password', [NewPasswordController::class, 'store'])
+                ->name('localized.password.store');
+        });
 
-    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-        ->name('localized.password.reset');
+        Route::middleware('auth')->group(function () {
+            Route::get('verify-email', EmailVerificationPromptController::class)
+                ->name('localized.verification.notice');
 
-    Route::post('reset-password', [NewPasswordController::class, 'store'])
-        ->name('localized.password.store');
-});
+            Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
+                ->middleware(['signed', 'throttle:6,1'])
+                ->name('localized.verification.verify');
 
-Route::middleware('auth')->group(function () {
-    Route::get('verify-email', EmailVerificationPromptController::class)
-        ->name('localized.verification.notice');
+            Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+                ->middleware('throttle:6,1')
+                ->name('localized.verification.send');
 
-    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('localized.verification.verify');
+            Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
+                ->name('localized.password.confirm');
 
-    Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-        ->middleware('throttle:6,1')
-        ->name('localized.verification.send');
+            Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
-    Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
-        ->name('localized.password.confirm');
+            Route::put('password', [PasswordController::class, 'update'])->name('localized.password.update');
 
-    Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
+            Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+                ->name('localized.logout');
+        });
 
-    Route::put('password', [PasswordController::class, 'update'])->name('localized.password.update');
-
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('localized.logout');
-});
-
-});
-
+    });
 
 // Add non-localized password reset routes for language persistence
 Route::middleware('guest', 'locale')->group(function () {
@@ -86,4 +104,3 @@ Route::middleware('guest', 'locale')->group(function () {
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
     Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.update');
 });
-

@@ -54,7 +54,7 @@
             <!-- Desktop navigation -->
             @if (Route::has('login'))
                 <div class="hidden sm:flex items-center space-x-4">
-                    <a href="{{ route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()]) }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
+                    <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
                         {{ __('Create New Piggy Bank') }}
                     </a>
 
@@ -63,16 +63,16 @@
                     </div>
 
                     @auth
-                        <a href="{{ route('localized.dashboard', ['locale' => app()->getLocale()]) }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
+                        <a href="{{ localizedRoute('localized.dashboard') }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
                             {{ __('Dashboard') }}
                         </a>
                     @else
-                        <a href="{{ route('localized.login', ['locale' => app()->getLocale()]) }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
+                        <a href="{{ localizedRoute('localized.login') }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
                             {{ __('Log in') }}
                         </a>
 
                         @if (Route::has('localized.register'))
-                            <a href="{{ route('localized.register', ['locale' => app()->getLocale()]) }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
+                            <a href="{{ localizedRoute('localized.register') }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
                                 {{ __('Register') }}
                             </a>
                         @endif
@@ -98,19 +98,19 @@
             <x-responsive-nav-link :href="route('localized.welcome', ['locale' => app()->getLocale()])">
                 {{ __('Welcome') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()])" :active="request()->routeIs('create-piggy-bank.*')">
+            <x-responsive-nav-link :href="localizedRoute('localized.create-piggy-bank.step-1')" :active="request()->routeIs('create-piggy-bank.*')">
                 {{ __('Create New Piggy Bank') }}
             </x-responsive-nav-link>
             @auth
-                <x-responsive-nav-link :href="route('localized.dashboard', ['locale' => app()->getLocale()])" :active="request()->routeIs('dashboard')">
+                <x-responsive-nav-link :href="localizedRoute('localized.dashboard')" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
             @else
-                <x-responsive-nav-link :href="route('localized.login', ['locale' => app()->getLocale()])" :active="request()->routeIs('localized.login')">
+                <x-responsive-nav-link :href="localizedRoute('localized.login')" :active="request()->routeIs('localized.login')">
                     {{ __('Log in') }}
                 </x-responsive-nav-link>
                 @if (Route::has('localized.register'))
-                    <x-responsive-nav-link :href="route('localized.register', ['locale' => app()->getLocale()])" :active="request()->routeIs('localized.register')">
+                    <x-responsive-nav-link :href="localizedRoute('localized.register')" :active="request()->routeIs('localized.register')">
                         {{ __('Register') }}
                     </x-responsive-nav-link>
                 @endif

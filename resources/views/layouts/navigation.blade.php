@@ -1,3 +1,4 @@
+
 <nav x-data="{ open: false }"
      class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
@@ -11,7 +12,7 @@
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-900"/>
                         </a>
                     @else
-                        <a href="{{ route('localized.welcome', ['locale' => app()->getLocale()]) }}">
+                        <a href="{{ localizedRoute('localized.welcome') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-900"/>
                         </a>
                     @endauth
@@ -22,21 +23,21 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
 
                     @auth
-                        <x-nav-link :href="localizedRoute('localized.dashboard')"
+                        <x-nav-link href="{{ localizedRoute('localized.dashboard') }}"
                                     :active="request()->routeIs('localized.dashboard.*')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                        <x-nav-link :href="localizedRoute('localized.piggy-banks.index')"
+                        <x-nav-link href="{{ localizedRoute('localized.piggy-banks.index') }}"
                                     :active="request()->routeIs('localized.piggy-banks.index.*')">
                         {{ __('My Piggy Banks') }}
                     </x-nav-link>
                     @endauth
 
-                        <x-nav-link :href="route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()])"
+                        <x-nav-link href="{{ route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()]) }}"
                                     :active="request()->routeIs('localized.create-piggy-bank.*')">
                         {{ __('Create New Piggy Bank') }}
                     </x-nav-link>
-                        <x-nav-link :href="route('localized.welcome', ['locale' => app()->getLocale()])"
+                        <x-nav-link href="{{ localizedRoute('localized.welcome') }}"
                                     :active="request()->routeIs('localized.welcome')">
                         {{ __('Welcome') }}
                     </x-nav-link>
@@ -68,7 +69,7 @@
 
                     <x-slot name="content">
 
-                        <x-dropdown-link :href="localizedRoute('localized.profile.edit')">
+                        <x-dropdown-link href="{{ localizedRoute('localized.profile.edit') }}">
                         {{ __('Profile') }}
                         </x-dropdown-link>
 
@@ -84,10 +85,10 @@
                         </x-dropdown-link>
 
                         <!-- Authentication -->
-                        <form method="POST" action="{{ route('localized.logout', ['locale' => app()->getLocale()]) }}">
+                        <form method="POST" action="{{ localizedRoute('localized.logout') }}">
                             @csrf
 
-                            <x-dropdown-link :href="route('localized.logout', ['locale' => app()->getLocale()])"
+                            <x-dropdown-link href="{{ localizedRoute('localized.logout') }}"
                                              onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 {{ __('Log Out') }}
@@ -129,22 +130,22 @@
         <div class="pt-2 pb-3 space-y-1">
 
             @auth
-                <x-responsive-nav-link :href="localizedRoute('localized.dashboard')"
+                <x-responsive-nav-link href="{{ localizedRoute('localized.dashboard') }}"
                                        :active="request()->routeIs('localized.dashboard.*')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-                <x-responsive-nav-link :href="localizedRoute('localized.piggy-banks.index')"
+                <x-responsive-nav-link href="{{ localizedRoute('localized.piggy-banks.index') }}"
                                        :active="request()->routeIs('localized.piggy-banks.index.*')">
                 {{ __('My Piggy Banks') }}
             </x-responsive-nav-link>
             @endauth
 
-            <x-responsive-nav-link :href="route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()])"
-                                   :active="request()->routeIs('localized.create-piggy-bank.*')">
-                {{ __('Create New Piggy Bank') }}
-            </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()]) }}"
+                                       :active="request()->routeIs('localized.create-piggy-bank.*')">
+                    {{ __('Create New Piggy Bank') }}
+                </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('localized.welcome', ['locale' => app()->getLocale()])"
+            <x-responsive-nav-link href="{{ localizedRoute('localized.welcome') }}"
                                    :active="request()->routeIs('localized.welcome')">
                 {{ __('Welcome') }}
             </x-responsive-nav-link>
@@ -160,7 +161,7 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="localizedRoute('localized.profile.edit')">
+                <x-responsive-nav-link href="{{ localizedRoute('localized.profile.edit') }}">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
@@ -240,9 +241,9 @@
 
                 <!-- Authentication -->
                 <form method="POST"
-                      action="{{ route('localized.logout', ['locale' => app()->getLocale()]) }}">
+                      action="{{ localizedRoute('localized.logout') }}">
                     @csrf
-                    <x-responsive-nav-link :href="route('localized.logout', ['locale' => app()->getLocale()])"
+                    <x-responsive-nav-link href="{{ localizedRoute('localized.logout') }}"
                                            onclick="event.preventDefault();
                                         this.closest('form').submit();">
                         {{ __('Log Out') }}

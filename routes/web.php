@@ -13,6 +13,32 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
+Route::get('/debug-terms-routes', function () {
+    echo "<h2>Terms/Privacy Routes Debug</h2>";
+
+    $routeCollection = Route::getRoutes();
+    $termsRoutes = [];
+
+    foreach ($routeCollection as $route) {
+        $name = $route->getName() ?? 'unnamed';
+        if (str_contains($name, 'terms') || str_contains($name, 'privacy')) {
+            $termsRoutes[] = [
+                'name' => $name,
+                'uri' => $route->uri(),
+                'methods' => $route->methods()
+            ];
+        }
+    }
+
+    echo "<h3>Terms/Privacy Routes Found:</h3>";
+    foreach ($termsRoutes as $route) {
+        echo "<pre>Name: {$route['name']} | URI: {$route['uri']} | Methods: " . implode(',', $route['methods']) . "</pre>";
+    }
+
+    return '';
+});
+
+
 // Redirect base URL to localized version
 Route::get('/', function () {
     // Get user's preferred locale or default to English
@@ -78,6 +104,23 @@ Route::localizedGet('profile', [ProfileController::class, 'edit'])
     ->name('localized.profile.edit')
     ->middleware(['locale', 'auth', 'verified']);
 
+// Terms and Privacy routes (converted to localized macros)
+Route::localizedGet('terms-of-service', function () {
+    return view('legal.terms');
+})
+    ->name('localized.terms');
+
+Route::localizedGet('privacy-policy', function () {
+    return view('legal.privacy');
+})
+    ->name('localized.privacy');
+
+// Welcome route (converted to localized macro)
+Route::localizedGet('welcome', function () {
+    return view('welcome');
+})
+    ->name('localized.welcome');
+
 
 // Localized route group
 Route::prefix('{locale}')
@@ -85,10 +128,6 @@ Route::prefix('{locale}')
     ->where(['locale' => '[a-z]{2}'])
     ->group(function () {
 
-        // Localized welcome route
-        Route::get('/', function () {
-            return view('welcome');
-        })->name('localized.welcome');
 
         Route::get('piggy-banks/{piggy_id}', [PiggyBankController::class, 'show'])
             ->middleware(['auth', 'verified'])
@@ -125,6 +164,75 @@ Route::prefix('{locale}')
             ->name('localized.piggy-banks.cancel')
             ->where('piggy_id', '[0-9]+');
 
+        Route::prefix(config("route-slugs.routes.create-piggy-bank." . app()->getLocale(), 'create-piggy-bank'))
+            ->name('localized.create-piggy-bank.')
+            ->middleware(['conditional.layout'])
+            ->group(function () {
+
+                Route::get('step-1', [PiggyBankCreateController::class, 'step1'])->name('step-1');
+
+                Route::post('clear', function () {
+                    try {
+                        session()->forget([
+                            'pick_date_step1.name',
+                            'pick_date_step1.price',
+                            'pick_date_step1.link',
+                            'pick_date_step1.details',
+                            'pick_date_step1.starting_amount',
+                            'pick_date_step1.preview',
+                            'pick_date_step1.currency',
+                            'pick_date_step3.date',
+                            'pick_date_step3.calculations',
+                        ]);
+                        session()->flash('success', __('You cleared the form.'));
+                    } catch (Exception) {
+                        session()->flash('error', __('There was an error during clearing the form. Refresh the page and try again.'));
+                    }
+                    return redirect()->back();
+                })->name('clear');
+
+                Route::post('api/link-preview', [PiggyBankCreateController::class, 'fetchLinkPreview'])->name('api.link-preview');
+                Route::post('cancel', [PiggyBankCreateController::class, 'cancelCreation'])->name('cancel');
+
+                Route::get('step-2', [PiggyBankCreateController::class, 'showStep2'])->name('step-2.get');
+                Route::post('step-2', [PiggyBankCreateController::class, 'step2'])->name('step-2');
+
+                Route::post('choose-strategy', [PiggyBankCreateController::class, 'storeStrategySelection'])->name('choose-strategy');
+
+                Route::prefix('pick-date')->name('pick-date.')->group(function () {
+                    Route::get('step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
+                    Route::post('calculate-frequencies', [PiggyBankCreateController::class, 'calculateFrequencyOptions'])->name('calculate-frequencies');
+                    Route::post('store-frequency', [PiggyBankCreateController::class, 'storeSelectedFrequency'])->name('store-frequency');
+                    Route::post('show-summary', [PiggyBankCreateController::class, 'showSummary'])->name('show-summary');
+                    Route::get('summary', [PiggyBankCreateController::class, 'showSummary'])->name('summary');
+                    Route::post('store', [PiggyBankCreateController::class, 'storePiggyBank'])
+                        ->middleware(['auth', 'verified'])
+                        ->name('store');
+                });
+
+                Route::get('get-flash-messages', function () {
+                    $successMessage = session('success');
+                    $errorMessage = session('error');
+                    $warningMessage = session('warning');
+                    $infoMessage = session('info');
+
+                    if ($successMessage || $errorMessage || $warningMessage || $infoMessage) {
+                        session()->forget(['success', 'error', 'warning', 'info']);
+                    }
+
+                    return response()->json([
+                        'success' => $successMessage,
+                        'error' => $errorMessage,
+                        'warning' => $warningMessage,
+                        'info' => $infoMessage,
+                    ]);
+                })->name('get-flash-messages');
+
+                Route::prefix('enter-saving-amount')->name('enter-saving-amount.')->group(function () {
+                    Route::get('step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
+                });
+            });
+
         Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::patch('profile', [ProfileController::class, 'update'])->name('localized.profile.update');
@@ -156,87 +264,10 @@ Route::prefix('{locale}')
                 ->middleware(['auth', 'verified'])
                 ->name('localized.scheduled-savings.update');
 
+
+
         });
 
-        Route::view('terms-of-service', 'legal.terms')->name('localized.terms');
-        Route::view('privacy-policy', 'legal.privacy')->name('localized.privacy');
-
-        Route::prefix('create-piggy-bank')
-            ->name('localized.create-piggy-bank.')
-            ->middleware(['conditional.layout'])
-            ->group(function () {
-
-                Route::get('step-1', [PiggyBankCreateController::class, 'step1'])->name('step-1');
-
-                Route::post('clear', function () {
-                    try {
-                        session()->forget([
-                            'pick_date_step1.name',
-                            'pick_date_step1.price',
-                            'pick_date_step1.link',
-                            'pick_date_step1.details',
-                            'pick_date_step1.starting_amount',
-                            'pick_date_step1.preview',
-                            'pick_date_step1.currency',
-                            'pick_date_step3.date',
-                            'pick_date_step3.calculations',
-                        ]);
-                        session()->flash('success', __('You cleared the form.'));
-                    } catch (Exception) {
-                        session()->flash('error', __('There was an error during clearing the form. Refresh the page and try again.'));
-                    }
-
-                    return redirect()->back();
-                })->name('clear');
-
-                Route::post('api/link-preview', [PiggyBankCreateController::class, 'fetchLinkPreview'])->name('api.link-preview');
-                Route::post('cancel', [PiggyBankCreateController::class, 'cancelCreation'])->name('cancel');
-
-                Route::get('step-2', [PiggyBankCreateController::class, 'showStep2'])->name('step-2.get');
-                Route::post('step-2', [PiggyBankCreateController::class, 'step2'])->name('step-2');
-
-                Route::post('choose-strategy', [PiggyBankCreateController::class, 'storeStrategySelection'])->name('choose-strategy');
-
-                Route::prefix('pick-date')->name('pick-date.')->group(function () {
-                    Route::get('step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
-                    Route::post('calculate-frequencies', [PiggyBankCreateController::class, 'calculateFrequencyOptions'])->name('calculate-frequencies');
-                    Route::post('store-frequency', [PiggyBankCreateController::class, 'storeSelectedFrequency'])->name('store-frequency');
-                    Route::post('show-summary', [PiggyBankCreateController::class, 'showSummary'])->name('show-summary');
-                    Route::get('summary', [PiggyBankCreateController::class, 'showSummary'])->name('summary');
-                    Route::post('store', [PiggyBankCreateController::class, 'storePiggyBank'])
-                        ->middleware(['auth', 'verified'])
-                        ->name('store');
-                });
-
-                /**
-                 * Returns flash messages as JSON for AJAX requests.
-                 * This endpoint is specifically designed to avoid HTML injection and unwanted side effects.
-                 */
-                Route::get('get-flash-messages', function () {
-                    // Get message values
-                    $successMessage = session('success');
-                    $errorMessage = session('error');
-                    $warningMessage = session('warning');
-                    $infoMessage = session('info');
-
-                    // Clear the messages after reading them
-                    if ($successMessage || $errorMessage || $warningMessage || $infoMessage) {
-                        session()->forget(['success', 'error', 'warning', 'info']);
-                    }
-
-                    // Return just the data, not HTML that could contain scripts
-                    return response()->json([
-                        'success' => $successMessage,
-                        'error' => $errorMessage,
-                        'warning' => $warningMessage,
-                        'info' => $infoMessage,
-                    ]);
-                })->name('get-flash-messages');
-
-                Route::prefix('enter-saving-amount')->name('enter-saving-amount.')->group(function () {
-                    Route::get('step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
-                });
-            });
 
         Route::post('update-timezone', [UserPreferencesController::class, 'updateTimezone'])
             ->name('localized.update-timezone')

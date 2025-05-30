@@ -107,7 +107,7 @@
                                     @else
 
                                         <a
-                                        href="{{ route('localized.login', ['locale' => app()->getLocale()]) }}"
+                                            href="{{ localizedRoute('localized.login') }}"
                                         class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                         >
                                         {{ __('Log in') }}
@@ -116,7 +116,7 @@
                                         @if (Route::has('localized.register'))
 
                                             <a
-                                            href="{{ route('localized.register', ['locale' => app()->getLocale()]) }}"
+                                                href="{{ localizedRoute('localized.register') }}"
                                             class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                             >
                                             {{ __('Register') }}
@@ -155,7 +155,7 @@
                         <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
                             <div class="pt-2 pb-3 space-y-1">
 
-                                <x-responsive-nav-link :href="route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()])"
+                                <x-responsive-nav-link href="{{ route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()]) }}"
                                                        :active="request()->routeIs('create-piggy-bank.*')">
                                     {{ __('Create New Piggy Bank') }}
                                 </x-responsive-nav-link>
@@ -165,12 +165,12 @@
                                         {{ __('My Piggy Banks') }}
                                     </x-responsive-nav-link>
                                 @else
-                                    <x-responsive-nav-link :href="route('localized.login', ['locale' => app()->getLocale()])"
+                                    <x-responsive-nav-link :href="localizedRoute('localized.login')"
                                                            :active="request()->routeIs('localized.login')">
                                         {{ __('Log in') }}
                                     </x-responsive-nav-link>
                                     @if (Route::has('localized.register'))
-                                        <x-responsive-nav-link :href="route('localized.register', ['locale' => app()->getLocale()])"
+                                        <x-responsive-nav-link :href="localizedRoute('localized.register')"
                                                                :active="request()->routeIs('localized.register')">
                                             {{ __('Register') }}
                                         </x-responsive-nav-link>
@@ -200,7 +200,7 @@
                                 <div class="mb-6 w-full rounded-md bg-yellow-100 p-4 text-sm text-yellow-800 shadow-md border border-yellow-300">
                                     {{ __('Please verify your email address to unlock all features.') }}
                                     <a
-                                        href="{{ route('localized.verification.notice', ['locale' => app()->getLocale()]) }}"
+                                        href="{{ localizedRoute('localized.verification.notice') }}"
                                         class="underline font-medium hover:text-yellow-900 ml-1"
                                     >
                                         {{ __('Resend Verification Email') }}
@@ -402,9 +402,9 @@
                         </span>
 
                         <div class="mt-2">
-                            <a href="{{ route('localized.terms', ['locale' => app()->getLocale()]) }}" class="hover:underline">{{ __('terms.title') }}</a>
+                            <a href="{{ route('localized.terms.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}" class="hover:underline">{{ __('terms.title') }}</a>
                             &nbsp;|&nbsp;
-                            <a href="{{ route('localized.privacy', ['locale' => app()->getLocale()]) }}" class="hover:underline">{{ __('privacy.title') }}</a>
+                            <a href="{{ route('localized.privacy.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}" class="hover:underline">{{ __('privacy.title') }}</a>
                         </div>
 
                     </footer>

@@ -15,11 +15,15 @@ class RouteHelper
     {
         $locale = $locale ?? app()->getLocale();
 
+        // Append locale to route name to get the language-specific route
+        $localizedRouteName = $routeName . '.' . $locale;
+
         // Always ensure locale is in parameters for localized routes
         $parameters['locale'] = $locale;
 
-        return route($routeName, $parameters);
+        return route($localizedRouteName, $parameters);
     }
+
 
     /**
      * Generate an absolute localized URL
