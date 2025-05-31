@@ -33,7 +33,7 @@
                     </x-nav-link>
                     @endauth
 
-                        <x-nav-link href="{{ route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()]) }}"
+                        <x-nav-link href="{{ route('localized.create-piggy-bank.step-1.' . app()->getLocale()) }}"
                                     :active="request()->routeIs('localized.create-piggy-bank.*')">
                         {{ __('Create New Piggy Bank') }}
                     </x-nav-link>
@@ -140,7 +140,7 @@
             </x-responsive-nav-link>
             @endauth
 
-                <x-responsive-nav-link href="{{ route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()]) }}"
+                <x-responsive-nav-link href="{{ route('localized.create-piggy-bank.step-1.' . app()->getLocale()) }}"
                                        :active="request()->routeIs('localized.create-piggy-bank.*')">
                     {{ __('Create New Piggy Bank') }}
                 </x-responsive-nav-link>

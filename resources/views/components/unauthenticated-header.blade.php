@@ -54,7 +54,7 @@
             <!-- Desktop navigation -->
             @if (Route::has('login'))
                 <div class="hidden sm:flex items-center space-x-4">
-                    <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
+                    <a href="{{ route('localized.create-piggy-bank.step-1.' . app()->getLocale()) }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
                         {{ __('Create New Piggy Bank') }}
                     </a>
 
@@ -98,7 +98,7 @@
             <x-responsive-nav-link :href="route('localized.welcome', ['locale' => app()->getLocale()])">
                 {{ __('Welcome') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="localizedRoute('localized.create-piggy-bank.step-1')" :active="request()->routeIs('create-piggy-bank.*')">
+            <x-responsive-nav-link :href="route('localized.create-piggy-bank.step-1.' . app()->getLocale())" :active="request()->routeIs('create-piggy-bank.*')">
                 {{ __('Create New Piggy Bank') }}
             </x-responsive-nav-link>
             @auth

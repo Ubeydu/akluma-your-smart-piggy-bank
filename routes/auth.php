@@ -30,6 +30,24 @@ Route::localizedPost('register', [RegisteredUserController::class, 'store'])
     ->name('localized.register.store')
     ->middleware(['guest']);
 
+// Localized forgot password routes
+Route::localizedGet('forgot-password', [PasswordResetLinkController::class, 'create'])
+    ->name('localized.password.request')
+    ->middleware(['guest']);
+
+Route::localizedPost('forgot-password', [PasswordResetLinkController::class, 'store'])
+    ->name('localized.password.email')
+    ->middleware(['guest']);
+
+// Localized reset password routes
+Route::localizedGet('reset-password/{token}', [NewPasswordController::class, 'create'])
+    ->name('localized.password.reset')
+    ->middleware(['guest']);
+
+Route::localizedPost('reset-password', [NewPasswordController::class, 'store'])
+    ->name('localized.password.store')
+    ->middleware(['guest']);
+
 // Non-localized login redirect for middleware
 Route::get('login', function () {
     $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
@@ -59,17 +77,7 @@ Route::prefix('{locale}')
             //
             //    Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-            Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-                ->name('localized.password.request');
 
-            Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-                ->name('localized.password.email');
-
-            Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-                ->name('localized.password.reset');
-
-            Route::post('reset-password', [NewPasswordController::class, 'store'])
-                ->name('localized.password.store');
         });
 
         Route::middleware('auth')->group(function () {
