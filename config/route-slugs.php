@@ -57,6 +57,12 @@ return [
             'fr' => 'connexion',
         ],
 
+        'logout' => [
+            'en' => 'logout',
+            'tr' => 'cikis',
+            'fr' => 'deconnexion',
+        ],
+
         'register' => [
             'en' => 'register',
             'tr' => 'kayit-ol',
@@ -85,6 +91,12 @@ return [
             'en' => 'verify-email/{id}/{hash}',
             'tr' => 'email-dogrula/{id}/{hash}',
             'fr' => 'verifier-email/{id}/{hash}',
+        ],
+
+        'email/verification-notification' => [
+            'en' => 'email/verification-notification',
+            'tr' => 'email/dogrulama-bildirimi',
+            'fr' => 'email/notification-verification',
         ],
 
         'confirm-password' => [

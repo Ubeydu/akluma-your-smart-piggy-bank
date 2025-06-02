@@ -56,6 +56,14 @@ Route::localizedGet('verify-email-with-params', VerifyEmailController::class)
     ->middleware(['auth', 'signed', 'throttle:6,1'])
     ->name('localized.verification.verify');
 
+Route::localizedPost('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('localized.verification.send');
+
+Route::localizedPost('logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware(['auth'])
+    ->name('localized.logout');
+
 // Non-localized login redirect for middleware
 Route::get('login', function () {
     $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
@@ -90,10 +98,6 @@ Route::prefix('{locale}')
 
         Route::middleware('auth')->group(function () {
 
-            Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-                ->middleware('throttle:6,1')
-                ->name('localized.verification.send');
-
             Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
                 ->name('localized.password.confirm');
 
@@ -101,8 +105,6 @@ Route::prefix('{locale}')
 
             Route::put('password', [PasswordController::class, 'update'])->name('localized.password.update');
 
-            Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-                ->name('localized.logout');
         });
 
     });
