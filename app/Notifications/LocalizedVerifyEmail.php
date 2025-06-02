@@ -11,8 +11,10 @@ class LocalizedVerifyEmail extends VerifyEmail
 {
     protected function verificationUrl($notifiable)
     {
+        $locale = app()->getLocale();
+
         return URL::temporarySignedRoute(
-            'localized.verification.verify',
+            'localized.verification.verify.' . $locale,
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
             [
                 'locale' => app()->getLocale(),

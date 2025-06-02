@@ -81,6 +81,12 @@ return [
             'fr' => 'verifier-email',
         ],
 
+        'verify-email-with-params' => [
+            'en' => 'verify-email/{id}/{hash}',
+            'tr' => 'email-dogrula/{id}/{hash}',
+            'fr' => 'verifier-email/{id}/{hash}',
+        ],
+
         'confirm-password' => [
             'en' => 'confirm-password',
             'tr' => 'sifre-onayla',

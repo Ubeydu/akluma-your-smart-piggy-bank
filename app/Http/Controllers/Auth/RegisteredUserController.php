@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helpers\RouteHelper;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -57,6 +58,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('localized.verification.notice', ['locale' => app()->getLocale()], absolute: false));
+        return redirect(RouteHelper::localizedRoute('localized.verification.notice'));
     }
 }

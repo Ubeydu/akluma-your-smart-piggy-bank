@@ -64,7 +64,7 @@
                        class="mt-1 border-gray-300 focus:ring-indigo-500 rounded"
                        onchange="toggleRegisterButton()" />
                 <span class="text-sm text-gray-700">
-            {!! __('auth.accept_terms', ['url' => route('localized.terms', ['locale' => app()->getLocale()])]) !!}
+            {!! __('auth.accept_terms', ['url' => route('localized.terms.' . app()->getLocale(), ['locale' => app()->getLocale()])]) !!}
         </span>
             </label>
             <x-input-error :messages="$errors->get('terms')" class="mt-2" />
@@ -76,7 +76,7 @@
                        class="mt-1 border-gray-300 focus:ring-indigo-500 rounded"
                        onchange="toggleRegisterButton()" />
                 <span class="text-sm text-gray-700">
-            {!! __('auth.accept_privacy', ['url' => route('localized.privacy', ['locale' => app()->getLocale()])]) !!}
+            {!! __('auth.accept_privacy', ['url' => route('localized.privacy.' . app()->getLocale(), ['locale' => app()->getLocale()])]) !!}
         </span>
             </label>
             <x-input-error :messages="$errors->get('privacy')" class="mt-2" />
