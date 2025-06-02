@@ -48,6 +48,10 @@ Route::localizedPost('reset-password', [NewPasswordController::class, 'store'])
     ->name('localized.password.store')
     ->middleware(['guest']);
 
+Route::localizedGet('verify-email', EmailVerificationPromptController::class)
+    ->name('localized.verification.notice')
+    ->middleware(['auth']);
+
 // Non-localized login redirect for middleware
 Route::get('login', function () {
     $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
@@ -81,8 +85,6 @@ Route::prefix('{locale}')
         });
 
         Route::middleware('auth')->group(function () {
-            Route::get('verify-email', EmailVerificationPromptController::class)
-                ->name('localized.verification.notice');
 
             Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
                 ->middleware(['signed', 'throttle:6,1'])
