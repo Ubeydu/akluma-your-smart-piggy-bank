@@ -203,5 +203,191 @@ class AppServiceProvider extends ServiceProvider
             };
         });
 
+        Route::macro('localizedPut', function (string $routeKey, $action) {
+            return new class($routeKey, $action, 'put')
+            {
+                private string $routeKey;
+                private $action;
+                private string $method;
+                private array $options = [];
+
+                public function __construct(string $routeKey, $action, string $method)
+                {
+                    $this->routeKey = $routeKey;
+                    $this->action = $action;
+                    $this->method = $method;
+                }
+
+                public function name(string $name)
+                {
+                    $this->options['name'] = $name;
+                    return $this;
+                }
+
+                public function middleware($middleware)
+                {
+                    $this->options['middleware'] = $middleware;
+                    return $this;
+                }
+
+                public function where(array $constraints)
+                {
+                    $this->options['where'] = $constraints;
+                    return $this;
+                }
+
+                public function __destruct()
+                {
+                    \App\Services\LocalizedRouteService::register(
+                        $this->method,
+                        $this->routeKey,
+                        $this->action,
+                        $this->options['name'] ?? 'unnamed.route',
+                        $this->options
+                    );
+                }
+            };
+        });
+
+        Route::macro('localizedMatch', function (array $methods, string $routeKey, $action) {
+            $methodString = implode('|', $methods);
+            return new class($routeKey, $action, $methodString)
+            {
+                private string $routeKey;
+                private $action;
+                private string $method;
+                private array $options = [];
+
+                public function __construct(string $routeKey, $action, string $method)
+                {
+                    $this->routeKey = $routeKey;
+                    $this->action = $action;
+                    $this->method = $method;
+                }
+
+                public function name(string $name)
+                {
+                    $this->options['name'] = $name;
+                    return $this;
+                }
+
+                public function middleware($middleware)
+                {
+                    $this->options['middleware'] = $middleware;
+                    return $this;
+                }
+
+                public function where(array $constraints)
+                {
+                    $this->options['where'] = $constraints;
+                    return $this;
+                }
+
+                public function __destruct()
+                {
+                    \App\Services\LocalizedRouteService::register(
+                        $this->method,
+                        $this->routeKey,
+                        $this->action,
+                        $this->options['name'] ?? 'unnamed.route',
+                        $this->options
+                    );
+                }
+            };
+        });
+
+
+        Route::macro('localizedPatch', function (string $routeKey, $action) {
+            return new class($routeKey, $action, 'patch')
+            {
+                private string $routeKey;
+                private $action;
+                private string $method;
+                private array $options = [];
+
+                public function __construct(string $routeKey, $action, string $method)
+                {
+                    $this->routeKey = $routeKey;
+                    $this->action = $action;
+                    $this->method = $method;
+                }
+
+                public function name(string $name)
+                {
+                    $this->options['name'] = $name;
+                    return $this;
+                }
+
+                public function middleware($middleware)
+                {
+                    $this->options['middleware'] = $middleware;
+                    return $this;
+                }
+
+                public function where(array $constraints)
+                {
+                    $this->options['where'] = $constraints;
+                    return $this;
+                }
+
+                public function __destruct()
+                {
+                    \App\Services\LocalizedRouteService::register(
+                        $this->method,
+                        $this->routeKey,
+                        $this->action,
+                        $this->options['name'] ?? 'unnamed.route',
+                        $this->options
+                    );
+                }
+            };
+        });
+
+        Route::macro('localizedDelete', function (string $routeKey, $action) {
+            return new class($routeKey, $action, 'delete')
+            {
+                private string $routeKey;
+                private $action;
+                private string $method;
+                private array $options = [];
+
+                public function __construct(string $routeKey, $action, string $method)
+                {
+                    $this->routeKey = $routeKey;
+                    $this->action = $action;
+                    $this->method = $method;
+                }
+
+                public function name(string $name)
+                {
+                    $this->options['name'] = $name;
+                    return $this;
+                }
+
+                public function middleware($middleware)
+                {
+                    $this->options['middleware'] = $middleware;
+                    return $this;
+                }
+
+                public function where(array $constraints)
+                {
+                    $this->options['where'] = $constraints;
+                    return $this;
+                }
+
+                public function __destruct()
+                {
+                    \App\Services\LocalizedRouteService::register(
+                        $this->method,
+                        $this->routeKey,
+                        $this->action,
+                        $this->options['name'] ?? 'unnamed.route',
+                        $this->options
+                    );
+                }
+            };
+        });
+
     }
 }

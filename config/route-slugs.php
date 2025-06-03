@@ -104,6 +104,12 @@ return [
             'tr' => 'sifre-onayla',
             'fr' => 'confirmer-mot-de-passe',
         ],
+
+        'password' => [
+            'en' => 'password',
+            'tr' => 'sifre',
+            'fr' => 'mot-de-passe',
+        ],
     ],
 
     /*

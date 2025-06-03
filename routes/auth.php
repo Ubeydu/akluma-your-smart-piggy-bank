@@ -64,6 +64,18 @@ Route::localizedPost('logout', [AuthenticatedSessionController::class, 'destroy'
     ->middleware(['auth'])
     ->name('localized.logout');
 
+Route::localizedGet('confirm-password', [ConfirmablePasswordController::class, 'show'])
+    ->middleware(['auth'])
+    ->name('localized.password.confirm');
+
+Route::localizedPost('confirm-password', [ConfirmablePasswordController::class, 'store'])
+    ->middleware(['auth'])
+    ->name('localized.password.store');
+
+Route::localizedPut('password', [PasswordController::class, 'update'])
+    ->middleware(['auth'])
+    ->name('localized.password.update');
+
 // Non-localized login redirect for middleware
 Route::get('login', function () {
     $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
@@ -96,16 +108,6 @@ Route::prefix('{locale}')
 
         });
 
-        Route::middleware('auth')->group(function () {
-
-            Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
-                ->name('localized.password.confirm');
-
-            Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
-
-            Route::put('password', [PasswordController::class, 'update'])->name('localized.password.update');
-
-        });
 
     });
 

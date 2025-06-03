@@ -9,11 +9,11 @@
         </p>
     </header>
 
-    <form id="send-verification" method="post" action="{{ route('localized.verification.send', ['locale' => app()->getLocale()]) }}">
+    <form id="send-verification" method="post" action="{{ route('localized.verification.send.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}">
         @csrf
     </form>
 
-    <form method="post" action="{{ route('localized.profile.update', ['locale' => app()->getLocale()]) }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('localized.profile.update.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 

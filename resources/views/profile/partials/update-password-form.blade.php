@@ -9,7 +9,7 @@
         </p>
     </header>
 
-    <form method="post" action="{{ route('localized.password.update', ['locale' => app()->getLocale()]) }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('localized.password.update.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}" class="mt-6 space-y-6">
         @csrf
         @method('put')
 

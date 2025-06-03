@@ -47,6 +47,14 @@ Route::localizedGet('profile', [ProfileController::class, 'edit'])
     ->name('localized.profile.edit')
     ->middleware(['locale', 'auth', 'verified']);
 
+Route::localizedPatch('profile', [ProfileController::class, 'update'])
+    ->name('localized.profile.update')
+    ->middleware(['auth', 'verified']);
+
+Route::localizedDelete('profile', [ProfileController::class, 'destroy'])
+    ->name('localized.profile.destroy')
+    ->middleware(['auth', 'verified']);
+
 // Terms and Privacy routes (converted to localized macros)
 Route::localizedGet('terms-of-service', function () {
     return view('legal.terms');
@@ -191,8 +199,6 @@ Route::prefix('{locale}')
 
         Route::middleware(['auth', 'verified'])->group(function () {
 
-            Route::patch('profile', [ProfileController::class, 'update'])->name('localized.profile.update');
-            Route::delete('profile', [ProfileController::class, 'destroy'])->name('localized.profile.destroy');
 
             Route::patch('preferences/update',
                 [App\Http\Controllers\UserPreferencesController::class, 'updatePreferences'])
