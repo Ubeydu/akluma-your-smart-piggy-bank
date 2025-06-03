@@ -75,10 +75,16 @@ return [
             'fr' => 'mot-de-passe-oublie',
         ],
 
-        'reset-password' => [
+        'reset-password/{token}' => [
+            'en' => 'reset-password/{token}',
+            'tr' => 'sifre-sifirla/{token}',
+            'fr' => 'reinitialiser-mot-de-passe/{token}',
+        ],
+
+        'store-new-password' => [
             'en' => 'reset-password',
-            'tr' => 'sifre-sifirla',
-            'fr' => 'reinitialiser-mot-de-passe',
+            'tr' => 'yeni-sifre-kaydet',
+            'fr' => 'enregistrer-nouveau-mot-de-passe',
         ],
 
         'verify-email' => [

@@ -38,17 +38,17 @@
             </x-primary-button>
 
             <div class="w-full flex flex-wrap justify-end gap-2">
-                @if (Route::has('localized.register'))
+                @if (Route::has('localized.register.' . app()->getLocale()))
                     <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                       href="{{ route('localized.register', ['locale' => app()->getLocale()]) }}">
+                       href="{{ route('localized.register.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}">
                         {{ __('Never registered?') }}
                     </a>
                     <span class="text-gray-600">{{ __('or') }}</span>
                 @endif
 
-                @if (Route::has('localized.password.request'))
+                    @if (Route::has('localized.password.request.' . app()->getLocale()))
                     <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                       href="{{ route('localized.password.request', ['locale' => app()->getLocale()]) }}">
+                       href="{{ route('localized.password.request.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}">
                         {{ __('Forgot your password?') }}
                     </a>
                 @endif

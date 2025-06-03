@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
-
 // Redirect base URL to localized version
 Route::get('/', function () {
     // Get user's preferred locale or default to English
@@ -32,13 +31,10 @@ Route::get('/', function () {
     abort(404); // prevent infinite loop
 });
 
-
-
 Route::localizedGet('dashboard', [DashboardController::class, 'index'])
     ->name('localized.dashboard')
     ->middleware(['locale', 'auth', 'verified']);
 
-// Add this outside the localized route group, near the dashboard route
 Route::localizedGet('piggy-banks', [PiggyBankController::class, 'index'])
     ->name('localized.piggy-banks.index')
     ->middleware(['auth', 'verified']);
@@ -74,7 +70,6 @@ Route::get('{locale}', function () {
     ->where('locale', implode('|', array_keys(config('app.available_languages'))))
     ->middleware('locale');
 
-
 // Create piggy bank step 1 - explicit for all locales
 Route::get('/en/create-piggy-bank/step-1', [PiggyBankCreateController::class, 'step1'])
     ->name('localized.create-piggy-bank.step-1.en');
@@ -85,13 +80,11 @@ Route::get('/tr/create-piggy-bank/step-1', [PiggyBankCreateController::class, 's
 Route::get('/fr/create-piggy-bank/step-1', [PiggyBankCreateController::class, 'step1'])
     ->name('localized.create-piggy-bank.step-1.fr');
 
-
 // Localized route group
 Route::prefix('{locale}')
     ->middleware('locale')
     ->where(['locale' => '[a-z]{2}'])
     ->group(function () {
-
 
         Route::get('piggy-banks/{piggy_id}', [PiggyBankController::class, 'show'])
             ->middleware(['auth', 'verified'])
@@ -128,7 +121,7 @@ Route::prefix('{locale}')
             ->name('localized.piggy-banks.cancel')
             ->where('piggy_id', '[0-9]+');
 
-        Route::prefix(config("route-slugs.routes.create-piggy-bank." . app()->getLocale(), 'create-piggy-bank'))
+        Route::prefix(config('route-slugs.routes.create-piggy-bank.'.app()->getLocale(), 'create-piggy-bank'))
             ->name('localized.create-piggy-bank.')
             ->middleware(['conditional.layout'])
             ->group(function () {
@@ -152,6 +145,7 @@ Route::prefix('{locale}')
                     } catch (Exception) {
                         session()->flash('error', __('There was an error during clearing the form. Refresh the page and try again.'));
                     }
+
                     return redirect()->back();
                 })->name('clear');
 
@@ -199,7 +193,6 @@ Route::prefix('{locale}')
 
         Route::middleware(['auth', 'verified'])->group(function () {
 
-
             Route::patch('preferences/update',
                 [App\Http\Controllers\UserPreferencesController::class, 'updatePreferences'])
                 ->name('localized.preferences.update');
@@ -226,10 +219,7 @@ Route::prefix('{locale}')
                 ->middleware(['auth', 'verified'])
                 ->name('localized.scheduled-savings.update');
 
-
-
         });
-
 
         Route::post('update-timezone', [UserPreferencesController::class, 'updateTimezone'])
             ->name('localized.update-timezone')
@@ -422,13 +412,13 @@ if (app()->environment('local')) {
 }
 
 Route::get('/debug-route-registration', function () {
-    echo "<h1>🔍 Route Registration Debug</h1>";
+    echo '<h1>🔍 Route Registration Debug</h1>';
 
     // Clear existing routes to start fresh
-    echo "<h2>Clearing existing routes...</h2>";
+    echo '<h2>Clearing existing routes...</h2>';
 
     // Re-register just the welcome route to see what happens
-    echo "<h2>Manually testing welcome route registration...</h2>";
+    echo '<h2>Manually testing welcome route registration...</h2>';
 
     // Test the macro directly
     try {
@@ -439,7 +429,7 @@ Route::get('/debug-route-registration', function () {
         // Force destructor
         unset($macro);
 
-        echo "<pre>Welcome macro test completed</pre>";
+        echo '<pre>Welcome macro test completed</pre>';
 
         // Check what routes were created
         $routeCollection = Route::getRoutes();
@@ -457,9 +447,21 @@ Route::get('/debug-route-registration', function () {
     return '';
 });
 
+Route::fallback(function (Request $request) {
+    // If this fallback is hit because of an auth failure, redirect to log in
+    if ($request->session()->has('url.intended')) {
+        // Use the requested locale if available
+        $redirectLocale = session('requested_locale', $request->segment(1));
+        $availableLocales = array_keys(config('app.available_languages', []));
 
+        if (! in_array($redirectLocale, $availableLocales)) {
+            $redirectLocale = session('locale', 'en');
+        }
 
-Route::fallback(function () {
+        return redirect()->route('localized.login.'.$redirectLocale, ['locale' => $redirectLocale]);
+    }
+
+    // Otherwise, use the existing fallback logic
     $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
 
     $availableLocales = array_keys(config('app.available_languages', []));
@@ -469,6 +471,5 @@ Route::fallback(function () {
 
     return redirect("/$locale");
 });
-
 
 require __DIR__.'/auth.php';

@@ -52,8 +52,15 @@ class LocalizedRouteService
             ]);
 
 
-            // Apply any additional options
             if (!empty($options['middleware'])) {
+                // Replace 'auth' with 'localized.auth' in middleware
+                if (is_array($options['middleware'])) {
+                    foreach ($options['middleware'] as $key => $middleware) {
+                        if ($middleware === 'auth') {
+                            $options['middleware'][$key] = 'localized.auth';
+                        }
+                    }
+                }
                 $route->middleware($options['middleware']);
             }
 

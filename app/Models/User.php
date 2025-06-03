@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\LocalizedResetPassword;
+use App\Notifications\LocalizedVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -71,7 +72,6 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->update(['timezone' => $timezone]);
     }
 
-
     // Add a method to get default preferences
     public function getNotificationPreferencesAttribute($value)
     {
@@ -79,14 +79,12 @@ class User extends Authenticatable implements MustVerifyEmail
             return [
                 'email' => ['enabled' => true],
                 'sms' => ['enabled' => true],
-                'push' => ['enabled' => true]
+                'push' => ['enabled' => true],
             ];
         }
 
         return json_decode($value, true);
     }
-
-
 
     protected static function booted(): void
     {
@@ -94,17 +92,14 @@ class User extends Authenticatable implements MustVerifyEmail
             $user->notification_preferences = [
                 'email' => ['enabled' => true],
                 'sms' => ['enabled' => true],
-                'push' => ['enabled' => true]
+                'push' => ['enabled' => true],
             ];
             $user->save();
         });
     }
 
-
     /**
      * Send the email verification notification.
-     *
-     * @return void
      */
     public function sendEmailVerificationNotification(): void
     {
@@ -112,10 +107,25 @@ class User extends Authenticatable implements MustVerifyEmail
         app()->setLocale($this->language);
 
         // Change this line
-        $this->notify(new \App\Notifications\LocalizedVerifyEmail);
+        $this->notify(new LocalizedVerifyEmail);
 
         app()->setLocale($previousLocale);
     }
 
 
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $previousLocale = app()->getLocale();
+        app()->setLocale($this->language);
+
+        $this->notify(new LocalizedResetPassword($token));
+
+        app()->setLocale($previousLocale);
+    }
 }

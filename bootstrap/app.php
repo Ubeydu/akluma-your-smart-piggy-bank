@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Middleware\CurrencySwitcher;
 use App\Http\Middleware\ConditionalLayoutMiddleware;
+use App\Http\Middleware\CurrencySwitcher;
+use App\Http\Middleware\LocalizedAuthenticateMiddleware;
 use App\Http\Middleware\RouteTrackingMiddleware;
 use App\Http\Middleware\SetLocaleFromUrl;
 use Illuminate\Foundation\Application;
@@ -20,15 +21,15 @@ return Application::configure(basePath: dirname(__DIR__))
         // This middleware is no longer needed globally and has been disabled to avoid conflicts.
         //
         // $middleware->web(append: LanguageSwitcher::class);
-
         $middleware->append(RouteTrackingMiddleware::class);
-
         $middleware->web(append: CurrencySwitcher::class);
+
 
 
         $middleware->alias([
             'conditional.layout' => ConditionalLayoutMiddleware::class,
             'locale' => SetLocaleFromUrl::class,
+            'localized.auth' => LocalizedAuthenticateMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

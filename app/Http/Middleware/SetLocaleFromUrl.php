@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Session;
 use Log;
 use Symfony\Component\HttpFoundation\Response;
 
-
 /**
  * Middleware: SetLocaleFromUrl
  *
@@ -23,6 +22,14 @@ class SetLocaleFromUrl
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if ($request->method() === 'POST') {
+            \Log::debug('🔍 POST request intercepted', [
+                'url' => $request->fullUrl(),
+                'route_name' => $request->route() ? $request->route()->getName() : 'no_route',
+                'action' => $request->route() ? $request->route()->getActionName() : 'no_action',
+            ]);
+        }
+
         // List of supported locales
         $availableLocales = array_keys(config('app.available_languages', []));
 
@@ -37,10 +44,10 @@ class SetLocaleFromUrl
             if (in_array($lang, $availableLocales)) {
                 App::setLocale($lang);
                 Session::put('locale', $lang);
+
                 return $next($request);
             }
         }
-
 
         /**
          * 1. CASE: URL starts with a valid locale segment (e.g., /en/register)

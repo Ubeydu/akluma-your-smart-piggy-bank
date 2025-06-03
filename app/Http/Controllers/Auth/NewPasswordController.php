@@ -30,11 +30,18 @@ class NewPasswordController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        //        \Log::debug('🔍 NewPasswordController store() reached!', [
+        //            'email' => $request->email,
+        //            'token_provided' => $request->token ? 'yes' : 'no',
+        //        ]);
+
         $request->validate([
             'token' => ['required'],
             'email' => ['required', 'email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        //        \Log::debug('🔍 About to call Password::reset');
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
@@ -42,20 +49,31 @@ class NewPasswordController extends Controller
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request) {
+                //                \Log::debug('🔍 Inside password reset callback', [
+                //                    'user_email' => $user->email,
+                //                    'old_password_hash' => substr($user->password, 0, 20).'...',
+                //                ]);
+
                 $user->forceFill([
                     'password' => Hash::make($request->password),
                     'remember_token' => Str::random(60),
                 ])->save();
 
+                //                \Log::debug('🔍 Password saved to database', [
+                //                    'new_password_hash' => substr($user->password, 0, 20).'...',
+                //                ]);
+
                 event(new PasswordReset($user));
             }
         );
+
+        //        \Log::debug('🔍 Password reset status', ['status' => $status]);
 
         // If the password was successfully reset, we will redirect the user back to
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
         return $status == Password::PASSWORD_RESET
-                    ? redirect()->route('localized.login', ['locale' => app()->getLocale()])->with('status', __($status))
+                    ? redirect()->route('localized.login.'.app()->getLocale(), ['locale' => app()->getLocale()])->with('status', __($status))
                     : back()->withInput($request->only('email'))
                         ->withErrors(['email' => __($status)]);
     }
