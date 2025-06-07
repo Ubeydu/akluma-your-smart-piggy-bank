@@ -88,7 +88,7 @@
                             </div>
 
                             <!-- Desktop navigation -->
-                            @if (Route::has('localized.login'))
+                            @if (Route::has('localized.login.' . app()->getLocale()))
                                 <nav class="hidden flex-1 -mx-3 justify-end sm:flex">
 
                                     <a
@@ -116,7 +116,7 @@
                                         {{ __('Log in') }}
                                         </a>
 
-                                        @if (Route::has('localized.register'))
+                                        @if (Route::has('localized.register.' . app()->getLocale()))
 
                                             <a
                                                 href="{{ localizedRoute('localized.register') }}"
@@ -172,7 +172,7 @@
                                                            :active="request()->routeIs('localized.login')">
                                         {{ __('Log in') }}
                                     </x-responsive-nav-link>
-                                    @if (Route::has('localized.register'))
+                                    @if (Route::has('localized.register.' . app()->getLocale()))
                                         <x-responsive-nav-link :href="localizedRoute('localized.register')"
                                                                :active="request()->routeIs('localized.register')">
                                             {{ __('Register') }}
