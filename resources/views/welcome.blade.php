@@ -92,7 +92,7 @@
                                 <nav class="hidden flex-1 -mx-3 justify-end sm:flex">
 
                                     <a
-                                        href="{{ route('localized.create-piggy-bank.step-1.' . app()->getLocale()) }}"
+                                        href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
                                     class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                     >
                                     {{ __('Create New Piggy Bank') }}
@@ -158,7 +158,7 @@
                         <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
                             <div class="pt-2 pb-3 space-y-1">
 
-                                <x-responsive-nav-link href="{{ route('localized.create-piggy-bank.step-1.' . app()->getLocale()) }}"
+                                <x-responsive-nav-link href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
                                                        :active="request()->routeIs('create-piggy-bank.*')">
                                     {{ __('Create New Piggy Bank') }}
                                 </x-responsive-nav-link>
@@ -378,7 +378,7 @@
 
                             <!-- Call to action button -->
                             <div class="text-center mt-16">
-                                <a href="{{ route('localized.create-piggy-bank.step-1.' . app()->getLocale()) }}" class="inline-block px-6 py-3 md:px-7 md:py-3.5 bg-linear-to-r from-indigo-500 to-purple-600 text-white font-bold text-sm md:text-base rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                                <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}" class="inline-block px-6 py-3 md:px-7 md:py-3.5 bg-linear-to-r from-indigo-500 to-purple-600 text-white font-bold text-sm md:text-base rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                                     {{ __('Create New Piggy Bank') }}
                                     <span class="ml-2 inline-block">→</span>
                                 </a>
@@ -405,9 +405,9 @@
                         </span>
 
                         <div class="mt-2">
-                            <a href="{{ route('localized.terms.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}" class="hover:underline">{{ __('terms.title') }}</a>
+                            <a href="{{ localizedRoute('localized.terms') }}" class="hover:underline">{{ __('terms.title') }}</a>
                             &nbsp;|&nbsp;
-                            <a href="{{ route('localized.privacy.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}" class="hover:underline">{{ __('privacy.title') }}</a>
+                            <a href="{{ localizedRoute('localized.privacy') }}" class="hover:underline">{{ __('privacy.title') }}</a>
                         </div>
 
                     </footer>

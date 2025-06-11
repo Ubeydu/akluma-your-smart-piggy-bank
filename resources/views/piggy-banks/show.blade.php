@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-xs rounded-lg">
                 <div class="py-6 px-8">
                     <!-- Editable Fields Form -->
-                    <form method="POST" action="{{ route('localized.piggy-banks.update', ['locale' => app()->getLocale(), 'piggy_id' => $piggyBank->id]) }}" class="space-y-6" x-data="{ isEditing: false }" x-ref="editForm">
+                    <form method="POST" action="{{ localizedRoute('localized.piggy-banks.update', ['piggy_id' => $piggyBank->id]) }}" class="space-y-6" x-data="{ isEditing: false }" x-ref="editForm">
                         @csrf
                         @method('PUT')
 
@@ -65,7 +65,7 @@
                                                                 @click="isEditing = false;
                                                                     showConfirmCancel = false;
                                                                     $refs.editForm.reset();
-                                                                    window.location.href = '{{ route('localized.piggy-banks.show', ['locale' => app()->getLocale(), 'piggy_id' => $piggyBank->id]) }}?cancelled=1';"
+                                                                    window.location.href = '{{ localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id]) }}?cancelled=1';"
                                                                 class="w-[200px] sm:w-auto justify-center sm:justify-start"
                                                         >
 
@@ -270,7 +270,7 @@
                             <div class="bg-yellow-50 p-4 rounded-lg mb-4 border border-yellow-200">
                                 <h3 class="font-semibold text-yellow-800 mb-2">Test Tools</h3>
                                 <div class="flex items-center gap-4">
-                                    <form action="{{ route('localized.test.set-date', ['locale' => app()->getLocale(), 'piggy_id' => $piggyBank->id]) }}" method="POST" class="flex items-center gap-2">
+                                    <form action="{{ localizedRoute('localized.test.set-date', ['piggy_id' => $piggyBank->id]) }}" method="POST" class="flex items-center gap-2">
                                         @csrf
                                         <input
                                                 type="date"
@@ -283,7 +283,7 @@
                                         </button>
                                     </form>
                                     @if(session('test_date'))
-                                        <form action="{{ route('localized.test.clear-date', ['locale' => app()->getLocale(), 'piggy_id' => $piggyBank->id]) }}" method="POST">
+                                        <form action="{{ localizedRoute('localized.test.clear-date', ['piggy_id' => $piggyBank->id]) }}" method="POST">
                                             @csrf
                                             <button type="submit" class="px-3 py-1 bg-gray-500 text-white rounded-md hover:bg-gray-600">
                                                 Clear Test Date

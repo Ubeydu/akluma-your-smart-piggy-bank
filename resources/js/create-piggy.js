@@ -139,8 +139,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.clearFormAndSwitchCurrency = async function(currency) {
         try {
-            // First, make request to clear the form
-            const response = await fetch(`/${window.Laravel.locale}/create-piggy-bank/clear`, {
+            // Get the current locale from the URL (since we're in a localized route)
+            const currentLocale = window.location.pathname.split('/')[1];
+            
+            // First, make request to clear the form using the same pattern as the clear button
+            const clearUrl = `/${currentLocale}/create-piggy-bank/clear`;
+            const response = await fetch(clearUrl, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
@@ -151,12 +155,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 throw new Error('Network response was not ok');
             }
 
-            // Then switch currency
+            // Then switch currency using the correct route
             window.location.href = `/currency/switch/${currency}`;
 
         } catch (error) {
             console.error('Error:', error);
-            // Optionally handle the error, maybe show a message to user
+            // Fallback: try to redirect anyway
+            window.location.href = `/currency/switch/${currency}`;
         }
     };
 
@@ -268,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             debounceTimer = setTimeout(() => {
                 // console.log('Making fetch request');
-                fetch(`/${window.Laravel.locale}/create-piggy-bank/api/link-preview`, {
+                fetch(`/api/create-piggy-bank/link-preview`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

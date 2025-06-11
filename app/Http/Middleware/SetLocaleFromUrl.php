@@ -22,21 +22,33 @@ class SetLocaleFromUrl
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->method() === 'POST') {
-            \Log::debug('🔍 POST request intercepted', [
-                'url' => $request->fullUrl(),
-                'route_name' => $request->route() ? $request->route()->getName() : 'no_route',
-                'action' => $request->route() ? $request->route()->getActionName() : 'no_action',
-            ]);
-        }
+        // Debug request information
+        Log::debug('🔍 SetLocaleFromUrl middleware called', [
+            'url' => $request->fullUrl(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax(),
+            'accept' => $request->header('Accept'),
+            'route_name' => $request->route() ? $request->route()->getName() : 'no_route',
+            'segments' => $request->segments(),
+        ]);
 
         // List of supported locales
         $availableLocales = array_keys(config('app.available_languages', []));
 
+        // Debug available locales
+        Log::debug('Available locales', [
+            'locales' => $availableLocales,
+            'current_app_locale' => App::getLocale(),
+            'current_session_locale' => Session::get('locale'),
+        ]);
+
         // Get the first URL segment
         $locale = $request->segment(1);
 
-        Log::debug('SetLocaleFromUrl: Incoming URL', ['full_url' => $request->fullUrl(), 'lang' => $request->query('lang') ?? null]);
+        Log::debug('First URL segment', [
+            'segment' => $locale,
+            'is_valid_locale' => in_array($locale, $availableLocales),
+        ]);
 
         // If ?lang=xx is present in query, use it (only if valid)
         if ($request->has('lang')) {
@@ -58,6 +70,7 @@ class SetLocaleFromUrl
          * - Forgets the 'locale' parameter for routing to avoid issues
          */
         if (in_array($locale, $availableLocales)) {
+            // This is the critical fix - ensure we set the app locale
             App::setLocale($locale);
             Session::put('locale', $locale);
 
@@ -66,7 +79,16 @@ class SetLocaleFromUrl
             }
 
             // Remove 'locale' from route parameters to avoid issues elsewhere
-            $request->route()->forgetParameter('locale');
+            if ($request->route()) {
+                $request->route()->forgetParameter('locale');
+            }
+
+            // Add debug to verify locale was set correctly
+            Log::debug('Locale set from URL segment', [
+                'locale' => $locale,
+                'app_locale_after_set' => App::getLocale(),
+                'session_locale_after_set' => Session::get('locale'),
+            ]);
 
             return $next($request);
         }
@@ -78,18 +100,22 @@ class SetLocaleFromUrl
          * - Else, sets from session (last chosen by guest)
          * - Else, falls back to 'en'
          * - DOES NOT redirect or change the URL
-         *
-         * This ensures password reset, login, and other non-localized routes still show in the user's language,
-         * but don't break with redirects or require duplicate routes.
          */
         if (Auth::check() && Auth::user()->language && in_array(Auth::user()->language, $availableLocales)) {
             App::setLocale(Auth::user()->language);
             Session::put('locale', Auth::user()->language);
         } elseif (Session::has('locale') && in_array(Session::get('locale'), $availableLocales)) {
+            // Ensure we set the app locale from session
             App::setLocale(Session::get('locale'));
         } else {
             App::setLocale('en');
         }
+
+        // Add debug at the end to see final locale state
+        Log::debug('🔍 SetLocaleFromUrl middleware finished', [
+            'final_app_locale' => App::getLocale(),
+            'final_session_locale' => Session::get('locale'),
+        ]);
 
         // Continue to next middleware / controller
         return $next($request);

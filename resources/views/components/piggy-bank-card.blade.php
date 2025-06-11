@@ -1,6 +1,6 @@
 @props(['piggyBank', 'newPiggyBankId' => null, 'newPiggyBankCreatedTime' => null])
 
-<a href="{{ route('localized.piggy-banks.show', ['locale' => app()->getLocale(), 'piggy_id' => $piggyBank->id]) }}" class="block text-current hover:no-underline">
+<a href="{{ localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id]) }}" class="block text-current hover:no-underline">
     <div class="p-5 border rounded-lg shadow-md bg-white hover:bg-gray-50 transition-all duration-300 piggy-bank-card"
          data-piggy-bank-id="{{ $piggyBank->id }}"
          data-new-piggy-bank-id="{{ $newPiggyBankId }}"

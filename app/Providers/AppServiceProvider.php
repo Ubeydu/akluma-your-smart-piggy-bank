@@ -131,9 +131,13 @@ class AppServiceProvider extends ServiceProvider
                     return $this;
                 }
 
-                public function where(array $constraints)
+                public function where($key, $pattern = null)
                 {
-                    $this->options['where'] = $constraints;
+                    if (is_array($key)) {
+                        $this->options['where'] = $key;
+                    } else {
+                        $this->options['where'][$key] = $pattern;
+                    }
 
                     return $this;
                 }
@@ -183,9 +187,13 @@ class AppServiceProvider extends ServiceProvider
                     return $this;
                 }
 
-                public function where(array $constraints)
+                public function where($key, $pattern = null)
                 {
-                    $this->options['where'] = $constraints;
+                    if (is_array($key)) {
+                        $this->options['where'] = $key;
+                    } else {
+                        $this->options['where'][$key] = $pattern;
+                    }
 
                     return $this;
                 }
@@ -207,8 +215,11 @@ class AppServiceProvider extends ServiceProvider
             return new class($routeKey, $action, 'put')
             {
                 private string $routeKey;
+
                 private $action;
+
                 private string $method;
+
                 private array $options = [];
 
                 public function __construct(string $routeKey, $action, string $method)
@@ -221,18 +232,25 @@ class AppServiceProvider extends ServiceProvider
                 public function name(string $name)
                 {
                     $this->options['name'] = $name;
+
                     return $this;
                 }
 
                 public function middleware($middleware)
                 {
                     $this->options['middleware'] = $middleware;
+
                     return $this;
                 }
 
-                public function where(array $constraints)
+                public function where($key, $pattern = null)
                 {
-                    $this->options['where'] = $constraints;
+                    if (is_array($key)) {
+                        $this->options['where'] = $key;
+                    } else {
+                        $this->options['where'][$key] = $pattern;
+                    }
+
                     return $this;
                 }
 
@@ -251,11 +269,15 @@ class AppServiceProvider extends ServiceProvider
 
         Route::macro('localizedMatch', function (array $methods, string $routeKey, $action) {
             $methodString = implode('|', $methods);
+
             return new class($routeKey, $action, $methodString)
             {
                 private string $routeKey;
+
                 private $action;
+
                 private string $method;
+
                 private array $options = [];
 
                 public function __construct(string $routeKey, $action, string $method)
@@ -268,18 +290,25 @@ class AppServiceProvider extends ServiceProvider
                 public function name(string $name)
                 {
                     $this->options['name'] = $name;
+
                     return $this;
                 }
 
                 public function middleware($middleware)
                 {
                     $this->options['middleware'] = $middleware;
+
                     return $this;
                 }
 
-                public function where(array $constraints)
+                public function where($key, $pattern = null)
                 {
-                    $this->options['where'] = $constraints;
+                    if (is_array($key)) {
+                        $this->options['where'] = $key;
+                    } else {
+                        $this->options['where'][$key] = $pattern;
+                    }
+
                     return $this;
                 }
 
@@ -296,13 +325,15 @@ class AppServiceProvider extends ServiceProvider
             };
         });
 
-
         Route::macro('localizedPatch', function (string $routeKey, $action) {
             return new class($routeKey, $action, 'patch')
             {
                 private string $routeKey;
+
                 private $action;
+
                 private string $method;
+
                 private array $options = [];
 
                 public function __construct(string $routeKey, $action, string $method)
@@ -315,18 +346,25 @@ class AppServiceProvider extends ServiceProvider
                 public function name(string $name)
                 {
                     $this->options['name'] = $name;
+
                     return $this;
                 }
 
                 public function middleware($middleware)
                 {
                     $this->options['middleware'] = $middleware;
+
                     return $this;
                 }
 
-                public function where(array $constraints)
+                public function where($key, $pattern = null)
                 {
-                    $this->options['where'] = $constraints;
+                    if (is_array($key)) {
+                        $this->options['where'] = $key;
+                    } else {
+                        $this->options['where'][$key] = $pattern;
+                    }
+
                     return $this;
                 }
 
@@ -347,8 +385,11 @@ class AppServiceProvider extends ServiceProvider
             return new class($routeKey, $action, 'delete')
             {
                 private string $routeKey;
+
                 private $action;
+
                 private string $method;
+
                 private array $options = [];
 
                 public function __construct(string $routeKey, $action, string $method)
@@ -361,18 +402,25 @@ class AppServiceProvider extends ServiceProvider
                 public function name(string $name)
                 {
                     $this->options['name'] = $name;
+
                     return $this;
                 }
 
                 public function middleware($middleware)
                 {
                     $this->options['middleware'] = $middleware;
+
                     return $this;
                 }
 
-                public function where(array $constraints)
+                public function where($key, $pattern = null)
                 {
-                    $this->options['where'] = $constraints;
+                    if (is_array($key)) {
+                        $this->options['where'] = $key;
+                    } else {
+                        $this->options['where'][$key] = $pattern;
+                    }
+
                     return $this;
                 }
 

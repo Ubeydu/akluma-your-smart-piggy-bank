@@ -20,21 +20,20 @@ class PiggyBankController extends Controller
         $newPiggyBankCreatedTime = session('newPiggyBankCreatedTime');
 
         // Debug output to laravel.log
-        \Log::info('Piggy Bank Index Page Loaded', [
-            'session_has_newPiggyBankId' => session()->has('newPiggyBankId'),
-            'newPiggyBankId' => $newPiggyBankId,
-            'newPiggyBankCreatedTime' => $newPiggyBankCreatedTime,
-            'url' => request()->fullUrl(),
-            'session_id' => session()->getId(),
-            'time' => now()->toDateTimeString()
-        ]);
+        // \Log::info('Piggy Bank Index Page Loaded', [
+        //     'session_has_newPiggyBankId' => session()->has('newPiggyBankId'),
+        //     'newPiggyBankId' => $newPiggyBankId,
+        //     'newPiggyBankCreatedTime' => $newPiggyBankCreatedTime,
+        //     'url' => request()->fullUrl(),
+        //     'session_id' => session()->getId(),
+        //     'time' => now()->toDateTimeString()
+        // ]);
 
         // Clear them after getting the values
         session()->forget(['newPiggyBankId', 'newPiggyBankCreatedTime']);
 
         return view('piggy-banks.index', compact('piggyBanks', 'newPiggyBankId', 'newPiggyBankCreatedTime'));
     }
-
 
     public function update(Request $request, $piggy_id)
     {
@@ -56,12 +55,14 @@ class PiggyBankController extends Controller
             'details' => $validated['details'],
         ]);
 
+        // Get current locale
+        $locale = app()->getLocale();
+
         return redirect()
-            ->route('localized.piggy-banks.show', ['locale' => app()->getLocale(), 'piggy_id' => $piggyBank->id])
+            ->route('localized.piggy-banks.show.'.$locale, ['locale' => $locale, 'piggy_id' => $piggyBank->id])
             ->with('status', __('You updated your piggy bank successfully'))
             ->with('success', __('You updated your piggy bank successfully'));
     }
-
 
     public function show($piggy_id): View
     {
@@ -78,14 +79,13 @@ class PiggyBankController extends Controller
             }
 
             return view('piggy-banks.show', [
-                'piggyBank' => $piggyBank
+                'piggyBank' => $piggyBank,
             ]);
         } catch (\Exception $e) {
             \Log::error('Error in show method', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
-
 
     public function cancel($piggy_id)
     {
@@ -101,7 +101,6 @@ class PiggyBankController extends Controller
             ->with('warning', __('You cancelled editing your piggy bank details.'));
     }
 
-
     public function updateStatusToCancelled($piggy_id)
     {
         $piggyBank = PiggyBank::findOrFail($piggy_id);
@@ -113,7 +112,7 @@ class PiggyBankController extends Controller
         // Check if piggy bank can be cancelled
         if (in_array($piggyBank->status, ['done', 'cancelled'])) {
             return response()->json([
-                'error' => 'Cannot cancel a completed or already cancelled piggy bank.'
+                'error' => 'Cannot cancel a completed or already cancelled piggy bank.',
             ], 400);
         }
 
@@ -121,9 +120,7 @@ class PiggyBankController extends Controller
 
         return response()->json([
             'status' => 'cancelled',
-            'message' => __('Piggy bank has been cancelled.')
+            'message' => __('Piggy bank has been cancelled.'),
         ]);
     }
-
-
 }

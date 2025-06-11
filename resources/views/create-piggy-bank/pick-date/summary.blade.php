@@ -255,7 +255,7 @@
 
                                 <x-slot:actions>
                                     <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
-                                        <form action="{{ route('localized.create-piggy-bank.cancel', ['locale' => app()->getLocale()]) }}" method="POST" class="block">
+                                        <form action="{{ localizedRoute('localized.create-piggy-bank.cancel') }}" method="POST" class="block">
                                             @csrf
                                             <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
                                                 {{ __('Yes, cancel') }}
@@ -275,14 +275,14 @@
 
                         <!-- Previous and Create buttons  -->
                         <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-                            <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ route('localized.create-piggy-bank.pick-date.step-3', ['locale' => app()->getLocale()]) }}'">
+                            <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ localizedRoute('localized.create-piggy-bank.pick-date.step-3') }}'">
                                 {{ __('Previous') }}
                             </x-secondary-button>
 
 
 
                             @auth
-                                <form method="POST" action="{{ route('localized.create-piggy-bank.pick-date.store', ['locale' => app()->getLocale()]) }}">
+                                <form method="POST" action="{{ localizedRoute('localized.create-piggy-bank.pick-date.store') }}">
                                     @csrf
                                     @if($activePiggyBanksCount >= $maxActivePiggyBanks)
                                         <x-primary-button type="button" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start opacity-50 cursor-not-allowed">
@@ -298,7 +298,7 @@
                                 <div>
                                     <x-secondary-button
                                         type="button"
-                                        onclick="window.location='{{ route('localized.register', ['locale' => app()->getLocale(), 'intended' => url()->current()]) }}'"
+                                        onclick="window.location='{{ localizedRoute('localized.register', ['intended' => url()->current()]) }}'"
                                         class="w-[200px] sm:w-auto justify-center sm:justify-start">
                                         {{ __('Register to Create') }}
                                     </x-secondary-button>

@@ -116,6 +116,98 @@ return [
             'tr' => 'sifre',
             'fr' => 'mot-de-passe',
         ],
+
+        // Add these to your route-slugs.php routes array:
+
+        'step-1' => [
+            'en' => 'step-1',
+            'tr' => 'adim-1',  // From "Step 1 of 3": "Adım 1 - 3"
+            'fr' => 'etape-1', // From "Step 1 of 3": "Étape 1 sur 3"
+        ],
+
+        'step-2' => [
+            'en' => 'step-2',
+            'tr' => 'adim-2',  // From "Step 2 of 3": "Adım 2 - 3"
+            'fr' => 'etape-2', // From "Step 2 of 3": "Étape 2 sur 3"
+        ],
+
+        'step-3' => [
+            'en' => 'step-3',
+            'tr' => 'adim-3',  // From "Step 3 of 3": "Adım 3 - 3"
+            'fr' => 'etape-3', // From "Step 3 of 3": "Étape 3 sur 3"
+        ],
+
+        'pick-date' => [
+            'en' => 'pick-date',
+            'tr' => 'tarih-belirle',  // From "Pick Date": "Tarih Belirle"
+            'fr' => 'choisir-date',   // From "Pick Date": "Choisissez la date"
+        ],
+
+        'summary' => [
+            'en' => 'summary',
+            'tr' => 'ozet',     // From "Summary": "Özet"
+            'fr' => 'resume',   // From "Summary": "Résumé"
+        ],
+
+        'enter-saving-amount' => [
+            'en' => 'enter-saving-amount',
+            'tr' => 'duzenli-birikim-miktari-belirle',
+            'fr' => 'saisir-montant-epargne',
+        ],
+
+        'clear' => [
+            'en' => 'clear',
+            'tr' => 'sil',
+            'fr' => 'effacer',
+        ],
+
+        'choose-strategy' => [
+            'en' => 'choose-strategy',
+            'tr' => 'strateji-sec',
+            'fr' => 'choisissez-strategie',
+        ],
+
+        'show-summary' => [
+            'en' => 'show-summary',
+            'tr' => 'ozet-goster',
+            'fr' => 'afficher-resume',
+        ],
+
+        'store' => [
+            'en' => 'store',
+            'tr' => 'kaydet',
+            'fr' => 'enregistrer',
+        ],
+
+        'pause' => [
+            'en' => 'pause',
+            'tr' => 'duraklat',
+            'fr' => 'mettre-en-pause',
+        ],
+
+        'resume' => [
+            'en' => 'resume',
+            'tr' => 'devam-et',
+            'fr' => 'reprendre',
+        ],
+
+        'update-status-cancelled' => [
+            'en' => 'update-status-cancelled',
+            'tr' => 'durumu-iptal-edildi-olarak-guncelle',
+            'fr' => 'mettre-a-jour-statut-annule',
+        ],
+
+        'test-date/{piggy_id}' => [
+            'en' => 'test-date/{piggy_id}',
+            'tr' => 'test-tarihi/{piggy_id}',
+            'fr' => 'date-test/{piggy_id}',
+        ],
+
+        'test-date/{piggy_id}/clear' => [
+            'en' => 'test-date/{piggy_id}/clear',
+            'tr' => 'test-tarihi/{piggy_id}/temizle',
+            'fr' => 'date-test/{piggy_id}/effacer',
+        ],
     ],
 
     /*
