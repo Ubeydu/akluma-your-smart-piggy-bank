@@ -486,7 +486,15 @@ async function updateUIElements(piggyBankId, data) {
 async function updateSchedule(piggyBankId, statusData) {  // <-- Accept statusData parameter
     try {
         const locale = getCurrentLocale();
-        const response = await fetch(`/${locale}/piggy-banks/${piggyBankId}/schedule`);
+        const response = await fetch(`/${locale}/piggy-banks/${piggyBankId}/schedule`, {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'text/html',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin'
+        });
         const html = await response.text();
 
         const scheduleContainer = document.getElementById('schedule-container');
