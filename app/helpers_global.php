@@ -15,7 +15,23 @@ if (!function_exists('localizedRoute')) {
         // Always ensure locale is in parameters
         $parameters['locale'] = $locale;
 
-        return route($localeSpecificRouteName, $parameters);
+        \Log::info('🛠️ localizedRoute() helper debug', [
+            'input_route' => $routeName,
+            'input_locale' => $locale,
+            'resolved_route_name' => $localeSpecificRouteName,
+            'parameters' => $parameters,
+            'route_exists' => \Route::has($localeSpecificRouteName),
+            'app_locale' => app()->getLocale(),
+        ]);
+
+        $generatedUrl = route($localeSpecificRouteName, $parameters);
+        
+        \Log::info('✅ localizedRoute() result', [
+            'generated_url' => $generatedUrl,
+            'route_name' => $localeSpecificRouteName,
+        ]);
+
+        return $generatedUrl;
     }
 }
 

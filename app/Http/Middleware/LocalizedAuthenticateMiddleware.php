@@ -34,10 +34,28 @@ class LocalizedAuthenticateMiddleware extends Authenticate
             $locale = $request->segment(1);
             $availableLocales = array_keys(config('app.available_languages', []));
 
-            // Fallback to default locale if invalid
+            \Log::info('🔐 Authentication failed - locale detection', [
+                'url' => $request->url(),
+                'first_segment' => $locale,
+                'available_locales' => $availableLocales,
+                'session_locale' => session('locale'),
+                'is_valid_locale' => in_array($locale, $availableLocales),
+            ]);
+
+            // Fallback to session locale, then default locale if invalid
             if (! in_array($locale, $availableLocales)) {
-                $locale = session('locale', 'en');
+                $locale = session('locale', config('app.locale', 'en'));
+                \Log::warning('🔄 Using fallback locale', [
+                    'fallback_locale' => $locale,
+                    'reason' => 'URL segment not in available locales'
+                ]);
             }
+
+            \Log::info('🔐 Redirecting to localized login', [
+                'target_route' => "localized.login.{$locale}",
+                'locale' => $locale,
+                'intended_url' => session('url.intended'),
+            ]);
 
             // Redirect to the localized login page
             return redirect()->route("localized.login.{$locale}", ['locale' => $locale]);

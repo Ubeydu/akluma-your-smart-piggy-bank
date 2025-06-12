@@ -33,4 +33,11 @@ It is not Kernel.php. Kernel.php exists in older Laravel versions. Mine is Larav
 - Make sure to give me only the part of the file where I need to make changes and/or additions, not the whole file.
 - When debugging, please give me ONLY ONE thing to try and wait for my response before suggesting something else.
 
+# Minimalist Guidance Principle
+
+- Provide ONE simple, clear solution first
+- Only offer alternatives when explicitly asked
+- Keep explanations brief and focused
+- Prioritize clarity over comprehensiveness for junior developers
+
 
