@@ -23,32 +23,32 @@ class SetLocaleFromUrl
     public function handle(Request $request, Closure $next): Response
     {
         // Debug request information
-        Log::debug('🔍 SetLocaleFromUrl middleware called', [
-            'url' => $request->fullUrl(),
-            'method' => $request->method(),
-            'is_ajax' => $request->ajax(),
-            'accept' => $request->header('Accept'),
-            'route_name' => $request->route() ? $request->route()->getName() : 'no_route',
-            'segments' => $request->segments(),
-        ]);
+        // Log::debug('🔍 SetLocaleFromUrl middleware called', [
+        //     'url' => $request->fullUrl(),
+        //     'method' => $request->method(),
+        //     'is_ajax' => $request->ajax(),
+        //     'accept' => $request->header('Accept'),
+        //     'route_name' => $request->route() ? $request->route()->getName() : 'no_route',
+        //     'segments' => $request->segments(),
+        // ]);
 
         // List of supported locales
         $availableLocales = array_keys(config('app.available_languages', []));
 
         // Debug available locales
-        Log::debug('Available locales', [
-            'locales' => $availableLocales,
-            'current_app_locale' => App::getLocale(),
-            'current_session_locale' => Session::get('locale'),
-        ]);
+        // Log::debug('Available locales', [
+        //     'locales' => $availableLocales,
+        //     'current_app_locale' => App::getLocale(),
+        //     'current_session_locale' => Session::get('locale'),
+        // ]);
 
         // Get the first URL segment
         $locale = $request->segment(1);
 
-        Log::debug('First URL segment', [
-            'segment' => $locale,
-            'is_valid_locale' => in_array($locale, $availableLocales),
-        ]);
+        // Log::debug('First URL segment', [
+        //     'segment' => $locale,
+        //     'is_valid_locale' => in_array($locale, $availableLocales),
+        // ]);
 
         // If ?lang=xx is present in query, use it (only if valid)
         if ($request->has('lang')) {
@@ -84,11 +84,11 @@ class SetLocaleFromUrl
             }
 
             // Add debug to verify locale was set correctly
-            Log::debug('Locale set from URL segment', [
-                'locale' => $locale,
-                'app_locale_after_set' => App::getLocale(),
-                'session_locale_after_set' => Session::get('locale'),
-            ]);
+            // Log::debug('Locale set from URL segment', [
+            //     'locale' => $locale,
+            //     'app_locale_after_set' => App::getLocale(),
+            //     'session_locale_after_set' => Session::get('locale'),
+            // ]);
 
             return $next($request);
         }
@@ -112,10 +112,10 @@ class SetLocaleFromUrl
         }
 
         // Add debug at the end to see final locale state
-        Log::debug('🔍 SetLocaleFromUrl middleware finished', [
-            'final_app_locale' => App::getLocale(),
-            'final_session_locale' => Session::get('locale'),
-        ]);
+        // Log::debug('🔍 SetLocaleFromUrl middleware finished', [
+        //     'final_app_locale' => App::getLocale(),
+        //     'final_session_locale' => Session::get('locale'),
+        // ]);
 
         // Continue to next middleware / controller
         return $next($request);

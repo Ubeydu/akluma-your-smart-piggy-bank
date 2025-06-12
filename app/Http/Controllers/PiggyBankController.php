@@ -66,34 +66,34 @@ class PiggyBankController extends Controller
 
     public function show($piggy_id): View
     {
-        \Log::info('🏦 PiggyBankController::show called', [
-            'piggy_id' => $piggy_id,
-            'url' => request()->fullUrl(),
-            'user_id' => auth()->id(),
-            'is_authenticated' => auth()->check(),
-            'app_locale' => app()->getLocale(),
-            'session_locale' => session('locale'),
-        ]);
+        // \Log::info('🏦 PiggyBankController::show called', [
+        //     'piggy_id' => $piggy_id,
+        //     'url' => request()->fullUrl(),
+        //     'user_id' => auth()->id(),
+        //     'is_authenticated' => auth()->check(),
+        //     'app_locale' => app()->getLocale(),
+        //     'session_locale' => session('locale'),
+        // ]);
         
         try {
             $piggyBank = PiggyBank::findOrFail($piggy_id);
 
-            \Log::info('🏦 PiggyBank found', [
-                'piggy_bank_id' => $piggyBank->id,
-                'owner_id' => $piggyBank->user_id,
-                'current_user_id' => auth()->id(),
-            ]);
+            // \Log::info('🏦 PiggyBank found', [
+            //     'piggy_bank_id' => $piggyBank->id,
+            //     'owner_id' => $piggyBank->user_id,
+            //     'current_user_id' => auth()->id(),
+            // ]);
 
             if (! Gate::allows('update', $piggyBank)) {
-                \Log::warning('🚫 Gate check failed for piggy bank access', [
-                    'piggy_bank_id' => $piggyBank->id,
-                    'owner_id' => $piggyBank->user_id,
-                    'current_user_id' => auth()->id(),
-                ]);
+                // \Log::warning('🚫 Gate check failed for piggy bank access', [
+                //     'piggy_bank_id' => $piggyBank->id,
+                //     'owner_id' => $piggyBank->user_id,
+                //     'current_user_id' => auth()->id(),
+                // ]);
                 abort(403);
             }
 
-            \Log::info('✅ Gate check passed, rendering view');
+            // \Log::info('✅ Gate check passed, rendering view');
 
             if (request()->has('cancelled')) {
                 session()->flash('info', __('edit_cancelled_message'));
@@ -103,10 +103,10 @@ class PiggyBankController extends Controller
                 'piggyBank' => $piggyBank,
             ]);
         } catch (\Exception $e) {
-            \Log::error('❌ Error in PiggyBankController::show', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            // \Log::error('❌ Error in PiggyBankController::show', [
+            //     'error' => $e->getMessage(),
+            //     'trace' => $e->getTraceAsString(),
+            // ]);
             throw $e;
         }
     }

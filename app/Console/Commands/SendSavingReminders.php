@@ -66,7 +66,7 @@ class SendSavingReminders extends Command
         });
 
         foreach ($savingsByTimezone as $timezone => $timezoneGroup) {
-            Log::info("🕐 Timezone group {$timezone} contains saving IDs: ".$timezoneGroup->pluck('id')->implode(', '));
+            // Log::info("🕐 Timezone group {$timezone} contains saving IDs: ".$timezoneGroup->pluck('id')->implode(', '));
         }
 
         foreach ($savingsByTimezone as $timezone => $timezoneGroup) {
@@ -74,7 +74,7 @@ class SendSavingReminders extends Command
         }
 
         $this->info('Reminder processing completed.');
-        Log::info("🧮 Total processSaving() calls in this run: {$this->savingDispatchCounter}");
+        // Log::info("🧮 Total processSaving() calls in this run: {$this->savingDispatchCounter}");
     }
 
     /**
@@ -199,7 +199,7 @@ class SendSavingReminders extends Command
 
     protected function processSaving(ScheduledSaving $saving): void
     {
-        Log::info("🧪 Entering processSaving() for saving ID {$saving->id}");
+        // Log::info("🧪 Entering processSaving() for saving ID {$saving->id}");
 
         try {
             DB::transaction(function () use ($saving) {
@@ -259,7 +259,7 @@ class SendSavingReminders extends Command
                     // Dispatch the job
                     \App\Jobs\SendSavingReminderJob::dispatch($lockedSaving);
 
-                    Log::info("✅ Dispatched reminder for saving ID {$lockedSaving->id} from SendSavingReminders");
+                    // Log::info("✅ Dispatched reminder for saving ID {$lockedSaving->id} from SendSavingReminders");
                     $this->info("Successfully dispatched email job for saving #{$lockedSaving->id}");
 
                 } catch (\Exception $e) {

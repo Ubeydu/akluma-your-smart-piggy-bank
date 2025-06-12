@@ -148,13 +148,13 @@ class ScheduledSavingController extends Controller
      */
     public function resumePiggyBank($piggy_id)
     {
-        \Log::info("Resume called with test date: " . session('test_date'));
+        // \Log::info("Resume called with test date: " . session('test_date'));
 
         $piggyBank = PiggyBank::findOrFail($piggy_id);
 
         $scheduleUpdated = false;
 
-        \Log::info("Found piggy bank with status: " . $piggyBank->status);
+        // \Log::info("Found piggy bank with status: " . $piggyBank->status);
 
         if ($piggyBank->status !== 'paused') {
             return response()->json(['error' => 'Piggy bank is not paused.'], 400);
@@ -183,20 +183,20 @@ class ScheduledSavingController extends Controller
             // Get the first saving
             $firstSaving = $pendingSavings->first();
 
-            \Log::info("First saving date: {$firstSaving->saving_date}, Current date: {$currentDate}");
+            // \Log::info("First saving date: {$firstSaving->saving_date}, Current date: {$currentDate}");
 
 
             // Special handling for daily frequency
             if ($piggyBank->selected_frequency === 'days') {
                 // For daily frequency, compare dates without time
                 if ($firstSaving->saving_date->startOfDay()->gt($currentDate->startOfDay())) {
-                    \Log::info("First saving is in the future (daily schedule), skipping schedule update");
+                    // \Log::info("First saving is in the future (daily schedule), skipping schedule update");
                     return;
                 }
             } else {
                 // For other frequencies, use existing comparison
                 if ($firstSaving->saving_date->gt($currentDate)) {
-                    \Log::info("First saving is in the future, skipping schedule update");
+                    // \Log::info("First saving is in the future, skipping schedule update");
                     return;
                 }
             }
@@ -209,7 +209,7 @@ class ScheduledSavingController extends Controller
                 ? Carbon::parse(session('test_date'))
                 : Carbon::today();
 
-            \Log::info("Using start date: " . $newStartDate->format('Y-m-d'));
+            // \Log::info("Using start date: " . $newStartDate->format('Y-m-d'));
 
             // Mapping for frequency
             $intervalMapping = [
@@ -227,12 +227,12 @@ class ScheduledSavingController extends Controller
 
 
             foreach ($pendingSavings as $index => $saving) {
-                \Log::info("Processing saving #{$saving->saving_number} with date {$saving->saving_date}");
+                // \Log::info("Processing saving #{$saving->saving_number} with date {$saving->saving_date}");
 
                 // Start with the test date plus one day
                 $workingDate = $newStartDate->copy()->addDay();
 
-                \Log::info("Processing with frequency: {$piggyBank->selected_frequency}");
+                // \Log::info("Processing with frequency: {$piggyBank->selected_frequency}");
 
                 if ($piggyBank->selected_frequency === 'years') {
                     $workingDate->addYears($index);
@@ -245,11 +245,11 @@ class ScheduledSavingController extends Controller
                     $workingDate->addDays($index);
                 }
 
-                \Log::info("Working date calculated for saving #{$saving->saving_number}: {$workingDate}");
+                // \Log::info("Working date calculated for saving #{$saving->saving_number}: {$workingDate}");
 
                 // Update with the new date
                 $saving->update(['saving_date' => $workingDate]);
-                \Log::info("Saved new date: {$workingDate}");
+                // \Log::info("Saved new date: {$workingDate}");
             }
 
 
@@ -259,7 +259,7 @@ class ScheduledSavingController extends Controller
 
         });
 
-        \Log::info("All savings processed");
+        // \Log::info("All savings processed");
         return response()->json(['message' => __('piggy_bank_resumed_schedule_not_updated_info'),
             'status' => 'active',
             'scheduleUpdated' => $scheduleUpdated
