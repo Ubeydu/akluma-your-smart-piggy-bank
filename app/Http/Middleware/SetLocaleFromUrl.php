@@ -22,15 +22,14 @@ class SetLocaleFromUrl
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Debug request information
-        // Log::debug('🔍 SetLocaleFromUrl middleware called', [
-        //     'url' => $request->fullUrl(),
-        //     'method' => $request->method(),
-        //     'is_ajax' => $request->ajax(),
-        //     'accept' => $request->header('Accept'),
-        //     'route_name' => $request->route() ? $request->route()->getName() : 'no_route',
-        //     'segments' => $request->segments(),
-        // ]);
+        //        \Log::info('🔍 SetLocaleFromUrl middleware called', [
+        //            'url' => $request->fullUrl(),
+        //            'method' => $request->method(),
+        //            'route_name' => $request->route() ? $request->route()->getName() : 'no_route',
+        //            'segments' => $request->segments(),
+        //            'session_intended' => session('url.intended'),
+        //            'session_id' => session()->getId(),
+        //        ]);
 
         // List of supported locales
         $availableLocales = array_keys(config('app.available_languages', []));

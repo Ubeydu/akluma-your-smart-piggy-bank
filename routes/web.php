@@ -557,6 +557,14 @@ Route::get('/debug-route-registration', function () {
 
 Route::fallback(function (Request $request) {
     // If this fallback is hit because of an auth failure, redirect to log in
+    //    \Log::info('🔍 Fallback route hit', [
+    //        'path' => $request->path(),
+    //        'has_intended_url' => $request->session()->has('url.intended'),
+    //        'intended_url' => session('url.intended'),
+    //        'requested_locale' => session('requested_locale'),
+    //        'segment_1' => $request->segment(1),
+    //    ]);
+
     if ($request->session()->has('url.intended')) {
         // Use the requested locale if available
         $redirectLocale = session('requested_locale', $request->segment(1));
