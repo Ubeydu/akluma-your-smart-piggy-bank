@@ -363,13 +363,17 @@ Route::get('currency/switch/{currency}', function ($currency, Request $request) 
 
         return redirect($referer ?? route('localized.dashboard', ['locale' => app()->getLocale()]));
     } catch (Exception $e) {
-        // If anything goes wrong with session storage or currency retrieval
         \Illuminate\Support\Facades\Log::error('Currency switch error', [
             'error' => $e->getMessage(),
+            'referer' => $request->headers->get('referer'),
+            'previous_url' => url()->previous(),
         ]);
         session()->flash('error', __('There was a problem setting currency. Please reload the page and try again.'));
 
-        return redirect()->back();
+        // Redirect explicitly to previous URL or dashboard with logging
+        $redirectUrl = url()->previous() ?: route('localized.dashboard', ['locale' => app()->getLocale()]);
+        \Illuminate\Support\Facades\Log::info('Redirecting after error to', ['url' => $redirectUrl]);
+        return redirect($redirectUrl);
     }
 })->name('global.currency.switch');
 
