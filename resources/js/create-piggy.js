@@ -158,8 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Then switch currency using the correct route
             console.log('[Currency Switch] redirecting to:', `/${currentLocale}/currency/switch/${currency}`);
-            window.location.href = `/${currentLocale}/currency/switch/${currency}`;
-
+            window.location.href = `/currency/switch/${currency}`;
 
         } catch (error) {
             console.error('Error:', error);
