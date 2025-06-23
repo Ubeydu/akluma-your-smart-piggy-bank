@@ -21,14 +21,13 @@ class LocalizedAuthenticateMiddleware extends Authenticate
      */
     public function handle($request, Closure $next, ...$guards)
     {
-        //        \Log::info('🔍 LocalizedAuthenticateMiddleware - Starting', [
-        //            'url' => $request->fullUrl(),
-        //            'method' => $request->method(),
-        //            'is_ajax' => $request->ajax(),
-        //            'session_id' => session()->getId(),
-        //            'is_authenticated' => auth()->check(),
-        //            'session_intended' => session('url.intended'),
-        //        ]);
+        \Log::info('Auth middleware check', [
+            'path' => $request->path(),
+            'is_ajax' => $request->ajax(),
+            'is_xhr' => $request->header('X-Requested-With'),
+            'auth_check' => auth()->check(),
+            'session_id' => session()->getId(),
+        ]);
 
         // Only store the intended URL if it's not already set and user is not authenticated
         if (! session()->has('url.intended') && ! auth()->check()) {
@@ -46,12 +45,23 @@ class LocalizedAuthenticateMiddleware extends Authenticate
             return parent::handle($request, $next, ...$guards);
         } catch (\Illuminate\Auth\AuthenticationException $e) {
             // Log authentication exception details
-            //            \Log::info('🔍 Authentication exception caught', [
-            //                'exception' => get_class($e),
-            //                'message' => $e->getMessage(),
-            //                'intended_url' => session('url.intended'),
-            //                'session_id' => session()->getId(),
-            //            ]);
+            \Log::warning('Authentication exception caught', [
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+                'intended_url' => session('url.intended'),
+                'session_id' => session()->getId(),
+                'path' => $request->path(),
+                'is_ajax' => $request->ajax(),
+                'is_xhr' => $request->header('X-Requested-With'),
+                'cookies' => $request->cookies->all(),
+                'headers' => $request->headers->all(),
+            ]);
+
+            // Special handling for AJAX requests
+            if ($request->ajax() || $request->header('X-Requested-With') == 'XMLHttpRequest') {
+                \Log::info('AJAX auth failure - returning 401 instead of redirect');
+                return response()->json(['error' => 'Unauthenticated'], 401);
+            }
 
             // Authentication failed, determine appropriate locale for redirection
             $locale = $request->segment(1);
