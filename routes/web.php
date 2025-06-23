@@ -361,7 +361,7 @@ Route::get('currency/switch/{currency}', function ($currency, Request $request) 
 
         session()->flash('success', $successMessage);
 
-        return redirect()->back();
+        return redirect($referer ?? route('localized.dashboard', ['locale' => app()->getLocale()]));
     } catch (Exception $e) {
         // If anything goes wrong with session storage or currency retrieval
         \Illuminate\Support\Facades\Log::error('Currency switch error', [
