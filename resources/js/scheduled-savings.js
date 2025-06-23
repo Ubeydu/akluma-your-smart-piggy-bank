@@ -483,10 +483,18 @@ async function updateUIElements(piggyBankId, data) {
 }
 
 // Helper function to update schedule
-async function updateSchedule(piggyBankId, statusData) {  // <-- Accept statusData parameter
+async function updateSchedule(piggyBankId, statusData) {
     try {
-        const locale = getCurrentLocale();
-        const response = await fetch(`/${locale}/piggy-banks/${piggyBankId}/schedule`, {
+        // Extract locale from current URL
+        const segments = window.location.pathname.split('/');
+        const locale = segments[1]; // First segment after the leading slash
+
+        // Use the standard API endpoint pattern with the correct locale
+        const scheduleUrl = `/${locale}/piggy-banks/${piggyBankId}/schedule`;
+
+        console.log('Schedule URL:', scheduleUrl);
+
+        const response = await fetch(scheduleUrl, {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -495,8 +503,8 @@ async function updateSchedule(piggyBankId, statusData) {  // <-- Accept statusDa
             },
             credentials: 'same-origin'
         });
-        const html = await response.text();
 
+        const html = await response.text();
         const scheduleContainer = document.getElementById('schedule-container');
         if (scheduleContainer) {
             scheduleContainer.innerHTML = html;
