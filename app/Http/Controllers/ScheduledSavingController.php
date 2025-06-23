@@ -284,9 +284,20 @@ class ScheduledSavingController extends Controller
 
 
 
-    public function getSchedulePartial($piggy_id)
+    public function getSchedulePartial(Request $request, $piggy_id)
     {
+        \Log::info('Schedule partial request', [
+            'piggy_id' => $piggy_id,
+            'is_ajax' => $request->ajax(),
+            'is_xhr' => $request->header('X-Requested-With') === 'XMLHttpRequest',
+            'auth_check' => auth()->check(),
+            'auth_id' => auth()->id(),
+            'session_id' => session()->getId(),
+        ]);
+
+        // Existing code to fetch and return the partial view
         $piggyBank = PiggyBank::findOrFail($piggy_id);
+
         return view('partials.schedule', compact('piggyBank'));
     }
 
