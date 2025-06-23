@@ -485,14 +485,19 @@ async function updateUIElements(piggyBankId, data) {
 // Helper function to update schedule
 async function updateSchedule(piggyBankId, statusData) {
     try {
-        // Extract locale from current URL
-        const segments = window.location.pathname.split('/');
-        const locale = segments[1]; // First segment after the leading slash
+        // Extract locale and localized slug from current URL
+        const segments = window.location.pathname.split('/').filter(s => s.length > 0);
+        console.log('URL segments:', segments);
 
-        // Use the standard API endpoint pattern with the correct locale
-        const scheduleUrl = `/${locale}/piggy-banks/${piggyBankId}/schedule`;
+        const locale = segments[0];
+        const localizedSlug = segments[1];
+        console.log('Extracted locale:', locale);
+        console.log('Extracted localizedSlug:', localizedSlug);
+        console.log('PiggyBank ID passed:', piggyBankId);
 
-        console.log('Schedule URL:', scheduleUrl);
+        // Construct the schedule URL using locale and localized slug
+        const scheduleUrl = `/${locale}/${localizedSlug}/${piggyBankId}/schedule`;
+        console.log('Constructed Schedule URL:', scheduleUrl);
 
         const response = await fetch(scheduleUrl, {
             method: 'GET',
@@ -504,25 +509,38 @@ async function updateSchedule(piggyBankId, statusData) {
             credentials: 'same-origin'
         });
 
+        console.log('Fetch response status:', response.status);
+
+        if (!response.ok) {
+            console.error('Failed to fetch schedule partial:', response.statusText);
+            return;
+        }
+
         const html = await response.text();
         const scheduleContainer = document.getElementById('schedule-container');
         if (scheduleContainer) {
             scheduleContainer.innerHTML = html;
+            console.log('Schedule container updated');
 
-            // Only animate if schedule was updated
             if (statusData && statusData.scheduleUpdated) {
                 scheduleContainer.classList.add('highlight-new');
                 scheduleContainer.addEventListener('animationend', () => {
                     scheduleContainer.classList.remove('highlight-new');
+                    console.log('Highlight animation ended');
                 }, { once: true });
+                console.log('Highlight animation started');
             }
 
             reinitializeCheckboxes();
+            console.log('Checkboxes reinitialized');
+        } else {
+            console.warn('Schedule container element not found');
         }
     } catch (error) {
         console.error('Error updating schedule:', error);
     }
 }
+
 
 // Helper function to reinitialize checkboxes
 function reinitializeCheckboxes() {

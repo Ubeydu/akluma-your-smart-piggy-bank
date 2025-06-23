@@ -224,104 +224,17 @@ Route::post('create-piggy-bank/pick-date/store', [PiggyBankCreateController::cla
     ->middleware(['auth', 'verified'])
     ->name('create-piggy-bank.pick-date.store');
 
-// // Create piggy bank step 1 - explicit for all locales
-// Route::get('/en/create-piggy-bank/step-1', [PiggyBankCreateController::class, 'step1'])
-//    ->name('localized.create-piggy-bank.step-1.en');
-//
-// Route::get('/tr/create-piggy-bank/step-1', [PiggyBankCreateController::class, 'step1'])
-//    ->name('localized.create-piggy-bank.step-1.tr');
-//
-// Route::get('/fr/create-piggy-bank/step-1', [PiggyBankCreateController::class, 'step1'])
-//    ->name('localized.create-piggy-bank.step-1.fr');
-
 // Localized route group
 Route::prefix('{locale}')
     ->middleware('locale')
     ->where(['locale' => '[a-z]{2}'])
     ->group(function () {
 
-        // Piggy bank routes moved to localized macros above
-
-        //        Route::prefix(config('route-slugs.routes.create-piggy-bank.'.app()->getLocale(), 'create-piggy-bank'))
-        //            ->name('localized.create-piggy-bank.')
-        //            ->middleware(['conditional.layout'])
-        //            ->group(function () {
-        //
-        //                Route::get('step-1', [PiggyBankCreateController::class, 'step1'])->name('step-1');
-        //
-        //                Route::post('clear', function () {
-        //                    try {
-        //                        session()->forget([
-        //                            'pick_date_step1.name',
-        //                            'pick_date_step1.price',
-        //                            'pick_date_step1.link',
-        //                            'pick_date_step1.details',
-        //                            'pick_date_step1.starting_amount',
-        //                            'pick_date_step1.preview',
-        //                            'pick_date_step1.currency',
-        //                            'pick_date_step3.date',
-        //                            'pick_date_step3.calculations',
-        //                        ]);
-        //                        session()->flash('success', __('You cleared the form.'));
-        //                    } catch (Exception) {
-        //                        session()->flash('error', __('There was an error during clearing the form. Refresh the page and try again.'));
-        //                    }
-        //
-        //                    return redirect()->back();
-        //                })->name('clear');
-        //
-        //                Route::post('api/link-preview', [PiggyBankCreateController::class, 'fetchLinkPreview'])->name('api.link-preview');
-        //                Route::post('cancel', [PiggyBankCreateController::class, 'cancelCreation'])->name('cancel');
-        //
-        //                Route::get('step-2', [PiggyBankCreateController::class, 'showStep2'])->name('step-2.get');
-        //                Route::post('step-2', [PiggyBankCreateController::class, 'step2'])->name('step-2');
-        //
-        //                Route::post('choose-strategy', [PiggyBankCreateController::class, 'storeStrategySelection'])->name('choose-strategy');
-        //
-        //                Route::prefix('pick-date')->name('pick-date.')->group(function () {
-        //                    Route::get('step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
-        //                    Route::post('calculate-frequencies', [PiggyBankCreateController::class, 'calculateFrequencyOptions'])->name('calculate-frequencies');
-        //                    Route::post('store-frequency', [PiggyBankCreateController::class, 'storeSelectedFrequency'])->name('store-frequency');
-        //                    Route::post('show-summary', [PiggyBankCreateController::class, 'showSummary'])->name('show-summary');
-        //                    Route::get('summary', [PiggyBankCreateController::class, 'showSummary'])->name('summary');
-        //                    Route::post('store', [PiggyBankCreateController::class, 'storePiggyBank'])
-        //                        ->middleware(['auth', 'verified'])
-        //                        ->name('store');
-        //                });
-        //
-        //                Route::get('get-flash-messages', function () {
-        //                    $successMessage = session('success');
-        //                    $errorMessage = session('error');
-        //                    $warningMessage = session('warning');
-        //                    $infoMessage = session('info');
-        //
-        //                    if ($successMessage || $errorMessage || $warningMessage || $infoMessage) {
-        //                        session()->forget(['success', 'error', 'warning', 'info']);
-        //                    }
-        //
-        //                    return response()->json([
-        //                        'success' => $successMessage,
-        //                        'error' => $errorMessage,
-        //                        'warning' => $warningMessage,
-        //                        'info' => $infoMessage,
-        //                    ]);
-        //                })->name('get-flash-messages');
-        //
-        //                Route::prefix('enter-saving-amount')->name('enter-saving-amount.')->group(function () {
-        //                    Route::get('step-3', [PiggyBankCreateController::class, 'renderStrategyView'])->name('step-3');
-        //                });
-        //            });
-
         Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::patch('preferences/update',
                 [App\Http\Controllers\UserPreferencesController::class, 'updatePreferences'])
                 ->name('localized.preferences.update');
-
-            //    Route::get('/test-piggy-full/{piggyBankId}', [TestController::class, 'testPiggyBank'])
-            //        ->name('test.piggy-full');
-
-            // Test routes moved to localized macros above
 
             Route::patch('scheduled-savings/{periodicSaving}', [ScheduledSavingController::class, 'update'])
                 ->middleware(['auth', 'verified'])
