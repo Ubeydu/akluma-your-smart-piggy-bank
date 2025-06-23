@@ -361,7 +361,19 @@ Route::get('currency/switch/{currency}', function ($currency, Request $request) 
 
         session()->flash('success', $successMessage);
 
-        return redirect($referer ?? route('localized.dashboard', ['locale' => app()->getLocale()]));
+        \Illuminate\Support\Facades\Log::info('Currency switch: redirect decision', [
+            'referer_header' => $request->headers->get('referer'),
+            'referer_variable' => $referer,
+            'route_fallback' => route('localized.dashboard', ['locale' => app()->getLocale()]),
+            'redirect_target' => $referer ?? route('localized.dashboard', ['locale' => app()->getLocale()]),
+        ]);
+
+        $response = redirect($referer ?? route('localized.dashboard', ['locale' => app()->getLocale()]));
+        \Illuminate\Support\Facades\Log::info('Redirect response created', [
+            'response_class' => get_class($response),
+            'response_content' => method_exists($response, 'getTargetUrl') ? $response->getTargetUrl() : 'unknown',
+        ]);
+        return $response;
     } catch (Exception $e) {
         \Illuminate\Support\Facades\Log::error('Currency switch error', [
             'error' => $e->getMessage(),
@@ -373,6 +385,7 @@ Route::get('currency/switch/{currency}', function ($currency, Request $request) 
         // Redirect explicitly to previous URL or dashboard with logging
         $redirectUrl = url()->previous() ?: route('localized.dashboard', ['locale' => app()->getLocale()]);
         \Illuminate\Support\Facades\Log::info('Redirecting after error to', ['url' => $redirectUrl]);
+
         return redirect($redirectUrl);
     }
 })->name('global.currency.switch');
