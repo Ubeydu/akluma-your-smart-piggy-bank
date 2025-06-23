@@ -375,6 +375,8 @@ Route::get('currency/switch/{currency}', function ($currency, Request $request) 
             'response_content' => method_exists($response, 'getTargetUrl') ? $response->getTargetUrl() : 'unknown',
         ]);
 
+        \Log::info('Returning successful redirect');
+
         return $response;
     } catch (Exception $e) {
         \Illuminate\Support\Facades\Log::error('Currency switch error', [
