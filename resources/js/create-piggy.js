@@ -141,9 +141,10 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             // Get the current locale from the URL (since we're in a localized route)
             const currentLocale = window.location.pathname.split('/')[1];
-            
+
             // First, make request to clear the form using the same pattern as the clear button
             const clearUrl = `/${currentLocale}/create-piggy-bank/clear`;
+            console.log('[Currency Switch] clearUrl:', clearUrl);
             const response = await fetch(clearUrl, {
                 method: 'POST',
                 headers: {
@@ -156,7 +157,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Then switch currency using the correct route
-            window.location.href = `/currency/switch/${currency}`;
+            console.log('[Currency Switch] redirecting to:', `/${currentLocale}/currency/switch/${currency}`);
+            window.location.href = `/${currentLocale}/currency/switch/${currency}`;
+
 
         } catch (error) {
             console.error('Error:', error);
