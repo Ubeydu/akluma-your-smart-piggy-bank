@@ -81,7 +81,7 @@ class RetryFailedReminders extends Command
 //                    // Dispatch the job instead of directly queueing
 //                    SendSavingReminderJob::dispatch($saving);
 //
-//                    Log::info("🔁 Retrying reminder for saving ID {$saving->id} from RetryFailedReminders");
+//                    // Log::info("🔁 Retrying reminder for saving ID {$saving->id} from RetryFailedReminders");
 //
 //                    $retryCount++;
 //
@@ -113,7 +113,7 @@ class RetryFailedReminders extends Command
                 try {
                     SendSavingReminderJob::dispatch($saving);
 
-                    Log::info("🔁 Retrying reminder for saving ID {$saving->id} from RetryFailedReminders");
+                    // Log::info("🔁 Retrying reminder for saving ID {$saving->id} from RetryFailedReminders");
 
                     $retryCount++;
 

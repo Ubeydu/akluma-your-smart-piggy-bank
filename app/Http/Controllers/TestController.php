@@ -16,11 +16,11 @@
 //            // 1. Set the test date
 //            $testDate = '2026-03-15';
 //            Carbon::setTestNow(Carbon::parse($testDate));
-//            Log::info("Test date set to: ".$testDate);
+//            // Log::info("Test date set to: ".$testDate);
 //
 //            // 2. Get the piggy bank
 //            $piggyBank = PiggyBank::findOrFail($piggyBankId);
-//            Log::info("Found piggy bank with status: ".$piggyBank->status);
+//            // Log::info("Found piggy bank with status: ".$piggyBank->status);
 //
 //            // 3. Get schedule before resume
 //            $beforeSchedule = $piggyBank->scheduledSavings()

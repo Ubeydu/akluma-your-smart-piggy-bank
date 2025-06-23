@@ -14,7 +14,7 @@
 
                     <div class="grid gap-6 mb-6">
                         <!-- Pick Date Strategy -->
-                        <form action="{{ route('localized.create-piggy-bank.choose-strategy', ['locale' => app()->getLocale()]) }}" method="POST">
+                        <form action="{{ localizedRoute('localized.create-piggy-bank.choose-strategy') }}" method="POST">
                             @csrf
                             <input type="hidden" name="strategy" value="pick-date">
                             <button type="submit" class="w-full p-6 text-left border rounded-lg hover:border-indigo-500 focus:outline-hidden focus:border-indigo-500 transition-colors duration-200 cursor-pointer">
@@ -24,7 +24,7 @@
                         </form>
 
                         <!-- Enter Saving Amount Strategy -->
-                        <form method="POST" action="{{ route('localized.create-piggy-bank.choose-strategy', ['locale' => app()->getLocale()]) }}" class="relative w-full">
+                        <form method="POST" action="{{ localizedRoute('localized.create-piggy-bank.choose-strategy') }}" class="relative w-full">
                             @csrf
                             <input type="hidden" name="strategy" value="enter-saving-amount">
 
@@ -66,7 +66,7 @@
 
                                 <x-slot:actions>
                                     <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
-                                        <form action="{{ route('localized.create-piggy-bank.cancel', ['locale' => app()->getLocale()]) }}" method="POST" class="block">
+                                        <form action="{{ localizedRoute('localized.create-piggy-bank.cancel') }}" method="POST" class="block">
                                             @csrf
                                             <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
                                                 {{ __('Yes, cancel') }}
@@ -84,7 +84,7 @@
                             </x-confirmation-dialog>
                         </div>
 
-                        <x-secondary-button type="button" onclick="window.location='{{ route('localized.create-piggy-bank.step-1', ['locale' => app()->getLocale()]) }}'" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                        <x-secondary-button type="button" onclick="window.location='{{ localizedRoute('localized.create-piggy-bank.step-1') }}'" class="w-[200px] sm:w-auto justify-center sm:justify-start">
                             {{ __('Previous') }}
                         </x-secondary-button>
                     </div>

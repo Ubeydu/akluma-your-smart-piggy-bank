@@ -11,7 +11,7 @@
                 <div class="py-4 px-6">
                     <h1 class="text-lg font-semibold mb-8">{{ __('Step 1 of 3') }}</h1>
 
-                    <form  id="mainForm" method="POST" action="{{ route('localized.create-piggy-bank.step-2', ['locale' => app()->getLocale()]) }}">
+                    <form  id="mainForm" method="POST" action="{{ localizedRoute('localized.create-piggy-bank.step-2') }}">
                         @csrf
 
                         <!-- Name -->
@@ -456,7 +456,7 @@
 
                                 <x-slot:actions>
                                     <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
-                                        <form action="{{ route('localized.create-piggy-bank.cancel', ['locale' => app()->getLocale()]) }}" method="POST" class="block">
+                                        <form action="{{ localizedRoute('localized.create-piggy-bank.cancel') }}" method="POST" class="block">
                                             @csrf
                                             <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start cursor-pointer">
                                                 {{ __('Yes, cancel') }}
@@ -474,7 +474,7 @@
                             </x-confirmation-dialog>
                         </div>
 
-                        <form action="{{ route('localized.create-piggy-bank.clear', ['locale' => app()->getLocale()]) }}" method="POST">
+                        <form action="{{ localizedRoute('localized.create-piggy-bank.clear') }}" method="POST">
                             @csrf
                             <x-secondary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start cursor-pointer">
                                 {{ __('Clear') }}
@@ -503,7 +503,7 @@
             hideDetails: @json(__('Hide Details'))
         };
 
-        const linkPreviewUrl = '{{ route('localized.create-piggy-bank.api.link-preview', ['locale' => app()->getLocale()]) }}';
+        const linkPreviewUrl = '{{ route('create-piggy-bank.api.link-preview') }}';
 
     </script>
 

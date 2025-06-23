@@ -24,11 +24,39 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        //        \Log::info('🔍 Login process - Before authentication', [
+        //            'intended_url_before' => session('url.intended'),
+        //            'session_id' => session()->getId(),
+        //        ]);
+
         $request->authenticate();
+
+        //        \Log::info('🔍 Login process - After authentication, before session regenerate', [
+        //            'intended_url_after_auth' => session('url.intended'),
+        //            'session_id' => session()->getId(),
+        //        ]);
 
         $request->session()->regenerate();
 
-        return redirect()->route('localized.piggy-banks.index', ['locale' => app()->getLocale()]);
+        //        \Log::info('🔍 Login process - After session regenerate', [
+        //            'intended_url_after_regenerate' => session('url.intended'),
+        //            'session_id' => session()->getId(),
+        //        ]);
+
+        // Get the intended URL before we call redirect()->intended()
+        $intendedUrl = session('url.intended');
+
+        // Create the redirect response
+        $response = redirect()->intended(localizedRoute('localized.piggy-banks.index'));
+
+        //        \Log::info('🔍 Login successful - Detailed redirect info', [
+        //            'intended_url_before_redirect' => $intendedUrl,
+        //            'intended_url_after_redirect' => session('url.intended'),
+        //            'redirect_to' => $response->getTargetUrl(),
+        //            'session_id' => session()->getId(),
+        //        ]);
+
+        return $response;
     }
 
     /**
@@ -42,6 +70,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/' . app()->getLocale());
+        return redirect('/'.app()->getLocale());
     }
 }
