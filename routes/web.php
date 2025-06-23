@@ -313,6 +313,13 @@ Route::get('language/{locale}', function ($locale, Request $request) {
 
 Route::get('currency/switch/{currency}', function ($currency, Request $request) {
     try {
+        \Illuminate\Support\Facades\Log::info('Currency switch route hit', [
+            'referer_header' => $request->headers->get('referer'),
+            'request_path' => $request->path(),
+            'full_url' => $request->fullUrl(),
+            'previous_url' => url()->previous(),
+        ]);
+
         // Debug locale information
         $referer = $request->headers->get('referer');
         $localeFromReferer = null;
