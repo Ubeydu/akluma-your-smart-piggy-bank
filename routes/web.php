@@ -311,14 +311,14 @@ Route::get('language/{locale}', function ($locale, Request $request) {
     return redirect()->back();
 })->name('global.language.switch');
 
-Route::get('currency/switch/{currency}', function ($currency, Request $request) {
+Route::get('currency/switch/{currency}', action: function ($currency, Request $request) {
     try {
-        \Illuminate\Support\Facades\Log::info('Currency switch route hit', [
-            'referer_header' => $request->headers->get('referer'),
-            'request_path' => $request->path(),
-            'full_url' => $request->fullUrl(),
-            'previous_url' => url()->previous(),
-        ]);
+        //        \Illuminate\Support\Facades\Log::info('Currency switch route hit', [
+        //            'referer_header' => $request->headers->get('referer'),
+        //            'request_path' => $request->path(),
+        //            'full_url' => $request->fullUrl(),
+        //            'previous_url' => url()->previous(),
+        //        ]);
 
         // Debug locale information
         $referer = $request->headers->get('referer');
@@ -333,9 +333,9 @@ Route::get('currency/switch/{currency}', function ($currency, Request $request) 
         // Try to set locale based on referer first
         if ($localeFromReferer) {
             app()->setLocale($localeFromReferer);
-            \Illuminate\Support\Facades\Log::info('Set locale from referer', [
-                'new_locale' => app()->getLocale(),
-            ]);
+            //            \Illuminate\Support\Facades\Log::info('Set locale from referer', [
+            //                'new_locale' => app()->getLocale(),
+            //            ]);
         }
 
         // Validate currency exists in config
@@ -361,7 +361,7 @@ Route::get('currency/switch/{currency}', function ($currency, Request $request) 
 
         session()->flash('success', $successMessage);
 
-// Determine redirect target without triggering route() if avoidable
+        // Determine redirect target without triggering route() if avoidable
         $redirectTarget = $referer;
 
         if (! $redirectTarget) {
@@ -373,18 +373,19 @@ Route::get('currency/switch/{currency}', function ($currency, Request $request) 
             }
         }
 
-        \Illuminate\Support\Facades\Log::info('Currency switch: redirect decision', [
-            'referer_header' => $request->headers->get('referer'),
-            'referer_variable' => $referer,
-            'redirect_target' => $redirectTarget,
-        ]);
+        //        \Illuminate\Support\Facades\Log::info('Currency switch: redirect decision', [
+        //            'referer_header' => $request->headers->get('referer'),
+        //            'referer_variable' => $referer,
+        //            'redirect_target' => $redirectTarget,
+        //        ]);
 
-        $response = redirect($redirectTarget);
-        \Illuminate\Support\Facades\Log::info('Redirect response created', [
-            'response_class' => get_class($response),
-            'response_content' => method_exists($response, 'getTargetUrl') ? $response->getTargetUrl() : 'unknown',
-        ]);
-        return $response;
+
+        //        \Illuminate\Support\Facades\Log::info('Redirect response created', [
+        //            'response_class' => get_class($response),
+        //            'response_content' => method_exists($response, 'getTargetUrl') ? $response->getTargetUrl() : 'unknown',
+        //        ]);
+
+        return redirect($redirectTarget);
     } catch (Exception $e) {
         \Illuminate\Support\Facades\Log::error('Currency switch error', [
             'error' => $e->getMessage(),
