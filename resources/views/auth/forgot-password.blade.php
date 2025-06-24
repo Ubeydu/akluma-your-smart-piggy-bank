@@ -6,7 +6,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('localized.password.email', ['locale' => app()->getLocale()]) }}">
+    <form method="POST" action="{{ route('localized.password.email.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}">
         @csrf
 
         <!-- Email Address -->

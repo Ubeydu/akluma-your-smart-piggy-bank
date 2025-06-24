@@ -14,9 +14,21 @@
     </x-slot>
 
     <x-slot name="content">
+        @php
+            // Debug: Compare session vs user currency
+            $sessionCurrency = session('currency');
+            $userCurrency = auth()->check() ? auth()->user()->currency : null;
+            $defaultCurrency = config('app.default_currency');
+            //  \Log::info('Desktop Currency Dropdown Debug', [
+            //      'session_currency' => $sessionCurrency,
+            //      'user_currency' => $userCurrency,
+            //      'default_currency' => $defaultCurrency,
+            //      'user_authenticated' => auth()->check()
+            //  ]);
+        @endphp
         @foreach (config('app.currencies') as $code => $currency)
             <x-dropdown-link :href="route('global.currency.switch', ['currency' => $code])"
-                             :class="session('currency') == $code ? 'font-bold text-gray-900' : ''">
+                             :class="(auth()->check() ? auth()->user()->currency : session('currency', config('app.default_currency'))) == $code ? 'font-bold text-gray-900' : ''">
                 {{ __($currency['name']) }}
             </x-dropdown-link>
         @endforeach

@@ -81,7 +81,7 @@ class SendSavingReminderJob implements ShouldQueue
         $piggyBank = PiggyBank::find($this->piggyBankId);
         $saving = $this->saving->fresh();
 
-        Log::info('📬 Reminder Job started for user ID ' . $this->userId . ' and saving ID ' . $this->saving->id);
+        // Log::info('📬 Reminder Job started for user ID ' . $this->userId . ' and saving ID ' . $this->saving->id);
 
         if (!$user || !$piggyBank) {
             Log::error("Could not find user or piggy bank for saving reminder", [
@@ -92,23 +92,23 @@ class SendSavingReminderJob implements ShouldQueue
             return;
         }
 
-        Log::info('🌐 Locale Debug Start', [
-            'saving_id' => $this->saving->id,
-            'user_id' => $this->userId,
-            'piggy_bank_id' => $this->piggyBankId,
-            'expected_locale' => $user->language,
-            'app_locale_before_set' => App::getLocale()
-        ]);
+        // Log::info('🌐 Locale Debug Start', [
+        //     'saving_id' => $this->saving->id,
+        //     'user_id' => $this->userId,
+        //     'piggy_bank_id' => $this->piggyBankId,
+        //     'expected_locale' => $user->language,
+        //     'app_locale_before_set' => App::getLocale()
+        // ]);
         $previousLocale = App::getLocale(); // ⬅️ still here, just moved down
 
         $userLocale = $user->language ?? config('app.locale');
         App::setLocale($userLocale);
 
-        Log::info('🌐 Locale Debug After Set', [
-            'user_id' => $user->id,
-            'user_locale' => $userLocale,
-            'app_locale_after_set' => App::getLocale()
-        ]);
+        // Log::info('🌐 Locale Debug After Set', [
+        //     'user_id' => $user->id,
+        //     'user_locale' => $userLocale,
+        //     'app_locale_after_set' => App::getLocale()
+        // ]);
 
         // Store the locale setting in the mailable itself to ensure it persists
         $mailable = new SavingReminderMail($user, $piggyBank, $saving);
@@ -145,11 +145,11 @@ class SendSavingReminderJob implements ShouldQueue
         $saving->notification_attempts = json_encode($notificationAttempts);
         $saving->save();
 
-        Log::info("Successfully sent email reminder for saving", [
-            'saving_id' => $saving->id,
-            'user_id' => $user->id,
-            'piggy_bank_id' => $piggyBank->id
-        ]);
+        // Log::info("Successfully sent email reminder for saving", [
+        //     'saving_id' => $saving->id,
+        //     'user_id' => $user->id,
+        //     'piggy_bank_id' => $piggyBank->id
+        // ]);
     }
 
     /**

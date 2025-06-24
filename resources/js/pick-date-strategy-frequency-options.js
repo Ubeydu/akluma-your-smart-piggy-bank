@@ -55,33 +55,34 @@ document.addEventListener("DOMContentLoaded", function () {
      */
 
     dateInput.addEventListener("change", async function() {
-        // console.log('Change event handler triggered');
-        // console.log('Current date value:', this.value);
-
         if (!this.value) {
-            // console.log('No date value, returning early');
             return;
         }
 
         try {
-            // console.log('About to fetch frequencies for date:', this.value);
-            const response = await fetch(window.Laravel.routes.calculateFrequencies, {
+            // Use the localized route with the current locale
+            const url = `/${window.Laravel.locale}/create-piggy-bank/pick-date/calculate-frequencies`;
+
+            // console.log('Making AJAX request with locale info:', {
+            //     url: url,
+            //     currentLocale: window.Laravel.locale,
+            //     documentLang: document.documentElement.lang,
+            //     htmlLang: document.querySelector('html').getAttribute('lang')
+            // });
+
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept-Language': window.Laravel.locale // Add locale as a header
                 },
                 body: JSON.stringify({purchase_date: this.value})
             });
 
-            // console.log('Response raw:', response);
-            // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-            // console.log('Response status:', response.status);
-            // console.log('Response statusText:', response.statusText);
-
-
             if (!response.ok) {
-                console.error('Server responded with error:', response.status);
+                // console.error('Server responded with error:', response.status);
                 return;
             }
 
@@ -200,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         setTimeout(() => container.remove(), 300);
                     }, 5000);
                 } catch (error) {
-                    console.error('Error fetching flash messages:', error);
+                    // console.error('Error fetching flash messages:', error);
                 }
             };
 
@@ -367,9 +368,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         ${option.extra_savings ? `
                             <div class="text-xs text-gray-600 mt-2 space-y-1">
                                 <div class="flex justify-between">
-                        <span data-translate="target-amount">${window.Laravel.translations['Target']}:</span>
-                        <span>${formatAmount(option.target_amount.formatted_value)}</span>
-                    </div>
+                                    <span data-translate="target-amount">${window.Laravel.translations['Target']}:</span>
+                                    <span>${formatAmount(option.target_amount.formatted_value)}</span>
+                                </div>
 
 
                     <div class="flex justify-between text-green-600">
@@ -410,11 +411,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     <span data-translate="total-savings">${window.Laravel.translations['Total']}:</span>
                     <span>${formatAmount(option.total_savings.formatted_value)}</span>
                 </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
                 </div>
-                    ` : ''}
-                </div>
-            </div>
-            `;
+                `;
 
                     }
                 }
@@ -438,7 +440,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             document.getElementById('frequencyOptions').classList.remove('hidden');
         } catch (error) {
-            console.error('Error calculating frequencies:', error);
+            // console.error('Error calculating frequencies:', error);
         }
     });
 
@@ -478,11 +480,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (response.ok) {
                 const nextButton = document.getElementById('nextButton');
                 nextButton.disabled = false;
-                console.log('Success:', responseData);
+                // console.log('Success:', responseData);
             }
         } catch (error) {
-            console.error('Error storing frequency:', error);
-            console.error('Response Body:', responseData);
+            // console.error('Error storing frequency:', error);
+            // console.error('Response Body:', responseData);
         }
     });
 

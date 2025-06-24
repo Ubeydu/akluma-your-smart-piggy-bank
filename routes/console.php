@@ -25,7 +25,7 @@ Artisan::command('logs:clear', function () {
 Schedule::command(SendSavingReminders::class)
     ->everyFiveMinutes()
     ->before(function () {
-        Log::info('🕒 schedule:run is executing (SendSavingReminders)');
+        // Log::info('🕒 schedule:run is executing (SendSavingReminders)');
     })
     ->appendOutputTo(storage_path('logs/scheduler.log'))
     ->description('Send saving reminders to users (every five minutes)');
@@ -33,7 +33,7 @@ Schedule::command(SendSavingReminders::class)
 Schedule::command(RetryFailedReminders::class)
     ->everyTenMinutes()
     ->before(function () {
-        Log::info('🕒 schedule:run is executing (RetryFailedReminders)');
+        // Log::info('🕒 schedule:run is executing (RetryFailedReminders)');
     })
     ->appendOutputTo(storage_path('logs/scheduler.log'))
     ->description('Retry failed saving reminders (every ten minutes)');

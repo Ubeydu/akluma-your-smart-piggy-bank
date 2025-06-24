@@ -1,3 +1,10 @@
+import { Ziggy } from './ziggy';
+
+// Add this function at the top of your file for better debugging
+// function debugLog(label, data) {
+//     console.log(`DEBUG [${label}]:`, data);
+// }
+
 // Status transition configuration
 const STATUS_TRANSITIONS = {
     'active': {
@@ -8,13 +15,13 @@ const STATUS_TRANSITIONS = {
         },
         'paused': {
             type: 'PWUC',
-            endpoint: '/{locale}/piggy-banks/{id}/pause',
+            endpoint: 'localized.piggy-banks.pause',
             confirmMessage: window.piggyBankTranslations['confirm_pause'],
             successMessage: window.piggyBankTranslations['piggy_bank_paused_info']
         },
         'cancelled': {
             type: 'PWUC',
-            endpoint: '/{locale}/piggy-banks/{id}/update-status-cancelled',
+            endpoint: 'localized.piggy-banks.update-status-cancelled',
             method: 'PATCH',
             confirmMessage: window.piggyBankTranslations['confirm_cancel'],
             successMessage: window.piggyBankTranslations['piggy_bank_cancelled']
@@ -23,7 +30,7 @@ const STATUS_TRANSITIONS = {
     'paused': {
         'active': {
             type: 'PWUC',
-            endpoint: '/{locale}/piggy-banks/{id}/resume',
+            endpoint: 'localized.piggy-banks.resume',
             confirmMessage: window.piggyBankTranslations['confirm_resume'],
             successMessage: window.piggyBankTranslations['piggy_bank_resumed_schedule_not_updated_info']
         },
@@ -32,7 +39,7 @@ const STATUS_TRANSITIONS = {
         },
         'cancelled': {
             type: 'PWUC',
-            endpoint: '/{locale}/piggy-banks/{id}/update-status-cancelled',
+            endpoint: 'localized.piggy-banks.update-status-cancelled',
             method: 'PATCH',
             confirmMessage: window.piggyBankTranslations['confirm_cancel_paused'],
             successMessage: window.piggyBankTranslations['piggy_bank_cancelled']
@@ -68,6 +75,30 @@ function getCurrentLocale() {
     return document.documentElement.lang || 'en';
 }
 
+function buildRouteUrl(routeName, params = {}) {
+    // Get the route from Ziggy routes
+    const routeConfig = Ziggy.routes[routeName];
+    if (!routeConfig) {
+        console.error('Route not found:', routeName);
+        return null;
+    }
+
+    let url = routeConfig.uri;
+
+    // Replace parameters in the URL
+    Object.keys(params).forEach(param => {
+        url = url.replace(`{${param}}`, params[param]);
+    });
+
+    // Use current origin instead of Ziggy.url to avoid CORS issues
+    const baseUrl = window.location.origin;
+    if (!url.startsWith('http')) {
+        url = baseUrl + '/' + url;
+    }
+
+    return url;
+}
+
 
 async function handleCheckboxChange(checkbox) {
     const savingId = checkbox.dataset.savingId;
@@ -96,13 +127,13 @@ async function handleCheckboxChange(checkbox) {
         }
 
         // In handleCheckboxChange, after getting the response:
-        console.log("Checkbox change response:", {
-            newStatus: data.piggy_bank_status,
-            selectElement: document.getElementById(`piggy-bank-status-${piggyBankId}`),
-            currentSelectValue: document.getElementById(`piggy-bank-status-${piggyBankId}`)?.value
-        });
+        // console.log("Checkbox change response:", {
+        //     newStatus: data.piggy_bank_status,
+        //     selectElement: document.getElementById(`piggy-bank-status-${piggyBankId}`),
+        //     currentSelectValue: document.getElementById(`piggy-bank-status-${piggyBankId}`)?.value
+        // });
 
-        console.log("Piggy Bank Status Returned:", data.piggy_bank_status);
+        // console.log("Piggy Bank Status Returned:", data.piggy_bank_status);
 
         // Show the appropriate message from the response
         if (data.message) {
@@ -163,14 +194,37 @@ async function handleCheckboxChange(checkbox) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    // console.log('Scheduled Savings JS Loaded');
-    //
-    // console.log('Translation check:', {
-    //     'paused_message': window.piggyBankTranslations['paused_message'],
-    //     'piggy_bank_paused_message': window.piggyBankTranslations['piggy_bank_paused_message']
+    // Force cache refresh indicator
+    // debugLog('Script loaded at', new Date().toISOString());
+
+    // Debug Ziggy routes
+    // debugLog('Ziggy available?', typeof Ziggy !== 'undefined');
+    // debugLog('buildRouteUrl function available?', typeof buildRouteUrl !== 'undefined');
+
+    // if (typeof Ziggy !== 'undefined') {
+    //     debugLog('Available routes', {
+    //         routeCount: Object.keys(Ziggy.routes).length,
+    //         sampleRoutes: Object.keys(Ziggy.routes).slice(0, 5),
+    //         hasLocalizedRoutes: Object.keys(Ziggy.routes).some(r => r.startsWith('localized.'))
+    //     });
+    // }
+
+    // Check if our specific routes exist (with locale suffix)
+    const currentLocale = getCurrentLocale();
+    const routesToCheck = [
+        `localized.piggy-banks.pause.${currentLocale}`,
+        `localized.piggy-banks.resume.${currentLocale}`,
+        `localized.piggy-banks.update-status-cancelled.${currentLocale}`
+    ];
+
+    // routesToCheck.forEach(routeName => {
+    //     if (typeof Ziggy !== 'undefined') {
+    //         debugLog(`Route check: ${routeName}`, {
+    //             exists: Ziggy.routes[routeName] !== undefined,
+    //             details: Ziggy.routes[routeName]
+    //         });
+    //     }
     // });
-
-
 
     const statusSelects = document.querySelectorAll('select[id^="piggy-bank-status-"]');
 
@@ -197,29 +251,46 @@ document.addEventListener('DOMContentLoaded', function () {
         select.addEventListener('change', async function() {
             const newStatus = this.value;
             const currentStatus = this.dataset.initialStatus;
-            const transition = STATUS_TRANSITIONS[currentStatus]?.[newStatus];
+            const piggyBankId = this.id.replace('piggy-bank-status-', '');
 
-            console.log('Current transition config:', transition);
+            // debugLog('Status Change Attempted', {
+            //     element: this,
+            //     piggyBankId: piggyBankId,
+            //     from: currentStatus,
+            //     to: newStatus
+            // });
+
+            // Skip if no change
+            if (newStatus === currentStatus) {
+                // debugLog('No status change', { currentStatus, newStatus });
+                return;
+            }
+
+            // Get transition configuration
+            const transition = STATUS_TRANSITIONS[currentStatus]?.[newStatus];
+            // debugLog('Transition Config', transition);
 
             if (!transition) {
-                // Reset to initial status if transition is not defined
+                // debugLog('No transition found', { currentStatus, newStatus });
                 this.value = currentStatus;
                 return;
             }
 
             if (transition.type === 'PWUC') {
-                console.log('Attempting PWUC transition:', {
-                    from: currentStatus,
-                    to: newStatus,
-                    endpoint: transition.endpoint,
-                    piggyBankId: piggyBankId
-                });
+                // debugLog('PWUC transition', {
+                //     from: currentStatus,
+                //     to: newStatus,
+                //     endpoint: transition.endpoint,
+                //     piggyBankId: piggyBankId
+                // });
 
                 // Reset select to current status while waiting for confirmation
                 this.value = currentStatus;
 
                 // Find the Alpine container and trigger dialog
                 const dialogContainer = this.closest('[x-data]');
+                // debugLog('Dialog container', dialogContainer);
+
                 if (dialogContainer) {
                     // Store current select element and status info
                     const selectElement = this;
@@ -231,23 +302,68 @@ document.addEventListener('DOMContentLoaded', function () {
                     dialogContainer._x_dataStack[0].statusChangeAction = async function() {
                         try {
                             const locale = getCurrentLocale();
-                            const endpoint = transition.endpoint
-                                .replace('{locale}', locale)
-                                .replace('{id}', piggyBankId);
-                            console.log('Making request to endpoint:', endpoint);
+                            // debugLog('Current locale', locale);
 
-                            await updatePiggyBankStatus(piggyBankId, endpoint, currentStatus, transition.method || 'PATCH');
+                            // Log the route name and parameters
+                            // debugLog('Route info', {
+                            //     name: transition.endpoint,
+                            //     params: {
+                            //         locale: locale,
+                            //         piggy_id: piggyBankId
+                            //     }
+                            // });
+
+                            // Build the localized route name
+                            const localizedRouteName = `${transition.endpoint}.${locale}`;
+                            // debugLog('Looking for route', localizedRouteName);
+
+                            // Check if route exists in Ziggy
+                            if (!Ziggy.routes[localizedRouteName]) {
+                                // debugLog('Route not found in Ziggy', {
+                                //     routeName: localizedRouteName,
+                                //     availableRoutes: Object.keys(Ziggy.routes).filter(r => r.includes('piggy-banks'))
+                                // });
+                                throw new Error(`Route "${localizedRouteName}" not found in Ziggy routes`);
+                            }
+
+                            // Use buildRouteUrl to generate the endpoint
+                            const endpoint = buildRouteUrl(localizedRouteName, {
+                                locale: locale,
+                                piggy_id: piggyBankId
+                            });
+
+                            if (!endpoint) {
+                                throw new Error(`Could not generate endpoint for route "${localizedRouteName}"`);
+                            }
+
+                            // debugLog('Generated endpoint', endpoint);
+
+                            const result = await updatePiggyBankStatus(
+                                piggyBankId,
+                                endpoint,
+                                targetStatus,
+                                transition.method || 'PATCH'
+                            );
+                            // debugLog('Update result', result);
 
                             // If successful, update the data-initial-status
                             selectElement.dataset.initialStatus = targetStatus;
                             selectElement.value = targetStatus;
                             updateSelectOptions();
 
-                            console.log('Request completed');
+                            if (transition.successMessage) {
+                                showFlashMessage(transition.successMessage, 'success');
+                            }
+
                             return true;
                         } catch (error) {
                             console.error('Transition error:', error);
+                            // debugLog('Error details', {
+                            //     message: error.message,
+                            //     stack: error.stack
+                            // });
                             selectElement.value = currentStatus;
+                            showFlashMessage('Failed to update piggy bank status. Please try again.', 'error');
                             return false;
                         }
                     };
@@ -299,58 +415,37 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-async function updatePiggyBankStatus(piggyBankId, url, initialStatus, method = 'PATCH') {
-    const startTime = performance.now();
-    console.log("updatePiggyBankStatus called with:", {
-        startTime,
-        piggyBankId,
-        url,
-        initialStatus,
-        method
-    });
+async function updatePiggyBankStatus(piggyBankId, endpoint, newStatus, method = 'PATCH') {
+    // debugLog('updatePiggyBankStatus called', {
+    //     piggyBankId,
+    //     endpoint,
+    //     newStatus,
+    //     method
+    // });
 
     try {
-        // Create form data for POST requests
-        const isPost = method.toUpperCase() === 'POST';
-        let fetchOptions = {
+        const response = await fetch(endpoint, {
             method: method,
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 'Accept': 'application/json'
             },
-        };
+            body: JSON.stringify({
+                status: newStatus
+            })
+        });
 
-        // For POST requests, send as form data
-        if (isPost) {
-            const formData = new FormData();
-            formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-            fetchOptions.body = formData;
-        } else {
-            // For PATCH and other requests, use JSON
-            fetchOptions.headers['Content-Type'] = 'application/json';
-        }
+        // debugLog('Response status', {
+        //     status: response.status,
+        //     statusText: response.statusText
+        // });
 
-        const response = await fetch(url, fetchOptions);
-
-        console.log("Response status:", response.status);
-
-        // Get response text first to help with debugging
-        const responseText = await response.text();
-        console.log("Raw response:", responseText);
-
-        // Try to parse the response as JSON
-        let data;
-        try {
-            data = JSON.parse(responseText);
-        } catch (e) {
-            console.error("Failed to parse response as JSON:", e);
-            throw new Error(responseText.includes('<!DOCTYPE html>') ?
-                "Server error - Request not processed correctly" :
-                "Server returned invalid JSON");
-        }
+        const data = await response.json();
+        // debugLog('Response data', data);
 
         if (!response.ok) {
-            throw new Error(data.error || 'Server returned an error');
+            throw new Error(data.message || 'Failed to update status');
         }
 
         // Update UI elements
@@ -359,12 +454,13 @@ async function updatePiggyBankStatus(piggyBankId, url, initialStatus, method = '
         // Update schedule if needed
         await updateSchedule(piggyBankId, data);
 
-        return true;
-
+        return data;
     } catch (error) {
-        console.error('Error in updatePiggyBankStatus:', error);
-        handleError(piggyBankId, initialStatus, error);
-        return false;
+        debugLog('Fetch error', {
+            message: error.message,
+            stack: error.stack
+        });
+        throw error;
     }
 }
 
@@ -387,30 +483,64 @@ async function updateUIElements(piggyBankId, data) {
 }
 
 // Helper function to update schedule
-async function updateSchedule(piggyBankId, statusData) {  // <-- Accept statusData parameter
+async function updateSchedule(piggyBankId, statusData) {
     try {
-        const locale = getCurrentLocale();
-        const response = await fetch(`/${locale}/piggy-banks/${piggyBankId}/schedule`);
-        const html = await response.text();
+        // Extract locale and localized slug from current URL
+        const segments = window.location.pathname.split('/').filter(s => s.length > 0);
+        // console.log('URL segments:', segments);
 
+        const locale = segments[0];
+        const localizedSlug = segments[1];
+        // console.log('Extracted locale:', locale);
+        // console.log('Extracted localizedSlug:', localizedSlug);
+        // console.log('PiggyBank ID passed:', piggyBankId);
+
+        // Construct the schedule URL using locale and localized slug
+        const scheduleUrl = `/${locale}/${localizedSlug}/${piggyBankId}/schedule`;
+        // console.log('Constructed Schedule URL:', scheduleUrl);
+
+        const response = await fetch(scheduleUrl, {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'text/html',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin'
+        });
+
+        // console.log('Fetch response status:', response.status);
+
+        if (!response.ok) {
+            console.error('Failed to fetch schedule partial:', response.statusText);
+            return;
+        }
+
+        const html = await response.text();
         const scheduleContainer = document.getElementById('schedule-container');
         if (scheduleContainer) {
             scheduleContainer.innerHTML = html;
+            // console.log('Schedule container updated');
 
-            // Only animate if schedule was updated
             if (statusData && statusData.scheduleUpdated) {
                 scheduleContainer.classList.add('highlight-new');
                 scheduleContainer.addEventListener('animationend', () => {
                     scheduleContainer.classList.remove('highlight-new');
+                    // console.log('Highlight animation ended');
                 }, { once: true });
+                // console.log('Highlight animation started');
             }
 
             reinitializeCheckboxes();
+            // console.log('Checkboxes reinitialized');
+        } else {
+            console.warn('Schedule container element not found');
         }
     } catch (error) {
         console.error('Error updating schedule:', error);
     }
 }
+
 
 // Helper function to reinitialize checkboxes
 function reinitializeCheckboxes() {
@@ -440,43 +570,43 @@ function handleError(piggyBankId, initialStatus, error) {
 }
 
 function updateSelectAfterStatusChange(piggyBankId, newStatus) {
-    console.log('updateSelectAfterStatusChange called with:', {
-        piggyBankId,
-        newStatus,
-    });
+    // console.log('updateSelectAfterStatusChange called with:', {
+    //     piggyBankId,
+    //     newStatus,
+    // });
 
     const selectElement = document.getElementById(`piggy-bank-status-${piggyBankId}`);
-    console.log('Select element found:', {
-        element: selectElement,
-        currentDisabledState: selectElement?.disabled,
-        currentClasses: selectElement?.classList.toString()
-    });
+    // console.log('Select element found:', {
+    //     element: selectElement,
+    //     currentDisabledState: selectElement?.disabled,
+    //     currentClasses: selectElement?.classList.toString()
+    // });
 
     if (selectElement) {
         // Update the select value and dataset
         selectElement.value = newStatus;
         selectElement.dataset.initialStatus = newStatus;
 
-        console.log('Should disable?', {
-            newStatus,
-            shouldDisable: ['done', 'cancelled'].includes(newStatus)
-        });
+        // console.log('Should disable?', {
+        //     newStatus,
+        //     shouldDisable: ['done', 'cancelled'].includes(newStatus)
+        // });
 
         // Disable select and add visual feedback if status is done or cancelled
         if (['done', 'cancelled'].includes(newStatus)) {
             selectElement.disabled = true;
             selectElement.classList.add('opacity-50', 'cursor-not-allowed');
-            console.log('After applying disabled state:', {
-                isDisabled: selectElement.disabled,
-                classes: selectElement.classList.toString()
-            });
+            // console.log('After applying disabled state:', {
+            //     isDisabled: selectElement.disabled,
+            //     classes: selectElement.classList.toString()
+            // });
         } else {
             selectElement.disabled = false;
             selectElement.classList.remove('opacity-50', 'cursor-not-allowed');
-            console.log('After removing disabled state:', {
-                isDisabled: selectElement.disabled,
-                classes: selectElement.classList.toString()
-            });
+            // console.log('After removing disabled state:', {
+            //     isDisabled: selectElement.disabled,
+            //     classes: selectElement.classList.toString()
+            // });
         }
 
         // Update options' disabled state based on STATUS_TRANSITIONS

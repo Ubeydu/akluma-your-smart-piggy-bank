@@ -19,19 +19,19 @@ class RouteTrackingMiddleware
         $requestId = uniqid();
 
         // Log route matching at the start
-        Log::channel('daily')->info("ROUTE_TRACKING [$requestId] START: " . $request->method() . ' ' . $request->path(), [
-            'route_name' => $route ? $route->getName() : 'unknown',
-            'action' => $route ? $route->getActionName() : 'unknown',
-            'uri' => $route ? $route->uri() : 'unknown'
-        ]);
+        // Log::channel('daily')->info("ROUTE_TRACKING [$requestId] START: " . $request->method() . ' ' . $request->path(), [
+        //     'route_name' => $route ? $route->getName() : 'unknown',
+        //     'action' => $route ? $route->getActionName() : 'unknown',
+        //     'uri' => $route ? $route->uri() : 'unknown'
+        // ]);
 
         // Process the request
         $response = $next($request);
 
         // Log completion
-        Log::channel('daily')->info("ROUTE_TRACKING [$requestId] END: " . $request->method() . ' ' . $request->path(), [
-            'status' => $response->getStatusCode()
-        ]);
+        // Log::channel('daily')->info("ROUTE_TRACKING [$requestId] END: " . $request->method() . ' ' . $request->path(), [
+        //     'status' => $response->getStatusCode()
+        // ]);
 
         return $response;
     }

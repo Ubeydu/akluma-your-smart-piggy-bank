@@ -14,6 +14,11 @@ This guide shows how to manually trigger saving reminders in the development env
    sail artisan app:send-saving-reminders --force
    ```
 
+Or, if you don't want to force, you just start the scheduler and wait the time to come;
+   ```bash
+   sail artisan schedule:work
+   ```
+
 3. Start the queue worker to process the jobs:
    ```bash
    sail artisan queue:work
