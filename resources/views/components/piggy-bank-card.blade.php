@@ -33,23 +33,33 @@
                     $statusColor = $statusColors[$piggyBank->status] ?? 'bg-gray-100 text-gray-800';
                 @endphp
                 <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColor }}">
-            {{ __(strtolower($piggyBank->status)) }}
-        </span>
+                    {{ __(strtolower($piggyBank->status)) }}
+                </span>
             </div>
         </div>
 
         <!-- Progress Bar -->
         <div class="w-full h-2.5 bg-gray-200 rounded-full mb-4 overflow-hidden">
             @php
-                $percent = $piggyBank->target_amount > 0
-                    ? min(100, round(($piggyBank->current_balance ?? 0) / $piggyBank->target_amount * 100))
-                    : 0;
+                $finalTotal = $piggyBank->final_total ?? 0;
+                $remaining = $piggyBank->remaining_amount ?? 0;
+                if ($finalTotal > 0) {
+                    if ($remaining > 0) {
+                        $percent = round((1 - ($remaining / $finalTotal)) * 100);
+                    } else {
+                        $percent = 100;
+                    }
+                    $percent = max(0, min(100, $percent));
+                } else {
+                    $percent = 0;
+                }
 
+                // Consistent color mapping with the badge
                 $progressColors = [
-                    'active' => 'bg-indigo-500',
+                    'active' => 'bg-green-500',
                     'paused' => 'bg-yellow-500',
                     'done' => 'bg-blue-500',
-                    'cancelled' => 'bg-gray-500'
+                    'cancelled' => 'bg-red-500'
                 ];
                 $progressColor = $progressColors[$piggyBank->status] ?? 'bg-indigo-500';
             @endphp

@@ -135,9 +135,20 @@
 
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('remaining_amount') }}</h3>
-                                    <p id="remaining-amount-{{ $piggyBank->id }}" class="mt-1 text-base text-gray-900" data-currency="{{ $piggyBank->currency }}"
-                                       data-locale="{{ app()->getLocale() }}">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->remaining_amount, $piggyBank->currency) }}</p>
+                                    <p id="remaining-amount-{{ $piggyBank->id }}"
+                                       class="mt-1 text-base text-gray-900"
+                                       data-currency="{{ $piggyBank->currency }}"
+                                       data-locale="{{ app()->getLocale() }}">
+                                        {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->remaining_amount, $piggyBank->currency) }}
+                                        @if($piggyBank->remaining_amount < 0)
+                                            <span class="ml-2 inline-block text-xs text-green-700 bg-green-50 px-2 py-1 rounded">
+                                                {{ __('extra_savings_note') }}
+                                            </span>
+                                        @endif
+                                    </p>
                                 </div>
+
+
                             </div>
 
                             <!-- Additional Information -->
@@ -300,6 +311,77 @@
                             </div>
                         @endif
 
+                        <!-- Manual Add/Remove Money Section -->
+                        <div class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+                            <form method="POST"
+                                  action="{{ localizedRoute('localized.piggy-banks.add-remove-money', ['piggy_id' => $piggyBank->id]) }}"
+                                  class="flex flex-col md:flex-row md:items-end gap-4">
+                                @csrf
+
+                                <div>
+                                    <x-input-label for="manual-amount" :value="__('manual_amount_label')" />
+                                    <x-text-input
+                                        id="manual-amount"
+                                        name="amount"
+                                        type="text"
+                                        inputmode="decimal"
+                                        pattern="^\d{1,10}(\.\d{1,2})?$"
+                                        maxlength="12"
+                                        placeholder="{{ __('manual_amount_placeholder') }}"
+                                        class="mt-1 block w-full"
+                                        required
+                                        autocomplete="off"
+                                        oninput="
+                                            let v = this.value.replace(/[^0-9.]/g, '');
+                                            v = v.replace(/^0+(\d)/, '$1');
+                                            v = v.replace(/(\..*)\./g, '$1');
+                                            if (v.indexOf('.') > -1) {
+                                                let parts = v.split('.');
+                                                parts[1] = parts[1].slice(0, 2);
+                                                v = parts[0].slice(0, 10) + '.' + parts[1];
+                                            } else {
+                                                v = v.slice(0, 12);
+                                            }
+                                            this.value = v;
+                                        "
+                                    />
+
+                                    <x-input-error :messages="$errors->get('amount')" class="mt-2" />
+                                </div>
+
+                                <div>
+                                    <x-input-label for="manual-note" :value="__('manual_note_label')" />
+                                    <x-text-input
+                                        id="manual-note"
+                                        name="note"
+                                        type="text"
+                                        maxlength="255"
+                                        placeholder="{{ __('manual_note_placeholder') }}"
+                                        class="mt-1 block w-full"
+                                        autocomplete="off"
+                                    />
+                                    <x-input-error :messages="$errors->get('note')" class="mt-2" />
+                                </div>
+
+                                <!-- Hidden input to store the action type -->
+                                <input type="hidden" name="type" id="manual-type" value="manual_add" />
+
+                                <div class="flex gap-2 mt-2 md:mt-0">
+                                    <button
+                                        type="submit"
+                                        onclick="document.getElementById('manual-type').value='manual_add'"
+                                        class="flex-1 min-w-0 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white font-semibold shadow focus:outline-none transition">
+                                        {{ __('manual_add_money_button') }}
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        onclick="document.getElementById('manual-type').value='manual_withdraw'"
+                                        class="flex-1 min-w-0 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow focus:outline-none transition">
+                                        {{ __('manual_withdraw_money_button') }}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
 
                         <!-- Savings Schedule -->
                         <div id="schedule-container" class="bg-rose-50 rounded-lg">

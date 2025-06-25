@@ -355,5 +355,13 @@
     "privacy.contact_intro": "Écrivez-moi à l’adresse",
     "privacy.contact_linkedin": " ou contactez-moi sur LinkedIn à",
     "auth.accept_terms": "J’accepte les <a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Conditions d’utilisation</a>.",
-    "auth.accept_privacy": "J’accepte la <a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Politique de confidentialité</a>."
+    "auth.accept_privacy": "J’accepte la <a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Politique de confidentialité</a>.",
+    "manual_amount_label": "Montant",
+    "manual_amount_placeholder": "Saisir le montant",
+    "manual_note_label": "Note (optionnel)",
+    "manual_note_placeholder": "Ajouter une note (optionnel)",
+    "manual_add_money_button": "Ajouter de l’argent",
+    "manual_withdraw_money_button": "Retirer de l’argent",
+    "extra_savings_note": "Cela signifie que vous avez économisé plus que votre objectif!",
+    "Money successfully added or removed!": "L'argent a été ajouté ou retiré avec succès !"
 }

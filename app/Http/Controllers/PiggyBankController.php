@@ -74,7 +74,7 @@ class PiggyBankController extends Controller
         //     'app_locale' => app()->getLocale(),
         //     'session_locale' => session('locale'),
         // ]);
-        
+
         try {
             $piggyBank = PiggyBank::findOrFail($piggy_id);
 
@@ -146,5 +146,51 @@ class PiggyBankController extends Controller
             'status' => 'cancelled',
             'message' => __('Piggy bank has been cancelled.'),
         ]);
+    }
+
+    public function addOrRemoveMoney(Request $request, $piggy_id)
+    {
+        $piggyBank = PiggyBank::findOrFail($piggy_id);
+
+        if (! Gate::allows('update', $piggyBank)) {
+            abort(403);
+        }
+
+        // Validation: Only allow positive amounts, and only allow add/remove types
+        $validated = $request->validate([
+            'type' => ['required', 'in:manual_add,manual_withdraw'],
+            'amount' => ['required', 'numeric', 'min:0.01', 'regex:/^\d{1,10}(\.\d{1,2})?$/'],
+            'note' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        // Negative for withdraw, positive for add
+        $signedAmount = $validated['type'] === 'manual_add'
+            ? $validated['amount']
+            : -$validated['amount'];
+
+        $piggyBank->transactions()->create([
+            'user_id' => $piggyBank->user_id,
+            'type' => $validated['type'],
+            'amount' => $signedAmount,
+            'note' => $validated['note'] ?? null,
+        ]);
+
+        // Fetch fresh balance/remaining values
+        $piggyBank->refresh();
+
+        // Apply the new done/active logic: only mark as done if remaining amount is zero or less
+        $remainingZeroOrLess = $piggyBank->remaining_amount <= 0;
+
+        $newStatus = $remainingZeroOrLess ? 'done' : 'active';
+
+        if ($piggyBank->status !== $newStatus) {
+            $piggyBank->update(['status' => $newStatus]);
+        }
+
+        // Redirect back to piggy bank details with success message
+        return redirect(localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id]))
+            ->with('success', $newStatus === 'done'
+                ? __('You have successfully completed your savings goal.')
+                : __('Money successfully added or removed!'));
     }
 }

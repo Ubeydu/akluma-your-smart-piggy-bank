@@ -74,6 +74,11 @@ Route::localizedPost('piggy-banks/{piggy_id}/cancel', [PiggyBankController::clas
     ->middleware(['auth', 'verified'])
     ->where('piggy_id', '[0-9]+');
 
+Route::localizedPost('piggy-banks/{piggy_id}/add-remove-money', [PiggyBankController::class, 'addOrRemoveMoney'])
+    ->name('localized.piggy-banks.add-remove-money')
+    ->middleware(['auth', 'verified'])
+    ->where('piggy_id', '[0-9]+');
+
 // Test routes for development
 Route::localizedPost('test-date/{piggy_id}', function ($piggy_id, Request $request) {
     // Verify the piggy bank exists but don't store the result

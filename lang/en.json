@@ -136,5 +136,12 @@
     "privacy.contact_intro": "Email me at",
     "privacy.contact_linkedin": " or reach out on LinkedIn to",
     "auth.accept_terms": "I agree to the <a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Terms of Service</a>.",
-    "auth.accept_privacy": "I agree to the <a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Privacy Policy</a>."
+    "auth.accept_privacy": "I agree to the <a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Privacy Policy</a>.",
+    "manual_amount_label": "Amount",
+    "manual_amount_placeholder": "Enter amount",
+    "manual_note_label": "Note (optional)",
+    "manual_note_placeholder": "Add a note (optional)",
+    "manual_add_money_button": "Add Money",
+    "manual_withdraw_money_button": "Take Out Money",
+    "extra_savings_note": "This means you have saved more than your target!"
 }

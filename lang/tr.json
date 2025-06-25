@@ -355,5 +355,13 @@
     "privacy.contact_intro": "Bana şu adresten e-posta atabilirsin:",
     "privacy.contact_linkedin": " ya da LinkedIn üzerinden bana ulaşabilirsin:",
     "auth.accept_terms": "<a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Hizmet Şartları</a>’nı kabul ediyorum.",
-    "auth.accept_privacy": "<a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Gizlilik Politikasını</a> kabul ediyorum."
+    "auth.accept_privacy": "<a href=\":url\" class=\"text-blue-500 hover:underline\" target=\"_blank\">Gizlilik Politikasını</a> kabul ediyorum.",
+    "manual_amount_label": "Tutar",
+    "manual_amount_placeholder": "Tutar girin",
+    "manual_note_label": "Not (isteğe bağlı)",
+    "manual_note_placeholder": "Not ekleyin (isteğe bağlı)",
+    "manual_add_money_button": "Para Ekle",
+    "manual_withdraw_money_button": "Para Çıkar",
+    "extra_savings_note": "Bu, hedefinden daha fazla birikim yaptığını gösteriyor!",
+    "Money successfully added or removed!": "Para başarıyla eklendi veya çıkarıldı!"
 }
