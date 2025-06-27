@@ -286,6 +286,7 @@
     "Environment file already exists.": "Ortam dosyası zaten mevcut.",
     "Environment file not found.": "Ortam dosyası bulunamadı.",
     "errors": "hatalar",
+    "error": "Hata",
     "Forbidden": "Yasaklı",
     "Go to page :page": ":page sayfasına git",
     "Invalid filename.": "Geçersiz dosya adı.",
@@ -369,5 +370,8 @@
     "You reached your goal!": "Hedefine ulaştın!",
     "Total Money You Saved": "Toplam Biriktirdiğin Para",
     "Planned Final Total": "Planlanan Son Toplam",
-    "actual_completed_at_label": "Gerçekleşen Tamamlanma Tarihi"
+    "actual_completed_at_label": "Gerçekleşen Tamamlanma Tarihi",
+    "You successfully added money to your piggy bank": "Kumbara'na başarıyla para ekledin",
+    "You successfully took out some money from your piggy bank": "Kumbara'ndan başarıyla para çektin",
+    "You cannot withdraw more money than what is currently in your piggy bank.": "Kumbarandaki mevcut paradan fazla para çekemezsin."
 }

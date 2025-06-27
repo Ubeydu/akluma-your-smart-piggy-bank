@@ -266,7 +266,7 @@
                         @endif
 
                         <!-- Manual Add/Remove Money Section -->
-                        <div class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+                        <div id="manual-money-section" class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
                             <form id="manual-money-form"
                                   method="POST"
                                   action="{{ localizedRoute('localized.piggy-banks.add-remove-money', ['piggy_id' => $piggyBank->id]) }}"
@@ -364,7 +364,8 @@
             confirm_resume: "{{ __('Are you sure you want to resume this piggy bank? Dates in your saving schedule may be updated if you proceed.') }}",
             piggy_bank_cancelled: "{{ __('Piggy bank has been cancelled.') }}",
             saving_marked_as_saved: "{{ __('You successfully marked your saving as saved.') }}",
-            saving_marked_as_unsaved: "{{ __('You successfully marked your scheduled saving as pending.') }}"
+            saving_marked_as_unsaved: "{{ __('You successfully marked your scheduled saving as pending.') }}",
+            error: "{{ __('error') }}",
         };
     </script>
 

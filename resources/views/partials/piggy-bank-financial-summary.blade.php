@@ -1,5 +1,8 @@
-<div id="financial-summary-container">
-    <div class="space-y-4">
+<div
+    id="financial-summary-container"
+    data-financial-summary-url="{{ localizedRoute('localized.piggy-banks.financial-summary', ['piggy_id' => $piggyBank->id]) }}"
+>
+<div class="space-y-4">
         <div>
             <h3 class="text-sm font-medium text-gray-500">{{ __('Item Price') }}</h3>
             <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->price, $piggyBank->currency) }}</p>

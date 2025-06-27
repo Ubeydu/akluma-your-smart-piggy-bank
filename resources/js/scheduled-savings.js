@@ -1,4 +1,5 @@
 import { Ziggy } from './ziggy';
+import { route } from 'ziggy-js';
 
 // Add this function at the top of your file for better debugging
 // function debugLog(label, data) {
@@ -120,10 +121,24 @@ async function handleCheckboxChange(checkbox) {
                 amount: amount
             })
         });
+        // console.log('Fetch response object:', response);
 
-        const data = await response.json();
-        if (!response.ok) {
-            throw new Error('Failed to update status');
+        let data;
+        try {
+            data = await response.json();
+            // console.log('Parsed JSON:', data);
+        } catch (e) {
+            console.error('Failed to parse JSON:', e);
+            const text = await response.text();
+            console.error('Raw response text:', text);
+            throw new Error('Response not valid JSON');
+        }
+
+        if (!data || typeof data !== 'object') {
+            throw new Error('Invalid server response');
+        }
+        if (!['saved', 'pending', 'active', 'done'].includes(data.status)) {
+            throw new Error(data.message || 'Failed to update saving status.');
         }
 
         // In handleCheckboxChange, after getting the response:
@@ -177,11 +192,35 @@ async function handleCheckboxChange(checkbox) {
             piggyBankStatusElement.dataset.initialStatus = data.piggy_bank_status;
         }
 
+        // DEBUG: Check manual money section disabling
+        // console.log('About to check if manual section should be disabled, status:', data.piggy_bank_status);
+        if (['done', 'paused', 'cancelled'].includes(data.piggy_bank_status)) {
+            // console.log('Status requires disabling manual section');
+            const manualSection = document.getElementById('manual-money-section');
+            // console.log('Manual section found:', !!manualSection);
+            setManualMoneySectionDisabled(true);
+            // console.log('setManualMoneySectionDisabled(true) called');
+        } else {
+            // console.log('Status allows manual section to be enabled');
+            setManualMoneySectionDisabled(false);
+        }
+
         // Update status text in UI
         const statusCell = checkbox.closest('tr').querySelector('td:last-child');
         statusCell.textContent = data.translated_status;
 
-        // NEW: Disable checkboxes if piggy bank is done
+        // DEBUG: Check what happens when status becomes done
+        // console.log('Piggy bank status from response:', data.piggy_bank_status);
+        if (data.piggy_bank_status === 'done') {
+            // console.log('Status is done - about to disable checkboxes');
+            const checkboxes = document.querySelectorAll('input[data-saving-id]');
+            // console.log('Found checkboxes before disabling:', checkboxes.length);
+            checkboxes.forEach((cb, index) => {
+                // console.log(`Checkbox ${index} - disabled before: ${cb.disabled}`);
+                cb.disabled = true;
+                // console.log(`Checkbox ${index} - disabled after: ${cb.disabled}`);
+            });
+        }
         disableScheduledSavingCheckboxesIfDone(piggyBankId);
 
         // If piggy bank status becomes "done", show a flash message dynamically
@@ -189,8 +228,13 @@ async function handleCheckboxChange(checkbox) {
             showFlashMessage(window.piggyBankTranslations['goal_completed'] || 'Congratulations! You have successfully completed your savings goal.');
         }
 
-        // Always reload the financial summary to keep the UI up to date
-        reloadFinancialSummary(piggyBankId);
+        try {
+            reloadFinancialSummary(piggyBankId);
+            reloadSchedulePartial(piggyBankId);
+
+        } catch (err) {
+            console.error('Error reloading financial summary:', err);
+        }
 
     } catch (error) {
         console.error('Error:', error);
@@ -357,6 +401,12 @@ document.addEventListener('DOMContentLoaded', function () {
                             selectElement.value = targetStatus;
                             updateSelectOptions();
 
+                            if (['done', 'paused', 'cancelled'].includes(targetStatus)) {
+                                setManualMoneySectionDisabled(true);
+                            } else {
+                                setManualMoneySectionDisabled(false);
+                            }
+
                             if (transition.successMessage) {
                                 showFlashMessage(transition.successMessage, 'success');
                             }
@@ -386,7 +436,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const checkboxes = document.querySelectorAll('input[data-saving-id]');
 
-
     // Handle initial checkbox state based on piggy bank status
     const container = document.querySelector('[data-piggy-bank-status]');
     if (container) {
@@ -394,18 +443,17 @@ document.addEventListener('DOMContentLoaded', function () {
         checkboxes.forEach(checkbox => {
             checkbox.disabled = ['paused', 'cancelled', 'done'].includes(status);
         });
+
+        // NEW: Disable manual add/remove money section if status is done, paused, cancelled
+        setManualMoneySectionDisabled(['done', 'paused', 'cancelled'].includes(status));
     }
 
-
-
-
-
-
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', async function () {
-            await handleCheckboxChange(this);
-        });
-    });
+    // checkboxes.forEach(checkbox => {
+    //     checkbox.addEventListener('change', async function () {
+    //         await handleCheckboxChange(this);
+    //     });
+    // });
+    attachCheckboxListeners();
 
 
     // Update checkbox state when piggy bank status changes
@@ -677,19 +725,34 @@ function updateSelectAfterStatusChange(piggyBankId, newStatus) {
 
 // Fetch and replace the financial summary for the current piggy bank
 function reloadFinancialSummary(piggyBankId) {
-    const locale = document.documentElement.lang || 'en';
-    fetch(`/${locale}/piggy-banks/${piggyBankId}/financial-summary`, {
+    const container = document.getElementById('financial-summary-container');
+    if (!container) return;
+
+    // Get the correct localized URL from the data attribute
+    const url = container.dataset.financialSummaryUrl;
+    if (!url) {
+        console.error('No financial summary URL found on container!');
+        return;
+    }
+
+    fetch(url, {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
         .then(response => response.text())
         .then(html => {
-            const container = document.getElementById('financial-summary-container');
-            if (container) {
-                container.outerHTML = html;
+            // Create a dummy div to parse the HTML
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            const newContent = temp.firstElementChild;
+            if (newContent) {
+                container.replaceWith(newContent);
             }
         })
-        .catch(console.error);
+        .catch(err => {
+            console.error('Error reloading financial summary:', err);
+        });
 }
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const manualForm = document.getElementById('manual-money-form');
@@ -698,7 +761,14 @@ document.addEventListener('DOMContentLoaded', function () {
     manualForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const piggyBankId = manualForm.action.match(/piggy-banks\/(\d+)/)[1];
+        const match = manualForm.action.match(/\/(\d+)\/add-remove-money/);
+        if (!match) {
+            console.error('Could not extract piggyBankId from form action:', manualForm.action);
+            showFlashMessage('Internal error: Could not determine piggy bank. Please reload.', 'error');
+            return;
+        }
+        const piggyBankId = match[1];
+
         const formData = new FormData(manualForm);
 
         fetch(manualForm.action, {
@@ -709,12 +779,26 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: formData
         })
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to add/remove money');
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
+                // console.log('Add/remove money SUCCESS - about to call reloadSchedulePartial');
+                // console.log('AJAX response:', data);
+
+                if (!data || typeof data !== 'object') {
+                    throw new Error('Invalid server response');
+                }
+
+                // If server-side status is not "success", handle as error
+                if (data.status !== 'success') {
+                    if (data.status === 'error') {
+                        showFlashMessage(data.message, 'error');
+                        return; // Don't throw, just show the message and stop
+                    }
+                    throw new Error(data.message || 'Unknown server error');
+                }
+
                 reloadFinancialSummary(piggyBankId);
+                reloadSchedulePartial(piggyBankId);
 
                 // Update status badge text and select value
                 const statusBadge = document.querySelector(`#status-text-${piggyBankId}`);
@@ -726,6 +810,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     statusSelect.value = data.piggy_bank_status;
                     statusSelect.dataset.initialStatus = data.piggy_bank_status;
                     disableStatusSelectIfDone(piggyBankId);
+
+                    // NEW: Disable/enable manual add/remove section based on status
+                    if (['done', 'paused', 'cancelled'].includes(data.piggy_bank_status)) {
+                        setManualMoneySectionDisabled(true);
+                    } else {
+                        setManualMoneySectionDisabled(false);
+                    }
                 }
 
                 // NEW: Disable checkboxes if piggy bank is done
@@ -735,7 +826,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 showFlashMessage(data.message, 'success');
                 manualForm.reset();
             })
-            .catch(() => {
+            .catch((err) => {
+                console.error('AJAX error in add/remove money:', err); // <-- ADD THIS LINE
+                console.error('Error details:', err.message, err.stack);
                 const type = formData.get('type');
                 if (type === 'manual_add') {
                     showFlashMessage("Something went wrong and you weren't able to add money to your piggy bank", 'error');
@@ -767,6 +860,83 @@ function disableStatusSelectIfDone(piggyBankId) {
     const statusSelect = document.getElementById(`piggy-bank-status-${piggyBankId}`);
     if (!statusSelect) return;
     statusSelect.disabled = statusSelect.value === 'done';
+}
+
+// Helper to disable/enable the manual money form section
+function setManualMoneySectionDisabled(disabled) {
+    // console.log('setManualMoneySectionDisabled called with:', disabled);
+
+    const section = document.getElementById('manual-money-section');
+    const form = document.getElementById('manual-money-form');
+
+    // console.log('Section found:', !!section);
+    // console.log('Form found:', !!form);
+
+    if (!section || !form) return;
+
+    // All inputs and buttons inside the form
+    const elements = form.querySelectorAll('input, button, textarea, select');
+    // console.log('Found form elements to disable:', elements.length);
+
+    elements.forEach((el, index) => {
+        // console.log(`Element ${index} (${el.tagName}) - disabled before: ${el.disabled}`);
+        el.disabled = disabled;
+        // console.log(`Element ${index} (${el.tagName}) - disabled after: ${el.disabled}`);
+
+        if (disabled) {
+            el.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            el.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    });
+
+    // Set overall opacity for section
+    section.style.opacity = disabled ? '0.5' : '1';
+    section.style.pointerEvents = disabled ? 'none' : '';
+
+    // console.log('Section opacity set to:', section.style.opacity);
+    // console.log('Section pointer-events set to:', section.style.pointerEvents);
+}
+
+// Fetch and replace the schedule partial for the current piggy bank
+function reloadSchedulePartial(piggyBankId) {
+    const locale = document.documentElement.lang || 'en';
+    const generatedUrl = route('localized.piggy-banks.schedule.' + locale, { locale: locale, piggy_id: piggyBankId });
+
+    fetch(generatedUrl, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+        .then(response => response.text())
+        .then(html => {
+            // console.log('Fresh HTML from server contains disabled checkboxes?', html.includes('disabled'));
+            const container = document.getElementById('schedule-container');
+            if (container) {
+                container.outerHTML = html;
+                // Re-attach checkbox listeners after DOM replacement
+                attachCheckboxListeners();
+            }
+        })
+        .catch(console.error);
+}
+
+function attachCheckboxListeners() {
+    const checkboxes = document.querySelectorAll('input[data-saving-id]');
+
+    // Check if piggy bank is done and disable checkboxes accordingly
+    const statusSelect = document.querySelector('select[id^="piggy-bank-status-"]');
+    const isDone = statusSelect && statusSelect.value === 'done';
+
+    checkboxes.forEach(checkbox => {
+        // Disable if piggy bank is done
+        if (isDone) {
+            checkbox.disabled = true;
+        }
+
+        // Attach event listener
+        checkbox.addEventListener('change', async function () {
+            await handleCheckboxChange(this);
+        });
+    });
 }
 
 

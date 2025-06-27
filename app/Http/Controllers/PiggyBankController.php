@@ -163,6 +163,22 @@ class PiggyBankController extends Controller
             'note' => ['nullable', 'string', 'max:255'],
         ]);
 
+        // Additional validation for withdrawals
+        if ($validated['type'] === 'manual_withdraw') {
+            if ($validated['amount'] > $piggyBank->actual_final_total_saved) {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => __('You cannot withdraw more money than what is currently in your piggy bank.'),
+                    ], 422);
+                }
+
+                return back()->withErrors([
+                    'amount' => __('You cannot withdraw more money than what is currently in your piggy bank.'),
+                ])->withInput();
+            }
+        }
+
         // Negative for withdraw, positive for add
         $signedAmount = $validated['type'] === 'manual_add'
             ? $validated['amount']
@@ -189,7 +205,7 @@ class PiggyBankController extends Controller
                 $update['actual_completed_at'] = now();
             }
             $piggyBank->update($update);
-            \Log::info('PiggyBank updated', $update + ['id' => $piggyBank->id]);
+            //            \Log::info('PiggyBank updated', $update + ['id' => $piggyBank->id]);
         }
 
         if ($request->ajax()) {
@@ -219,5 +235,19 @@ class PiggyBankController extends Controller
         $piggyBank = \App\Models\PiggyBank::findOrFail($piggy_id);
 
         return view('partials.piggy-bank-financial-summary', compact('piggyBank'))->render();
+    }
+
+    public function getSchedulePartial(Request $request, $piggy_id)
+    {
+        $piggyBank = \App\Models\PiggyBank::findOrFail($piggy_id);
+
+        if ($request->ajax()) {
+            return response()->view('partials.schedule', [
+                'piggyBank' => $piggyBank,
+            ]);
+        }
+
+        // Optional: fallback to redirect/show page if not AJAX
+        return redirect()->route('localized.piggy-banks.show', ['piggy_id' => $piggy_id]);
     }
 }

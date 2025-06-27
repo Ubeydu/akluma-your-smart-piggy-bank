@@ -24,6 +24,7 @@
     "Environment file already exists.": "Environment file already exists.",
     "Environment file not found.": "Environment file not found.",
     "errors": "les erreurs",
+    "error": "Erreur",
     "Forbidden": "Interdit",
     "Forgot your password?": "Mot de passe oublié ?",
     "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": "Mot de passe oublié ? Pas de soucis. Veuillez nous indiquer votre adresse e-mail et nous vous enverrons un lien de réinitialisation du mot de passe.",
@@ -369,5 +370,8 @@
     "You reached your goal!": "Tu as atteint ton objectif !",
     "Total Money You Saved": "Total Économisé",
     "Planned Final Total": "Total Final Prévu",
-    "actual_completed_at_label": "Date de réalisation effective"
+    "actual_completed_at_label": "Date de réalisation effective",
+    "You successfully added money to your piggy bank": "Tu as ajouté de l’argent dans ta tirelire",
+    "You successfully took out some money from your piggy bank": "Tu as retiré de l’argent de ta tirelire",
+    "You cannot withdraw more money than what is currently in your piggy bank.": "Vous ne pouvez pas retirer plus d'argent que ce qui se trouve actuellement dans votre tirelire."
 }

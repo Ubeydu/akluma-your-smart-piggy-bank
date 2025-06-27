@@ -1,4 +1,4 @@
-<div class="mt-8" data-piggy-bank-status="{{ $piggyBank->status }}">
+<div id="schedule-container" class="mt-8" data-piggy-bank-status="{{ $piggyBank->status }}">
 
     @if($piggyBank->status === 'paused')
         <div class="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400">
