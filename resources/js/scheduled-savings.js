@@ -181,10 +181,16 @@ async function handleCheckboxChange(checkbox) {
         const statusCell = checkbox.closest('tr').querySelector('td:last-child');
         statusCell.textContent = data.translated_status;
 
+        // NEW: Disable checkboxes if piggy bank is done
+        disableScheduledSavingCheckboxesIfDone(piggyBankId);
+
         // If piggy bank status becomes "done", show a flash message dynamically
         if (data.piggy_bank_status === 'done') {
             showFlashMessage(window.piggyBankTranslations['goal_completed'] || 'Congratulations! You have successfully completed your savings goal.');
         }
+
+        // Always reload the financial summary to keep the UI up to date
+        reloadFinancialSummary(piggyBankId);
 
     } catch (error) {
         console.error('Error:', error);
@@ -669,20 +675,128 @@ function updateSelectAfterStatusChange(piggyBankId, newStatus) {
     }
 }
 
+// Fetch and replace the financial summary for the current piggy bank
+function reloadFinancialSummary(piggyBankId) {
+    const locale = document.documentElement.lang || 'en';
+    fetch(`/${locale}/piggy-banks/${piggyBankId}/financial-summary`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+        .then(response => response.text())
+        .then(html => {
+            const container = document.getElementById('financial-summary-container');
+            if (container) {
+                container.outerHTML = html;
+            }
+        })
+        .catch(console.error);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const manualForm = document.getElementById('manual-money-form');
+    if (!manualForm) return;
+
+    manualForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const piggyBankId = manualForm.action.match(/piggy-banks\/(\d+)/)[1];
+        const formData = new FormData(manualForm);
+
+        fetch(manualForm.action, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to add/remove money');
+                return response.json();
+            })
+            .then(data => {
+                reloadFinancialSummary(piggyBankId);
+
+                // Update status badge text and select value
+                const statusBadge = document.querySelector(`#status-text-${piggyBankId}`);
+                if (statusBadge && data.translated_status) {
+                    statusBadge.textContent = data.translated_status.charAt(0).toUpperCase() + data.translated_status.slice(1);
+                }
+                const statusSelect = document.getElementById(`piggy-bank-status-${piggyBankId}`);
+                if (statusSelect && data.piggy_bank_status) {
+                    statusSelect.value = data.piggy_bank_status;
+                    statusSelect.dataset.initialStatus = data.piggy_bank_status;
+                    disableStatusSelectIfDone(piggyBankId);
+                }
+
+                // NEW: Disable checkboxes if piggy bank is done
+                disableScheduledSavingCheckboxesIfDone(piggyBankId);
+
+                // Show message
+                showFlashMessage(data.message, 'success');
+                manualForm.reset();
+            })
+            .catch(() => {
+                const type = formData.get('type');
+                if (type === 'manual_add') {
+                    showFlashMessage("Something went wrong and you weren't able to add money to your piggy bank", 'error');
+                } else if (type === 'manual_withdraw') {
+                    showFlashMessage("Something went wrong and you weren't able to take out any money from your piggy bank", 'error');
+                } else {
+                    showFlashMessage("Something went wrong. Please try again.", 'error');
+                }
+            });
+    });
+});
+
+function disableScheduledSavingCheckboxesIfDone(piggyBankId) {
+    // Look for a container or data attribute that tells you the status
+    // (Adjust selector if you use something else to store the status)
+    const statusBadge = document.querySelector(`#status-text-${piggyBankId}`);
+    const statusValue = statusBadge ? statusBadge.textContent.trim().toLowerCase() : null;
+
+    if (statusValue === 'done') {
+        document.querySelectorAll('.scheduled-saving-checkbox').forEach(cb => {
+            cb.disabled = true;
+            cb.classList.remove('cursor-pointer');
+            cb.classList.add('cursor-not-allowed');
+        });
+    }
+}
+
+function disableStatusSelectIfDone(piggyBankId) {
+    const statusSelect = document.getElementById(`piggy-bank-status-${piggyBankId}`);
+    if (!statusSelect) return;
+    statusSelect.disabled = statusSelect.value === 'done';
+}
+
 
 /**
  * Function to display a flash message dynamically
  */
-function showFlashMessage(message) {
+function showFlashMessage(message, type = 'success') {
     // Remove existing flash messages
     const existingFlash = document.getElementById('flash-message');
     if (existingFlash) {
         existingFlash.remove();
     }
 
+    // Color and label map
+    const config = {
+        success: {
+            bg: "bg-green-100 border-green-400 text-green-700",
+            label: window.piggyBankTranslations['success'] || "Success"
+        },
+        error: {
+            bg: "bg-red-100 border-red-400 text-red-700",
+            label: window.piggyBankTranslations['error'] || "Error"
+        }
+    };
+
+    const c = config[type] || config.success;
+
     const flashMessageContainer = document.createElement('div');
     flashMessageContainer.id = "flash-message";
-    flashMessageContainer.className = "bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow-lg";
+    flashMessageContainer.className = `${c.bg} border px-4 py-3 rounded shadow-lg`;
     flashMessageContainer.style.position = "fixed";
     flashMessageContainer.style.top = "20px";
     flashMessageContainer.style.left = "50%";
@@ -691,9 +805,9 @@ function showFlashMessage(message) {
     flashMessageContainer.style.zIndex = "50";
 
     flashMessageContainer.innerHTML = `
-        <strong class="font-bold">${window.piggyBankTranslations['info']}</strong>
+        <strong class="font-bold">${c.label}</strong>
         <span class="block sm:inline">${message}</span>
-        <button class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none';">
+        <button class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.remove();">
             &times;
         </button>
     `;
@@ -707,5 +821,6 @@ function showFlashMessage(message) {
         }
     }, 5000);
 }
+
 
 

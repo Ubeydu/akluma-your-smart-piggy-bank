@@ -109,47 +109,8 @@
 
                         <!-- Other Details -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Financial Information -->
-                            <div class="space-y-4">
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Item Price') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->price, $piggyBank->currency) }}</p>
-                                </div>
 
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Starting Amount') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->starting_amount, $piggyBank->currency) }}</p>
-                                </div>
-
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Final Total') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->final_total, $piggyBank->currency) }}</p>
-                                </div>
-
-
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Current Balance') }}</h3>
-                                    <p id="current-balance-{{ $piggyBank->id }}" class="mt-1 text-base text-gray-900" data-currency="{{ $piggyBank->currency }}"
-                                       data-locale="{{ app()->getLocale() }}">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->current_balance, $piggyBank->currency) }}</p>
-                                </div>
-
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('remaining_amount') }}</h3>
-                                    <p id="remaining-amount-{{ $piggyBank->id }}"
-                                       class="mt-1 text-base text-gray-900"
-                                       data-currency="{{ $piggyBank->currency }}"
-                                       data-locale="{{ app()->getLocale() }}">
-                                        {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->remaining_amount, $piggyBank->currency) }}
-                                        @if($piggyBank->remaining_amount < 0)
-                                            <span class="ml-2 inline-block text-xs text-green-700 bg-green-50 px-2 py-1 rounded">
-                                                {{ __('extra_savings_note') }}
-                                            </span>
-                                        @endif
-                                    </p>
-                                </div>
-
-
-                            </div>
+                            @include('partials.piggy-bank-financial-summary', ['piggyBank' => $piggyBank])
 
                             <!-- Additional Information -->
                             <div class="space-y-4">
@@ -239,13 +200,6 @@
                                 </div>
 
                                 <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('saving_goal_reach_date') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">
-                                        {{ $piggyBank->scheduledSavings()->orderByDesc('saving_number')->first()->saving_date->translatedFormat('d F Y') }}
-                                    </p>
-                                </div>
-
-                                <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Product Link') }}</h3>
                                     @if($piggyBank->link)
                                         <a href="{{ $piggyBank->link }}" target="_blank"
@@ -313,7 +267,8 @@
 
                         <!-- Manual Add/Remove Money Section -->
                         <div class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
-                            <form method="POST"
+                            <form id="manual-money-form"
+                                  method="POST"
                                   action="{{ localizedRoute('localized.piggy-banks.add-remove-money', ['piggy_id' => $piggyBank->id]) }}"
                                   class="flex flex-col md:flex-row md:items-end gap-4">
                                 @csrf
@@ -327,7 +282,6 @@
                                         inputmode="decimal"
                                         pattern="^\d{1,10}(\.\d{1,2})?$"
                                         maxlength="12"
-                                        placeholder="{{ __('manual_amount_placeholder') }}"
                                         class="mt-1 block w-full"
                                         required
                                         autocomplete="off"
@@ -356,7 +310,6 @@
                                         name="note"
                                         type="text"
                                         maxlength="255"
-                                        placeholder="{{ __('manual_note_placeholder') }}"
                                         class="mt-1 block w-full"
                                         autocomplete="off"
                                     />
@@ -370,13 +323,13 @@
                                     <button
                                         type="submit"
                                         onclick="document.getElementById('manual-type').value='manual_add'"
-                                        class="flex-1 min-w-0 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white font-semibold shadow focus:outline-none transition">
+                                        class="flex-1 min-w-0 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white font-semibold shadow focus:outline-none transition cursor-pointer">
                                         {{ __('manual_add_money_button') }}
                                     </button>
                                     <button
                                         type="submit"
                                         onclick="document.getElementById('manual-type').value='manual_withdraw'"
-                                        class="flex-1 min-w-0 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow focus:outline-none transition">
+                                        class="flex-1 min-w-0 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow focus:outline-none transition cursor-pointer">
                                         {{ __('manual_withdraw_money_button') }}
                                     </button>
                                 </div>

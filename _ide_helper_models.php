@@ -22,7 +22,6 @@ namespace App\Models{
  * @property string $name
  * @property float $price
  * @property float|null $starting_amount
- * @property float|null $current_balance
  * @property float $target_amount
  * @property float|null $extra_savings
  * @property float $total_savings
@@ -36,8 +35,10 @@ namespace App\Models{
  * @property string|null $preview_title
  * @property string|null $preview_description
  * @property string|null $preview_url
- * @property-read float $final_total
+ * @property float $final_total
  * @property-read float $remaining_amount
+ * @property-read float $actual_final_total_saved
+ * @property-read float $current_balance
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ScheduledSaving> $scheduledSavings
  * @property-read int|null $scheduled_savings_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PiggyBankTransaction> $transactions
@@ -50,7 +51,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereChosenStrategy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereCurrency($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereCurrentBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereDetails($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereExtraSavings($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereFinalTotal($value)

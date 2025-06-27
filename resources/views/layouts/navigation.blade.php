@@ -190,7 +190,7 @@
 
                     <x-slot name="content">
                         @foreach (config('app.available_languages') as $language => $locale)
-                            <x-responsive-nav-link :href="route('global.language.switch', ['locale' => $locale])"
+                            <x-responsive-nav-link :href="route('global.language.switch', ['locale' => $language])"
                                                    :class="App::getLocale() == $locale ? 'font-bold text-gray-900' : ''">
                                 {{ __($language) }}
                             </x-responsive-nav-link>

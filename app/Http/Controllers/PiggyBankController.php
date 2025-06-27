@@ -184,13 +184,40 @@ class PiggyBankController extends Controller
         $newStatus = $remainingZeroOrLess ? 'done' : 'active';
 
         if ($piggyBank->status !== $newStatus) {
-            $piggyBank->update(['status' => $newStatus]);
+            $update = ['status' => $newStatus];
+            if ($newStatus === 'done' && ! $piggyBank->actual_completed_at) {
+                $update['actual_completed_at'] = now();
+            }
+            $piggyBank->update($update);
+            \Log::info('PiggyBank updated', $update + ['id' => $piggyBank->id]);
         }
 
-        // Redirect back to piggy bank details with success message
+        if ($request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => $newStatus === 'done'
+                    ? __('You have successfully completed your savings goal.')
+                    : ($signedAmount > 0
+                        ? __('You successfully added money to your piggy bank')
+                        : __('You successfully took out some money from your piggy bank')),
+                'piggy_bank_status' => $newStatus,
+                'translated_status' => __(strtolower($newStatus)),
+            ]);
+        }
+
         return redirect(localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id]))
             ->with('success', $newStatus === 'done'
                 ? __('You have successfully completed your savings goal.')
                 : __('Money successfully added or removed!'));
+    }
+
+    /**
+     * Return just the financial summary partial for AJAX reloads.
+     */
+    public function getFinancialSummary($piggy_id)
+    {
+        $piggyBank = \App\Models\PiggyBank::findOrFail($piggy_id);
+
+        return view('partials.piggy-bank-financial-summary', compact('piggyBank'))->render();
     }
 }

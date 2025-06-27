@@ -45,7 +45,7 @@
                 <tr>
                     <td class="px-1 py-4 whitespace-normal text-sm text-gray-900">
                         <input type="checkbox"
-                               class="rounded-sm border-gray-300 text-blue-600 shadow-xs focus:border-blue-300 focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50 {{ in_array($piggyBank->status, ['paused', 'cancelled', 'done']) ? 'cursor-not-allowed' : 'cursor-pointer' }}"
+                               class="scheduled-saving-checkbox rounded-sm border-gray-300 text-blue-600 shadow-xs focus:border-blue-300 focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50 {{ in_array($piggyBank->status, ['paused', 'cancelled', 'done']) ? 'cursor-not-allowed' : 'cursor-pointer' }}"
                                {{ $saving->status === 'saved' ? 'checked' : '' }}
                                data-saving-id="{{ $saving->id }}"
                                data-piggy-bank-id="{{ $piggyBank->id }}"

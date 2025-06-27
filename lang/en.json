@@ -143,5 +143,6 @@
     "manual_note_placeholder": "Add a note (optional)",
     "manual_add_money_button": "Add Money",
     "manual_withdraw_money_button": "Take Out Money",
-    "extra_savings_note": "This means you have saved more than your target!"
+    "extra_savings_note": "This means you have saved more than your target!",
+    "actual_completed_at_label": "Actual Completion Date"
 }

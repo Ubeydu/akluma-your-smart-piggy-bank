@@ -363,5 +363,11 @@
     "manual_add_money_button": "Para Ekle",
     "manual_withdraw_money_button": "Para Çıkar",
     "extra_savings_note": "Bu, hedefinden daha fazla birikim yaptığını gösteriyor!",
-    "Money successfully added or removed!": "Para başarıyla eklendi veya çıkarıldı!"
+    "Money successfully added or removed!": "Para başarıyla eklendi veya çıkarıldı!",
+    "You saved more than your goal!": "Hedefinden daha fazla biriktirdin!",
+    "You saved less than your goal.": "Hedefinden daha az biriktirdin.",
+    "You reached your goal!": "Hedefine ulaştın!",
+    "Total Money You Saved": "Toplam Biriktirdiğin Para",
+    "Planned Final Total": "Planlanan Son Toplam",
+    "actual_completed_at_label": "Gerçekleşen Tamamlanma Tarihi"
 }

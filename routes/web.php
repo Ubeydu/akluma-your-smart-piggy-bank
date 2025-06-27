@@ -49,6 +49,11 @@ Route::localizedPut('piggy-banks/{piggy_id}', [PiggyBankController::class, 'upda
     ->middleware(['auth', 'verified'])
     ->where('piggy_id', '[0-9]+');
 
+Route::localizedGet('piggy-banks/{piggy_id}/financial-summary', [PiggyBankController::class, 'getFinancialSummary'])
+    ->name('localized.piggy-banks.financial-summary')
+    ->middleware(['auth', 'verified'])
+    ->where('piggy_id', '[0-9]+');
+
 Route::localizedPatch('piggy-banks/{piggy_id}/pause', [ScheduledSavingController::class, 'pausePiggyBank'])
     ->name('localized.piggy-banks.pause')
     ->middleware(['auth', 'verified'])

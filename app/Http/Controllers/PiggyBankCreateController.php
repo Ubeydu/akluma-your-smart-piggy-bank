@@ -604,7 +604,6 @@ class PiggyBankCreateController extends Controller
 
             $piggyBank->price = $step1Data['price']->getAmount()->toFloat();
             $piggyBank->starting_amount = $step1Data['starting_amount']?->getAmount()->toFloat();
-            $piggyBank->current_balance = $step1Data['starting_amount']?->getAmount()->toFloat();
             $piggyBank->target_amount = $calculations['target_amount']['amount']->getAmount()->toFloat();
             $piggyBank->extra_savings = $calculations['extra_savings']['amount']->getAmount()->toFloat();
             $piggyBank->total_savings = $calculations['total_savings']['amount']->getAmount()->toFloat();
