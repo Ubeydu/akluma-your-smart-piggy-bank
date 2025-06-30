@@ -74,7 +74,7 @@ class PiggyBankController extends Controller
         //     'app_locale' => app()->getLocale(),
         //     'session_locale' => session('locale'),
         // ]);
-        
+
         try {
             $piggyBank = PiggyBank::findOrFail($piggy_id);
 
@@ -146,5 +146,108 @@ class PiggyBankController extends Controller
             'status' => 'cancelled',
             'message' => __('Piggy bank has been cancelled.'),
         ]);
+    }
+
+    public function addOrRemoveMoney(Request $request, $piggy_id)
+    {
+        $piggyBank = PiggyBank::findOrFail($piggy_id);
+
+        if (! Gate::allows('update', $piggyBank)) {
+            abort(403);
+        }
+
+        // Validation: Only allow positive amounts, and only allow add/remove types
+        $validated = $request->validate([
+            'type' => ['required', 'in:manual_add,manual_withdraw'],
+            'amount' => ['required', 'numeric', 'min:0.01', 'regex:/^\d{1,10}(\.\d{1,2})?$/'],
+            'note' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        // Additional validation for withdrawals
+        if ($validated['type'] === 'manual_withdraw') {
+            if ($validated['amount'] > $piggyBank->actual_final_total_saved) {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => __('You cannot withdraw more money than what is currently in your piggy bank.'),
+                    ], 422);
+                }
+
+                return back()->withErrors([
+                    'amount' => __('You cannot withdraw more money than what is currently in your piggy bank.'),
+                ])->withInput();
+            }
+        }
+
+        // Negative for withdraw, positive for add
+        $signedAmount = $validated['type'] === 'manual_add'
+            ? $validated['amount']
+            : -$validated['amount'];
+
+        $piggyBank->transactions()->create([
+            'user_id' => $piggyBank->user_id,
+            'type' => $validated['type'],
+            'amount' => $signedAmount,
+            'note' => $validated['note'] ?? null,
+        ]);
+
+        // Fetch fresh balance/remaining values
+        $piggyBank->refresh();
+
+        // Apply the new done/active logic: only mark as done if remaining amount is zero or less
+        $remainingZeroOrLess = $piggyBank->remaining_amount <= 0;
+
+        $newStatus = $remainingZeroOrLess ? 'done' : 'active';
+
+        if ($piggyBank->status !== $newStatus) {
+            $update = ['status' => $newStatus];
+            if ($newStatus === 'done' && ! $piggyBank->actual_completed_at) {
+                $update['actual_completed_at'] = now();
+            }
+            $piggyBank->update($update);
+            //            \Log::info('PiggyBank updated', $update + ['id' => $piggyBank->id]);
+        }
+
+        if ($request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => $newStatus === 'done'
+                    ? __('You have successfully completed your savings goal.')
+                    : ($signedAmount > 0
+                        ? __('You successfully added money to your piggy bank')
+                        : __('You successfully took out some money from your piggy bank')),
+                'piggy_bank_status' => $newStatus,
+                'translated_status' => __(strtolower($newStatus)),
+            ]);
+        }
+
+        return redirect(localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id]))
+            ->with('success', $newStatus === 'done'
+                ? __('You have successfully completed your savings goal.')
+                : __('Money successfully added or removed!'));
+    }
+
+    /**
+     * Return just the financial summary partial for AJAX reloads.
+     */
+    public function getFinancialSummary($piggy_id)
+    {
+        $piggyBank = \App\Models\PiggyBank::findOrFail($piggy_id);
+
+        return view('partials.piggy-bank-financial-summary', compact('piggyBank'))->render();
+    }
+
+    public function getSchedulePartial(Request $request, $piggy_id)
+    {
+        $piggyBank = \App\Models\PiggyBank::findOrFail($piggy_id);
+
+        if ($request->ajax()) {
+            return response()->view('partials.schedule', [
+                'piggyBank' => $piggyBank,
+            ]);
+        }
+
+        // Optional: fallback to redirect/show page if not AJAX
+        return redirect()->route('localized.piggy-banks.show', ['piggy_id' => $piggy_id]);
     }
 }

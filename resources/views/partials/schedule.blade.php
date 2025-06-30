@@ -1,4 +1,4 @@
-<div class="mt-8" data-piggy-bank-status="{{ $piggyBank->status }}">
+<div id="schedule-container" class="mt-8" data-piggy-bank-status="{{ $piggyBank->status }}">
 
     @if($piggyBank->status === 'paused')
         <div class="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400">
@@ -45,7 +45,7 @@
                 <tr>
                     <td class="px-1 py-4 whitespace-normal text-sm text-gray-900">
                         <input type="checkbox"
-                               class="rounded-sm border-gray-300 text-blue-600 shadow-xs focus:border-blue-300 focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50 {{ in_array($piggyBank->status, ['paused', 'cancelled', 'done']) ? 'cursor-not-allowed' : 'cursor-pointer' }}"
+                               class="scheduled-saving-checkbox rounded-sm border-gray-300 text-blue-600 shadow-xs focus:border-blue-300 focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50 {{ in_array($piggyBank->status, ['paused', 'cancelled', 'done']) ? 'cursor-not-allowed' : 'cursor-pointer' }}"
                                {{ $saving->status === 'saved' ? 'checked' : '' }}
                                data-saving-id="{{ $saving->id }}"
                                data-piggy-bank-id="{{ $piggyBank->id }}"

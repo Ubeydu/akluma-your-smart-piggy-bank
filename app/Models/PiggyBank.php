@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Brick\Money\Money;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +16,6 @@ use Log;
  * @property string $name
  * @property float $price
  * @property float|null $starting_amount
- * @property float|null $current_balance
  * @property float $target_amount
  * @property float|null $extra_savings
  * @property float $total_savings
@@ -31,7 +29,7 @@ use Log;
  * @property string|null $preview_title
  * @property string|null $preview_description
  * @property string|null $preview_url
- * @property-read float $final_total
+ * @property float $final_total
  * @property-read float $remaining_amount
  */
 class PiggyBank extends Model
@@ -47,7 +45,6 @@ class PiggyBank extends Model
         'name',
         'price',
         'starting_amount',
-        'current_balance',
         'target_amount',
         'extra_savings',
         'total_savings',
@@ -58,6 +55,7 @@ class PiggyBank extends Model
         'preview_image',
         'currency',
         'status',
+        'actual_completed_at',
         'preview_title',
         'preview_description',
         'preview_url',
@@ -67,6 +65,10 @@ class PiggyBank extends Model
         'preview_image' => 'images/piggy_banks/default_piggy_bank.png',
         'currency' => 'TRY',
         'status' => 'active',
+    ];
+
+    protected $casts = [
+        'actual_completed_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -79,97 +81,76 @@ class PiggyBank extends Model
         return $this->hasMany(ScheduledSaving::class);
     }
 
-    private $remainingAmountOverride = null;
-
-    public function setRemainingAmountOverride(callable $override)
+    /**
+     * Eloquent accessor for the "remaining_amount" attribute.
+     *
+     * Returns the planned goal (final_total) minus the actual total saved (sum of all transactions).
+     * This value tells you how much more needs to be saved to reach the goal, in real time.
+     *
+     * ⚠️ This method is called automatically by Laravel/Eloquent
+     * when you access $piggyBank->remaining_amount.
+     *
+     * @noinspection PhpUnused
+     */
+    public function getRemainingAmountAttribute(): float
     {
-        $this->remainingAmountOverride = $override;
+        try {
+            // Calculate remaining amount as planned final total minus actual total saved
+            return $this->final_total - $this->actual_final_total_saved;
+        } catch (\Throwable $e) {
+            Log::error('Invalid money calculation in piggy bank', [
+                'piggy_bank_id' => $this->id,
+                'total_savings' => $this->total_savings,
+                'actual_final_total_saved' => $this->actual_final_total_saved,
+                'currency' => $this->currency,
+                'error' => $e->getMessage(),
+            ]);
+            return 0.0;
+        }
     }
 
     /**
      * Eloquent accessor for the "final_total" attribute.
      *
-     * ⚠️ This method is called automatically by Laravel/Eloquent
-     * when you access $piggyBank->final_total in your code or Blade views.
+     * This method returns the stable, stored value of the user's intended total—
+     * i.e., the amount the user will find in their piggy bank if they complete all scheduled savings,
+     * **regardless of any manual additions or withdrawals** made along the way.
      *
-     * Even if PhpStorm says "not used", it *is* used via magic property access.
-     * Usage example: $piggyBank->final_total in Blade or PHP.
+     * This is set at creation (starting amount + planned savings), and is only updated if the user
+     * manually increases or decreases their piggy bank goal. It is NOT dynamically recalculated from
+     * transaction history, and does not reflect the live current balance.
+     *
+     * Usage example: $piggyBank->final_total (used in Blade and PHP)
+     *
      * @noinspection PhpUnused
      */
     public function getFinalTotalAttribute(): float
     {
-        \Log::info('getFinalTotalAttribute called', ['piggy_bank_id' => $this->id]);
-        try {
-            return ($this->total_savings ?? 0) + ($this->starting_amount ?? 0);
-        } catch (\Throwable $e) {
-            \Log::error('Error calculating final total', [
-                'piggy_bank_id' => $this->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            return 0.0;
-        }
+        // Always return the stored attribute.
+        return $this->attributes['final_total'] ?? 0.0;
     }
 
     /**
-     * Eloquent accessor for the "remaining_amount" attribute.
+     * Get the actual total money saved, dynamically calculated from transactions.
      *
-     * ⚠️ This method is called automatically by Laravel/Eloquent
-     * when you access $piggyBank->remaining_amount.
+     * Usage: $piggyBank->actual_final_total_saved
      *
-     * PhpStorm may not detect usage, but this IS used!
      * @noinspection PhpUnused
-     * @return float
      */
-    public function getRemainingAmountAttribute(): float
+    public function getActualFinalTotalSavedAttribute(): float
     {
-        \Log::info('getRemainingAmountAttribute called', ['piggy_bank_id' => $this->id]);
-        if ($this->remainingAmountOverride) {
-            try {
-                // Since remainingAmountOverride previously returned a Money object,
-                // we need to get its amount as a float
-                $overrideResult = call_user_func($this->remainingAmountOverride);
-                if ($overrideResult instanceof Money) {
-                    return $overrideResult->getAmount()->toFloat();
-                }
-
-                return (float) $overrideResult;
-            } catch (\Throwable $e) {
-                Log::error('Error in remaining amount override calculation', [
-                    'piggy_bank_id' => $this->id,
-                    'error' => $e->getMessage(),
-                ]);
-
-                return 0.0;
-            }
-        }
-
-        // Original implementation simplified to work with raw values
-        try {
-
-            //            \Log::info('Calculating remaining amount', [
-            //                'final_total' => $this->final_total,
-            //                'current_balance' => $this->current_balance,
-            //                'total_savings' => $this->total_savings,
-            //                'starting_amount' => $this->starting_amount
-            //            ]);
-
-            return $this->final_total - ($this->current_balance ?? 0);
-        } catch (\Throwable $e) {
-            Log::error('Invalid money calculation in piggy bank', [
-                'piggy_bank_id' => $this->id,
-                'total_savings' => $this->total_savings,
-                'current_balance' => $this->current_balance,
-                'currency' => $this->currency,
-                'error' => $e->getMessage(),
-            ]);
-
-            return 0.0;
-        }
+        // Sum all transaction amounts (additions and withdrawals)
+        return $this->transactions()->sum('amount');
     }
+
 
     public static function getStatusOptions(): array
     {
         return self::STATUS_OPTIONS;
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(PiggyBankTransaction::class);
     }
 }

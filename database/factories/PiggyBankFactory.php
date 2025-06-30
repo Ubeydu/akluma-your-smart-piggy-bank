@@ -33,7 +33,6 @@ class PiggyBankFactory extends Factory
             'chosen_strategy' => $this->faker->randomElement(['weekly', 'monthly']), // adjust these values based on your actual strategies
             'selected_frequency' => $this->faker->randomElement(['weekly', 'bi-weekly']), // adjust these values based on your actual frequencies
             'starting_amount' => $this->faker->randomFloat(2, 0, 1000),
-            'current_balance' => fn (array $attributes) => $attributes['starting_amount'],
             'total_savings' => $this->faker->randomFloat(2, 1000, 10000),
             'extra_savings' => $this->faker->optional(0.3)->randomFloat(2, 0, 500),
             'link' => $this->faker->optional(0.3)->url(),

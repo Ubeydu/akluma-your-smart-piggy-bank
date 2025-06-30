@@ -18,6 +18,7 @@ class ScheduledSavingController extends Controller
     public function index()
     {
         $periodicSavings = ScheduledSaving::all();
+
         return response()->json($periodicSavings);
     }
 
@@ -51,10 +52,10 @@ class ScheduledSavingController extends Controller
      */
     public function update(Request $request, ScheduledSaving $periodicSaving)
     {
-//        Log::info('ScheduledSaving update method called.', [
-//            'saving_id' => $periodicSaving->id,
-//            'request_data' => $request->all()
-//        ]);
+        //        Log::info('ScheduledSaving update method called.', [
+        //            'saving_id' => $periodicSaving->id,
+        //            'request_data' => $request->all()
+        //        ]);
 
         $validatedData = $request->validate([
             'piggy_bank_id' => 'required|exists:piggy_banks,id',
@@ -64,43 +65,47 @@ class ScheduledSavingController extends Controller
 
         try {
             DB::transaction(function () use ($periodicSaving, $validatedData) {
-//                Log::info('Inside DB Transaction', ['saving_id' => $periodicSaving->id]);
+                //                Log::info('Inside DB Transaction', ['saving_id' => $periodicSaving->id]);
 
                 $piggyBank = PiggyBank::findOrFail($validatedData['piggy_bank_id']);
 
-                // Ensure `current_balance` is never NULL
-                if (is_null($piggyBank->current_balance)) {
-                    $piggyBank->current_balance = 0;
-                }
-
-//                Log::info('PiggyBank found', [
-//                    'piggy_bank_id' => $piggyBank->id,
-//                    'current_balance' => $piggyBank->current_balance
-//                ]);
-
                 $amount = $validatedData['amount'];
 
-                // Adjust balance safely
+                // Instead of directly adjusting balance, insert a transaction row
                 if ($validatedData['status'] === 'saved' && $periodicSaving->status === 'pending') {
-                    $piggyBank->current_balance += $amount;
+                    // Marked as saved: add positive transaction
+                    $piggyBank->transactions()->create([
+                        'user_id' => $piggyBank->user_id,
+                        'type' => 'scheduled_add',
+                        'amount' => $amount,
+                        'note' => 'Scheduled saving marked as saved',
+                        'scheduled_for' => $periodicSaving->saving_date, // optional
+                    ]);
                 } elseif ($validatedData['status'] === 'pending' && $periodicSaving->status === 'saved') {
-                    $piggyBank->current_balance -= $amount;
+                    // Unmarked (was saved, now pending): add negative transaction
+                    $piggyBank->transactions()->create([
+                        'user_id' => $piggyBank->user_id,
+                        'type' => 'scheduled_add',
+                        'amount' => -1 * $amount,
+                        'note' => 'Scheduled saving unmarked as saved',
+                        'scheduled_for' => $periodicSaving->saving_date, // optional
+                    ]);
                 }
-
-                // Save the updated balance
-                $piggyBank->save();
 
                 // Update scheduled saving status
                 $periodicSaving->update(['status' => $validatedData['status']]);
 
-                // Fetch updated remaining amount
-                $updatedRemainingAmount = $piggyBank->remaining_amount;
-
                 // Automatically update piggy bank status if needed
-                if (!in_array($piggyBank->status, ['paused', 'cancelled'])) {
-                    $newStatus = $updatedRemainingAmount == 0 ? 'done' : 'active';
-                    $piggyBank->update(['status' => $newStatus]);
-//                    Log::info('PiggyBank status updated', ['new_status' => $newStatus]);
+                if (! in_array($piggyBank->status, ['paused', 'cancelled'])) {
+                    // Only mark as done if remaining amount is zero or less
+                    $remainingZeroOrLess = $piggyBank->remaining_amount <= 0;
+                    $newStatus = $remainingZeroOrLess ? 'done' : 'active';
+
+                    $update = ['status' => $newStatus];
+                    if ($newStatus === 'done' && ! $piggyBank->actual_completed_at) {
+                        $update['actual_completed_at'] = now();
+                    }
+                    $piggyBank->update($update);
                 }
             });
 
@@ -113,7 +118,7 @@ class ScheduledSavingController extends Controller
             return response()->json([
                 'status' => $validatedData['status'],
                 'translated_status' => __(strtolower($validatedData['status'])),
-                'new_balance' => $updatedPiggyBank->current_balance,
+                'new_balance' => $updatedPiggyBank->actual_final_total_saved,
                 'remaining_amount' => $updatedPiggyBank->remaining_amount,
                 'piggy_bank_status' => $updatedPiggyBank->status,
                 'message' => __($messageKey),
@@ -121,10 +126,10 @@ class ScheduledSavingController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error updating scheduled saving:', ['error' => $e->getMessage()]);
+
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
-
 
     /**
      * Pause a piggy bank (stopping scheduled savings temporarily)
@@ -185,7 +190,6 @@ class ScheduledSavingController extends Controller
 
             // \Log::info("First saving date: {$firstSaving->saving_date}, Current date: {$currentDate}");
 
-
             // Special handling for daily frequency
             if ($piggyBank->selected_frequency === 'days') {
                 // For daily frequency, compare dates without time
@@ -221,10 +225,9 @@ class ScheduledSavingController extends Controller
 
             $intervalFunction = $intervalMapping[$piggyBank->selected_frequency] ?? null;
 
-            if (!$intervalFunction) {
-                throw new \Exception("Invalid frequency set for piggy bank.");
+            if (! $intervalFunction) {
+                throw new \Exception('Invalid frequency set for piggy bank.');
             }
-
 
             foreach ($pendingSavings as $index => $saving) {
                 // \Log::info("Processing saving #{$saving->saving_number} with date {$saving->saving_date}");
@@ -236,9 +239,9 @@ class ScheduledSavingController extends Controller
 
                 if ($piggyBank->selected_frequency === 'years') {
                     $workingDate->addYears($index);
-                } else if ($piggyBank->selected_frequency === 'months') {
+                } elseif ($piggyBank->selected_frequency === 'months') {
                     $workingDate->addMonths($index);
-                } else if ($piggyBank->selected_frequency === 'weeks') {
+                } elseif ($piggyBank->selected_frequency === 'weeks') {
                     // For weekly frequency, use addWeeks instead of calculating days
                     $workingDate->addWeeks($index);
                 } else { // days
@@ -252,24 +255,17 @@ class ScheduledSavingController extends Controller
                 // \Log::info("Saved new date: {$workingDate}");
             }
 
-
             $scheduleUpdated = true;
-
-
 
         });
 
         // \Log::info("All savings processed");
         return response()->json(['message' => __('piggy_bank_resumed_schedule_not_updated_info'),
             'status' => 'active',
-            'scheduleUpdated' => $scheduleUpdated
-            ]);
+            'scheduleUpdated' => $scheduleUpdated,
+        ]);
 
     }
-
-
-
-
 
     /**
      * Remove the specified resource from storage.
@@ -281,24 +277,20 @@ class ScheduledSavingController extends Controller
         return response()->json(null, 204);
     }
 
-
-
-
     public function getSchedulePartial(Request $request, $piggy_id)
     {
-        \Log::info('Schedule partial request', [
-            'piggy_id' => $piggy_id,
-            'is_ajax' => $request->ajax(),
-            'is_xhr' => $request->header('X-Requested-With') === 'XMLHttpRequest',
-            'auth_check' => auth()->check(),
-            'auth_id' => auth()->id(),
-            'session_id' => session()->getId(),
-        ]);
+//        \Log::info('Schedule partial request', [
+//            'piggy_id' => $piggy_id,
+//            'is_ajax' => $request->ajax(),
+//            'is_xhr' => $request->header('X-Requested-With') === 'XMLHttpRequest',
+//            'auth_check' => auth()->check(),
+//            'auth_id' => auth()->id(),
+//            'session_id' => session()->getId(),
+//        ]);
 
         // Existing code to fetch and return the partial view
         $piggyBank = PiggyBank::findOrFail($piggy_id);
 
         return view('partials.schedule', compact('piggyBank'));
     }
-
 }
