@@ -1,3 +1,9 @@
+<?php
+// Get the current language
+$language = app()->getLocale(); // Gets the current locale, e.g., 'tr', 'en', etc.
+$currentPlaceholder = $placeholders[$language];
+?>
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-900 leading-tight">
@@ -12,24 +18,126 @@
                     <h1 class="text-lg font-semibold mb-4">{{ __('Step 3 of 3') }}</h1>
 
 
-                <p>Enter saving amount Step 3</p>
+                    <div class="mb-8 bg-gray-50 p-6 rounded-lg border border-gray-200">
+
+                        <div class="space-y-4">
 
 
-                <!-- Action Buttons -->
-                <div class="flex justify-between mt-6">
-                    <x-danger-button type="button" onclick="if(confirm('{{ __('Are you sure you want to cancel?') }}')) { window.location='{{ route('dashboard') }}'; }">
-                        {{ __('Cancel') }}
-                    </x-danger-button>
-                    <x-secondary-button type="button" onclick="window.location='{{ route('create-piggy-bank.step-2.get') }}'">
-                        {{ __('Previous') }}
-                    </x-secondary-button>
-                    {{--                        <x-primary-button id="nextButton" type="submit">--}}
-                    {{--                            {{ __('Next') }}--}}
-                    {{--                        </x-primary-button>--}}
-                </div>
+                            <!-- Price Display -->
+                            <div class="flex justify-between items-baseline">
+                                <span class="text-gray-700 break-normal">{{ __('Item Price') }}:</span>
+                                <div class="flex items-baseline gap-2 text-right flex-wrap justify-end min-w-[120px]">
+                                    {{ session('pick_date_step1.price')->formatTo(App::getLocale()) }}
+                                </div>
+                            </div>
+
+                            <!-- Starting Amount Display (only shown if exists) -->
+                            @if(session('pick_date_step1.starting_amount'))
+                                <div class="flex justify-between items-baseline">
+                                    <span class="text-gray-700 break-normal">{{ __('Initial Deposit') }}:</span>
+                                    <div class="flex items-baseline gap-2 text-right flex-wrap justify-end min-w-[120px]">
+                                        {{ session('pick_date_step1.starting_amount')->formatTo(App::getLocale()) }}
+                                    </div>
+                                </div>
+                            @endif
+
+
+                            <!-- Target Amount Display -->
+                            @php
+                                $startingAmount = session('pick_date_step1.starting_amount');
+                                // Only proceed with calculation if starting amount exists and is not zero
+                                if ($startingAmount && !$startingAmount->isZero()) {
+                                    $price = session('pick_date_step1.price');
+                                    $targetAmount = $price->minus($startingAmount);
+                            @endphp
+                            <div class="flex justify-between items-baseline">
+                                <span class="text-gray-700 break-normal">{{ __('Target Amount') }}:</span>
+                                <div class="flex items-baseline gap-2 text-right flex-wrap justify-end min-w-[120px]">
+                                    {{ $targetAmount->formatTo(App::getLocale()) }}
+                                </div>
+                            </div>
+                            @php
+                                }
+                            @endphp
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    {{-- Frequency Options Container --}}
+                    <div id="frequencyOptions" class="mt-8 hidden">
+                        <h2 id="frequencyTitle" class="text-lg font-semibold mb-6">{{ __('Select your saving frequency') }}</h2>
+                        <div class="space-y-6">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <script>
+                        window.Laravel = {
+                            locale: "{{ app()->getLocale() }}",
+                            translations: @json(trans()->getLoader()->load(app()->getLocale(), '*', '*')),
+                            routes: {
+
+                            },
+                            defaultImage: '{{ asset("images/default_piggy_bank.png") }}'
+                        }
+                    </script>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-between sm:space-y-0 mt-6">
+
+                        <div x-data="{ showConfirmCancel: false }">
+                            <!-- Cancel button -->
+                            <x-danger-button @click="showConfirmCancel = true" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                {{ __('Cancel') }}
+                            </x-danger-button>
+
+                            <!-- Confirmation dialog component -->
+                            <x-confirmation-dialog>
+                                <x-slot:title>
+                                    {{ __('Are you sure you want to cancel?') }}
+                                </x-slot>
+
+                                <x-slot:actions>
+                                    <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
+                                        <form action="{{ localizedRoute('localized.create-piggy-bank.cancel') }}" method="POST" class="block">
+                                            @csrf
+                                            <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                                {{ __('Yes, cancel') }}
+                                            </x-danger-button>
+                                        </form>
+
+                                        <x-secondary-button
+                                            @click="showConfirmCancel = false"
+                                            class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                        >
+                                            {{ __('No, continue') }}
+                                        </x-secondary-button>
+                                    </div>
+                                </x-slot:actions>
+                            </x-confirmation-dialog>
+                        </div>
+
+                        <form method="GET" action="{{ localizedRoute('localized.create-piggy-bank.step-2.get') }}" class="inline">
+                            <x-secondary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                {{ __('Previous') }}
+                            </x-secondary-button>
+                        </form>
+
+                        <form method="POST" action="{{ localizedRoute('localized.create-piggy-bank.pick-date.show-summary') }}">
+                            @csrf
+                            <x-primary-button type="submit" id="nextButton" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start disabled:bg-gray-400 disabled:cursor-not-allowed  disabled:hover:bg-gray-300">
+                                {{ __('Next') }}
+                            </x-primary-button>
+                        </form>
+                    </div>
 
                 </div>
             </div>
         </div>
     </div>
 </x-app-layout>
+
