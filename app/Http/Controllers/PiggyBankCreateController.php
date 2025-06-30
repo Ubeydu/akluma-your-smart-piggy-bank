@@ -443,6 +443,16 @@ class PiggyBankCreateController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function calculateTargetDates(Request $request)
+    {
+        // Calculate target completion dates for different frequencies
+        return response()->json([
+            'success' => true,
+            'message' => 'Route working',
+            'received_amount' => $request->input('saving_amount'),
+        ]);
+    }
+
     public function showSummary(Request $request)
     {
         // Add detailed logging at the start
