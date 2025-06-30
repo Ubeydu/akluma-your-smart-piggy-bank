@@ -1,9 +1,3 @@
-<?php
-// Get the current language
-$language = app()->getLocale(); // Gets the current locale, e.g., 'tr', 'en', etc.
-$currentPlaceholder = $placeholders[$language];
-?>
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-900 leading-tight">

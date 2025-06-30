@@ -186,6 +186,10 @@ Route::localizedGet('create-piggy-bank/pick-date/step-3', [PiggyBankCreateContro
     ->name('localized.create-piggy-bank.pick-date.step-3')
     ->middleware(['conditional.layout']);
 
+Route::localizedGet('create-piggy-bank/enter-saving-amount/step-3', [PiggyBankCreateController::class, 'renderStrategyView'])
+    ->name('localized.create-piggy-bank.enter-saving-amount.step-3')
+    ->middleware(['conditional.layout']);
+
 Route::localizedGet('create-piggy-bank/pick-date/show-summary', [PiggyBankCreateController::class, 'showSummary'])
     ->name('localized.create-piggy-bank.pick-date.show-summary')
     ->middleware(['conditional.layout']);

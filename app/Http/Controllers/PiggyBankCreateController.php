@@ -295,17 +295,14 @@ class PiggyBankCreateController extends Controller
             'strategy' => 'required|in:pick-date,enter-saving-amount',
         ]);
 
-        // Check if user is trying to access the feature that is not yet available
-        if ($validated['strategy'] === 'enter-saving-amount') {
-            return redirect()->back()->with('error', 'This feature is coming soon.');
-        }
-
         // Store the chosen strategy in the session
         $request->session()->put('chosen_strategy', $validated['strategy']);
 
         // Redirect to the appropriate Step 3
         if ($validated['strategy'] === 'pick-date') {
             return redirect(localizedRoute('localized.create-piggy-bank.pick-date.step-3'));
+        } elseif ($validated['strategy'] === 'enter-saving-amount') {
+            return redirect(localizedRoute('localized.create-piggy-bank.enter-saving-amount.step-3'));
         }
 
         return redirect()->back()->withErrors(['strategy' => 'Invalid strategy selected.']);
