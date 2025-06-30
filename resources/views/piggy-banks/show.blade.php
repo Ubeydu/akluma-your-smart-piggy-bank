@@ -109,36 +109,8 @@
 
                         <!-- Other Details -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Financial Information -->
-                            <div class="space-y-4">
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Item Price') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->price, $piggyBank->currency) }}</p>
-                                </div>
 
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Starting Amount') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->starting_amount, $piggyBank->currency) }}</p>
-                                </div>
-
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Final Total') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->final_total, $piggyBank->currency) }}</p>
-                                </div>
-
-
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Current Balance') }}</h3>
-                                    <p id="current-balance-{{ $piggyBank->id }}" class="mt-1 text-base text-gray-900" data-currency="{{ $piggyBank->currency }}"
-                                       data-locale="{{ app()->getLocale() }}">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->current_balance, $piggyBank->currency) }}</p>
-                                </div>
-
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('remaining_amount') }}</h3>
-                                    <p id="remaining-amount-{{ $piggyBank->id }}" class="mt-1 text-base text-gray-900" data-currency="{{ $piggyBank->currency }}"
-                                       data-locale="{{ app()->getLocale() }}">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->remaining_amount, $piggyBank->currency) }}</p>
-                                </div>
-                            </div>
+                            @include('partials.piggy-bank-financial-summary', ['piggyBank' => $piggyBank])
 
                             <!-- Additional Information -->
                             <div class="space-y-4">
@@ -228,13 +200,6 @@
                                 </div>
 
                                 <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('saving_goal_reach_date') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">
-                                        {{ $piggyBank->scheduledSavings()->orderByDesc('saving_number')->first()->saving_date->translatedFormat('d F Y') }}
-                                    </p>
-                                </div>
-
-                                <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Product Link') }}</h3>
                                     @if($piggyBank->link)
                                         <a href="{{ $piggyBank->link }}" target="_blank"
@@ -300,6 +265,76 @@
                             </div>
                         @endif
 
+                        <!-- Manual Add/Remove Money Section -->
+                        <div id="manual-money-section" class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+                            <form id="manual-money-form"
+                                  method="POST"
+                                  action="{{ localizedRoute('localized.piggy-banks.add-remove-money', ['piggy_id' => $piggyBank->id]) }}"
+                                  class="flex flex-col md:flex-row md:items-end gap-4">
+                                @csrf
+
+                                <div>
+                                    <x-input-label for="manual-amount" :value="__('manual_amount_label')" />
+                                    <x-text-input
+                                        id="manual-amount"
+                                        name="amount"
+                                        type="text"
+                                        inputmode="decimal"
+                                        pattern="^\d{1,10}(\.\d{1,2})?$"
+                                        maxlength="12"
+                                        class="mt-1 block w-full"
+                                        required
+                                        autocomplete="off"
+                                        oninput="
+                                            let v = this.value.replace(/[^0-9.]/g, '');
+                                            v = v.replace(/^0+(\d)/, '$1');
+                                            v = v.replace(/(\..*)\./g, '$1');
+                                            if (v.indexOf('.') > -1) {
+                                                let parts = v.split('.');
+                                                parts[1] = parts[1].slice(0, 2);
+                                                v = parts[0].slice(0, 10) + '.' + parts[1];
+                                            } else {
+                                                v = v.slice(0, 12);
+                                            }
+                                            this.value = v;
+                                        "
+                                    />
+
+                                    <x-input-error :messages="$errors->get('amount')" class="mt-2" />
+                                </div>
+
+                                <div>
+                                    <x-input-label for="manual-note" :value="__('manual_note_label')" />
+                                    <x-text-input
+                                        id="manual-note"
+                                        name="note"
+                                        type="text"
+                                        maxlength="255"
+                                        class="mt-1 block w-full"
+                                        autocomplete="off"
+                                    />
+                                    <x-input-error :messages="$errors->get('note')" class="mt-2" />
+                                </div>
+
+                                <!-- Hidden input to store the action type -->
+                                <input type="hidden" name="type" id="manual-type" value="manual_add" />
+
+                                <div class="flex gap-2 mt-2 md:mt-0">
+                                    <button
+                                        type="submit"
+                                        onclick="document.getElementById('manual-type').value='manual_add'"
+                                        class="flex-1 min-w-0 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white font-semibold shadow focus:outline-none transition cursor-pointer">
+                                        {{ __('manual_add_money_button') }}
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        onclick="document.getElementById('manual-type').value='manual_withdraw'"
+                                        class="flex-1 min-w-0 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow focus:outline-none transition cursor-pointer">
+                                        {{ __('manual_withdraw_money_button') }}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
 
                         <!-- Savings Schedule -->
                         <div id="schedule-container" class="bg-rose-50 rounded-lg">
@@ -329,7 +364,8 @@
             confirm_resume: "{{ __('Are you sure you want to resume this piggy bank? Dates in your saving schedule may be updated if you proceed.') }}",
             piggy_bank_cancelled: "{{ __('Piggy bank has been cancelled.') }}",
             saving_marked_as_saved: "{{ __('You successfully marked your saving as saved.') }}",
-            saving_marked_as_unsaved: "{{ __('You successfully marked your scheduled saving as pending.') }}"
+            saving_marked_as_unsaved: "{{ __('You successfully marked your scheduled saving as pending.') }}",
+            error: "{{ __('error') }}",
         };
     </script>
 

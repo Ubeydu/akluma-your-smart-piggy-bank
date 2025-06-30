@@ -22,7 +22,6 @@ namespace App\Models{
  * @property string $name
  * @property float $price
  * @property float|null $starting_amount
- * @property float|null $current_balance
  * @property float $target_amount
  * @property float|null $extra_savings
  * @property float $total_savings
@@ -36,10 +35,14 @@ namespace App\Models{
  * @property string|null $preview_title
  * @property string|null $preview_description
  * @property string|null $preview_url
- * @property-read float $final_total
+ * @property float $final_total
  * @property-read float $remaining_amount
+ * @property-read float $actual_final_total_saved
+ * @property-read float $current_balance
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ScheduledSaving> $scheduledSavings
  * @property-read int|null $scheduled_savings_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PiggyBankTransaction> $transactions
+ * @property-read int|null $transactions_count
  * @property-read \App\Models\User $user
  * @method static \Database\Factories\PiggyBankFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank newModelQuery()
@@ -48,9 +51,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereChosenStrategy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereCurrency($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereCurrentBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereDetails($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereExtraSavings($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereFinalTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereLink($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereName($value)
@@ -68,6 +71,37 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBank whereUserId($value)
  */
 	class PiggyBank extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property int $piggy_bank_id
+ * @property int $user_id
+ * @property string $type
+ * @property string $amount
+ * @property string|null $note
+ * @property string|null $scheduled_for
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\PiggyBank $piggyBank
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBankTransaction newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBankTransaction newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBankTransaction query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBankTransaction whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBankTransaction whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBankTransaction whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBankTransaction whereNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBankTransaction wherePiggyBankId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBankTransaction whereScheduledFor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBankTransaction whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBankTransaction whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PiggyBankTransaction whereUserId($value)
+ */
+	class PiggyBankTransaction extends \Eloquent {}
 }
 
 namespace App\Models{

@@ -21,13 +21,13 @@ class LocalizedAuthenticateMiddleware extends Authenticate
      */
     public function handle($request, Closure $next, ...$guards)
     {
-        \Log::info('Auth middleware check', [
-            'path' => $request->path(),
-            'is_ajax' => $request->ajax(),
-            'is_xhr' => $request->header('X-Requested-With'),
-            'auth_check' => auth()->check(),
-            'session_id' => session()->getId(),
-        ]);
+//        \Log::info('Auth middleware check', [
+//            'path' => $request->path(),
+//            'is_ajax' => $request->ajax(),
+//            'is_xhr' => $request->header('X-Requested-With'),
+//            'auth_check' => auth()->check(),
+//            'session_id' => session()->getId(),
+//        ]);
 
         // Only store the intended URL if it's not already set and user is not authenticated
         if (! session()->has('url.intended') && ! auth()->check()) {

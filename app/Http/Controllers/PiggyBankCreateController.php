@@ -604,10 +604,11 @@ class PiggyBankCreateController extends Controller
 
             $piggyBank->price = $step1Data['price']->getAmount()->toFloat();
             $piggyBank->starting_amount = $step1Data['starting_amount']?->getAmount()->toFloat();
-            $piggyBank->current_balance = $step1Data['starting_amount']?->getAmount()->toFloat();
             $piggyBank->target_amount = $calculations['target_amount']['amount']->getAmount()->toFloat();
             $piggyBank->extra_savings = $calculations['extra_savings']['amount']->getAmount()->toFloat();
             $piggyBank->total_savings = $calculations['total_savings']['amount']->getAmount()->toFloat();
+
+            $piggyBank->final_total = ($piggyBank->starting_amount ?? 0) + ($piggyBank->total_savings ?? 0);
 
             // Basic fields remain the same
             $piggyBank->link = $step1Data['link'];
@@ -624,6 +625,16 @@ class PiggyBankCreateController extends Controller
             $piggyBank->preview_url = $preview['url'] ?? null;
 
             $piggyBank->save();
+
+            // Insert starting amount as a transaction if present and > 0
+            if ($piggyBank->starting_amount && $piggyBank->starting_amount > 0) {
+                $piggyBank->transactions()->create([
+                    'user_id' => $piggyBank->user_id,
+                    'type' => 'starting_amount',
+                    'amount' => $piggyBank->starting_amount,
+                    'note' => 'Initial deposit at creation',
+                ]);
+            }
 
             // Update scheduled savings to use the same approach
             foreach ($paymentSchedule as $payment) {
