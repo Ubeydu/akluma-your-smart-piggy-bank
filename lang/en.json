@@ -44,7 +44,11 @@
     "enter_saving_amount_strategy_definition": "Or, tell us how much money you want to put aside regularly, then we will tell you when you will reach that goal.",
     "Clear": "Clear",
     "minimum amount 100": "min. 100",
+    "minimum amount 10": "min. 10",
+    "saving_amount_whole_numbers_only": "You can put only numbers in this field. No comma, no dot, no letters",
+    "saving_amount_whole_length_exceeded": "You can enter maximum 10 digits.",
     "price_whole_numbers_only": "You can put only numbers in this field. No comma, no dot, no letters",
+    "price_whole_length_exceeded": "You can enter maximum 10 digits.",
     "Current Balance": "Current balance",
     "Final Total": "Final amount you will have when you open your piggy bank",
     "Total Savings": "Sum of Periodic Savings",
@@ -144,5 +148,6 @@
     "manual_add_money_button": "Add Money",
     "manual_withdraw_money_button": "Take Out Money",
     "extra_savings_note": "This means you have saved more than your target!",
-    "actual_completed_at_label": "Actual Completion Date"
+    "actual_completed_at_label": "Actual Completion Date",
+    "starting_amount_numbers_only": "You can put only numbers in this field. No comma, no dot, no letters."
 }
