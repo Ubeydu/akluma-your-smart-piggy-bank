@@ -22,6 +22,19 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // Check maximum amount
+        const currentAmount = parseFloat(savingAmountWhole.value + '.' + (savingAmountCents?.value || '00'));
+        if (currentAmount >= window.Laravel.maxSavingAmount) {
+            // Show temporary error message and hide options
+            frequencyOptions.classList.add('hidden');
+            const maxErrorDiv = document.getElementById('saving_amount_max_error');
+            maxErrorDiv.classList.remove('hidden');
+            setTimeout(() => {
+                maxErrorDiv.classList.add('hidden');
+            }, 5000);
+            return;
+        }
+
         const data = {
             saving_amount_whole: savingAmountWhole.value,
             saving_amount_cents: savingAmountCents ? savingAmountCents.value : '00'
@@ -48,6 +61,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function displayFrequencyOptions(options) {
+        // Clear existing content first
+        const shortTermContainer = document.querySelector('#shortTermOptions');
+        const longTermContainer = document.querySelector('#longTermOptions');
+
+        if (shortTermContainer) shortTermContainer.innerHTML = '';
+        if (longTermContainer) longTermContainer.innerHTML = '';
+
+
         const periodToTranslationKey = (type) => {
             const translationMap = {
                 'day': 'days',
@@ -63,12 +84,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return window.Laravel.translations[translationKey];
         };
 
-        // Clear existing content first
-        const shortTermContainer = document.querySelector('#shortTermOptions');
-        const longTermContainer = document.querySelector('#longTermOptions');
-
-        if (shortTermContainer) shortTermContainer.innerHTML = '';
-        if (longTermContainer) longTermContainer.innerHTML = '';
 
         // Define which periods are short-term vs long-term (same as pick-date)
         const shortTermPeriods = ['days', 'weeks'];
@@ -95,9 +110,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     const baseType = frequency.slice(0, -1); // Remove 's' to get 'day', 'week', etc.
                     const periodLabel = formatPeriodLabel(baseType);
 
-                    // Copy exact HTML structure from pick-date
+
                     container.innerHTML += `
-                    <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50 mb-2 cursor-pointer"
+                    <div class="relative flex items-start p-4 border rounded-lg hover:bg-gray-50 mb-2 cursor-pointer sm:p-6"
                         onclick="this.querySelector('input[type=\\'radio\\']').click()">
                         <div class="flex items-center h-5">
                             <input type="radio"
@@ -107,41 +122,50 @@ document.addEventListener('DOMContentLoaded', function () {
                                    onclick="event.stopPropagation()">
                         </div>
                         <div class="ml-3">
-                            <div class="text-sm font-medium text-gray-700 flex flex-wrap gap-2">
+                            <div class="text-base font-medium text-gray-700 flex flex-wrap gap-2">
                                 <span>${translations.savingsPlan}:</span>
                                 <span class="font-semibold">${savingAmountWhole}</span>
                                 <span>×</span>
                                 <span>${option.periods} ${periodLabel}</span>
                             </div>
-                            <div class="text-xs text-gray-600 mt-2 space-y-1">
 
-                                <div class="flex justify-between">
-                                    <span>${translations.periodicSavingAmount}:</span>
+                            <div class="text-sm text-gray-600 mt-3 space-y-3">
+
+                                <div class="flex items-center py-2 gap-x-4">
+                                    <span class="min-w-[140px]">${translations.periodicSavingAmount}:</span>
                                     <span>${option.saving_amount}</span>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span>${translations.targetDate}:</span>
+                                <div class="flex items-center py-2 gap-x-4">
+                                    <span class="min-w-[140px]">${translations.targetDate}:</span>
                                     <span>${option.target_date}</span>
                                 </div>
-                                <div class="flex justify-between font-semibold">
-                                    <span>${translations.total}:</span>
+                                <div class="flex items-center py-2 gap-x-4 font-semibold">
+                                    <span class="min-w-[140px]">${translations.total}:</span>
                                     <span>${option.total_amount}</span>
                                 </div>
 
                             </div>
+
                         </div>
                     </div>
                 `;
+
                 }
             }
         });
+
     }
 
-
-    // Add event listener to trigger calculation when user enters amount
     const savingAmountInput = document.getElementById('saving_amount_whole');
     if (savingAmountInput) {
         savingAmountInput.addEventListener('input', calculateAndDisplayOptions);
         savingAmountInput.addEventListener('blur', calculateAndDisplayOptions);
     }
+
+    const savingAmountCentsInput = document.getElementById('saving_amount_cents');
+    if (savingAmountCentsInput) {
+        savingAmountCentsInput.addEventListener('input', calculateAndDisplayOptions);
+        savingAmountCentsInput.addEventListener('blur', calculateAndDisplayOptions);
+    }
+
 });

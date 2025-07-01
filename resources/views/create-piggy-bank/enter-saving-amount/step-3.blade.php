@@ -98,6 +98,9 @@
                                 <div id="saving_amount_whole_error_length" class="text-red-500 text-sm mt-1 hidden">
                                     {{ __('saving_amount_whole_length_exceeded') }}
                                 </div>
+                                <div id="saving_amount_max_error" class="text-red-500 text-sm mt-1 hidden">
+                                    {{ __('Saving amount must be less than the target amount.') }}
+                                </div>
 
                             </div>
 
@@ -198,7 +201,7 @@
                             <!-- Short-term Saving Options -->
                             <div>
                                 <h3 class="text-md font-medium text-gray-800 mb-4">{{ __('Short-term Saving Options') }}</h3>
-                                <div id="shortTermOptions" class="space-y-3">
+                                <div id="shortTermOptions" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                     <!-- Populated by JavaScript -->
                                 </div>
                             </div>
@@ -206,7 +209,7 @@
                             <!-- Long-term Saving Options -->
                             <div>
                                 <h3 class="text-md font-medium text-gray-800 mb-4">{{ __('Long-term Saving Options') }}</h3>
-                                <div id="longTermOptions" class="space-y-3">
+                                <div id="longTermOptions" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                     <!-- Populated by JavaScript -->
                                 </div>
                             </div>
@@ -221,7 +224,16 @@
                             routes: {
                                 calculateTargetDates: '{{ localizedRoute("localized.create-piggy-bank.enter-saving-amount.calculate-target-dates", ["locale" => app()->getLocale()]) }}'
                             },
-                            defaultImage: '{{ asset("images/default_piggy_bank.png") }}'
+                            defaultImage: '{{ asset("images/default_piggy_bank.png") }}',
+                            maxSavingAmount: @php
+                                $startingAmount = session('pick_date_step1.starting_amount');
+                                if ($startingAmount && !$startingAmount->isZero()) {
+                                    $maxAmount = session('pick_date_step1.price')->minus($startingAmount);
+                                } else {
+                                    $maxAmount = session('pick_date_step1.price');
+                                }
+                                echo $maxAmount->getAmount()->toFloat() - 0.01; // Subtract 0.01 to make it "less than"
+                            @endphp
                         };
 
                         const translations = {

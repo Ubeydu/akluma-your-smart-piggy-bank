@@ -461,6 +461,12 @@ class PiggyBankCreateController extends Controller
             ], 400);
         }
 
+        // Calculate maximum allowed amount
+        $maxAmount = $step1Data['price'];
+        if (isset($step1Data['starting_amount']) && ! $step1Data['starting_amount']->isZero()) {
+            $maxAmount = $step1Data['price']->minus($step1Data['starting_amount']);
+        }
+
         // Calculate target amount
         $targetAmount = $step1Data['price'];
         if (isset($step1Data['starting_amount']) && ! $step1Data['starting_amount']->isZero()) {
@@ -471,6 +477,15 @@ class PiggyBankCreateController extends Controller
         $savingAmountCents = $validated['saving_amount_cents'] ?? '00';
         $savingAmountString = $validated['saving_amount_whole'].'.'.str_pad($savingAmountCents, 2, '0', STR_PAD_LEFT);
         $savingAmount = \Brick\Money\Money::of($savingAmountString, $targetAmount->getCurrency());
+
+        // Validate that saving amount is less than maximum
+        if ($savingAmount->isGreaterThanOrEqualTo($maxAmount)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Saving amount must be less than the target amount.',
+                'max_amount' => $maxAmount->formatTo(app()->getLocale()),
+            ], 400);
+        }
 
         // Calculate periods needed
         $periodsNeeded = ceil($targetAmount->getAmount()->toFloat() / $savingAmount->getAmount()->toFloat());
