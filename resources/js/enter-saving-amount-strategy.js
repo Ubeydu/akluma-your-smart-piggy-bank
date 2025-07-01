@@ -124,24 +124,24 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="ml-3">
                             <div class="text-base font-medium text-gray-700 flex flex-wrap gap-2">
                                 <span>${translations.savingsPlan}:</span>
-                                <span class="font-semibold">${savingAmountWhole}</span>
+                                <span class="font-semibold">${option.saving_amount}</span>
                                 <span>×</span>
                                 <span>${option.periods} ${periodLabel}</span>
                             </div>
 
                             <div class="text-sm text-gray-600 mt-3 space-y-3">
 
-                                <div class="flex items-center py-2 gap-x-4">
+                                <div class="flex items-center py-2 gap-x-4 font-semibold">
                                     <span class="min-w-[140px]">${translations.periodicSavingAmount}:</span>
                                     <span>${option.saving_amount}</span>
-                                </div>
-                                <div class="flex items-center py-2 gap-x-4">
-                                    <span class="min-w-[140px]">${translations.targetDate}:</span>
-                                    <span>${option.target_date}</span>
                                 </div>
                                 <div class="flex items-center py-2 gap-x-4 font-semibold">
                                     <span class="min-w-[140px]">${translations.total}:</span>
                                     <span>${option.total_amount}</span>
+                                </div>
+                                <div class="flex items-center py-2 gap-x-4 text-green-600 font-bold text-xl">
+                                    <span class="min-w-[140px]">${translations.targetDate}:</span>
+                                    <span>${option.target_date}</span>
                                 </div>
 
                             </div>
