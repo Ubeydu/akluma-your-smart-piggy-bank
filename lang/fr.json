@@ -373,5 +373,6 @@
     "actual_completed_at_label": "Date de réalisation effective",
     "You successfully added money to your piggy bank": "Tu as ajouté de l’argent dans ta tirelire",
     "You successfully took out some money from your piggy bank": "Tu as retiré de l’argent de ta tirelire",
-    "You cannot withdraw more money than what is currently in your piggy bank.": "Vous ne pouvez pas retirer plus d'argent que ce qui se trouve actuellement dans votre tirelire."
+    "You cannot withdraw more money than what is currently in your piggy bank.": "Vous ne pouvez pas retirer plus d'argent que ce qui se trouve actuellement dans votre tirelire.",
+    "Periodic Saving Amount": "Montant périodique d'épargne"
 }

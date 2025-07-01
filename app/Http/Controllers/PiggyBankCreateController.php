@@ -445,11 +445,69 @@ class PiggyBankCreateController extends Controller
 
     public function calculateTargetDates(Request $request)
     {
-        // Calculate target completion dates for different frequencies
+        // Validate the saving amount input
+        $validated = $request->validate([
+            'saving_amount_whole' => 'required|integer|min:10',
+            'saving_amount_cents' => 'nullable|string|max:2',
+        ]);
+
+        // Get step 1 data from session
+        $step1Data = $request->session()->get('pick_date_step1');
+
+        if (! $step1Data || ! isset($step1Data['price'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Step 1 data not found in session',
+            ], 400);
+        }
+
+        // Calculate target amount
+        $targetAmount = $step1Data['price'];
+        if (isset($step1Data['starting_amount']) && ! $step1Data['starting_amount']->isZero()) {
+            $targetAmount = $step1Data['price']->minus($step1Data['starting_amount']);
+        }
+
+        // Convert saving amount to Money object
+        $savingAmountCents = $validated['saving_amount_cents'] ?? '00';
+        $savingAmountString = $validated['saving_amount_whole'].'.'.str_pad($savingAmountCents, 2, '0', STR_PAD_LEFT);
+        $savingAmount = \Brick\Money\Money::of($savingAmountString, $targetAmount->getCurrency());
+
+        // Calculate periods needed
+        $periodsNeeded = ceil($targetAmount->getAmount()->toFloat() / $savingAmount->getAmount()->toFloat());
+
+        // Calculate target dates using Carbon with locale
+        $now = \Carbon\Carbon::now();
+
+        $options = [
+            'days' => [
+                'periods' => $periodsNeeded,
+                'target_date' => $now->copy()->addDays($periodsNeeded)->locale(app()->getLocale())->toDateString(),
+                'saving_amount' => $savingAmount->formatTo(app()->getLocale()),
+                'total_amount' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+            ],
+            'weeks' => [
+                'periods' => $periodsNeeded,
+                'target_date' => $now->copy()->addWeeks($periodsNeeded)->locale(app()->getLocale())->toDateString(),
+                'saving_amount' => $savingAmount->formatTo(app()->getLocale()),
+                'total_amount' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+            ],
+            'months' => [
+                'periods' => $periodsNeeded,
+                'target_date' => $now->copy()->addMonths($periodsNeeded)->locale(app()->getLocale())->toDateString(),
+                'saving_amount' => $savingAmount->formatTo(app()->getLocale()),
+                'total_amount' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+            ],
+            'years' => [
+                'periods' => $periodsNeeded,
+                'target_date' => $now->copy()->addYears($periodsNeeded)->locale(app()->getLocale())->toDateString(),
+                'saving_amount' => $savingAmount->formatTo(app()->getLocale()),
+                'total_amount' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+            ],
+        ];
+
         return response()->json([
             'success' => true,
-            'message' => 'Route working',
-            'received_amount' => $request->input('saving_amount'),
+            'options' => $options,
         ]);
     }
 

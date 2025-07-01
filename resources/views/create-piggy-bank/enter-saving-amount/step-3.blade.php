@@ -193,9 +193,25 @@
                     {{-- Frequency Options Container --}}
                     <div id="frequencyOptions" class="mt-8 hidden">
                         <h2 id="frequencyTitle" class="text-lg font-semibold mb-6">{{ __('Select your saving frequency') }}</h2>
+
                         <div class="space-y-6">
-                            <!-- Will be populated by JavaScript -->
+                            <!-- Short-term Saving Options -->
+                            <div>
+                                <h3 class="text-md font-medium text-gray-800 mb-4">{{ __('Short-term Saving Options') }}</h3>
+                                <div id="shortTermOptions" class="space-y-3">
+                                    <!-- Populated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <!-- Long-term Saving Options -->
+                            <div>
+                                <h3 class="text-md font-medium text-gray-800 mb-4">{{ __('Long-term Saving Options') }}</h3>
+                                <div id="longTermOptions" class="space-y-3">
+                                    <!-- Populated by JavaScript -->
+                                </div>
+                            </div>
                         </div>
+
                     </div>
 
                     <script>
@@ -203,14 +219,21 @@
                             locale: "{{ app()->getLocale() }}",
                             translations: @json(trans()->getLoader()->load(app()->getLocale(), '*', '*')),
                             routes: {
-                                {{--calculateFrequencies: '{{ route("create-piggy-bank.enter-saving-amount.calculate-frequencies", ["locale" => app()->getLocale()]) }}',--}}
-                                {{--storeFrequency: '{{ route("create-piggy-bank.enter-saving-amount.store-frequency", ["locale" => app()->getLocale()]) }}'--}}
+                                calculateTargetDates: '{{ localizedRoute("localized.create-piggy-bank.enter-saving-amount.calculate-target-dates", ["locale" => app()->getLocale()]) }}'
                             },
                             defaultImage: '{{ asset("images/default_piggy_bank.png") }}'
                         };
 
                         const translations = {
-                            formattedSavingAmount: @json(__('formatted: :value'))
+                            formattedSavingAmount: @json(__('formatted: :value')),
+                            savingsPlan: @json(__('Savings plan')),
+                            periodicSavingAmount: @json(__('Periodic Saving Amount')),
+                            targetDate: @json(__('Target Date')),
+                            total: @json(__('Total')),
+                            daily: @json(__('daily')),
+                            weekly: @json(__('weekly')),
+                            monthly: @json(__('monthly')),
+                            yearly: @json(__('yearly'))
                         };
                     </script>
                     @vite(['resources/js/enter-saving-amount-strategy.js'])

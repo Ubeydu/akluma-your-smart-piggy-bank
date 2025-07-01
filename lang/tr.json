@@ -377,5 +377,6 @@
     "Please, enter the amount you want to save regularly. This can be daily, weekly, monthly, or yearly.": "Düzenli olarak kenara ayırmak istediğin miktarı gir. Günlük, haftalık, aylık, ya da yıllık olabilir.",
     "minimum amount 10": "min. 10",
     "saving_amount_whole_numbers_only": "Bu kısma rakam haricinde hiç bir şey yazamazsın.",
-    "saving_amount_whole_length_exceeded": "En fazla 10 haneli bir değer girebilirsin."
+    "saving_amount_whole_length_exceeded": "En fazla 10 haneli bir değer girebilirsin.",
+    "Periodic Saving Amount": "Düzenli birikim miktarı"
 }
