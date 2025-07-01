@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Store the current target dates data globally
+    let currentTargetDatesData = null;
+
+
     // Formatting function for enter saving amount strategy
     window.updateFormattedPrice = function(value, elementId) {
         const formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -61,6 +65,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function displayFrequencyOptions(options) {
+        // Store the current options data for form submission
+        currentTargetDatesData = options;
+
         // Clear existing content first
         const shortTermContainer = document.querySelector('#shortTermOptions');
         const longTermContainer = document.querySelector('#longTermOptions');
@@ -119,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                    name="frequency"
                                    value="${frequency}"
                                    class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                                   onclick="event.stopPropagation()">
+                                   onclick="event.stopPropagation(); handleFrequencySelection('${frequency}')">
                         </div>
                         <div class="ml-3">
                             <div class="text-base font-medium text-gray-700 flex flex-wrap gap-2">
@@ -166,6 +173,36 @@ document.addEventListener('DOMContentLoaded', function () {
     if (savingAmountCentsInput) {
         savingAmountCentsInput.addEventListener('input', calculateAndDisplayOptions);
         savingAmountCentsInput.addEventListener('blur', calculateAndDisplayOptions);
+    }
+
+    // Function to handle frequency selection
+    window.handleFrequencySelection = function(selectedFrequency) {
+        const nextButton = document.getElementById('nextButton');
+        const selectedFrequencyInput = document.getElementById('selectedFrequencyInput');
+        const savingAmountInput = document.getElementById('savingAmountInput');
+        const targetDatesInput = document.getElementById('targetDatesInput');
+
+        if (!nextButton || !selectedFrequencyInput || !savingAmountInput || !targetDatesInput) {
+            console.error('Required form elements not found');
+            return;
+        }
+
+        const savingAmountWhole = document.getElementById('saving_amount_whole').value;
+        const savingAmountCents = document.getElementById('saving_amount_cents')?.value || '00';
+        const fullSavingAmount = savingAmountWhole + '.' + savingAmountCents;
+
+        selectedFrequencyInput.value = selectedFrequency;
+        savingAmountInput.value = fullSavingAmount;
+        targetDatesInput.value = JSON.stringify(currentTargetDatesData);
+
+        nextButton.disabled = false;
+        nextButton.classList.remove('disabled:bg-gray-400', 'disabled:cursor-not-allowed', 'disabled:hover:bg-gray-300');
+    }
+
+    // Disable Next button initially
+    const nextButton = document.getElementById('nextButton');
+    if (nextButton) {
+        nextButton.disabled = true;
     }
 
 });

@@ -292,9 +292,14 @@
                             </x-secondary-button>
                         </form>
 
-                        <form method="POST" action="{{ localizedRoute('localized.create-piggy-bank.pick-date.show-summary') }}">
+                        <form method="POST" action="{{ localizedRoute('localized.create-piggy-bank.enter-saving-amount.process-step-3') }}">
                             @csrf
-                            <x-primary-button type="submit" id="nextButton" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start disabled:bg-gray-400 disabled:cursor-not-allowed  disabled:hover:bg-gray-300">
+                            <!-- Add hidden fields to send the data -->
+                            <input type="hidden" name="selected_frequency" id="selectedFrequencyInput">
+                            <input type="hidden" name="saving_amount" id="savingAmountInput">
+                            <input type="hidden" name="target_dates" id="targetDatesInput">
+
+                            <x-primary-button type="submit" id="nextButton" class="w-[200px] sm:w-auto justify-center sm:justify-start disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-300">
                                 {{ __('Next') }}
                             </x-primary-button>
                         </form>

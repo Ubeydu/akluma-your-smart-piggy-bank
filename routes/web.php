@@ -206,6 +206,22 @@ Route::localizedPost('create-piggy-bank/pick-date/store', [PiggyBankCreateContro
     ->name('localized.create-piggy-bank.pick-date.store')
     ->middleware(['conditional.layout', 'auth', 'verified']);
 
+Route::localizedGet('create-piggy-bank/enter-saving-amount/show-summary', [PiggyBankCreateController::class, 'showEnterSavingAmountSummary'])
+    ->name('localized.create-piggy-bank.enter-saving-amount.show-summary')
+    ->middleware(['conditional.layout']);
+
+Route::localizedPost('create-piggy-bank/enter-saving-amount/show-summary', [PiggyBankCreateController::class, 'showEnterSavingAmountSummary'])
+    ->name('localized.create-piggy-bank.enter-saving-amount.show-summary.post')
+    ->middleware(['conditional.layout']);
+
+Route::localizedPost('create-piggy-bank/enter-saving-amount/store', [PiggyBankCreateController::class, 'storeEnterSavingAmountPiggyBank'])
+    ->name('localized.create-piggy-bank.enter-saving-amount.store')
+    ->middleware(['auth', 'conditional.layout', 'verified']);
+
+Route::localizedPost('create-piggy-bank/enter-saving-amount/process-step-3', [PiggyBankCreateController::class, 'processEnterSavingAmountStep3'])
+    ->name('localized.create-piggy-bank.enter-saving-amount.process-step-3')
+    ->middleware(['conditional.layout']);
+
 // API and internal routes for create-piggy-bank (non-localized)
 Route::post('api/create-piggy-bank/link-preview', [PiggyBankCreateController::class, 'fetchLinkPreview'])
     ->name('create-piggy-bank.api.link-preview');
