@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="ml-3">
                             <div class="text-base font-medium text-gray-700 flex flex-wrap gap-2">
                                 <span>${translations.savingsPlan}:</span>
-                                <span class="font-semibold">${option.saving_amount}</span>
+                                <span class="font-semibold">${option.saving_amount.formatted_value}</span>
                                 <span>×</span>
                                 <span>${option.periods} ${periodLabel}</span>
                             </div>
@@ -140,11 +140,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
                                 <div class="flex items-center py-2 gap-x-4 font-semibold">
                                     <span class="min-w-[140px]">${translations.periodicSavingAmount}:</span>
-                                    <span>${option.saving_amount}</span>
+                                    <span>${option.saving_amount.formatted_value}</span>
                                 </div>
                                 <div class="flex items-center py-2 gap-x-4 font-semibold">
                                     <span class="min-w-[140px]">${translations.total}:</span>
-                                    <span>${option.total_amount}</span>
+                                    <span>${option.total_amount.formatted_value}</span>
                                 </div>
                                 <div class="flex items-center py-2 gap-x-4 text-green-600 font-bold text-xl">
                                     <span class="min-w-[140px]">${translations.targetDate}:</span>

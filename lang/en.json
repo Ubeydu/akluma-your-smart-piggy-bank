@@ -53,6 +53,7 @@
     "Final Total": "Final amount you will have when you open your piggy bank",
     "Total Savings": "Sum of Periodic Savings",
     "Extra Savings Tooltip Info": "We rounded your savings amount to avoid dealing with fractional contributions in your periodic deposits. This extra amount comes from that adjustment.",
+    "Extra Savings Tooltip Info For Enter Saving Amount Strategy": "You'll save slightly more than needed because your periodic amount doesn't divide evenly into the target. This extra ensures you reach your goal.",
     "paused_message": "Piggy bank is paused. Activate it first to change the status of your savings.",
     "piggy_bank_paused_info": "You paused saving. When you decide to continue, simply activate your piggy bank.",
     "piggy_bank_resumed_schedule_updated_info": "You resumed your piggy bank and schedule updated.",

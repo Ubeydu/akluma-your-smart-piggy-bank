@@ -133,9 +133,30 @@
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <h3 class="text-sm font-medium text-gray-500 flex items-center gap-1">
                                     {{ __('Extra Savings') }}
+                                    <span x-data="{ showTooltip: false }" class="relative cursor-help">
+                                        <svg @mouseenter="showTooltip = true"
+                                             @mouseleave="showTooltip = false"
+                                             xmlns="http://www.w3.org/2000/svg"
+                                             fill="none"
+                                             viewBox="0 0 24 24"
+                                             stroke-width="2"
+                                             stroke="currentColor"
+                                             class="w-4 h-4 text-gray-500 hover:text-gray-800 transition-colors duration-200">
+                                        <path stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                        </svg>
+
+                                    <div x-show="showTooltip"
+                                         x-cloak
+                                         class="absolute z-10 w-64 px-4 py-2 mt-2 text-sm bg-gray-900 text-white rounded-lg shadow-lg -translate-x-1/2 left-1/2"
+                                         role="tooltip">
+                                            {{ __('Extra Savings Tooltip Info For Enter Saving Amount Strategy') }}
+                                    </div>
+                                    </span>
                                 </h3>
                                 <p class="mt-1 text-lg font-semibold text-gray-900">
-                                    -
+                                    {{ $extraSavings ? $extraSavings->formatTo(App::getLocale()) : '-' }}
                                 </p>
                             </div>
 
@@ -144,7 +165,7 @@
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <h3 class="text-sm font-medium text-gray-500">{{ __('Total Savings') }}</h3>
                                 <p class="mt-1 text-lg font-semibold text-gray-900">
-                                    {{ $summary['enter_saving_amount_step3']['target_dates'][$summary['enter_saving_amount_step3']['selected_frequency']]['total_amount'] ?? '-' }}
+                                    {{ $summary['enter_saving_amount_step3']['target_dates'][$summary['enter_saving_amount_step3']['selected_frequency']]['total_amount']['formatted_value'] ?? '-' }}
                                 </p>
                             </div>
 
@@ -194,32 +215,7 @@
                     <div class="bg-gray-100 rounded-lg p-4 border-2 border-gray-800 shadow-md">
                         <h3 class="text-sm font-medium text-gray-500">{{ __('Planned Final Total') }}</h3>
                         <p class="mt-1 text-xl font-bold text-gray-900">
-                            @php
-                                $startingAmount = $summary['pick_date_step1']['starting_amount'] ?? null;
-                                $totalScheduledSavings = $summary['enter_saving_amount_step3']['target_dates'][$summary['enter_saving_amount_step3']['selected_frequency']]['total_amount'] ?? null;
-
-                                // Convert total_amount string to Money object if needed
-                                if ($totalScheduledSavings && is_string($totalScheduledSavings)) {
-                                    // Extract currency and amount from string like "£6,000.00"
-                                    $currency = $summary['pick_date_step1']['currency'];
-                                    $cleanAmount = preg_replace('/[^\d.,]/', '', $totalScheduledSavings);
-                                    $cleanAmount = str_replace(',', '', $cleanAmount);
-                                    $totalScheduledSavings = Money::of($cleanAmount, $currency);
-                                }
-
-                                // Calculate final total
-                                if ($startingAmount && $totalScheduledSavings) {
-                                    $finalTotal = $startingAmount->plus($totalScheduledSavings);
-                                } elseif ($totalScheduledSavings) {
-                                    $finalTotal = $totalScheduledSavings;
-                                } elseif ($startingAmount) {
-                                    $finalTotal = $startingAmount;
-                                } else {
-                                    $finalTotal = null;
-                                }
-                            @endphp
-
-                            {{ $finalTotal ? $finalTotal->formatTo(App::getLocale()) : '-' }}
+                            {{ $plannedFinalTotal ? $plannedFinalTotal->formatTo(App::getLocale()) : '-' }}
                         </p>
                     </div>
 

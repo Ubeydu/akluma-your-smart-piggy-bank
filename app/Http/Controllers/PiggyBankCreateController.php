@@ -313,6 +313,14 @@ class PiggyBankCreateController extends Controller
      */
     public function renderStrategyView(Request $request)
     {
+//        // TEMPORARY DEBUG - Remove after fixing
+//        dd([
+//            'chosen_strategy_session' => $request->session()->get('chosen_strategy'),
+//            'current_url' => $request->url(),
+//            'route_name' => $request->route()->getName(),
+//            'all_session_keys' => array_keys($request->session()->all())
+//        ]);
+
         // Get the chosen strategy from the session
         $strategy = $request->session()->get('chosen_strategy');
 
@@ -491,32 +499,60 @@ class PiggyBankCreateController extends Controller
         $periodsNeeded = ceil($targetAmount->getAmount()->toFloat() / $savingAmount->getAmount()->toFloat());
 
         // Calculate target dates using Carbon with locale
-        $now = \Carbon\Carbon::now();
+        $startDate = \Carbon\Carbon::tomorrow();
 
         $options = [
             'days' => [
                 'periods' => $periodsNeeded,
-                'target_date' => $now->copy()->addDays($periodsNeeded)->locale(app()->getLocale())->toDateString(),
-                'saving_amount' => $savingAmount->formatTo(app()->getLocale()),
-                'total_amount' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+                'target_date_raw' => $startDate->copy()->addDays($periodsNeeded - 1)->toDateString(),
+                'target_date' => $startDate->copy()->addDays($periodsNeeded - 1)->locale(app()->getLocale())->isoFormat('L'),
+                'saving_amount' => [
+                    'amount' => $savingAmount,
+                    'formatted_value' => $savingAmount->formatTo(app()->getLocale()),
+                ],
+                'total_amount' => [
+                    'amount' => $savingAmount->multipliedBy($periodsNeeded),
+                    'formatted_value' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+                ],
             ],
             'weeks' => [
                 'periods' => $periodsNeeded,
-                'target_date' => $now->copy()->addWeeks($periodsNeeded)->locale(app()->getLocale())->toDateString(),
-                'saving_amount' => $savingAmount->formatTo(app()->getLocale()),
-                'total_amount' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+                'target_date_raw' => $startDate->copy()->addWeeks($periodsNeeded - 1)->toDateString(),
+                'target_date' => $startDate->copy()->addWeeks($periodsNeeded - 1)->locale(app()->getLocale())->isoFormat('L'),
+                'saving_amount' => [
+                    'amount' => $savingAmount,
+                    'formatted_value' => $savingAmount->formatTo(app()->getLocale()),
+                ],
+                'total_amount' => [
+                    'amount' => $savingAmount->multipliedBy($periodsNeeded),
+                    'formatted_value' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+                ],
             ],
             'months' => [
                 'periods' => $periodsNeeded,
-                'target_date' => $now->copy()->addMonths($periodsNeeded)->locale(app()->getLocale())->toDateString(),
-                'saving_amount' => $savingAmount->formatTo(app()->getLocale()),
-                'total_amount' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+                'target_date_raw' => $startDate->copy()->addMonths($periodsNeeded - 1)->toDateString(),
+                'target_date' => $startDate->copy()->addMonths($periodsNeeded - 1)->locale(app()->getLocale())->isoFormat('L'),
+                'saving_amount' => [
+                    'amount' => $savingAmount,
+                    'formatted_value' => $savingAmount->formatTo(app()->getLocale()),
+                ],
+                'total_amount' => [
+                    'amount' => $savingAmount->multipliedBy($periodsNeeded),
+                    'formatted_value' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+                ],
             ],
             'years' => [
                 'periods' => $periodsNeeded,
-                'target_date' => $now->copy()->addYears($periodsNeeded)->locale(app()->getLocale())->toDateString(),
-                'saving_amount' => $savingAmount->formatTo(app()->getLocale()),
-                'total_amount' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+                'target_date_raw' => $startDate->copy()->addYears($periodsNeeded - 1)->toDateString(),
+                'target_date' => $startDate->copy()->addYears($periodsNeeded - 1)->locale(app()->getLocale())->isoFormat('L'),
+                'saving_amount' => [
+                    'amount' => $savingAmount,
+                    'formatted_value' => $savingAmount->formatTo(app()->getLocale()),
+                ],
+                'total_amount' => [
+                    'amount' => $savingAmount->multipliedBy($periodsNeeded),
+                    'formatted_value' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+                ],
             ],
         ];
 
@@ -790,9 +826,7 @@ class PiggyBankCreateController extends Controller
 
         $request->session()->put('payment_schedule', $paymentSchedule);
 
-        $targetDate = ($targetDateData['target_date'] instanceof Carbon)
-            ? $targetDateData['target_date']->toDateString()
-            : $targetDateData['target_date'];
+        $targetDate = $targetDateData['target_date_raw'];
         $targetDate = Carbon::createFromFormat('Y-m-d', $targetDate);
 
         $finalPaymentDate = Carbon::createFromFormat('Y-m-d', $paymentSchedule[count($paymentSchedule) - 1]['date']);
@@ -840,6 +874,34 @@ class PiggyBankCreateController extends Controller
                 ->count();
         }
 
+        // Calculate planned final total
+        $startingAmount = $summary['pick_date_step1']['starting_amount'] ?? null;
+        $totalSavingsData = $summary['enter_saving_amount_step3']['target_dates'][$selectedFrequency]['total_amount']['amount'] ?? null;
+        $totalSavingsAmount = null;
+        if ($totalSavingsData && is_array($totalSavingsData)) {
+            $totalSavingsAmount = Money::of($totalSavingsData['amount'], $totalSavingsData['currency']);
+        }
+
+
+        $plannedFinalTotal = null;
+        if ($startingAmount && $totalSavingsAmount) {
+            $plannedFinalTotal = $startingAmount->plus($totalSavingsAmount);
+        } elseif ($startingAmount) {
+            $plannedFinalTotal = $startingAmount;
+        } elseif ($totalSavingsAmount) {
+            $plannedFinalTotal = $totalSavingsAmount;
+        }
+
+        // Calculate extra savings (difference between total periodic savings and target amount)
+        $extraSavings = null;
+        if ($totalSavingsAmount) {
+            $targetAmountForCalculation = $summary['pick_date_step1']['starting_amount']
+                ? $summary['pick_date_step1']['price']->minus($summary['pick_date_step1']['starting_amount'])
+                : $summary['pick_date_step1']['price'];
+
+            $extraSavings = $totalSavingsAmount->minus($targetAmountForCalculation);
+        }
+
         // Return view with all necessary data
         return view('create-piggy-bank.enter-saving-amount.summary', [
             'summary' => $summary,
@@ -848,6 +910,8 @@ class PiggyBankCreateController extends Controller
             'savingCompletionDate' => $savingCompletionDate->format('Y-m-d'),
             'activePiggyBanksCount' => $activePiggyBanksCount,
             'maxActivePiggyBanks' => PiggyBank::MAX_ACTIVE_PIGGY_BANKS,
+            'plannedFinalTotal' => $plannedFinalTotal,
+            'extraSavings' => $extraSavings,
         ]);
     }
 
