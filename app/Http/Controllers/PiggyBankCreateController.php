@@ -938,6 +938,9 @@ class PiggyBankCreateController extends Controller
             $step3Data = $request->session()->get('enter_saving_amount_step3');
             $selectedFrequency = $step3Data['selected_frequency'];
             $targetDateData = $step3Data['target_dates'][$selectedFrequency];
+
+
+
             $paymentSchedule = $request->session()->get('payment_schedule');
 
             $piggyBank = new PiggyBank;
@@ -946,9 +949,21 @@ class PiggyBankCreateController extends Controller
 
             $piggyBank->price = $step1Data['price']->getAmount()->toFloat();
             $piggyBank->starting_amount = $step1Data['starting_amount']?->getAmount()->toFloat();
-            $piggyBank->target_amount = $targetDateData['target_amount']['amount']->getAmount()->toFloat();
-            $piggyBank->extra_savings = $targetDateData['extra_savings']['amount']->getAmount()->toFloat();
-            $piggyBank->total_savings = $targetDateData['total_savings']['amount']->getAmount()->toFloat();
+
+            // Calculate target amount (same logic as in summary view)
+            $targetAmountForDB = $step1Data['starting_amount']
+                ? $step1Data['price']->minus($step1Data['starting_amount'])
+                : $step1Data['price'];
+            $piggyBank->target_amount = $targetAmountForDB->getAmount()->toFloat();
+
+            // Reconstruct Money objects from serialized arrays
+            $totalAmountData = $targetDateData['total_amount']['amount'];
+            $totalAmountMoney = Money::of($totalAmountData['amount'], $totalAmountData['currency']);
+            $piggyBank->total_savings = $totalAmountMoney->getAmount()->toFloat();
+
+            // Calculate extra savings
+            $extraSavingsMoney = $totalAmountMoney->minus($targetAmountForDB);
+            $piggyBank->extra_savings = $extraSavingsMoney->getAmount()->toFloat();
 
             $piggyBank->final_total = ($piggyBank->starting_amount ?? 0) + ($piggyBank->total_savings ?? 0);
 

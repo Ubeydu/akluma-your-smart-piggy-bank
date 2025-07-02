@@ -88,9 +88,7 @@
 
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500">{{ __('Target Date') }}</h3>
-                                <p class="mt-1 text-base text-gray-900">{{ $summary['enter_saving_amount_step3']['target_dates'][$summary['enter_saving_amount_step3']['selected_frequency']]['target_date'] instanceof Carbon\Carbon
-    ? $summary['enter_saving_amount_step3']['target_dates'][$summary['enter_saving_amount_step3']['selected_frequency']]['target_date']->copy()->setTimezone(config('app.timezone'))->locale(App::getLocale())->isoFormat('LL')
-    : Carbon\Carbon::parse($summary['enter_saving_amount_step3']['target_dates'][$summary['enter_saving_amount_step3']['selected_frequency']]['target_date'])->utc()->setTimezone(config('app.timezone'))->locale(App::getLocale())->isoFormat('LL') }}</p>
+                                <p class="mt-1 text-base text-gray-900">{{ $summary['enter_saving_amount_step3']['target_dates'][$summary['enter_saving_amount_step3']['selected_frequency']]['target_date'] }}</p>
                             </div>
 
                             @if($dateMessage)
