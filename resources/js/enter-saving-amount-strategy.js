@@ -130,24 +130,20 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                         <div class="ml-3 flex-1 min-w-0">
 
-                            <div class="text-base font-medium text-gray-700 flex items-center gap-x-4 flex-wrap">
+                            <div class="text-base text-gray-700 flex items-center gap-x-4 flex-wrap">
                                 <span class="min-w-[120px] sm:min-w-[200px]">${translations.savingsPlan}:</span>
-                                <span class="font-semibold break-words">${option.saving_amount.formatted_value} × ${option.periods} ${periodLabel}</span>
+                                <span class="font-mono break-words">${option.saving_amount.formatted_value} × ${option.periods} ${periodLabel}</span>
                             </div>
 
                             <div class="text-base text-gray-600 mt-3 space-y-3">
 
-                                <div class="flex items-center py-2 gap-x-4 font-semibold flex-wrap">
-                                    <span class="min-w-[180px] sm:min-w-[200px]">${translations.periodicSavingAmount}:</span>
-                                    <span class="break-words">${option.saving_amount.formatted_value}</span>
-                                </div>
-                                <div class="flex items-center py-2 gap-x-4 font-semibold flex-wrap">
+                                <div class="flex items-center py-2 gap-x-4 flex-wrap">
                                     <span class="min-w-[180px] sm:min-w-[200px]">${translations.total}:</span>
-                                    <span class="break-words">${option.total_amount.formatted_value}</span>
+                                    <span class="font-mono break-words bg-gray-50 px-2 py-1 rounded">${option.total_amount.formatted_value}</span>
                                 </div>
-                                <div class="flex items-center py-2 gap-x-4 text-green-600 font-bold text-lg flex-wrap">
+                                <div class="flex items-center py-2 gap-x-4 text-green-600 flex-wrap">
                                     <span class="min-w-[100px] sm:min-w-[200px]">${translations.targetDate}:</span>
-                                    <span class="break-words">${option.target_date}</span>
+                                    <span class="font-mono break-words bg-gray-50 px-2 py-1 rounded">${option.target_date}</span>
                                 </div>
 
                             </div>
