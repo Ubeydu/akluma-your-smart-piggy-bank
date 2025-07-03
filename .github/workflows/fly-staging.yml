@@ -41,6 +41,21 @@ jobs:
       - uses: superfly/flyctl-actions/setup-flyctl@master
         if: steps.check_files.outputs.only_docs != 'true'
 
+      - name: Setup Node.js
+        if: steps.check_files.outputs.only_docs != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        if: steps.check_files.outputs.only_docs != 'true'
+        run: npm ci
+
+      - name: Build assets
+        if: steps.check_files.outputs.only_docs != 'true'
+        run: npm run build
+
       - name: Deploy to Fly.io
         if: steps.check_files.outputs.only_docs != 'true'
         run: flyctl deploy --remote-only -c fly.staging.toml
