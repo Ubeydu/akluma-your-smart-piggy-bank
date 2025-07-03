@@ -166,13 +166,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const savingAmountInput = document.getElementById('saving_amount_whole');
     if (savingAmountInput) {
         savingAmountInput.addEventListener('input', calculateAndDisplayOptions);
-        savingAmountInput.addEventListener('blur', calculateAndDisplayOptions);
+        // Re-generate options when page loads if amount is already filled
+        window.addEventListener('load', function() {
+            const savingAmountInput = document.getElementById('saving_amount_whole');
+            if (savingAmountInput && savingAmountInput.value && savingAmountInput.value >= 10) {
+                calculateAndDisplayOptions();
+            }
+        });
     }
 
     const savingAmountCentsInput = document.getElementById('saving_amount_cents');
     if (savingAmountCentsInput) {
         savingAmountCentsInput.addEventListener('input', calculateAndDisplayOptions);
-        savingAmountCentsInput.addEventListener('blur', calculateAndDisplayOptions);
     }
 
     // Function to handle frequency selection
