@@ -66,7 +66,7 @@
     "pick_date_strategy_definition": "Kumbaranı açıp, ürünü almak istediğin tarihi belirle. Biz de buna göre her hafta ya da her ay ne kadar para kenara ayırman gerektiğini belirleyelim.",
     "enter_saving_amount_strategy_definition": "Düzenli olarak kenara ayırmak istediğin miktarı belirle. Biz de buna göre ne zaman istediğin ürünü alabileceğini hesaplayalım.",
     "Pick Date": "Tarih Belirle",
-    "Enter Saving Amount" : "Düzenli Birikim Miktarı Belirle",
+    "Enter Periodic Saving Amount" : "Düzenli Birikim Miktarı Belirle",
     "Previous": "Önceki Sayfa",
     "Please pick a valid future date.": "Lütfen geçerli bir tarih seçin.",
     "You picked": "Seçtiğin tarih",

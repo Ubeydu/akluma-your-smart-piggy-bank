@@ -313,13 +313,13 @@ class PiggyBankCreateController extends Controller
      */
     public function renderStrategyView(Request $request)
     {
-//        // TEMPORARY DEBUG - Remove after fixing
-//        dd([
-//            'chosen_strategy_session' => $request->session()->get('chosen_strategy'),
-//            'current_url' => $request->url(),
-//            'route_name' => $request->route()->getName(),
-//            'all_session_keys' => array_keys($request->session()->all())
-//        ]);
+        //        // TEMPORARY DEBUG - Remove after fixing
+        //        dd([
+        //            'chosen_strategy_session' => $request->session()->get('chosen_strategy'),
+        //            'current_url' => $request->url(),
+        //            'route_name' => $request->route()->getName(),
+        //            'all_session_keys' => array_keys($request->session()->all())
+        //        ]);
 
         // Get the chosen strategy from the session
         $strategy = $request->session()->get('chosen_strategy');
@@ -813,7 +813,6 @@ class PiggyBankCreateController extends Controller
         $selectedFrequency = $summary['enter_saving_amount_step3']['selected_frequency'];
         $targetDateData = $summary['enter_saving_amount_step3']['target_dates'][$selectedFrequency];
 
-
         // Generate payment schedule
         $scheduleService = new SavingScheduleService;
 
@@ -882,7 +881,6 @@ class PiggyBankCreateController extends Controller
             $totalSavingsAmount = Money::of($totalSavingsData['amount'], $totalSavingsData['currency']);
         }
 
-
         $plannedFinalTotal = null;
         if ($startingAmount && $totalSavingsAmount) {
             $plannedFinalTotal = $startingAmount->plus($totalSavingsAmount);
@@ -938,8 +936,6 @@ class PiggyBankCreateController extends Controller
             $step3Data = $request->session()->get('enter_saving_amount_step3');
             $selectedFrequency = $step3Data['selected_frequency'];
             $targetDateData = $step3Data['target_dates'][$selectedFrequency];
-
-
 
             $paymentSchedule = $request->session()->get('payment_schedule');
 

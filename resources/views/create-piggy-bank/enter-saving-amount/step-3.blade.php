@@ -12,7 +12,7 @@
                     <h1 class="text-lg font-semibold mb-4">{{ __('Step 3 of 3') }}</h1>
 
                     <div class="mb-6">
-                        <x-input-label for="saving_amount_whole" class="font-semibold text-gray-900"> {{ __('Enter Saving Amount') }} </x-input-label>
+                        <x-input-label for="saving_amount_whole" class="font-semibold text-gray-900"> {{ __('Enter Periodic Saving Amount') }} </x-input-label>
                         <p class="text-gray-500 text-sm mt-1">
                             {{ __('Please, enter the amount you want to save regularly. This can be daily, weekly, monthly, or yearly.') }}
                         </p>
@@ -214,7 +214,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     <script>

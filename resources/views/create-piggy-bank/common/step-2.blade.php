@@ -13,16 +13,6 @@
                     <p class="text-gray-600 mb-6">{{ __('Choose your strategy') }}</p>
 
                     <div class="grid gap-6 mb-6">
-                        <!-- Pick Date Strategy -->
-                        <form action="{{ localizedRoute('localized.create-piggy-bank.choose-strategy') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="strategy" value="pick-date">
-                            <button type="submit" class="w-full p-6 text-left border rounded-lg hover:border-indigo-500 focus:outline-hidden focus:border-indigo-500 transition-colors duration-200 cursor-pointer">
-                                <h3 class="text-xl font-semibold mb-3">{{ __('Pick Date') }}</h3>
-                                <p class="text-gray-600">{{ __('pick_date_strategy_definition') }}</p>
-                            </button>
-                        </form>
-
                         <!-- Enter Saving Amount Strategy -->
                         <form method="POST" action="{{ localizedRoute('localized.create-piggy-bank.choose-strategy') }}" class="relative w-full">
                             @csrf
@@ -33,15 +23,20 @@
                                 type="submit"
                                 class="w-full p-6 text-left border rounded-lg hover:border-indigo-500 focus:outline-hidden focus:border-indigo-500 transition-colors duration-200 cursor-pointer"
                             >
-                                <h3 class="text-xl font-semibold mb-3">{{ __('Enter Saving Amount') }}</h3>
+                                <h3 class="text-xl font-semibold mb-3">{{ __('Enter Periodic Saving Amount') }}</h3>
                                 <p class="text-gray-600">{{ __('enter_saving_amount_strategy_definition') }}</p>
                             </button>
-
-
-
                         </form>
 
-
+                        <!-- Pick Date Strategy -->
+                        <form action="{{ localizedRoute('localized.create-piggy-bank.choose-strategy') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="strategy" value="pick-date">
+                            <button type="submit" class="w-full p-6 text-left border rounded-lg hover:border-indigo-500 focus:outline-hidden focus:border-indigo-500 transition-colors duration-200 cursor-pointer">
+                                <h3 class="text-xl font-semibold mb-3">{{ __('Pick Date') }}</h3>
+                                <p class="text-gray-600">{{ __('pick_date_strategy_definition') }}</p>
+                            </button>
+                        </form>
                     </div>
 
                     <!-- Action Buttons -->
