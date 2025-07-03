@@ -194,10 +194,10 @@
     "You switched the currency to :currency": "Vous avez changé la devise en :currency",
     "There was a problem setting currency. Please reload the page and try again.": "Un problème est survenu lors de la définition de la devise. Veuillez recharger la page et réessayer.",
     "Choose your strategy": "Choisissez votre stratégie",
-    "pick_date_strategy_definition": "Choisissez une date pour votre objectif d'achat. Nous calculerons combien économiser chaque semaine ou chaque mois pour l'atteindre.",
-    "enter_saving_amount_strategy_definition": "Indiquez un montant d'épargne régulier. Nous calculerons quand vous pourrez acheter l'article.",
+    "pick_date_strategy_definition": "Décidez de la date à laquelle vous souhaitez atteindre votre objectif d’achat. Ensuite, nous vous montrerons combien mettre de côté régulièrement pour y parvenir.",
+    "enter_saving_amount_strategy_definition": "Dites-nous combien vous souhaitez mettre de côté périodiquement, puis nous vous dirons quand vous atteindrez votre objectif.",
     "Pick Date": "Choisissez la date",
-    "Enter Saving Amount": "Saisir le montant d'épargne",
+    "Enter Periodic Saving Amount": "Saisis le montant à économiser régulièrement",
     "Previous": "Précédent",
     "Please pick a valid future date.": "Veuillez choisir une date future valide.",
     "You picked": "Vous avez choisi",
@@ -373,5 +373,12 @@
     "actual_completed_at_label": "Date de réalisation effective",
     "You successfully added money to your piggy bank": "Tu as ajouté de l’argent dans ta tirelire",
     "You successfully took out some money from your piggy bank": "Tu as retiré de l’argent de ta tirelire",
-    "You cannot withdraw more money than what is currently in your piggy bank.": "Vous ne pouvez pas retirer plus d'argent que ce qui se trouve actuellement dans votre tirelire."
+    "You cannot withdraw more money than what is currently in your piggy bank.": "Vous ne pouvez pas retirer plus d'argent que ce qui se trouve actuellement dans votre tirelire.",
+    "Periodic Saving Amount": "Montant périodique d'épargne",
+    "Saving amount must be less than the target amount.": "Le montant d’épargne régulière doit être inférieur à l’objectif d’épargne.",
+    "Please, enter the amount you want to save regularly. This can be daily, weekly, monthly, or yearly.": "Veuillez saisir le montant que vous souhaitez épargner régulièrement. Cela peut être chaque jour, chaque semaine, chaque mois ou chaque année.",
+    "minimum amount 10": "min. 10",
+    "saving_amount_whole_numbers_only": "Vous pouvez entrer uniquement des chiffres dans ce champ.",
+    "saving_amount_whole_length_exceeded": "Vous pouvez entrer un maximum de 10 chiffres.",
+    "Extra Savings Tooltip Info For Enter Saving Amount Strategy": "Vous épargnerez un peu plus que nécessaire, car votre montant périodique ne se divise pas parfaitement dans l’objectif. Ce surplus garantit que vous atteindrez votre but."
 }
