@@ -132,14 +132,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
                             <div class="text-base text-gray-700 flex items-center gap-x-4 flex-wrap">
                                 <span class="min-w-[120px] sm:min-w-[200px]">${translations.savingsPlan}:</span>
-                                <span class="font-mono break-words">${option.saving_amount.formatted_value} × ${option.periods} ${periodLabel}</span>
+                                <span class="break-words">${option.saving_amount.formatted_value} × ${option.periods} ${periodLabel}</span>
                             </div>
 
                             <div class="text-base text-gray-600 mt-3 space-y-3">
 
                                 <div class="flex items-center py-2 gap-x-4 flex-wrap">
                                     <span class="min-w-[180px] sm:min-w-[200px]">${translations.total}:</span>
-                                    <span class="font-mono break-words bg-gray-50 px-2 py-1 rounded">${option.total_amount.formatted_value}</span>
+                                    <span class="break-words bg-gray-50 px-2 py-1 rounded">${option.total_amount.formatted_value}</span>
                                 </div>
                                 <div class="flex items-center py-2 gap-x-4 text-green-600 flex-wrap">
                                     <span class="min-w-[100px] sm:min-w-[200px]">${translations.targetDate}:</span>
