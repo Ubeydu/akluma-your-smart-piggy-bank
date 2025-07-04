@@ -295,17 +295,14 @@ class PiggyBankCreateController extends Controller
             'strategy' => 'required|in:pick-date,enter-saving-amount',
         ]);
 
-        // Check if user is trying to access the feature that is not yet available
-        if ($validated['strategy'] === 'enter-saving-amount') {
-            return redirect()->back()->with('error', 'This feature is coming soon.');
-        }
-
         // Store the chosen strategy in the session
         $request->session()->put('chosen_strategy', $validated['strategy']);
 
         // Redirect to the appropriate Step 3
         if ($validated['strategy'] === 'pick-date') {
             return redirect(localizedRoute('localized.create-piggy-bank.pick-date.step-3'));
+        } elseif ($validated['strategy'] === 'enter-saving-amount') {
+            return redirect(localizedRoute('localized.create-piggy-bank.enter-saving-amount.step-3'));
         }
 
         return redirect()->back()->withErrors(['strategy' => 'Invalid strategy selected.']);
@@ -316,6 +313,14 @@ class PiggyBankCreateController extends Controller
      */
     public function renderStrategyView(Request $request)
     {
+        //        // TEMPORARY DEBUG - Remove after fixing
+        //        dd([
+        //            'chosen_strategy_session' => $request->session()->get('chosen_strategy'),
+        //            'current_url' => $request->url(),
+        //            'route_name' => $request->route()->getName(),
+        //            'all_session_keys' => array_keys($request->session()->all())
+        //        ]);
+
         // Get the chosen strategy from the session
         $strategy = $request->session()->get('chosen_strategy');
 
@@ -444,6 +449,117 @@ class PiggyBankCreateController extends Controller
         $request->session()->put('pick_date_step3', $step3Data);
 
         return response()->json(['success' => true]);
+    }
+
+    public function calculateTargetDates(Request $request)
+    {
+        // Validate the saving amount input
+        $validated = $request->validate([
+            'saving_amount_whole' => 'required|integer|min:10',
+            'saving_amount_cents' => 'nullable|string|max:2',
+        ]);
+
+        // Get step 1 data from session
+        $step1Data = $request->session()->get('pick_date_step1');
+
+        if (! $step1Data || ! isset($step1Data['price'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Step 1 data not found in session',
+            ], 400);
+        }
+
+        // Calculate maximum allowed amount
+        $maxAmount = $step1Data['price'];
+        if (isset($step1Data['starting_amount']) && ! $step1Data['starting_amount']->isZero()) {
+            $maxAmount = $step1Data['price']->minus($step1Data['starting_amount']);
+        }
+
+        // Calculate target amount
+        $targetAmount = $step1Data['price'];
+        if (isset($step1Data['starting_amount']) && ! $step1Data['starting_amount']->isZero()) {
+            $targetAmount = $step1Data['price']->minus($step1Data['starting_amount']);
+        }
+
+        // Convert saving amount to Money object
+        $savingAmountCents = $validated['saving_amount_cents'] ?? '00';
+        $savingAmountString = $validated['saving_amount_whole'].'.'.str_pad($savingAmountCents, 2, '0', STR_PAD_LEFT);
+        $savingAmount = \Brick\Money\Money::of($savingAmountString, $targetAmount->getCurrency());
+
+        // Validate that saving amount is less than maximum
+        if ($savingAmount->isGreaterThanOrEqualTo($maxAmount)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Saving amount must be less than the target amount.',
+                'max_amount' => $maxAmount->formatTo(app()->getLocale()),
+            ], 400);
+        }
+
+        // Calculate periods needed
+        $periodsNeeded = ceil($targetAmount->getAmount()->toFloat() / $savingAmount->getAmount()->toFloat());
+
+        // Calculate target dates using Carbon with locale
+        $startDate = \Carbon\Carbon::tomorrow();
+
+        $options = [
+            'days' => [
+                'periods' => $periodsNeeded,
+                'target_date_raw' => $startDate->copy()->addDays($periodsNeeded - 1)->toDateString(),
+                'target_date' => $startDate->copy()->addDays($periodsNeeded - 1)->locale(app()->getLocale())->isoFormat('L'),
+                'saving_amount' => [
+                    'amount' => $savingAmount,
+                    'formatted_value' => $savingAmount->formatTo(app()->getLocale()),
+                ],
+                'total_amount' => [
+                    'amount' => $savingAmount->multipliedBy($periodsNeeded),
+                    'formatted_value' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+                ],
+            ],
+            'weeks' => [
+                'periods' => $periodsNeeded,
+                'target_date_raw' => $startDate->copy()->addWeeks($periodsNeeded - 1)->toDateString(),
+                'target_date' => $startDate->copy()->addWeeks($periodsNeeded - 1)->locale(app()->getLocale())->isoFormat('L'),
+                'saving_amount' => [
+                    'amount' => $savingAmount,
+                    'formatted_value' => $savingAmount->formatTo(app()->getLocale()),
+                ],
+                'total_amount' => [
+                    'amount' => $savingAmount->multipliedBy($periodsNeeded),
+                    'formatted_value' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+                ],
+            ],
+            'months' => [
+                'periods' => $periodsNeeded,
+                'target_date_raw' => $startDate->copy()->addMonths($periodsNeeded - 1)->toDateString(),
+                'target_date' => $startDate->copy()->addMonths($periodsNeeded - 1)->locale(app()->getLocale())->isoFormat('L'),
+                'saving_amount' => [
+                    'amount' => $savingAmount,
+                    'formatted_value' => $savingAmount->formatTo(app()->getLocale()),
+                ],
+                'total_amount' => [
+                    'amount' => $savingAmount->multipliedBy($periodsNeeded),
+                    'formatted_value' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+                ],
+            ],
+            'years' => [
+                'periods' => $periodsNeeded,
+                'target_date_raw' => $startDate->copy()->addYears($periodsNeeded - 1)->toDateString(),
+                'target_date' => $startDate->copy()->addYears($periodsNeeded - 1)->locale(app()->getLocale())->isoFormat('L'),
+                'saving_amount' => [
+                    'amount' => $savingAmount,
+                    'formatted_value' => $savingAmount->formatTo(app()->getLocale()),
+                ],
+                'total_amount' => [
+                    'amount' => $savingAmount->multipliedBy($periodsNeeded),
+                    'formatted_value' => $savingAmount->multipliedBy($periodsNeeded)->formatTo(app()->getLocale()),
+                ],
+            ],
+        ];
+
+        return response()->json([
+            'success' => true,
+            'options' => $options,
+        ]);
     }
 
     public function showSummary(Request $request)
@@ -678,6 +794,272 @@ class PiggyBankCreateController extends Controller
             // ]);
             throw $e;
         }
+    }
+
+    public function showEnterSavingAmountSummary(Request $request)
+    {
+        // Get all relevant session data for enter saving amount strategy
+        $summary = [
+            'pick_date_step1' => $request->session()->get('pick_date_step1'),
+            'enter_saving_amount_step3' => $request->session()->get('enter_saving_amount_step3'),
+        ];
+
+        // Handle POST request
+        if ($request->isMethod('post')) {
+            return redirect(localizedRoute('localized.create-piggy-bank.enter-saving-amount.show-summary'));
+        }
+
+        // Get the necessary data for generating payment schedule
+        $selectedFrequency = $summary['enter_saving_amount_step3']['selected_frequency'];
+        $targetDateData = $summary['enter_saving_amount_step3']['target_dates'][$selectedFrequency];
+
+        // Generate payment schedule
+        $scheduleService = new SavingScheduleService;
+
+        $paymentSchedule = $scheduleService->generateSchedule(
+            $targetDateData['target_date'],
+            $targetDateData['periods'],
+            $selectedFrequency,
+            ['amount' => $summary['enter_saving_amount_step3']['saving_amount']]
+        );
+
+        $request->session()->put('payment_schedule', $paymentSchedule);
+
+        $targetDate = $targetDateData['target_date_raw'];
+        $targetDate = Carbon::createFromFormat('Y-m-d', $targetDate);
+
+        $finalPaymentDate = Carbon::createFromFormat('Y-m-d', $paymentSchedule[count($paymentSchedule) - 1]['date']);
+
+        // Initialize variables for user messaging
+        $dateMessage = null;
+
+        // For comparisons, use UTC dates directly
+        if ($targetDate->isPast() || $finalPaymentDate->isPast()) {
+            $savingCompletionDate = Carbon::tomorrow()->utc();
+            $dateMessage = __('Due to a calculation error, we\'ve adjusted your saving plan to start from tomorrow.');
+        } else {
+            if ($finalPaymentDate->equalTo($targetDate)) {
+                $savingCompletionDate = $finalPaymentDate;
+            } elseif ($finalPaymentDate->lt($targetDate)) {
+                $savingCompletionDate = $finalPaymentDate;
+                // Convert to local timezone for display
+                $localizedDate = $finalPaymentDate
+                    ->copy()
+                    ->setTimezone(config('app.timezone'))
+                    ->locale(App::getLocale());
+
+                $dateMessage = __('Good news! You will reach your saving goal earlier than planned, on :date', [
+                    'date' => $localizedDate->isoFormat('LL'),
+                ]);
+            } else {
+                $savingCompletionDate = $finalPaymentDate;
+                // Convert to local timezone for display
+                $localizedDate = $finalPaymentDate
+                    ->copy()
+                    ->setTimezone(config('app.timezone'))
+                    ->locale(App::getLocale());
+
+                $dateMessage = __('Note: Your saving plan will complete on :date', [
+                    'date' => $localizedDate->isoFormat('LL'),
+                ]);
+            }
+        }
+
+        // Check if user has reached the maximum number of active/paused piggy banks
+        $activePiggyBanksCount = 0;
+        if (auth()->check()) {
+            $activePiggyBanksCount = PiggyBank::where('user_id', auth()->id())
+                ->whereIn('status', ['active', 'paused'])
+                ->count();
+        }
+
+        // Calculate planned final total
+        $startingAmount = $summary['pick_date_step1']['starting_amount'] ?? null;
+        $totalSavingsData = $summary['enter_saving_amount_step3']['target_dates'][$selectedFrequency]['total_amount']['amount'] ?? null;
+        $totalSavingsAmount = null;
+        if ($totalSavingsData && is_array($totalSavingsData)) {
+            $totalSavingsAmount = Money::of($totalSavingsData['amount'], $totalSavingsData['currency']);
+        }
+
+        $plannedFinalTotal = null;
+        if ($startingAmount && $totalSavingsAmount) {
+            $plannedFinalTotal = $startingAmount->plus($totalSavingsAmount);
+        } elseif ($startingAmount) {
+            $plannedFinalTotal = $startingAmount;
+        } elseif ($totalSavingsAmount) {
+            $plannedFinalTotal = $totalSavingsAmount;
+        }
+
+        // Calculate extra savings (difference between total periodic savings and target amount)
+        $extraSavings = null;
+        if ($totalSavingsAmount) {
+            $targetAmountForCalculation = $summary['pick_date_step1']['starting_amount']
+                ? $summary['pick_date_step1']['price']->minus($summary['pick_date_step1']['starting_amount'])
+                : $summary['pick_date_step1']['price'];
+
+            $extraSavings = $totalSavingsAmount->minus($targetAmountForCalculation);
+        }
+
+        // Return view with all necessary data
+        return view('create-piggy-bank.enter-saving-amount.summary', [
+            'summary' => $summary,
+            'paymentSchedule' => $paymentSchedule,
+            'dateMessage' => $dateMessage,
+            'savingCompletionDate' => $savingCompletionDate->format('Y-m-d'),
+            'activePiggyBanksCount' => $activePiggyBanksCount,
+            'maxActivePiggyBanks' => PiggyBank::MAX_ACTIVE_PIGGY_BANKS,
+            'plannedFinalTotal' => $plannedFinalTotal,
+            'extraSavings' => $extraSavings,
+        ]);
+    }
+
+    public function storeEnterSavingAmountPiggyBank(Request $request)
+    {
+        if (! $request->session()->has('enter_saving_amount_step3')) {
+            return redirect(localizedRoute('localized.piggy-banks.index'))
+                ->with('warning', __('You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.'));
+        }
+
+        // Check if user has reached the maximum number of active/paused piggy banks
+        $activePiggyBanksCount = PiggyBank::where('user_id', auth()->id())
+            ->whereIn('status', ['active', 'paused'])
+            ->count();
+
+        if ($activePiggyBanksCount >= PiggyBank::MAX_ACTIVE_PIGGY_BANKS) {
+            return back();
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $step1Data = $request->session()->get('pick_date_step1');
+            $step3Data = $request->session()->get('enter_saving_amount_step3');
+            $selectedFrequency = $step3Data['selected_frequency'];
+            $targetDateData = $step3Data['target_dates'][$selectedFrequency];
+
+            $paymentSchedule = $request->session()->get('payment_schedule');
+
+            $piggyBank = new PiggyBank;
+            $piggyBank->user_id = auth()->id();
+            $piggyBank->name = $step1Data['name'];
+
+            $piggyBank->price = $step1Data['price']->getAmount()->toFloat();
+            $piggyBank->starting_amount = $step1Data['starting_amount']?->getAmount()->toFloat();
+
+            // Calculate target amount (same logic as in summary view)
+            $targetAmountForDB = $step1Data['starting_amount']
+                ? $step1Data['price']->minus($step1Data['starting_amount'])
+                : $step1Data['price'];
+            $piggyBank->target_amount = $targetAmountForDB->getAmount()->toFloat();
+
+            // Reconstruct Money objects from serialized arrays
+            $totalAmountData = $targetDateData['total_amount']['amount'];
+            $totalAmountMoney = Money::of($totalAmountData['amount'], $totalAmountData['currency']);
+            $piggyBank->total_savings = $totalAmountMoney->getAmount()->toFloat();
+
+            // Calculate extra savings
+            $extraSavingsMoney = $totalAmountMoney->minus($targetAmountForDB);
+            $piggyBank->extra_savings = $extraSavingsMoney->getAmount()->toFloat();
+
+            $piggyBank->final_total = ($piggyBank->starting_amount ?? 0) + ($piggyBank->total_savings ?? 0);
+
+            // Basic fields remain the same
+            $piggyBank->link = $step1Data['link'];
+            $piggyBank->details = $step1Data['details'];
+            $piggyBank->chosen_strategy = $request->session()->get('chosen_strategy');
+            $piggyBank->selected_frequency = $selectedFrequency;
+            $piggyBank->currency = $step1Data['currency'];
+
+            // Preview data remains the same
+            $preview = $step1Data['preview'] ?? [];
+            $piggyBank->preview_title = $preview['title'] ?? null;
+            $piggyBank->preview_description = $preview['description'] ?? null;
+            $piggyBank->preview_image = $preview['image'] ?? 'images/default_piggy_bank.png';
+            $piggyBank->preview_url = $preview['url'] ?? null;
+
+            $piggyBank->save();
+
+            // Insert starting amount as a transaction if present and > 0
+            if ($piggyBank->starting_amount && $piggyBank->starting_amount > 0) {
+                $piggyBank->transactions()->create([
+                    'user_id' => $piggyBank->user_id,
+                    'type' => 'starting_amount',
+                    'amount' => $piggyBank->starting_amount,
+                    'note' => 'Initial deposit at creation',
+                ]);
+            }
+
+            // Update scheduled savings to use the same approach
+            foreach ($paymentSchedule as $payment) {
+                $scheduledSaving = new ScheduledSaving;
+                $scheduledSaving->piggy_bank_id = $piggyBank->id;
+                $scheduledSaving->saving_number = $payment['payment_number'];
+                $scheduledSaving->amount = $payment['amount']->getAmount()->toFloat();
+                $scheduledSaving->saving_date = $payment['date'];
+                $scheduledSaving->save();
+            }
+
+            DB::commit();
+
+            $request->session()->forget([
+                'pick_date_step1',
+                'enter_saving_amount_step3',
+                'chosen_strategy',
+                'payment_schedule',
+            ]);
+
+            // First store it in regular session
+            $request->session()->put('newPiggyBankId', $piggyBank->id);
+
+            return redirect(localizedRoute('localized.piggy-banks.index', ['from_creation' => true]))
+                ->with('newPiggyBankId', $piggyBank->id)
+                ->with('newPiggyBankCreatedTime', time())
+                ->with('success', __('Your piggy bank has been created successfully.'));
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function processEnterSavingAmountStep3(Request $request)
+    {
+        $request->validate([
+            'selected_frequency' => 'required|in:days,weeks,months,years',
+            'saving_amount' => 'required|numeric|min:0.01',
+            'target_dates' => 'required|json',
+        ]);
+
+        // Get the saving amount from the request (should be sent via JavaScript)
+        $savingAmount = $request->input('saving_amount');
+        if (! $savingAmount) {
+            return back()->withErrors(['saving_amount' => __('Please enter a saving amount.')]);
+        }
+
+        // Get step1 data to access currency
+        $step1Data = $request->session()->get('pick_date_step1');
+        if (! $step1Data) {
+            return redirect(localizedRoute('localized.create-piggy-bank.step-1'));
+        }
+
+        // Convert saving amount to Money object
+        $savingAmountMoney = Money::of($savingAmount, $step1Data['currency']);
+
+        // Get target dates that were calculated (should be available from the previous calculation)
+        $targetDates = $request->input('target_dates');
+        if (! $targetDates) {
+            return back()->withErrors(['target_dates' => __('Target dates calculation is missing.')]);
+        }
+
+        // Store step 3 data in session
+        $request->session()->put('enter_saving_amount_step3', [
+            'saving_amount' => $savingAmountMoney,
+            'selected_frequency' => $request->input('selected_frequency'),
+            'target_dates' => json_decode($targetDates, true),
+        ]);
+
+        // Redirect to summary page
+        return redirect(localizedRoute('localized.create-piggy-bank.enter-saving-amount.show-summary'));
     }
 
     /**

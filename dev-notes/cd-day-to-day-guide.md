@@ -1,3 +1,15 @@
+> **NOTE:**
+>
+> - This guide assumes you are using GitHub Actions for automatic deployments.
+    >     - Pushing to `main` triggers deployment to staging (`akluma-staging.fly.dev`).
+    >     - Pushing to `prod` triggers deployment to production (`akluma-prod.fly.dev`).
+>
+> - If your repository does **NOT** have a separate `prod` branch (some teams use only `main` for production), substitute `main` wherever you see `prod` in this guide.
+>
+> - All git commands use `git switch`, which is the modern and preferred way to switch and create branches.
+    >     - If you are using an older version of Git and `git switch` is not available, use `git checkout` instead.
+
+
 # 🚀 Day-to-Day Deployment Guide (Dev → Staging → Prod)
 
 This guide explains the **everyday deployment flow** now that Continuous Deployment (CD) is fully set up via GitHub Actions and Fly.io.
@@ -25,17 +37,20 @@ feature → dev → main → prod
 ### ✅ Step 1: Start a Feature Branch
 
 ```bash
-git checkout main
+git switch main
 git pull origin main
-git checkout -b feature/some-feature
+git switch -c feature/some-feature
 ```
 
 Work on your code. Then test locally:
 
 ```bash
-composer run dev
+sail up
+sail npm run dev
 # Visit http://localhost:8000
 ```
+
+# This runs your dev server; if you use another script, use that instead
 
 ---
 
@@ -52,7 +67,7 @@ git push --set-upstream origin feature/some-feature
 ### ✅ Step 3: Create Pull Request → `dev`
 
 - Open GitHub
-- Create PR from `feature/some-feature` → `dev`
+- Create PR from base: `dev` ← compare: `feature/some-feature`
 - Review & merge
 
 ---
@@ -60,7 +75,7 @@ git push --set-upstream origin feature/some-feature
 ### ✅ Step 4: Sync Local `dev` After GitHub Merge
 
 ```bash
-git checkout dev
+git switch dev
 git pull origin dev # <--- Pull the changes you just merged on GitHub into your local dev
 ```
 
@@ -69,19 +84,23 @@ git pull origin dev # <--- Pull the changes you just merged on GitHub into your 
 ### ✅ Step 5: Sync `dev` with `main` (if needed)
 
 ```bash
-git checkout dev
+git switch dev
 git pull origin main
 git push origin dev
 ```
 
-Do this only if `main` has commits `dev` hasn’t seen yet.
+#### Bring any hotfixes from main into dev before the next cycle (optional)
+
+This step is optional - it ensures `dev` has any commits from `main` that
+might have been added since your last sync. It's always safe
+to run these commands even if not needed.
 
 ---
 
 ### ✅ Step 6: Deploy to Staging
 
 ```bash
-git checkout main
+git switch main
 git pull origin main
 git merge dev
 git push origin main
@@ -99,7 +118,7 @@ Visit the site and manually verify everything works.
 ### ✅ Step 7: Promote to Production
 
 ```bash
-git checkout prod
+git switch prod
 git pull origin prod
 git merge main
 git push origin prod
@@ -108,6 +127,7 @@ git push origin prod
 ✅ This triggers production deploy to:
 ```
 https://akluma-prod.fly.dev
+https://akluma.com
 ```
 
 ---
@@ -117,7 +137,7 @@ https://akluma-prod.fly.dev
 To ensure `dev` always stays clean and current:
 
 ```bash
-git checkout dev
+git switch dev
 git merge main
 git push origin dev
 ```
@@ -137,4 +157,3 @@ This is your new professional-grade daily CD flow. Use it every time you push co
 Let staging catch problems. Let production stay safe.
 
 You're running things the right way. 🚀
-
