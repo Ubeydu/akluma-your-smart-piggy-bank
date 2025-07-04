@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
@@ -39,6 +40,11 @@ class AppServiceProvider extends ServiceProvider
 
         // 🔐 Authorization policies
         Gate::policy(PiggyBank::class, PiggyBankPolicy::class);
+
+        // 🚦 Rate limiting configuration
+        RateLimiter::for('password-reset', function ($request) {
+            return \Illuminate\Cache\RateLimiting\Limit::perMinutes(5, 1)->by($request->email.$request->ip());
+        });
 
         // 🌐 Set locale if user has one
         Auth::user()?->language && App::setLocale(Auth::user()->language);

@@ -380,5 +380,6 @@
     "minimum amount 10": "min. 10",
     "saving_amount_whole_numbers_only": "Vous pouvez entrer uniquement des chiffres dans ce champ.",
     "saving_amount_whole_length_exceeded": "Vous pouvez entrer un maximum de 10 chiffres.",
-    "Extra Savings Tooltip Info For Enter Saving Amount Strategy": "Vous épargnerez un peu plus que nécessaire, car votre montant périodique ne se divise pas parfaitement dans l’objectif. Ce surplus garantit que vous atteindrez votre but."
+    "Extra Savings Tooltip Info For Enter Saving Amount Strategy": "Vous épargnerez un peu plus que nécessaire, car votre montant périodique ne se divise pas parfaitement dans l’objectif. Ce surplus garantit que vous atteindrez votre but.",
+    "Wait": "Attendez"
 }
