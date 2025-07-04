@@ -85,6 +85,9 @@
     "piggybank.empty_state.title": "No Piggy Banks Yet",
     "piggybank.empty_state.message": "Start saving for your goals today by creating your first piggy bank!",
     "piggybank.empty_state.button_text": "Create Your Piggy Bank",
+    "1. I am saving for a (required field)": "1. I am saving for <span class='text-red-500'>(required field)</span>",
+    "2. Price of the item (required field)": "2. The amount I want to save <span class='text-red-500'>(required field)</span>",
+    "3. Product link (optional field)": "3. Product link if you are saving to buy something (optional field)",
     "step1_name_placeholder": "e.g. school fee, Samsung Galaxy S25, that awesome gadget for kitchen, or capital for launching business, ...",
     "step1_link_placeholder": "e.g. https://www.ebay.com/itm/167340412147?_skw=SAMSUNG+Galaxy+S25",
     "step1_details_placeholder": "You can add notes or details about your saving goal here. For example: 'I'll keep the savings in the wooden box inside my wardrobe,' or 'I'll deposit the savings into my Bank of America account that I rarely use.'",
@@ -150,5 +153,6 @@
     "manual_withdraw_money_button": "Take Out Money",
     "extra_savings_note": "This means you have saved more than your target!",
     "actual_completed_at_label": "Actual Completion Date",
-    "starting_amount_numbers_only": "You can put only numbers in this field. No comma, no dot, no letters."
+    "starting_amount_numbers_only": "You can put only numbers in this field. No comma, no dot, no letters.",
+    "piggy_bank_created_success": "Your piggy bank has been created successfully. You will receive reminder emails on your saving days. Change that if you like in notification preferences in your profile."
 }

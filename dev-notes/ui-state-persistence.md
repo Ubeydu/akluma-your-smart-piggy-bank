@@ -12,8 +12,8 @@ When a user creates a new item and is redirected to a list page with success mes
       ->route('piggy-banks.index')
       ->with('newPiggyBankId', $piggyBank->id)
       ->with('newPiggyBankCreatedTime', time())
-      ->with('success', __('Your piggy bank has been created successfully.'));
-
+      ->with('success', __('piggy_bank_created_success'));
+  ```
 
 - Ensured session clearing in `PiggyBankController@index`:
   ```php
