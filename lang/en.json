@@ -150,5 +150,6 @@
     "manual_withdraw_money_button": "Take Out Money",
     "extra_savings_note": "This means you have saved more than your target!",
     "actual_completed_at_label": "Actual Completion Date",
-    "starting_amount_numbers_only": "You can put only numbers in this field. No comma, no dot, no letters."
+    "starting_amount_numbers_only": "You can put only numbers in this field. No comma, no dot, no letters.",
+    "piggy_bank_created_success": "Your piggy bank has been created successfully. You will receive reminder emails on your saving days. Change that if you like in notification preferences in your profile."
 }

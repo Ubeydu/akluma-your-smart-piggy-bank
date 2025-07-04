@@ -784,7 +784,8 @@ class PiggyBankCreateController extends Controller
             return redirect(localizedRoute('localized.piggy-banks.index', ['from_creation' => true]))
                 ->with('newPiggyBankId', $piggyBank->id)
                 ->with('newPiggyBankCreatedTime', time())
-                ->with('success', __('Your piggy bank has been created successfully.'));
+                ->with('success', __('piggy_bank_created_success'))
+                ->with('success_duration', 10000); // 10 seconds instead of default 5
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -1014,7 +1015,8 @@ class PiggyBankCreateController extends Controller
             return redirect(localizedRoute('localized.piggy-banks.index', ['from_creation' => true]))
                 ->with('newPiggyBankId', $piggyBank->id)
                 ->with('newPiggyBankCreatedTime', time())
-                ->with('success', __('Your piggy bank has been created successfully.'));
+                ->with('success', __('piggy_bank_created_success'))
+                ->with('success_duration', 10000); // 10 seconds instead of default 5
 
         } catch (Exception $e) {
             DB::rollBack();

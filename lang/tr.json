@@ -126,7 +126,7 @@
     "Date": "Tarih",
     "Amount": "Miktar",
     "Saving options have been calculated for :date": "Birikim seçeneklerini bu tarih için hesapladık: :date",
-    "Your piggy bank has been created successfully.": "Tebrikler. Kumbaranı başarılı bir şekilde oluşturdun.",
+    "piggy_bank_created_success": "Tebrikler. Kumbaranı başarılı bir şekilde oluşturdun. Birikim yapacağın günlerde sana hatırlatıcı e-postalar göndereceğiz. Profil ayarlarından bildirim tercihlerini değiştirebilirsin.",
     "Already_registered": "Daha önce kaydolduysan buraya tıkla",
     "You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.": "Bu bilgilerle bir kumbara oluşturduğun için, tekrar olmasın diye seni kumbaralarım sayfasına yönlendirdik.",
     "Piggy Bank Details": "Kumbaranın Detayları",

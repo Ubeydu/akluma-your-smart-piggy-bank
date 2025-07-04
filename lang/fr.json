@@ -256,7 +256,7 @@
     "Date": "Date",
     "Amount": "Montant",
     "Saving options have been calculated for :date": "Les options d'épargne ont été calculées pour le :date",
-    "Your piggy bank has been created successfully.": "Votre tirelire a été créée avec succès.",
+    "piggy_bank_created_success": "Votre tirelire a été créée avec succès. Vous recevrez des e-mails de rappel sur vos jours d'épargne. Vous pouvez modifier cela dans les préférences de notification de votre profil.",
     "Already_registered": "Déjà inscrit",
     "You already created a piggy bank with this information. So, we sent you to your piggy banks list to prevent creating a duplicate one.": "Vous avez déjà créé une tirelire avec ces informations. Nous vous avons donc redirigé vers votre liste de tirelires pour éviter d'en créer une en double.",
     "Piggy Bank Details": "Détails de la tirelire",
