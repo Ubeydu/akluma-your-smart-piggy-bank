@@ -151,20 +151,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     </div>
                 `;
-
-                // Add this right before the debugDiv creation
-                console.log('Currency display debug:', {
-                    saving_amount: option.saving_amount.formatted_value,
-                    total_amount: option.total_amount.formatted_value,
-                    char_codes: option.saving_amount.formatted_value.split('').map(char => char.charCodeAt(0))
-                });
-
-                // Also add a visible debug element temporarily
-                const debugDiv = document.createElement('div');
-                debugDiv.style.cssText = 'background: yellow; padding: 10px; margin: 10px; font-family: monospace; font-size: 12px;';
-                debugDiv.innerHTML = `Debug: "${option.saving_amount.formatted_value}" | Chars: ${option.saving_amount.formatted_value.split('').map(char => char.charCodeAt(0)).join(', ')}`;
-                document.body.appendChild(debugDiv);
-
                 }
             }
         });
