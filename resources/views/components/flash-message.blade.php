@@ -3,8 +3,12 @@
     $errorMessage = session('error');
     $warningMessage = session('warning');
     $infoMessage = session('info');
+
+    // Get custom duration if provided, otherwise use default
+    $successDuration = session('success_duration', 5000);
+
     if ($successMessage || $errorMessage || $warningMessage || $infoMessage) {
-        session()->forget(['success', 'error', 'warning', 'info']);
+        session()->forget(['success', 'error', 'warning', 'info', 'success_duration']);
     }
 
     // Use a simpler structure for AJAX requests without Alpine.js
@@ -17,7 +21,7 @@
             x-data="{
                 show: true,
                 autoClose() {
-                    setTimeout(() => { this.show = false }, 5000)
+                    setTimeout(() => { this.show = false }, {{ $successMessage ? $successDuration : 5000 }})
                 }
             }"
         x-init="autoClose()"
