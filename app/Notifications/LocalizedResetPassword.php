@@ -30,11 +30,11 @@ class LocalizedResetPassword extends ResetPasswordNotification
         $locale = $notifiable->language ?? app()->getLocale();
         $routeName = 'localized.password.reset.'.$locale;
 
-        \Log::debug('🔍 Password reset route debug', [
-            'route_name' => $routeName,
-            'route_exists' => \Route::has($routeName),
-            'locale' => $locale,
-        ]);
+//        \Log::debug('🔍 Password reset route debug', [
+//            'route_name' => $routeName,
+//            'route_exists' => \Route::has($routeName),
+//            'locale' => $locale,
+//        ]);
 
         return url(route($routeName, [
             'token' => $this->token,
