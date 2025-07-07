@@ -204,6 +204,14 @@ class PickDateCalculationService
             //                'is_amount_null' => $roundedAmount === null
             //            ]);
 
+            // Add the debug logging right before the return statement
+            Log::info('Currency formatting debug:', [
+                'locale' => App::getLocale(),
+                'formatted_value' => $roundedAmount->formatTo(App::getLocale()),
+                'raw_amount' => $roundedAmount->getAmount()->__toString(),
+                'currency_code' => $roundedAmount->getCurrency()->getCurrencyCode(),
+            ]);
+
             return [
                 'amount' => [
                     'amount' => $roundedAmount,

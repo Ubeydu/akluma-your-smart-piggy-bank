@@ -50,7 +50,7 @@ sail npm run dev
 # Visit http://localhost:8000
 ```
 
-# This runs your dev server; if you use another script, use that instead
+#### This runs your dev server; if you use another script, use that instead
 
 ---
 
@@ -81,19 +81,55 @@ git pull origin dev # <--- Pull the changes you just merged on GitHub into your 
 
 ---
 
-### ✅ Step 5: Sync `dev` with `main` (if needed)
+
+### ✅ Step 5: Sync `dev` with `main` (Keep Dev Up-To-Date)
+
+**Purpose:**
+Make sure your `dev` branch includes any changes that were pushed directly to `main` (like hotfixes, urgent fixes, or web edits). This prevents conflicts and keeps `dev` and `main` histories aligned.
+
+**Commands:**
 
 ```bash
 git switch dev
 git pull origin main
+# (If Git gives you a message about "divergent branches," see below)
 git push origin dev
 ```
 
-#### Bring any hotfixes from main into dev before the next cycle (optional)
+* Run `git pull origin main` while on `dev` to bring in any new changes from `main`.
 
-This step is optional - it ensures `dev` has any commits from `main` that
-might have been added since your last sync. It's always safe
-to run these commands even if not needed.
+* Most of the time, this will "just work" with no special options.
+
+* If you see a message like:
+
+  ```
+  You have divergent branches and need to specify how to reconcile them.
+  fatal: Need to specify how to reconcile divergent branches.
+  ```
+
+  Git is asking how to combine the branch histories.
+  In this case, run:
+
+  ```bash
+  git pull origin main --no-rebase
+  ```
+
+  This will merge the latest `main` into your local `dev` and update the remote `dev`.
+
+* If there are merge conflicts, Git will prompt you to resolve them.
+
+* Use a merge commit message like:
+
+  ```
+  Merge main into dev to keep branches aligned.
+  ```
+
+**Tip:**
+By running `git pull origin main` as your default, you'll be notified if `dev` and `main` have diverged.
+This lets you pause and review why divergence happened before merging.
+
+You can run this step anytime you want to make sure `dev` has all the latest from `main`, even if you’re not about to merge or deploy.
+
 
 ---
 
