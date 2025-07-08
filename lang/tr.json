@@ -380,5 +380,14 @@
     "saving_amount_whole_length_exceeded": "En fazla 10 haneli bir değer girebilirsin.",
     "Periodic Saving Amount": "Düzenli birikim miktarı",
     "Saving amount must be less than the target amount.": "Düzenli birikim miktarı birikim hedefinden daha az olmalı.",
-    "Extra Savings Tooltip Info For Enter Saving Amount Strategy": "Düzenli birikim miktarın hedefe tam olarak bölünmediği için biraz fazla birikim yapacaksın. Bu fazlalık, hedefini kesin olarak tamamlamanı sağlar."
+    "Extra Savings Tooltip Info For Enter Saving Amount Strategy": "Düzenli birikim miktarın hedefe tam olarak bölünmediği için biraz fazla birikim yapacaksın. Bu fazlalık, hedefini kesin olarak tamamlamanı sağlar.",
+    "manual_money_info_message": "Bu kısmı kullanarak kumbarana istediğin zaman birikim programından bağımsız olarak para ekleyebilir ya da çıkarabilirsin.",
+    "How to mark your savings as complete": "Birikimimi nasıl tamamlanmış olarak işaretleyebilirim?",
+    "Show Guide": "Rehberi Göster",
+    "Hide Guide": "Rehberi Gizle",
+    "Click": "Tıkla",
+    "Each time you save money according to your schedule, tick the checkbox to mark it as saved and track your progress.": "Her para biriktirdiğinde, kutucukları işaretleyerek birikimini tamamlanmış olarak kaydedebilir ve ilerlemeni takip edebilirsin.",
+    "manual_money_manual_title": "Kumbarama nasıl ekstra para ekleyebilirim?",
+    "manual_money_show_buttons": "Butonları Göster",
+    "manual_money_hide_buttons": "Butonları Gizle"
 }

@@ -407,6 +407,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 setManualMoneySectionDisabled(false);
                             }
 
+                            reloadSchedulePartial(piggyBankId);
+
                             if (transition.successMessage) {
                                 showFlashMessage(transition.successMessage, 'success');
                             }
@@ -577,6 +579,7 @@ async function updateSchedule(piggyBankId, statusData) {
             // console.log('Schedule container updated');
 
             if (statusData && statusData.scheduleUpdated) {
+                // console.log('HIGHLIGHT DEBUG:', { statusData, scheduleUpdated: statusData.scheduleUpdated });
                 scheduleContainer.classList.add('highlight-new');
                 scheduleContainer.addEventListener('animationend', () => {
                     scheduleContainer.classList.remove('highlight-new');
@@ -712,6 +715,7 @@ function updateSelectAfterStatusChange(piggyBankId, newStatus) {
         const scheduleTable = scheduleContainer.querySelector('table');
         if (scheduleTable) {
             if (['done', 'paused', 'cancelled'].includes(newStatus)) {
+                console.log('SHOULD DISABLE CHECKBOXES:', { newStatus, checkboxes: scheduleContainer.querySelectorAll('input[data-saving-id]').length });
                 scheduleTable.classList.add('opacity-50');
                 // Disable all checkboxes
                 const checkboxes = scheduleContainer.querySelectorAll('input[data-saving-id]');
@@ -908,6 +912,7 @@ function reloadSchedulePartial(piggyBankId) {
     })
         .then(response => response.text())
         .then(html => {
+            console.log('ABOUT TO REPLACE ENTIRE CONTAINER WITH outerHTML');
             // console.log('Fresh HTML from server contains disabled checkboxes?', html.includes('disabled'));
             const container = document.getElementById('schedule-container');
             if (container) {
