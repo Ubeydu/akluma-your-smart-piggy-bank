@@ -154,5 +154,9 @@
     "extra_savings_note": "This means you have saved more than your target!",
     "actual_completed_at_label": "Actual Completion Date",
     "starting_amount_numbers_only": "You can put only numbers in this field. No comma, no dot, no letters.",
-    "piggy_bank_created_success": "Your piggy bank has been created successfully. You will receive reminder emails on your saving days. Change that if you like in notification preferences in your profile."
+    "piggy_bank_created_success": "Your piggy bank has been created successfully. You will receive reminder emails on your saving days. Change that if you like in notification preferences in your profile.",
+    "manual_money_info_message": "You can add or take out money from your piggy bank manually. This is useful if you want to adjust your savings based on unexpected expenses or income.",
+    "manual_money_manual_title": "How to add money to your piggy bank manually",
+    "manual_money_show_buttons": "Show Buttons",
+    "manual_money_hide_buttons": "Hide Buttons"
 }

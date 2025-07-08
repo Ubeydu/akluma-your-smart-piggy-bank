@@ -380,5 +380,14 @@
     "minimum amount 10": "min. 10",
     "saving_amount_whole_numbers_only": "Vous pouvez entrer uniquement des chiffres dans ce champ.",
     "saving_amount_whole_length_exceeded": "Vous pouvez entrer un maximum de 10 chiffres.",
-    "Extra Savings Tooltip Info For Enter Saving Amount Strategy": "Vous épargnerez un peu plus que nécessaire, car votre montant périodique ne se divise pas parfaitement dans l’objectif. Ce surplus garantit que vous atteindrez votre but."
+    "Extra Savings Tooltip Info For Enter Saving Amount Strategy": "Vous épargnerez un peu plus que nécessaire, car votre montant périodique ne se divise pas parfaitement dans l’objectif. Ce surplus garantit que vous atteindrez votre but.",
+    "manual_money_info_message": "Vous pouvez ajouter ou retirer de l’argent de votre tirelire manuellement. C’est utile si vous souhaitez ajuster vos économies en cas de dépenses ou de revenus imprévus.",
+    "How to mark your savings as complete": "Comment marquer vos économies comme terminées",
+    "Show Guide": "Afficher le guide",
+    "Hide Guide": "Masquer le guide",
+    "Click": "Cliquez",
+    "Each time you save money according to your schedule, tick the checkbox to mark it as saved and track your progress.": "Chaque fois que vous mettez de l’argent de côté selon votre planning, cochez la case pour marquer cette étape comme terminée et suivre votre progression.",
+    "manual_money_manual_title": "Comment ajouter de l’argent manuellement à votre tirelire",
+    "manual_money_show_buttons": "Afficher les boutons",
+    "manual_money_hide_buttons": "Masquer les boutons"
 }
