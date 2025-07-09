@@ -158,5 +158,8 @@
     "manual_money_info_message": "You can add or take out money from your piggy bank manually. This is useful if you want to adjust your savings based on unexpected expenses or income.",
     "manual_money_manual_title": "How to add money to your piggy bank manually",
     "manual_money_show_buttons": "Show Buttons",
-    "manual_money_hide_buttons": "Hide Buttons"
+    "manual_money_hide_buttons": "Hide Buttons",
+    "vault_create_success_message": "Vault created successfully.",
+    "vault_update_success_message": "Vault updated successfully.",
+    "vault_delete_success_message": "Vault deleted successfully."
 }

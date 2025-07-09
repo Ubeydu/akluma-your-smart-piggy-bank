@@ -389,5 +389,8 @@
     "Each time you save money according to your schedule, tick the checkbox to mark it as saved and track your progress.": "Chaque fois que vous mettez de l’argent de côté selon votre planning, cochez la case pour marquer cette étape comme terminée et suivre votre progression.",
     "manual_money_manual_title": "Comment ajouter de l’argent manuellement à votre tirelire",
     "manual_money_show_buttons": "Afficher les boutons",
-    "manual_money_hide_buttons": "Masquer les boutons"
+    "manual_money_hide_buttons": "Masquer les boutons",
+    "vault_create_success_message": "Vous avez créé le coffre-fort avec succès.",
+    "vault_update_success_message": "Vous avez mis à jour le coffre-fort avec succès.",
+    "vault_delete_success_message": "Vous avez supprimé le coffre-fort avec succès."
 }

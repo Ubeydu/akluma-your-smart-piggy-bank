@@ -389,5 +389,8 @@
     "Each time you save money according to your schedule, tick the checkbox to mark it as saved and track your progress.": "Her para biriktirdiğinde, kutucukları işaretleyerek birikimini tamamlanmış olarak kaydedebilir ve ilerlemeni takip edebilirsin.",
     "manual_money_manual_title": "Kumbarama nasıl ekstra para ekleyebilirim?",
     "manual_money_show_buttons": "Butonları Göster",
-    "manual_money_hide_buttons": "Butonları Gizle"
+    "manual_money_hide_buttons": "Butonları Gizle",
+    "vault_create_success_message": "Kasanı başarıyla oluşturdun.",
+    "vault_update_success_message": "Kasanı başarıyla güncelledin.",
+    "vault_delete_success_message": "Kasanı başarıyla sildin."
 }
