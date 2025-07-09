@@ -140,7 +140,10 @@ class PiggyBankController extends Controller
             ], 400);
         }
 
-        $piggyBank->update(['status' => 'cancelled']);
+        $piggyBank->update([
+            'status' => 'cancelled',
+            'vault_id' => null,
+        ]);
 
         return response()->json([
             'status' => 'cancelled',
