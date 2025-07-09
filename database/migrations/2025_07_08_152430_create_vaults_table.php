@@ -19,8 +19,9 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->string('name', 255)->nullable(false);
             $table->text('details')->nullable();
-            $table->check('char_length(`details`) <= 5000', 'chk_vault_details_length');
         });
+
+        DB::statement('ALTER TABLE vaults ADD CONSTRAINT chk_vault_details_length CHECK ( CHAR_LENGTH(details) <= 5000 )');
     }
 
     /**
