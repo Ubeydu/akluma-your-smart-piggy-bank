@@ -47,12 +47,22 @@ class PiggyBankController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'details' => ['nullable', 'string', 'max:1000'],
+            'vault_id' => ['nullable', 'exists:vaults,id'],
         ]);
+
+        // Additional validation: ensure vault belongs to user
+        if ($validated['vault_id']) {
+            $vault = auth()->user()->vaults()->find($validated['vault_id']);
+            if (! $vault) {
+                abort(403, 'Vault does not belong to user');
+            }
+        }
 
         // Update only allowed fields
         $piggyBank->update([
             'name' => $validated['name'],
             'details' => $validated['details'],
+            'vault_id' => $validated['vault_id'],
         ]);
 
         // Get current locale

@@ -34,6 +34,23 @@
                             <x-input-error :messages="$errors->get('details')" class="mt-2" />
                         </div>
 
+                        <!-- Vault Selection (Editable) -->
+                        <div>
+                            <x-input-label for="vault_id" :value="__('Vault')" />
+                            <select id="vault_id"
+                                    name="vault_id"
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-xs"
+                                    x-bind:disabled="!isEditing">
+                                <option value="">{{ __('No vault selected') }}</option>
+                                @foreach(auth()->user()->vaults as $vault)
+                                    <option value="{{ $vault->id }}" {{ old('vault_id', $piggyBank->vault_id) == $vault->id ? 'selected' : '' }}>
+                                        {{ $vault->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('vault_id')" class="mt-2" />
+                        </div>
+
 
                         <!-- Save and Cancel Buttons -->
                         <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-end sm:space-y-0 sm:gap-3">
