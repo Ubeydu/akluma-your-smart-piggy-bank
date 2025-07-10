@@ -31,11 +31,15 @@ class Vault extends Model
         return $this->hasMany(PiggyBank::class);
     }
 
-    public function getTotalSavedAttribute(): float
+    public function getTotalSavedAttribute(): array
     {
         return $this->piggyBanks()
             ->whereIn('status', ['active', 'paused', 'done'])
             ->get()
-            ->sum('actual_final_total_saved');
+            ->groupBy('currency')
+            ->map(function ($piggyBanks) {
+                return $piggyBanks->sum('actual_final_total_saved');
+            })
+            ->toArray();
     }
 }

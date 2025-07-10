@@ -43,7 +43,7 @@ class VaultController extends Controller
         $vault = auth()->user()->vaults()->create($validated);
 
         return redirect()
-            ->route('localized.vaults.show', ['locale' => app()->getLocale(), 'vault_id' => $vault->id])
+            ->to(localizedRoute('localized.vaults.show', ['vault_id' => $vault->id]))
             ->with('success', __('vault_create_success_message'));
     }
 
@@ -74,7 +74,7 @@ class VaultController extends Controller
         $vault->update($validated);
 
         return redirect()
-            ->route('localized.vaults.show', ['locale' => app()->getLocale(), 'vault_id' => $vault->id])
+            ->to(localizedRoute('localized.vaults.show', ['vault_id' => $vault->id]))
             ->with('success', __('vault_update_success_message'));
     }
 
@@ -89,7 +89,7 @@ class VaultController extends Controller
         $vault->delete();
 
         return redirect()
-            ->route('localized.vaults.index', ['locale' => app()->getLocale()])
+            ->to(localizedRoute('localized.vaults.index'))
             ->with('success', __('vault_delete_success_message'));
     }
 }
