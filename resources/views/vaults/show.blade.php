@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-900  leading-tight">
                 {{ $vault->name }}
             </h2>
             <div class="flex space-x-3">
@@ -175,15 +175,41 @@
                                     {{ __('This will delete the vault but keep all piggy banks. This action cannot be undone.') }}
                                 </p>
                             </div>
-                            <form method="POST" action="{{ localizedRoute('localized.vaults.destroy', ['vault_id' => $vault->id]) }}"
-                                  onsubmit="return confirm('{{ __('Are you sure you want to delete this vault? This action cannot be undone.') }}')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                        class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md">
+
+                            <div x-data="{ showConfirmCancel: false }">
+                                <button type="button"
+                                        @click.prevent="showConfirmCancel = true"
+                                        class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md cursor-pointer">
                                     {{ __('Delete Vault') }}
                                 </button>
-                            </form>
+
+                                <template x-if="showConfirmCancel">
+                                    <x-confirmation-dialog>
+                                        <x-slot:title>
+                                            {{ __('Are you sure you want to delete this vault? This action cannot be undone.') }}
+                                        </x-slot>
+
+                                        <x-slot:actions>
+                                            <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
+                                                <form method="POST" action="{{ localizedRoute('localized.vaults.destroy', ['vault_id' => $vault->id]) }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                                        {{ __('Yes, proceed') }}
+                                                    </x-danger-button>
+                                                </form>
+
+                                                <x-secondary-button type="button"
+                                                                    @click="showConfirmCancel = false"
+                                                                    class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                                    {{ __('No, cancel') }}
+                                                </x-secondary-button>
+                                            </div>
+                                        </x-slot:actions>
+                                    </x-confirmation-dialog>
+                                </template>
+                            </div>
+
                         </div>
                     </div>
                 </div>

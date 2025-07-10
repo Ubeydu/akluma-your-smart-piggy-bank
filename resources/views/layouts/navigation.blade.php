@@ -40,7 +40,7 @@
                         <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.create-piggy-bank.step-1') }}"
                                     :active="request()->routeIs('localized.create-piggy-bank.*')">
                         {{ __('Create New Piggy Bank') }}
-                    </x-nav-link>
+                        </x-nav-link>
                         <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.welcome') }}"
                                     :active="request()->routeIs('localized.welcome')">
                         {{ __('Welcome') }}

@@ -87,7 +87,7 @@
                                 {{ __('Cancel') }}
                             </a>
                             <button type="submit"
-                                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
+                                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md cursor-pointer">
                                 {{ __('Update Vault') }}
                             </button>
                         </div>

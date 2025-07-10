@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-900  leading-tight">
                 {{ __('My Vaults') }}
             </h2>
             <a href="{{ localizedRoute('localized.vaults.create') }}"
@@ -16,51 +16,10 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     @if($vaults->count() > 0)
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="flex flex-wrap gap-6">
                             @foreach($vaults as $vault)
-                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow">
-                                    <h3 class="font-semibold text-lg mb-2">{{ $vault->name }}</h3>
-
-                                    <div class="mb-4">
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('Total Saved') }}</p>
-
-                                        <div class="text-xl font-bold text-green-600">
-                                            @if(empty($vault->total_saved))
-                                                0
-                                            @elseif(count($vault->total_saved) === 1)
-                                                @php
-                                                    $currency = array_keys($vault->total_saved)[0];
-                                                    $amount = array_values($vault->total_saved)[0];
-                                                @endphp
-                                                {{ number_format($amount, 2) }} {{ $currency }}
-                                            @else
-                                                @foreach($vault->total_saved as $currency => $amount)
-                                                    <div>{{ number_format($amount, 2) }} {{ $currency }}</div>
-                                                @endforeach
-                                            @endif
-                                        </div>
-
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ __('Connected Piggy Banks') }}</p>
-                                        <p class="font-medium">{{ $vault->piggyBanks->count() }}</p>
-                                    </div>
-
-                                    @if($vault->details)
-                                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ Str::limit($vault->details, 100) }}</p>
-                                    @endif
-
-                                    <div class="flex space-x-2">
-                                        <a href="{{ localizedRoute('localized.vaults.show', ['vault_id' => $vault->id]) }}"
-                                           class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
-                                            {{ __('View') }}
-                                        </a>
-                                        <a href="{{ localizedRoute('localized.vaults.edit', ['vault_id' => $vault->id]) }}"
-                                           class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm">
-                                            {{ __('Edit') }}
-                                        </a>
-                                    </div>
+                                <div class="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+                                    <x-vault-card :vault="$vault" />
                                 </div>
                             @endforeach
                         </div>
