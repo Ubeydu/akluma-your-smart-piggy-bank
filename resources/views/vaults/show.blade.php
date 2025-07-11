@@ -103,6 +103,9 @@
                                     <div class="flex items-start justify-between mb-3">
                                         <h4 class="text-base font-medium text-gray-900 dark:text-gray-100 truncate">
                                             {{ $piggyBank->name }}
+                                            <span class="text-gray-600 dark:text-gray-200 font-normal text-sm ml-2">
+                                                #{{ $piggyBank->id }}
+                                            </span>
                                         </h4>
                                         @php
                                             $statusClasses = match($piggyBank->status) {
