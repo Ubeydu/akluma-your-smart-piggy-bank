@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-900 leading-tight">
                 {{ __('Create Vault') }}
             </h2>
             <a href="{{ localizedRoute('localized.vaults.index') }}"
@@ -11,7 +11,7 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-4 px-4">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
@@ -73,7 +73,7 @@
                         </div>
 
                         <!-- Submit Buttons -->
-                        <div class="flex justify-end space-x-3">
+                        <div class="flex justify-center space-x-3">
                             <a href="{{ localizedRoute('localized.vaults.index') }}"
                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md">
                                 {{ __('Cancel') }}

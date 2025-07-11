@@ -123,6 +123,16 @@ Route::localizedGet('vaults/{vault_id}/cancel', [VaultController::class, 'cancel
     ->middleware(['auth', 'verified'])
     ->where('vault_id', '[0-9]+');
 
+Route::localizedPost('vaults/{vault_id}/connect-piggy-bank', [VaultController::class, 'connectPiggyBank'])
+    ->name('localized.vaults.connect-piggy-bank')
+    ->middleware(['auth', 'verified'])
+    ->where('vault_id', '[0-9]+');
+
+Route::localizedDelete('vaults/{vault_id}/disconnect-piggy-bank', [VaultController::class, 'disconnectPiggyBank'])
+    ->name('localized.vaults.disconnect-piggy-bank')
+    ->middleware(['auth', 'verified'])
+    ->where('vault_id', '[0-9]+');
+
 // Test routes for development
 Route::localizedPost('test-date/{piggy_id}', function ($piggy_id, Request $request) {
     // Verify the piggy bank exists but don't store the result

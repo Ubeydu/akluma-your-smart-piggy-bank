@@ -1,6 +1,8 @@
+@props(['show' => 'showConfirmCancel'])
+
 <div
     x-cloak
-    x-show="showConfirmCancel"
+    x-show="{{ $show }}"
     class="fixed inset-0 z-50 overflow-y-auto"
     role="dialog"
 >
@@ -8,7 +10,7 @@
     <div class="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:p-0">
         <div
             class="fixed inset-0 bg-gray-500/40 transition-opacity"
-            @click="showConfirmCancel = false"
+            @click="{{ $show }} = false"
         ></div>
 
         <!-- Dialog box -->

@@ -432,5 +432,14 @@
     "Changes cancelled": "Değişiklikler iptal edildi",
     "Back to Piggy Banks": "Kumbaralara Dön",
     "Vault": "Kasa",
-    "No vault selected": "Kasa seçilmedi"
+    "No vault selected": "Kasa seçilmedi",
+    "vault_piggy_bank_connect_success_message": "Kumbara kasaya başarıyla bağlandı.",
+    "vault_piggy_bank_disconnect_success_message": "Kumbara kasadan başarıyla ayrıldı.",
+    "vault_piggy_bank_already_connected_message": "Bu kumbara zaten başka bir kasaya bağlı.",
+    "Connect Piggy Bank": "Kumbara Bağla",
+    "Connect": "Bağla",
+    "Disconnect": "Ayır",
+    "Select a piggy bank to connect": "Bağlanacak kumbara seç",
+    "Are you sure you want to disconnect this piggy bank?": "Bu kumbarayı ayırmak istediğinden emin misin?",
+    "This piggy bank is already connected to this vault.": "Bu kumbara zaten bu kasaya bağlı."
 }

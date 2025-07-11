@@ -430,5 +430,14 @@
     "View": "Voir",
     "You cancelled editing your vault. Your changes haven't been saved.": "Vous avez annulé la modification de votre coffre-fort. Vos modifications n'ont pas été enregistrées.",
     "Changes cancelled": "Modifications annulées",
-    "Back to Piggy Banks": "Retour aux tirelires"
+    "Back to Piggy Banks": "Retour aux tirelires",
+    "vault_piggy_bank_connect_success_message": "Tirelire connectée au coffre avec succès.",
+    "vault_piggy_bank_disconnect_success_message": "Tirelire déconnectée du coffre avec succès.",
+    "vault_piggy_bank_already_connected_message": "Cette tirelire est déjà connectée à un autre coffre.",
+    "Connect Piggy Bank": "Connecter Tirelire",
+    "Connect": "Connecter",
+    "Disconnect": "Déconnecter",
+    "Select a piggy bank to connect": "Sélectionner une tirelire à connecter",
+    "Are you sure you want to disconnect this piggy bank?": "Êtes-vous sûr de vouloir déconnecter cette tirelire?",
+    "This piggy bank is already connected to this vault.": "Cette tirelire est déjà connectée à ce coffre."
 }

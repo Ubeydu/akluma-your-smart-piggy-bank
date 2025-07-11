@@ -11,7 +11,7 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-4 px-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
@@ -32,7 +32,7 @@
                             </div>
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">{{ __('No vaults yet') }}</h3>
                             <p class="text-gray-600 dark:text-gray-400 mb-4">{{ __('Create your first vault to organize your piggy banks.') }}</p>
-                            
+
                             <!-- Info Section -->
                             <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4 mb-6 max-w-lg mx-auto">
                                 <div class="flex">
@@ -51,7 +51,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <a href="{{ localizedRoute('localized.vaults.create') }}"
                                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
                                 {{ __('Create Your First Vault') }}

@@ -161,5 +161,16 @@
     "manual_money_hide_buttons": "Hide Buttons",
     "vault_create_success_message": "Vault created successfully.",
     "vault_update_success_message": "Vault updated successfully.",
-    "vault_delete_success_message": "Vault deleted successfully."
+    "vault_delete_success_message": "Vault deleted successfully.",
+    "vault_piggy_bank_connect_success_message": "Piggy bank connected to vault successfully.",
+    "vault_piggy_bank_disconnect_success_message": "Piggy bank disconnected from vault successfully.",
+    "vault_piggy_bank_already_connected_message": "This piggy bank is already connected to another vault.",
+    "Connect Piggy Bank": "Connect Piggy Bank",
+    "Connect": "Connect",
+    "Disconnect": "Disconnect",
+    "Connected Piggy Banks": "Connected Piggy Banks",
+    "No piggy banks connected": "No piggy banks connected",
+    "Select a piggy bank to connect": "Select a piggy bank to connect",
+    "Are you sure you want to disconnect this piggy bank?": "Are you sure you want to disconnect this piggy bank?",
+    "This piggy bank is already connected to this vault.": "This piggy bank is already connected to this vault."
 }

@@ -17,7 +17,7 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-4 px-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <!-- Vault Summary Card -->
@@ -132,12 +132,48 @@
                                         </div>
                                     </div>
 
-                                    <div class="mt-4">
+                                    <div class="mt-4 flex justify-between items-center">
                                         <a href="{{ localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id]) }}"
                                            class="text-blue-300 hover:text-blue-500 text-sm font-medium">
                                             {{ __('View Details') }} →
                                         </a>
+
+                                        <div x-data="{ showDisconnectConfirm: false }">
+                                            <button type="button"
+                                                    @click.prevent="showDisconnectConfirm = true"
+                                                    class="text-red-400 hover:text-red-600 text-sm font-medium cursor-pointer">
+                                                {{ __('Disconnect') }}
+                                            </button>
+
+                                            <template x-if="showDisconnectConfirm">
+                                                <x-confirmation-dialog show="showDisconnectConfirm">
+                                                    <x-slot:title>
+                                                        {{ __('Are you sure you want to disconnect this piggy bank?') }}
+                                                    </x-slot>
+
+                                                    <x-slot:actions>
+                                                        <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
+                                                            <form method="POST" action="{{ localizedRoute('localized.vaults.disconnect-piggy-bank', ['vault_id' => $vault->id]) }}">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <input type="hidden" name="piggy_bank_id" value="{{ $piggyBank->id }}">
+                                                                <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                                                    {{ __('Yes, proceed') }}
+                                                                </x-danger-button>
+                                                            </form>
+
+                                                            <x-secondary-button type="button"
+                                                                                @click="showDisconnectConfirm = false"
+                                                                                class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                                                {{ __('No, cancel') }}
+                                                            </x-secondary-button>
+                                                        </div>
+                                                    </x-slot:actions>
+                                                </x-confirmation-dialog>
+                                            </template>
+                                        </div>
                                     </div>
+
                                 </div>
                             @endforeach
                         </div>
@@ -163,12 +199,83 @@
                 </div>
             </div>
 
+
+            <!-- Connect Piggy Bank Section -->
+            @if($unconnectedPiggyBanks->count() > 0)
+                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">
+                            {{ __('Connect Piggy Bank') }}
+                        </h3>
+
+                        <form method="POST" action="{{ localizedRoute('localized.vaults.connect-piggy-bank', ['vault_id' => $vault->id]) }}" class="space-y-4">
+                            @csrf
+
+                            <div x-data="{
+                                    open: false,
+                                    selected: null,
+                                    selectedText: '{{ __('Select a piggy bank to connect') }}',
+                                    piggyBanks: @js($formattedPiggyBanks)
+                                }" class="relative">
+
+                                <!-- Hidden input for form submission -->
+                                <input type="hidden" name="piggy_bank_id" :value="selected" required>
+
+                                <!-- Dropdown button -->
+                                <button type="button" @click="open = !open"
+                                        class="relative w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-base">
+                                    <span class="block truncate text-gray-900 dark:text-gray-300" x-text="selectedText"></span>
+                                    <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                        <svg class="h-5 w-5 text-gray-400 transition-transform duration-200"
+                                             :class="{ 'rotate-180': open }"
+                                             viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </span>
+                                </button>
+
+                                <!-- Dropdown menu -->
+                                <div x-show="open" @click.away="open = false"
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="transform opacity-0 scale-95"
+                                     x-transition:enter-end="transform opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="transform opacity-100 scale-100"
+                                     x-transition:leave-end="transform opacity-0 scale-95"
+                                     class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 shadow-lg max-h-60 rounded-md py-1 text-lg ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+
+                                    <template x-for="piggyBank in piggyBanks" :key="piggyBank.id">
+                                        <button type="button" @click="selected = piggyBank.id; selectedText = piggyBank.display; open = false"
+                                                class="w-full text-left cursor-default select-none relative py-4 pl-3 pr-9 hover:bg-blue-600 hover:text-white text-gray-900 dark:text-gray-300 text-lg"
+                                                :class="{ 'bg-blue-600 text-white': selected === piggyBank.id }">
+                                            <span class="block truncate" x-text="piggyBank.display"></span>
+                                            <span x-show="selected === piggyBank.id" class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600">
+                                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                </svg>
+                                            </span>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div>
+                                <button type="submit"
+                                        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md cursor-pointer">
+                                    {{ __('Connect') }}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            @endif
+
             <!-- Danger Zone -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-red-600 mb-4">{{ __('Danger Zone') }}</h3>
                     <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
-                        <div class="flex justify-between items-start">
+                        <div class="flex justify-between items-center">
                             <div>
                                 <h4 class="text-base text-red-800 dark:text-red-300 font-medium">{{ __('Delete Vault') }}</h4>
                                 <p class="text-red-700 dark:text-red-400 text-sm mt-1">
