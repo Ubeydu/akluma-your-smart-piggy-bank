@@ -82,7 +82,7 @@
 
                         <!-- Submit Buttons -->
                         <div class="flex justify-end space-x-3">
-                            <a href="{{ localizedRoute('localized.vaults.show', ['vault_id' => $vault->id]) }}"
+                            <a href="{{ localizedRoute('localized.vaults.cancel', ['vault_id' => $vault->id]) }}"
                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md">
                                 {{ __('Cancel') }}
                             </a>

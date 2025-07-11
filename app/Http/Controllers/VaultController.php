@@ -92,4 +92,18 @@ class VaultController extends Controller
             ->to(localizedRoute('localized.vaults.index'))
             ->with('success', __('vault_delete_success_message'));
     }
+
+    public function cancel($vault_id): RedirectResponse
+    {
+        $vault = Vault::findOrFail($vault_id);
+
+        if (! Gate::allows('update', $vault)) {
+            abort(403);
+        }
+
+        return redirect()
+            ->to(localizedRoute('localized.vaults.show', ['vault_id' => $vault->id]))
+            ->with('status', __('Changes cancelled'))
+            ->with('warning', __('You cancelled editing your vault. Your changes haven\'t been saved.'));
+    }
 }

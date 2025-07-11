@@ -41,7 +41,7 @@
                 {{ __('View') }}
             </span>
             <a href="{{ localizedRoute('localized.vaults.edit', ['vault_id' => $vault->id]) }}"
-               class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm"
+               class="bg-gray-600 hover:bg-gray-900 text-white px-3 py-1 rounded text-sm"
                onclick="event.preventDefault(); event.stopPropagation(); window.location.href='{{ localizedRoute('localized.vaults.edit', ['vault_id' => $vault->id]) }}';">
                 {{ __('Edit') }}
             </a>

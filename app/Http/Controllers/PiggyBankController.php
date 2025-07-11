@@ -106,7 +106,7 @@ class PiggyBankController extends Controller
             // \Log::info('✅ Gate check passed, rendering view');
 
             if (request()->has('cancelled')) {
-                session()->flash('info', __('edit_cancelled_message'));
+                session()->flash('warning', __('edit_cancelled_message'));
             }
 
             return view('piggy-banks.show', [

@@ -31,7 +31,7 @@
                             </h3>
 
                             @if(empty($vault->total_saved))
-                                <p class="text-3xl font-bold text-green-900 dark:text-green-100">
+                                <p class="text-2xl font-bold text-green-900 dark:text-green-100">
                                     0
                                 </p>
                             @elseif(count($vault->total_saved) === 1)
@@ -39,7 +39,7 @@
                                     $currency = array_keys($vault->total_saved)[0];
                                     $amount = array_values($vault->total_saved)[0];
                                 @endphp
-                                <p class="text-3xl font-bold text-green-900 dark:text-green-100">
+                                <p class="text-2xl font-bold text-green-900 dark:text-green-100">
                                     {{ number_format($amount, 2) }} {{ $currency }}
                                 </p>
                             @else
@@ -51,7 +51,7 @@
                                             </span>
                                         </div>
                                     @endforeach
-                                    <p class="text-xs text-green-700 dark:text-green-300 mt-2 italic">
+                                    <p class="text-sm text-green-700 dark:text-green-300 mt-2 italic">
                                         {{ __('Multiple currencies - totals shown separately') }}
                                     </p>
                                 </div>
@@ -63,7 +63,7 @@
                             <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">
                                 {{ __('Connected Piggy Banks') }}
                             </h3>
-                            <p class="text-3xl font-bold text-blue-900 dark:text-blue-100">
+                            <p class="text-2xl font-bold text-blue-900 dark:text-blue-100">
                                 {{ $vault->piggyBanks->count() }}
                             </p>
                         </div>
@@ -74,7 +74,7 @@
                             <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 {{ __('Vault Details') }}
                             </h3>
-                            <p class="text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                                 {{ $vault->details }}
                             </p>
                         </div>
@@ -90,7 +90,7 @@
                             {{ __('Connected Piggy Banks') }}
                         </h3>
                         @if($vault->piggyBanks->count() > 0)
-                            <span class="text-sm text-gray-500">
+                            <span class="text-sm text-gray-200">
                                 {{ __(':count piggy banks in this vault', ['count' => $vault->piggyBanks->count()]) }}
                             </span>
                         @endif
@@ -101,7 +101,7 @@
                             @foreach($vault->piggyBanks as $piggyBank)
                                 <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
                                     <div class="flex items-start justify-between mb-3">
-                                        <h4 class="font-medium text-gray-900 dark:text-gray-100 truncate">
+                                        <h4 class="text-base font-medium text-gray-900 dark:text-gray-100 truncate">
                                             {{ $piggyBank->name }}
                                         </h4>
                                         @php
@@ -119,14 +119,14 @@
 
                                     <div class="space-y-2 text-sm">
                                         <div>
-                                            <span class="text-gray-600 dark:text-gray-400">{{ __('Saved:') }}</span>
-                                            <span class="font-medium text-green-600">
+                                            <span class="text-gray-600 dark:text-gray-200">{{ __('Saved:') }}</span>
+                                            <span class="font-medium text-green-400">
                                                 {{ number_format($piggyBank->actual_final_total_saved, 2) }} {{ $piggyBank->currency }}
                                             </span>
                                         </div>
                                         <div>
-                                            <span class="text-gray-600 dark:text-gray-400">{{ __('Goal:') }}</span>
-                                            <span class="font-medium">
+                                            <span class="text-gray-600 dark:text-gray-200">{{ __('Goal:') }}</span>
+                                            <span class="font-medium dark:text-white">
                                                 {{ number_format($piggyBank->final_total, 2) }} {{ $piggyBank->currency }}
                                             </span>
                                         </div>
@@ -134,7 +134,7 @@
 
                                     <div class="mt-4">
                                         <a href="{{ localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id]) }}"
-                                           class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                           class="text-blue-300 hover:text-blue-500 text-sm font-medium">
                                             {{ __('View Details') }} →
                                         </a>
                                     </div>
@@ -148,10 +148,10 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                            <h3 class="text-base font-medium text-gray-900 dark:text-gray-100 mb-2">
                                 {{ __('No piggy banks connected') }}
                             </h3>
-                            <p class="text-gray-600 dark:text-gray-400 mb-4">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
                                 {{ __('Connect piggy banks to this vault to track your savings by storage location.') }}
                             </p>
                             <a href="{{ localizedRoute('localized.piggy-banks.index') }}"
@@ -170,7 +170,7 @@
                     <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
                         <div class="flex justify-between items-start">
                             <div>
-                                <h4 class="text-red-800 dark:text-red-300 font-medium">{{ __('Delete Vault') }}</h4>
+                                <h4 class="text-base text-red-800 dark:text-red-300 font-medium">{{ __('Delete Vault') }}</h4>
                                 <p class="text-red-700 dark:text-red-400 text-sm mt-1">
                                     {{ __('This will delete the vault but keep all piggy banks. This action cannot be undone.') }}
                                 </p>
