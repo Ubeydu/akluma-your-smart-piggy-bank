@@ -32,6 +32,26 @@
                             </div>
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">{{ __('No vaults yet') }}</h3>
                             <p class="text-gray-600 dark:text-gray-400 mb-4">{{ __('Create your first vault to organize your piggy banks.') }}</p>
+                            
+                            <!-- Info Section -->
+                            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4 mb-6 max-w-lg mx-auto">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3 text-left">
+                                        <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">
+                                            {{ __('What is a vault?') }}
+                                        </h3>
+                                        <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                                            <p>{{ __('A vault is a container that groups your piggy banks based on where you store the real money. For example, create one vault for your savings account and another for your physical piggy bank at home.') }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <a href="{{ localizedRoute('localized.vaults.create') }}"
                                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
                                 {{ __('Create Your First Vault') }}
