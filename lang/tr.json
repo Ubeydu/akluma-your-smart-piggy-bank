@@ -430,5 +430,7 @@
     "View": "Görüntüle",
     "You cancelled editing your vault. Your changes haven't been saved.": "Kasayı düzenlemeyi iptal ettin. Değişikliklerini kaydetmedik.",
     "Changes cancelled": "Değişiklikler iptal edildi",
-    "Back to Piggy Banks": "Kumbaralara Dön"
+    "Back to Piggy Banks": "Kumbaralara Dön",
+    "Vault": "Kasa",
+    "No vault selected": "Kasa seçilmedi"
 }
