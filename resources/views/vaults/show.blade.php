@@ -6,11 +6,11 @@
             </h2>
             <div class="flex space-x-3">
                 <a href="{{ localizedRoute('localized.vaults.edit', ['vault_id' => $vault->id]) }}"
-                   class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md">
+                   class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md text-center inline-block">
                     {{ __('Edit Vault') }}
                 </a>
                 <a href="{{ localizedRoute('localized.vaults.index') }}"
-                   class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
+                   class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md text-center inline-block">
                     {{ __('Back to Vaults') }}
                 </a>
             </div>
@@ -276,12 +276,10 @@
             <!-- Danger Zone -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-red-600 mb-4">{{ __('Danger Zone') }}</h3>
                     <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
                         <div class="flex justify-between items-center">
                             <div>
-                                <h4 class="text-base text-red-800 dark:text-red-300 font-medium">{{ __('Delete Vault') }}</h4>
-                                <p class="text-red-700 dark:text-red-400 text-sm mt-1">
+                                <p class="text-red-700 dark:text-red-400 text-sm mt-1 mr-6">
                                     {{ __('This will delete the vault but keep all piggy banks. This action cannot be undone.') }}
                                 </p>
                             </div>
