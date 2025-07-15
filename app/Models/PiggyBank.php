@@ -59,6 +59,7 @@ class PiggyBank extends Model
         'preview_title',
         'preview_description',
         'preview_url',
+        'vault_id',
     ];
 
     protected $attributes = [
@@ -152,5 +153,10 @@ class PiggyBank extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(PiggyBankTransaction::class);
+    }
+
+    public function vault(): BelongsTo
+    {
+        return $this->belongsTo(Vault::class);
     }
 }

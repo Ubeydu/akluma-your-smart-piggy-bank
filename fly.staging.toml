@@ -30,9 +30,22 @@ console_command = 'php /var/www/html/artisan tinker'
   processes = ['app']
 
 [[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
-  cpus = 1
+processes = ["app"]
+memory = "512mb"
+cpu_kind = "shared"
+cpus = 1
+
+[[vm]]
+processes = ["worker"]
+memory = "512mb"
+cpu_kind = "shared"
+cpus = 1
+
+[[vm]]
+processes = ["cron"]
+memory = "512mb"
+cpu_kind = "shared"
+cpus = 1
 
 
 [processes]
