@@ -26,6 +26,12 @@ return [
             'fr' => 'mes-tirelires',
         ],
 
+        'vaults' => [
+            'en' => 'vaults',
+            'tr' => 'kasalar',
+            'fr' => 'coffres-forts',
+        ],
+
         'profile' => [
             'en' => 'profile',
             'tr' => 'profilim',
@@ -229,6 +235,11 @@ return [
             'en' => 'token',
             'tr' => 'token',
             'fr' => 'jeton',
+        ],
+        'vault_id' => [
+            'en' => 'vault_id',
+            'tr' => 'kasa_id',
+            'fr' => 'coffre_id',
         ],
     ],
 ];

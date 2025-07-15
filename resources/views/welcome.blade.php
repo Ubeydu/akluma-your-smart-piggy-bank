@@ -100,12 +100,18 @@
 
 
                                     @auth
-
                                         <a
                                             href="{{ localizedRoute('localized.piggy-banks.index') }}"
                                             class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                         >
                                             {{ __('My Piggy Banks') }}
+                                        </a>
+                                        <a
+
+                                        href="{{ localizedRoute('localized.vaults.index') }}"
+                                        class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
+                                        >
+                                        {{ __('My Vaults') }}
                                         </a>
                                     @else
 
@@ -166,6 +172,10 @@
                                     <x-responsive-nav-link :href="localizedRoute('localized.piggy-banks.index')"
                                                            :active="request()->routeIs('localized.piggy-banks.index.*')">
                                         {{ __('My Piggy Banks') }}
+                                    </x-responsive-nav-link>
+                                    <x-responsive-nav-link :href="localizedRoute('localized.vaults.index')"
+                                                           :active="request()->routeIs('localized.vaults.*')">
+                                        {{ __('My Vaults') }}
                                     </x-responsive-nav-link>
                                 @else
                                     <x-responsive-nav-link :href="localizedRoute('localized.login')"

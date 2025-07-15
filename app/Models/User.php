@@ -67,6 +67,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(PiggyBank::class);
     }
 
+    public function vaults(): HasMany
+    {
+        return $this->hasMany(Vault::class);
+    }
+
     public function updateTimezone($timezone): void
     {
         $this->update(['timezone' => $timezone]);
@@ -112,12 +117,10 @@ class User extends Authenticatable implements MustVerifyEmail
         app()->setLocale($previousLocale);
     }
 
-
     /**
      * Send the password reset notification.
      *
      * @param  string  $token
-     * @return void
      */
     public function sendPasswordResetNotification($token): void
     {

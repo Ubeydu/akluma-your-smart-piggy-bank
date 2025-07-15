@@ -25,18 +25,22 @@
                     @auth
                         <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.dashboard') }}"
                                     :active="request()->routeIs('localized.dashboard.*')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
                         <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.piggy-banks.index') }}"
-                                    :active="request()->routeIs('localized.piggy-banks.index.*')">
-                        {{ __('My Piggy Banks') }}
-                    </x-nav-link>
+                                    :active="request()->routeIs('localized.piggy-banks.*')">
+                            {{ __('My Piggy Banks') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.vaults.index') }}"
+                                    :active="request()->routeIs('localized.vaults.*')">
+                            {{ __('My Vaults') }}
+                        </x-nav-link>
                     @endauth
 
                         <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.create-piggy-bank.step-1') }}"
                                     :active="request()->routeIs('localized.create-piggy-bank.*')">
                         {{ __('Create New Piggy Bank') }}
-                    </x-nav-link>
+                        </x-nav-link>
                         <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.welcome') }}"
                                     :active="request()->routeIs('localized.welcome')">
                         {{ __('Welcome') }}
@@ -132,12 +136,16 @@
             @auth
                 <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.dashboard') }}"
                                        :active="request()->routeIs('localized.dashboard.*')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
+                    {{ __('Dashboard') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.piggy-banks.index') }}"
-                                       :active="request()->routeIs('localized.piggy-banks.index.*')">
-                {{ __('My Piggy Banks') }}
-            </x-responsive-nav-link>
+                                       :active="request()->routeIs('localized.piggy-banks.*')">
+                    {{ __('My Piggy Banks') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.vaults.index') }}"
+                                       :active="request()->routeIs('localized.vaults.*')">
+                    {{ __('My Vaults') }}
+                </x-responsive-nav-link>
             @endauth
 
                 <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.create-piggy-bank.step-1') }}"

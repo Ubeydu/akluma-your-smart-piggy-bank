@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\VaultController;
 
 // Redirect base URL to localized version
 Route::get('/', function () {
@@ -83,6 +84,54 @@ Route::localizedPost('piggy-banks/{piggy_id}/add-remove-money', [PiggyBankContro
     ->name('localized.piggy-banks.add-remove-money')
     ->middleware(['auth', 'verified'])
     ->where('piggy_id', '[0-9]+');
+
+// Vault routes
+Route::localizedGet('vaults', [VaultController::class, 'index'])
+    ->name('localized.vaults.index')
+    ->middleware(['auth', 'verified']);
+
+Route::localizedGet('vaults/{vault_id}', [VaultController::class, 'show'])
+    ->name('localized.vaults.show')
+    ->middleware(['auth', 'verified'])
+    ->where('vault_id', '[0-9]+');
+
+Route::localizedGet('vaults/create', [VaultController::class, 'create'])
+    ->name('localized.vaults.create')
+    ->middleware(['auth', 'verified']);
+
+Route::localizedPost('vaults', [VaultController::class, 'store'])
+    ->name('localized.vaults.store')
+    ->middleware(['auth', 'verified']);
+
+Route::localizedGet('vaults/{vault_id}/edit', [VaultController::class, 'edit'])
+    ->name('localized.vaults.edit')
+    ->middleware(['auth', 'verified'])
+    ->where('vault_id', '[0-9]+');
+
+Route::localizedPut('vaults/{vault_id}', [VaultController::class, 'update'])
+    ->name('localized.vaults.update')
+    ->middleware(['auth', 'verified'])
+    ->where('vault_id', '[0-9]+');
+
+Route::localizedDelete('vaults/{vault_id}', [VaultController::class, 'destroy'])
+    ->name('localized.vaults.destroy')
+    ->middleware(['auth', 'verified'])
+    ->where('vault_id', '[0-9]+');
+
+Route::localizedGet('vaults/{vault_id}/cancel', [VaultController::class, 'cancel'])
+    ->name('localized.vaults.cancel')
+    ->middleware(['auth', 'verified'])
+    ->where('vault_id', '[0-9]+');
+
+Route::localizedPost('vaults/{vault_id}/connect-piggy-bank', [VaultController::class, 'connectPiggyBank'])
+    ->name('localized.vaults.connect-piggy-bank')
+    ->middleware(['auth', 'verified'])
+    ->where('vault_id', '[0-9]+');
+
+Route::localizedDelete('vaults/{vault_id}/disconnect-piggy-bank', [VaultController::class, 'disconnectPiggyBank'])
+    ->name('localized.vaults.disconnect-piggy-bank')
+    ->middleware(['auth', 'verified'])
+    ->where('vault_id', '[0-9]+');
 
 // Test routes for development
 Route::localizedPost('test-date/{piggy_id}', function ($piggy_id, Request $request) {

@@ -18,7 +18,14 @@
             <div class="flex-1 w-[calc(100%-5rem)]">
                 <!-- Add truncate to the h3 to prevent overflow -->
                 <h3 class="text-lg font-bold text-gray-900 mb-0.5 truncate">{{ $piggyBank->name }}</h3>
-                <div class="text-sm text-gray-500">{{ __('piggy_bank_ID') }} {{ $piggyBank->id }}</div>
+                <div class="flex items-center gap-1">
+                    <span class="text-sm text-gray-500">{{ __('piggy_bank_ID') }} {{ $piggyBank->id }}</span>
+                    @if($piggyBank->vault_id)
+                        <span class="text-sm text-gray-500">•</span>
+                        <span class="text-sm text-gray-500">{{ __('Vault') }}: {{ Str::limit($piggyBank->vault->name, 15) }}</span>
+                    @endif
+                </div>
+
             </div>
 
             <!-- Status Badge - move to below title on small screens -->

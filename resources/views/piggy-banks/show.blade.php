@@ -1,8 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-900 leading-tight">
-            {{ __('Piggy Bank Details') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-900 leading-tight">
+                {{ __('Piggy Bank Details') }}
+            </h2>
+            <div class="flex space-x-3">
+                <a href="{{ localizedRoute('localized.piggy-banks.index') }}"
+                   class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
+                    {{ __('Back to Piggy Banks') }}
+                </a>
+            </div>
+        </div>
     </x-slot>
 
     <div class="py-4 px-4">
@@ -19,7 +27,8 @@
                             <x-input-label for="name" :value="__('Product Name')" />
                             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"
                                           :value="old('name', $piggyBank->name)" required
-                                          x-bind:disabled="!isEditing" />
+                                          x-bind:disabled="!isEditing"
+                                          x-bind:class="{ 'cursor-not-allowed': !isEditing }" />
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
 
@@ -30,8 +39,27 @@
                                       name="details"
                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-xs"
                                       rows="3"
-                                      :disabled="!isEditing">{{ old('details', $piggyBank->details) }}</textarea>
+                                      x-bind:disabled="!isEditing"
+                                      x-bind:class="{ 'cursor-not-allowed': !isEditing }">{{ old('details', $piggyBank->details) }}</textarea>
                             <x-input-error :messages="$errors->get('details')" class="mt-2" />
+                        </div>
+
+                        <!-- Vault Selection (Editable) -->
+                        <div>
+                            <x-input-label for="vault_id" :value="__('Vault')" />
+                            <select id="vault_id"
+                                    name="vault_id"
+                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-xs"
+                                    x-bind:disabled="!isEditing"
+                                    x-bind:class="{ 'cursor-pointer': isEditing, 'cursor-not-allowed': !isEditing }">
+                                <option value="">{{ __('No vault selected') }}</option>
+                                @foreach(auth()->user()->vaults as $vault)
+                                    <option value="{{ $vault->id }}" {{ old('vault_id', $piggyBank->vault_id) == $vault->id ? 'selected' : '' }}>
+                                        {{ $vault->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('vault_id')" class="mt-2" />
                         </div>
 
 
