@@ -66,7 +66,7 @@
                                         {{ __('What is a vault?') }}
                                     </h3>
                                     <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
-                                        <p>{{ __('A vault is a container that groups your piggy banks based on where you store the real money. For example, create one vault for your savings account and another for your physical piggy bank at home.') }}</p>
+                                        <p>{{ __('vault_definition') }}</p>
                                     </div>
                                 </div>
                             </div>

@@ -6,7 +6,7 @@
             </h2>
             <div class="flex space-x-3">
                 <a href="{{ localizedRoute('localized.piggy-banks.index') }}"
-                   class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
+                   class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md text-center inline-block">
                     {{ __('Back to Piggy Banks') }}
                 </a>
             </div>
@@ -46,12 +46,41 @@
 
                         <!-- Vault Selection (Editable) -->
                         <div>
-                            <x-input-label for="vault_id" :value="__('Vault')" />
+                            <div class="flex items-center">
+                            <x-input-label for="vault_id" :value="__('Vault')"/>
+
+                            <span x-data="{ showTooltip: false }" class="relative cursor-help inline-block ml-1">
+                                <svg @mouseenter="showTooltip = true"
+                                     @mouseleave="showTooltip = false"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke-width="2"
+                                     stroke="currentColor"
+                                     class="w-4 h-4 text-gray-600 hover:text-gray-800 transition-colors duration-200">
+                                    <path stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                </svg>
+                                <div x-show="showTooltip"
+                                     x-cloak
+                                     class="absolute z-10 w-48 px-3 py-2 mt-2 text-sm bg-gray-900 text-white rounded-lg shadow-lg"
+                                     :class="{
+                                        'left-0 ml-2': $el.getBoundingClientRect().left < 150,
+                                        'right-0 mr-2': $el.getBoundingClientRect().right > window.innerWidth - 150,
+                                        'left-1/2 -translate-x-1/2': $el.getBoundingClientRect().left >= 150 && $el.getBoundingClientRect().right <= window.innerWidth - 150
+                                     }"
+                                     role="tooltip">
+                                    {{ __('vault_definition') }}
+                                </div>
+                            </span>
+                            </div>
+
                             <select id="vault_id"
                                     name="vault_id"
                                     class="mt-1 block w-full border-gray-300 rounded-md shadow-xs"
                                     x-bind:disabled="!isEditing"
-                                    x-bind:class="{ 'cursor-pointer': isEditing, 'cursor-not-allowed': !isEditing }">
+                                    x-bind:class="{ 'cursor-pointer': isEditing, 'cursor-not-allowed opacity-60': !isEditing }">
                                 <option value="">{{ __('No vault selected') }}</option>
                                 @foreach(auth()->user()->vaults as $vault)
                                     <option value="{{ $vault->id }}" {{ old('vault_id', $piggyBank->vault_id) == $vault->id ? 'selected' : '' }}>
@@ -59,6 +88,16 @@
                                     </option>
                                 @endforeach
                             </select>
+
+                            @if(auth()->user()->vaults->count() === 0)
+                                <div class="mt-2">
+                                    <a href="{{ localizedRoute('localized.vaults.create') }}"
+                                       class="text-blue-600 hover:text-blue-700 underline text-sm">
+                                        {{ __('Create Vault') }}
+                                    </a>
+                                </div>
+                            @endif
+
                             <x-input-error :messages="$errors->get('vault_id')" class="mt-2" />
                         </div>
 
