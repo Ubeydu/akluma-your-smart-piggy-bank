@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-900  leading-tight">
+            <h2 class="font-semibold text-xl text-gray-900  leading-tight mr-4">
                 {{ $vault->name }}
             </h2>
             <div class="flex space-x-3">
@@ -191,12 +191,8 @@
                                 {{ __('No piggy banks connected') }}
                             </h3>
                             <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                                {{ __('Connect piggy banks to this vault to track your savings by storage location.') }}
+                                {{ __('connect_piggy_bank') }}
                             </p>
-                            <a href="{{ localizedRoute('localized.piggy-banks.index') }}"
-                               class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
-                                {{ __('View Your Piggy Banks') }}
-                            </a>
                         </div>
                     @endif
                 </div>
@@ -215,11 +211,12 @@
                             @csrf
 
                             <div x-data="{
-                                    open: false,
-                                    selected: null,
-                                    selectedText: '{{ __('Select a piggy bank to connect') }}',
-                                    piggyBanks: @js($formattedPiggyBanks)
-                                }" class="relative">
+                                open: false,
+                                selected: null,
+                                selectedText: '{{ __('Select a piggy bank to connect') }}',
+                                piggyBanks: @js($formattedPiggyBanks)
+                            }" class="relative">
+
 
                                 <!-- Hidden input for form submission -->
                                 <input type="hidden" name="piggy_bank_id" :value="selected" required>

@@ -30,14 +30,15 @@ class VaultController extends Controller
             ->whereNull('vault_id')
             ->get();
 
-        // Format piggy banks for the dropdown
-        $formattedPiggyBanks = $unconnectedPiggyBanks->map(function ($pb) {
+        $formattedPiggyBanks = $unconnectedPiggyBanks->filter(function ($pb) {
+            return ! in_array($pb->status, ['done', 'cancelled']);
+        })->map(function ($pb) {
             return [
                 'id' => $pb->id,
                 'name' => $pb->name,
                 'amount' => number_format($pb->actual_final_total_saved, 2),
                 'currency' => $pb->currency,
-                'display' => $pb->name.' ('.number_format($pb->actual_final_total_saved, 2).' '.$pb->currency.')',
+                'display' => $pb->name.' #'.$pb->id.' ('.number_format($pb->actual_final_total_saved, 2).' '.$pb->currency.')',
             ];
         });
 
