@@ -31,7 +31,6 @@
                                 </svg>
                             </div>
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">{{ __('No vaults yet') }}</h3>
-                            <p class="text-gray-600 dark:text-gray-400 mb-4">{{ __('Create your first vault to organize your piggy banks.') }}</p>
 
                             <!-- Info Section -->
                             <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4 mb-6 max-w-lg mx-auto">
@@ -46,7 +45,7 @@
                                             {{ __('What is a vault?') }}
                                         </h3>
                                         <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
-                                            <p>{{ __('A vault is a container that groups your piggy banks based on where you store the real money. For example, create one vault for your savings account and another for your physical piggy bank at home.') }}</p>
+                                            <p>{{ __('vault_definition') }}</p>
                                         </div>
                                     </div>
                                 </div>

@@ -15,6 +15,8 @@
 {{ __('view_piggy_bank') }}
 </x-mail::button>
 
+{{ __('saving_reminder_additional_message') }}
+
 {{ __('saving_reminder_closing') }}
 {{ config('app.name') }}
 

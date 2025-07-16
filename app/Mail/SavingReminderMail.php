@@ -29,14 +29,14 @@ class SavingReminderMail extends Mailable implements ShouldQueue
         // Set locale based on user's language preference
         $locale = $this->user->language ?? App::getLocale();
         App::setLocale($locale);
-        
-        \Log::info('📧 SavingReminderMail constructor called', [
-            'user_id' => $this->user->id,
-            'user_language' => $this->user->language,
-            'piggy_bank_id' => $this->piggyBank->id,
-            'set_locale' => $locale,
-            'app_locale' => App::getLocale(),
-        ]);
+
+        //        \Log::info('📧 SavingReminderMail constructor called', [
+        //            'user_id' => $this->user->id,
+        //            'user_language' => $this->user->language,
+        //            'piggy_bank_id' => $this->piggyBank->id,
+        //            'set_locale' => $locale,
+        //            'app_locale' => App::getLocale(),
+        //        ]);
     }
 
     /**
@@ -44,14 +44,14 @@ class SavingReminderMail extends Mailable implements ShouldQueue
      */
     public function envelope(): Envelope
     {
-        \Log::info('✉️ SavingReminderMail envelope() called', [
-            'user_id' => $this->user->id,
-            'app_locale' => App::getLocale(),
-        ]);
-        
+        //        \Log::info('✉️ SavingReminderMail envelope() called', [
+        //            'user_id' => $this->user->id,
+        //            'app_locale' => App::getLocale(),
+        //        ]);
+
         return new Envelope(
             subject: __('saving_reminder_subject', [
-                'name' => $this->piggyBank->name
+                'name' => $this->piggyBank->name,
             ]),
         );
     }
@@ -61,31 +61,31 @@ class SavingReminderMail extends Mailable implements ShouldQueue
      */
     public function content(): Content
     {
-        \Log::critical('🚨 CONTENT METHOD CALLED - THIS SHOULD APPEAR!', [
-            'user_id' => $this->user->id,
-            'piggy_bank_id' => $this->piggyBank->id,
-        ]);
-        
+        //        \Log::critical('🚨 CONTENT METHOD CALLED - THIS SHOULD APPEAR!', [
+        //            'user_id' => $this->user->id,
+        //            'piggy_bank_id' => $this->piggyBank->id,
+        //        ]);
+
         // Use the localizedRoute helper to generate a properly localized URL
         $locale = $this->user->language ?? app()->getLocale();
-        
-        \Log::info('🔗 Email URL Generation Debug', [
-            'user_id' => $this->user->id,
-            'user_language' => $this->user->language,
-            'resolved_locale' => $locale,
-            'app_locale' => app()->getLocale(),
-            'piggy_bank_id' => $this->piggyBank->id,
-        ]);
-        
+
+        //        \Log::info('🔗 Email URL Generation Debug', [
+        //            'user_id' => $this->user->id,
+        //            'user_language' => $this->user->language,
+        //            'resolved_locale' => $locale,
+        //            'app_locale' => app()->getLocale(),
+        //            'piggy_bank_id' => $this->piggyBank->id,
+        //        ]);
+
         $piggyBankUrl = localizedRoute('localized.piggy-banks.show', [
             'piggy_id' => $this->piggyBank->id,
         ], $locale);
-        
-        \Log::info('🎯 Generated Email URL', [
-            'url' => $piggyBankUrl,
-            'locale' => $locale,
-            'piggy_bank_id' => $this->piggyBank->id,
-        ]);
+
+        //        \Log::info('🎯 Generated Email URL', [
+        //            'url' => $piggyBankUrl,
+        //            'locale' => $locale,
+        //            'piggy_bank_id' => $this->piggyBank->id,
+        //        ]);
 
         // Format the date
         $formattedDate = Carbon::parse($this->scheduledSaving->saving_date)->format('Y-m-d');
@@ -102,6 +102,4 @@ class SavingReminderMail extends Mailable implements ShouldQueue
             ],
         );
     }
-
-
 }
