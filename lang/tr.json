@@ -441,5 +441,6 @@
     "Disconnect": "Ayır",
     "Select a piggy bank to connect": "Bağlanacak kumbara seç",
     "Are you sure you want to disconnect this piggy bank?": "Bu kumbarayı ayırmak istediğinden emin misin?",
-    "This piggy bank is already connected to this vault.": "Bu kumbara zaten bu kasaya bağlı."
+    "This piggy bank is already connected to this vault.": "Bu kumbara zaten bu kasaya bağlı.",
+    "vault_cant_connect_status": "Kumbaranın durumu :status iken onu bir kasaya bağlayamazsın"
 }
