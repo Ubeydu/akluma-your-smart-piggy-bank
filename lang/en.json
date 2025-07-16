@@ -72,6 +72,7 @@
     "saving_reminder_title": "Saving Reminder",
     "saving_reminder_greeting": "Hello :name,",
     "saving_reminder_message": "This is a reminder for your saving #:saving_number of :amount :currency for your piggy bank \":piggy_bank_name\" scheduled for today (:date).",
+    "saving_reminder_additional_message": "When you’ve put this amount aside, click the button above to open your piggy bank. If you’re not already logged in, you’ll be asked to sign in first.\n\nOnce you are on your piggy bank page, scroll down to the “Saving Schedule” table near the end and check the box next to your saving to mark it as complete.\n\nIf you haven’t saved yet, you can always come back and mark it later.",
     "view_piggy_bank": "View Piggy Bank",
     "saving_reminder_closing": "Happy saving!",
     "saving_reminder_unsubscribe_notice": "If you would like to stop receiving these reminders, you can update your notification preferences in your piggy bank settings.",

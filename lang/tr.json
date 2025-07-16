@@ -163,6 +163,7 @@
     "saving_reminder_title": "Birikim Hatırlatması",
     "saving_reminder_greeting": "Merhaba :name,",
     "saving_reminder_message": "Bu, bugün (:date) için planlanmış olan kumbaranız: :piggy_bank_name için #:saving_number numaralı :amount :currency tutarındaki birikiminiz için bir hatırlatmadır.",
+    "saving_reminder_additional_message": "Bu birikimi kenara ayırdıysan, yukarıdaki butona tıklayarak kumbaranı açabilirsin. Henüz siteye giriş yapmadıysan, önce giriş yapman gerekecek.\n\nKumbara sayfasına ulaştığında, sayfanın alt tarafında yer alan \"Birikim Programın\" tablosuna git ve ilgili birikimin yanındaki kutucuğu işaretle.\n\nEğer henüz bu miktarı kenara ayıramadıysan, bu işlemi şimdi değil, gerçekte paranı kumbarana koyduğunda yapmalısın.",
     "view_piggy_bank": "Kumbarayı Görüntüle",
     "saving_reminder_closing": "İyi birikimler!",
     "saving_reminder_unsubscribe_notice": "Bu hatırlatmaları almak istemiyorsanız, kumbara ayarlarınızdan bildirim tercihlerinizi güncelleyebilirsiniz.",
