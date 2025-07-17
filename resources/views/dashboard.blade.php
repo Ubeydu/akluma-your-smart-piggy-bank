@@ -8,17 +8,50 @@
 
     <div class="py-4 px-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 relative">
-            <!-- Single Coming Soon Badge for the entire dashboard -->
-            <span class="absolute right-0 z-20"
-                  style="top: -12px;">
-            <span class="inline-block bg-linear-to-r from-yellow-400 to-orange-500 text-sm text-gray-700 font-medium px-4 py-2 rounded-full shadow-lg"
-                  style="background: linear-gradient(to right, #FBBF24, #F97316);">
-                {{ __('Coming Soon ✨') }}
-            </span>
-        </span>
+
+            <div class="mb-6">
+            <!-- Money Left to Save -->
+            <div class="p-5 border rounded-lg shadow-md bg-white relative">
+                <h3 class="text-md font-bold text-gray-900 mb-3">{{ __('Left to Save') }}</h3>
+
+                <div>
+                    @if(!empty($leftToSave))
+                        @foreach($leftToSave as $currency => $amount)
+                            <div class="mb-2">
+                                                    <span class="text-2xl font-bold text-gray-900">
+                                                        {{ MoneyFormatHelper::format($amount, $currency) }}
+                                                    </span>
+                                @if(in_array($currency, ['XOF', 'XAF']))
+                                    <div class="text-sm text-gray-600 mt-1">
+                                        {{ config('app.currencies.' . $currency . '.name') }}
+                                    </div>
+                                @endif
+                                <div class="mt-2">
+                                    <div class="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="bg-indigo-500 h-full rounded-full"
+                                             style="width: {{ $progressPercentages[$currency] ?? 0 }}%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-500 mt-1 block">{{ $progressPercentages[$currency] ?? 0 }}% {{ __('of goal completed') }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <span class="text-2xl font-bold text-gray-900">{{ __('No active savings') }}</span>
+                    @endif
+                </div>
+            </div>
+            </div>
 
             <!-- Dashboard content with blur overlay -->
-            <div class="relative rounded-lg overflow-hidden">
+            <div class="relative rounded-lg overflow-visible">
+                <!-- Single Coming Soon Badge for the entire dashboard -->
+                <span class="absolute right-0 z-20"
+                      style="top: -12px;">
+                <span class="inline-block bg-linear-to-r from-yellow-400 to-orange-500 text-sm text-gray-700 font-medium px-4 py-2 rounded-full shadow-lg"
+                  style="background: linear-gradient(to right, #FBBF24, #F97316);">
+                {{ __('Coming Soon ✨') }}
+                </span>
+                </span>
 
                 <!-- No blur, just opacity -->
                 <div class="absolute inset-0 bg-white/40 z-10"></div>
@@ -78,37 +111,6 @@
                                     {{ __('+15% from last month') }}
                                 </span>
                                         </div>
-                                    </div>
-                                </div>
-
-                                <!-- Money Left to Save -->
-                                <div class="p-5 border rounded-lg shadow-md bg-white relative">
-                                    <h3 class="text-md font-bold text-gray-900 mb-3">{{ __('Left to Save') }}</h3>
-
-                                    <div>
-                                        @if(!empty($leftToSave))
-                                            @foreach($leftToSave as $currency => $amount)
-                                                <div class="mb-2">
-                                                    <span class="text-2xl font-bold text-gray-900">
-                                                        {{ MoneyFormatHelper::format($amount, $currency) }}
-                                                    </span>
-                                                    @if(in_array($currency, ['XOF', 'XAF']))
-                                                        <div class="text-sm text-gray-600 mt-1">
-                                                            {{ config('app.currencies.' . $currency . '.name') }}
-                                                        </div>
-                                                    @endif
-                                                    <div class="mt-2">
-                                                        <div class="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                                                            <div class="bg-indigo-500 h-full rounded-full"
-                                                                 style="width: {{ $progressPercentages[$currency] ?? 0 }}%"></div>
-                                                        </div>
-                                                        <span class="text-xs text-gray-500 mt-1 block">{{ $progressPercentages[$currency] ?? 0 }}% {{ __('of goal completed') }}</span>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        @else
-                                            <span class="text-2xl font-bold text-gray-900">{{ __('No active savings') }}</span>
-                                        @endif
                                     </div>
                                 </div>
 

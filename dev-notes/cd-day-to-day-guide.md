@@ -57,7 +57,7 @@ sail npm run dev
 ### ✅ Step 2: Commit and Push
 
 ```bash
-git add .
+git add -A
 git commit -m "Add: some feature"
 git push --set-upstream origin feature/some-feature
 ```
