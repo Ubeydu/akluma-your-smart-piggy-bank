@@ -2,8 +2,8 @@
 
 namespace App\Helpers;
 
-use Brick\Money\Money;
 use Brick\Money\Context\CustomContext;
+use Brick\Money\Money;
 
 class MoneyFormatHelper
 {
@@ -25,9 +25,10 @@ class MoneyFormatHelper
                 'amount' => $amount,
                 'currency' => $currency,
                 'decimal_places' => $decimalPlaces,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-            return $currency . ' ' . number_format($amount, $decimalPlaces);
+
+            return $currency.' '.number_format($amount, $decimalPlaces);
         }
     }
 }
