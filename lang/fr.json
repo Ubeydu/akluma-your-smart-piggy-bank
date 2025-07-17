@@ -441,5 +441,6 @@
     "Are you sure you want to disconnect this piggy bank?": "Êtes-vous sûr de vouloir déconnecter cette tirelire?",
     "This piggy bank is already connected to this vault.": "Cette tirelire est déjà connectée à ce coffre.",
     "vault_cant_connect_status": "Vous ne pouvez pas connecter votre tirelire à un coffre-fort lorsque son statut est :status",
-    "piggy banks": "tirelires"
+    "piggy banks": "tirelires",
+    "app_name": "Akluma, tirelire en ligne"
 }
