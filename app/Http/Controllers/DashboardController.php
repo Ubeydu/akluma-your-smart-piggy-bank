@@ -13,7 +13,7 @@ class DashboardController extends Controller
         $dashboardService = new DashboardStatsService;
 
         // Calculate fresh stats
-        $leftToSave = $dashboardService->calculateLeftToSave(auth()->id());
+        $leftToSaveData = $dashboardService->calculateLeftToSave(auth()->id());
         $progressPercentages = $dashboardService->calculateProgressPercentages(auth()->id());
 
         // Get piggy bank status counts for the authenticated user
@@ -52,6 +52,6 @@ class DashboardController extends Controller
             ->limit(3)
             ->get();
 
-        return view('dashboard', compact('statusCounts', 'recentActivity', 'upcomingPayments', 'leftToSave', 'progressPercentages'));
+        return view('dashboard', compact('statusCounts', 'recentActivity', 'upcomingPayments', 'leftToSaveData', 'progressPercentages'));
     }
 }

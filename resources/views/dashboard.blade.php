@@ -15,12 +15,15 @@
                 <h3 class="text-md font-bold text-gray-900 mb-3">{{ __('Left to Save') }}</h3>
 
                 <div>
-                    @if(!empty($leftToSave))
-                        @foreach($leftToSave as $currency => $amount)
+                    @if(!empty($leftToSaveData['amounts']))
+                        @foreach($leftToSaveData['amounts'] as $currency => $amount)
                             <div class="mb-2">
-                                                    <span class="text-2xl font-bold text-gray-900">
-                                                        {{ MoneyFormatHelper::format($amount, $currency) }}
-                                                    </span>
+                                <span class="text-2xl font-bold text-gray-900">
+                                    {{ MoneyFormatHelper::format($amount, $currency) }}
+                                </span>
+                                                <span class="text-sm text-gray-500 ml-2">
+                                    ({{ $leftToSaveData['counts'][$currency] ?? 0 }} {{ __('piggy banks') }})
+                                </span>
                                 @if(in_array($currency, ['XOF', 'XAF']))
                                     <div class="text-sm text-gray-600 mt-1">
                                         {{ config('app.currencies.' . $currency . '.name') }}

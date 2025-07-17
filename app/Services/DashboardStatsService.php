@@ -15,6 +15,7 @@ class DashboardStatsService
             ->get();
 
         $currencyBreakdown = [];
+        $currencyCounts = [];
 
         foreach ($piggyBanks as $piggyBank) {
             $leftToSave = $piggyBank->remaining_amount;
@@ -22,6 +23,7 @@ class DashboardStatsService
             if ($leftToSave > 0) {
                 $currency = $piggyBank->currency;
                 $currencyBreakdown[$currency] = ($currencyBreakdown[$currency] ?? 0) + $leftToSave;
+                $currencyCounts[$currency] = ($currencyCounts[$currency] ?? 0) + 1;
             }
         }
 
@@ -38,7 +40,10 @@ class DashboardStatsService
             ]
         );
 
-        return $currencyBreakdown;
+        return [
+            'amounts' => $currencyBreakdown,
+            'counts' => $currencyCounts
+        ];
     }
 
     public function calculateProgressPercentages($userId): array
