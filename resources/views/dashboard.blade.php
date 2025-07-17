@@ -26,7 +26,7 @@
                                 </span>
                                 @if(in_array($currency, ['XOF', 'XAF']))
                                     <div class="text-sm text-gray-600 mt-1">
-                                        {{ config('app.currencies.' . $currency . '.name') }}
+                                        {{ __(config('app.currencies.' . $currency . '.name')) }}
                                     </div>
                                 @endif
                                 <div class="mt-2">

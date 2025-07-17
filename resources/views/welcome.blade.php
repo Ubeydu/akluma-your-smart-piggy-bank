@@ -101,17 +101,22 @@
 
                                     @auth
                                         <a
+                                            href="{{ localizedRoute('localized.dashboard') }}"
+                                            class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
+                                        >
+                                            {{ __('Dashboard') }}
+                                        </a>
+                                        <a
                                             href="{{ localizedRoute('localized.piggy-banks.index') }}"
                                             class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                         >
                                             {{ __('My Piggy Banks') }}
                                         </a>
                                         <a
-
-                                        href="{{ localizedRoute('localized.vaults.index') }}"
-                                        class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
+                                            href="{{ localizedRoute('localized.vaults.index') }}"
+                                            class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                         >
-                                        {{ __('My Vaults') }}
+                                            {{ __('My Vaults') }}
                                         </a>
                                     @else
 
@@ -169,6 +174,10 @@
                                     {{ __('Create New Piggy Bank') }}
                                 </x-responsive-nav-link>
                                 @auth
+                                    <x-responsive-nav-link :href="localizedRoute('localized.dashboard')"
+                                                           :active="request()->routeIs('localized.dashboard.*')">
+                                        {{ __('Dashboard') }}
+                                    </x-responsive-nav-link>
                                     <x-responsive-nav-link :href="localizedRoute('localized.piggy-banks.index')"
                                                            :active="request()->routeIs('localized.piggy-banks.index.*')">
                                         {{ __('My Piggy Banks') }}
