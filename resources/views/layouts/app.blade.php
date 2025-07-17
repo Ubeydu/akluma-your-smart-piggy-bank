@@ -9,6 +9,53 @@
 
         <link rel="canonical" href="{{ str_replace('https://www.akluma.com', 'https://akluma.com', url()->current()) }}" />
 
+        @php
+            $currentLocale = app()->getLocale();
+            $availableLocales = array_keys(config('app.available_languages', []));
+            $currentRouteName = Route::currentRouteName();
+        @endphp
+
+        @if($currentRouteName && str_starts_with($currentRouteName, 'localized.'))
+            @foreach($availableLocales as $locale)
+                @php
+                    $routeNameParts = explode('.', $currentRouteName);
+                    $baseRouteName = implode('.', array_slice($routeNameParts, 0, -1));
+                    $localeRouteName = $baseRouteName . '.' . $locale;
+
+                    try {
+                        $localizedUrl = str_replace('https://www.akluma.com', 'https://akluma.com',
+                            route($localeRouteName, array_merge(request()->route()->parameters(), ['locale' => $locale]))
+                        );
+                    } catch (Exception $e) {
+                        $localizedUrl = null;
+                    }
+                @endphp
+
+                @if($localizedUrl)
+                    <link rel="alternate" hreflang="{{ $locale }}" href="{{ $localizedUrl }}" />
+                @endif
+            @endforeach
+
+            {{-- x-default hreflang points to your default (English) version --}}
+            @php
+                $defaultLocale = 'en';
+                $routeNameParts = explode('.', $currentRouteName);
+                $baseRouteName = implode('.', array_slice($routeNameParts, 0, -1));
+                $defaultRouteName = $baseRouteName . '.' . $defaultLocale;
+             try {
+                    $xDefaultUrl = str_replace('https://www.akluma.com', 'https://akluma.com',
+                        route($defaultRouteName, array_merge(request()->route()->parameters(), ['locale' => $defaultLocale]))
+                    );
+                } catch (Exception $e) {
+                    $xDefaultUrl = null;
+                }
+            @endphp
+            @if($xDefaultUrl)
+                <link rel="alternate" hreflang="x-default" href="{{ $xDefaultUrl }}" />
+            @endif
+
+        @endif
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />

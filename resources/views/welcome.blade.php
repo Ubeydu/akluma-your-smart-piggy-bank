@@ -8,6 +8,17 @@
 
         <link rel="canonical" href="{{ str_replace('https://www.akluma.com', 'https://akluma.com', url()->current()) }}" />
 
+        @php
+            $availableLocales = array_keys(config('app.available_languages', []));
+        @endphp
+
+        @foreach($availableLocales as $locale)
+            <link rel="alternate" hreflang="{{ $locale }}" href="{{ str_replace('https://www.akluma.com', 'https://akluma.com', url('/') . $locale) }}" />
+        @endforeach
+
+        {{-- x-default for welcome page points to English version --}}
+        <link rel="alternate" hreflang="x-default" href="{{ str_replace('https://www.akluma.com', 'https://akluma.com', url('/en')) }}" />
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
