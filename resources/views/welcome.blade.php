@@ -4,7 +4,22 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ __('app_name') }}</title>
+        <title>{!! __('welcome_page_title') !!} - {!! __('app_name') !!}</title>
+
+        <meta name="description" content="{!! __('welcome_meta_description') !!}">
+
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:title" content="{!! __('welcome_page_title') !!} - {!! __('app_name') !!}">
+        <meta property="og:description" content="{!! __('welcome_meta_description') !!}">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:site_name" content="{{ __('app_name') }}">
+
+        <!-- Twitter Card Meta Tags -->
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:image" content="{{ asset('apple-touch-icon.png') }}">
+        <meta name="twitter:title" content="{!! __('welcome_page_title') !!} - {!! __('app_name') !!}">
+        <meta name="twitter:description" content="{!! __('welcome_meta_description') !!}">
 
         <link rel="canonical" href="{{ str_replace('https://www.akluma.com', 'https://akluma.com', url()->current()) }}" />
 
