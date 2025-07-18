@@ -58,6 +58,13 @@ class PiggyBankController extends Controller
             }
         }
 
+        // Prevent connecting to a vault if status is 'cancelled' or 'done'
+        if (in_array($piggyBank->status, ['cancelled', 'done']) && $validated['vault_id'] !== $piggyBank->vault_id) {
+            return redirect()
+                ->back()
+                ->withErrors(['vault_id' => __('vault_cant_connect_status', ['status' => strtolower(__($piggyBank->status))])]);
+        }
+
         // Update only allowed fields
         $piggyBank->update([
             'name' => $validated['name'],

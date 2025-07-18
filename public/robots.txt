@@ -1,2 +1,5 @@
 User-agent: *
-Disallow:
+Disallow: /api/
+Disallow: /*/api/
+Disallow: /fr/create-piggy-bank/api/
+Disallow: /en/create-piggy-bank/api/

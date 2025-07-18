@@ -4,9 +4,20 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ __('project_name') }}</title>
+        <title>{{ __('app_name') }}</title>
 
         <link rel="canonical" href="{{ str_replace('https://www.akluma.com', 'https://akluma.com', url()->current()) }}" />
+
+        @php
+            $availableLocales = array_keys(config('app.available_languages', []));
+        @endphp
+
+        @foreach($availableLocales as $locale)
+            <link rel="alternate" hreflang="{{ $locale }}" href="{{ str_replace('https://www.akluma.com', 'https://akluma.com', url('/') . $locale) }}" />
+        @endforeach
+
+        {{-- x-default for welcome page points to English version --}}
+        <link rel="alternate" hreflang="x-default" href="{{ str_replace('https://www.akluma.com', 'https://akluma.com', url('/en')) }}" />
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -101,17 +112,22 @@
 
                                     @auth
                                         <a
+                                            href="{{ localizedRoute('localized.dashboard') }}"
+                                            class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
+                                        >
+                                            {{ __('Dashboard') }}
+                                        </a>
+                                        <a
                                             href="{{ localizedRoute('localized.piggy-banks.index') }}"
                                             class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                         >
                                             {{ __('My Piggy Banks') }}
                                         </a>
                                         <a
-
-                                        href="{{ localizedRoute('localized.vaults.index') }}"
-                                        class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
+                                            href="{{ localizedRoute('localized.vaults.index') }}"
+                                            class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                         >
-                                        {{ __('My Vaults') }}
+                                            {{ __('My Vaults') }}
                                         </a>
                                     @else
 
@@ -169,6 +185,10 @@
                                     {{ __('Create New Piggy Bank') }}
                                 </x-responsive-nav-link>
                                 @auth
+                                    <x-responsive-nav-link :href="localizedRoute('localized.dashboard')"
+                                                           :active="request()->routeIs('localized.dashboard.*')">
+                                        {{ __('Dashboard') }}
+                                    </x-responsive-nav-link>
                                     <x-responsive-nav-link :href="localizedRoute('localized.piggy-banks.index')"
                                                            :active="request()->routeIs('localized.piggy-banks.index.*')">
                                         {{ __('My Piggy Banks') }}

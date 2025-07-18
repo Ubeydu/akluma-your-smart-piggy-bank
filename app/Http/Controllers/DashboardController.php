@@ -3,12 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\PiggyBank;
+use App\Services\DashboardStatsService;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        $dashboardService = new DashboardStatsService;
+
+        // Calculate fresh stats
+        $leftToSaveData = $dashboardService->calculateLeftToSave(auth()->id());
+        $progressPercentages = $dashboardService->calculateProgressPercentages(auth()->id());
+
         // Get piggy bank status counts for the authenticated user
         $statusCounts = PiggyBank::where('user_id', auth()->id())
             ->select('status', DB::raw('count(*) as count'))
@@ -21,7 +28,7 @@ class DashboardController extends Controller
             'active' => 0,
             'paused' => 0,
             'done' => 0,
-            'cancelled' => 0
+            'cancelled' => 0,
         ], $statusCounts);
 
         // Get recent activity (last 3 scheduled savings)
@@ -45,6 +52,6 @@ class DashboardController extends Controller
             ->limit(3)
             ->get();
 
-        return view('dashboard', compact('statusCounts', 'recentActivity', 'upcomingPayments'));
+        return view('dashboard', compact('statusCounts', 'recentActivity', 'upcomingPayments', 'leftToSaveData', 'progressPercentages'));
     }
 }
