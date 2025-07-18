@@ -6,13 +6,13 @@ use App\Http\Controllers\PiggyBankCreateController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduledSavingController;
 use App\Http\Controllers\UserPreferencesController;
+use App\Http\Controllers\VaultController;
 use App\Models\User;
 use Brick\Money\Money;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
-use App\Http\Controllers\VaultController;
 
 // Redirect base URL to localized version
 Route::get('/', function () {
@@ -30,6 +30,10 @@ Route::get('/', function () {
     }
 
     abort(404); // prevent infinite loop
+});
+
+Route::get('/sitemap.xml', function () {
+    return response()->view('sitemap')->header('Content-Type', 'text/xml');
 });
 
 Route::localizedGet('dashboard', [DashboardController::class, 'index'])
@@ -461,7 +465,6 @@ Route::get('currency/switch/{currency}', action: function ($currency, Request $r
         //            'referer_variable' => $referer,
         //            'redirect_target' => $redirectTarget,
         //        ]);
-
 
         //        \Illuminate\Support\Facades\Log::info('Redirect response created', [
         //            'response_class' => get_class($response),
