@@ -442,5 +442,6 @@
     "This piggy bank is already connected to this vault.": "Cette tirelire est déjà connectée à ce coffre.",
     "vault_cant_connect_status": "Vous ne pouvez pas connecter votre tirelire à un coffre-fort lorsque son statut est :status",
     "piggy banks": "tirelires",
-    "app_name": "Akluma, tirelire en ligne"
+    "app_name": "Akluma, tirelire en ligne",
+    "default_meta_description": "Épargnez de l'argent pour vos objectifs avec les tirelires numériques d'Akluma. Suivez vos économies, définissez des objectifs et atteignez vos objectifs financiers."
 }
