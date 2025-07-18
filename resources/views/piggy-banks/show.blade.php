@@ -1,3 +1,4 @@
+
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
@@ -18,7 +19,7 @@
             <div class="bg-white overflow-hidden shadow-xs rounded-lg">
                 <div class="py-6 px-8">
                     <!-- Editable Fields Form -->
-                    <form method="POST" action="{{ localizedRoute('localized.piggy-banks.update', ['piggy_id' => $piggyBank->id]) }}" class="space-y-6" x-data="{ isEditing: false }" x-ref="editForm">
+                    <form method="POST" action="{{ localizedRoute('localized.piggy-banks.update', ['piggy_id' => $piggyBank->id]) }}" class="space-y-6" x-data="{ isEditing: false, showVaultWarning: false, isStatusDisabled: {{ in_array($piggyBank->status, ['cancelled', 'done']) ? 'true' : 'false' }} }" x-ref="editForm">
                         @csrf
                         @method('PUT')
 
@@ -76,11 +77,15 @@
                             </span>
                             </div>
 
+                            <div class="relative">
                             <select id="vault_id"
                                     name="vault_id"
                                     class="mt-1 block w-full border-gray-300 rounded-md shadow-xs"
-                                    x-bind:disabled="!isEditing"
-                                    x-bind:class="{ 'cursor-pointer': isEditing, 'cursor-not-allowed opacity-60': !isEditing }">
+                                    x-bind:disabled="!isEditing || {{ in_array($piggyBank->status, ['cancelled', 'done']) ? 'true' : 'false' }}"
+                                    x-bind:class="{
+                                        'cursor-pointer': isEditing && {{ in_array($piggyBank->status, ['cancelled', 'done']) ? 'false' : 'true' }},
+                                        'cursor-not-allowed opacity-60': !isEditing || {{ in_array($piggyBank->status, ['cancelled', 'done']) ? 'true' : 'false' }}
+                                    }">
                                 <option value="">{{ __('No vault selected') }}</option>
                                 @foreach(auth()->user()->vaults as $vault)
                                     <option value="{{ $vault->id }}" {{ old('vault_id', $piggyBank->vault_id) == $vault->id ? 'selected' : '' }}>
@@ -88,6 +93,17 @@
                                     </option>
                                 @endforeach
                             </select>
+                                <!-- Overlay clickable div when disabled -->
+                                <div
+                                    x-show="isEditing && isStatusDisabled"
+                                    @click="
+                                        showVaultWarning = true;
+                                        setTimeout(() => { showVaultWarning = false }, 5000);
+                                    "
+                                    class="absolute inset-0 z-10 cursor-not-allowed"
+                                    style="background: transparent"
+                                ></div>
+                            </div>
 
                             @if(auth()->user()->vaults->count() === 0)
                                 <div class="mt-2">
@@ -99,6 +115,17 @@
                             @endif
 
                             <x-input-error :messages="$errors->get('vault_id')" class="mt-2" />
+
+                            <!-- Warning message when edit mode is active but vault is disabled due to status -->
+                            <template x-if="showVaultWarning && isStatusDisabled">
+                                <div class="mt-2 text-sm text-red-600 flex items-center">
+                                    <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                    </svg>
+                                    {{ __('vault_cant_connect_status', ['status' => strtolower(__($piggyBank->status))]) }}
+                                </div>
+                            </template>
+
                         </div>
 
 
