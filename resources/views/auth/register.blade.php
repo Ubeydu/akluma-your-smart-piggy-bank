@@ -1,3 +1,5 @@
+@section('title', __('Register') . ' - ' . __('app_name'))
+
 <x-guest-layout>
     <div class="mb-6 p-4 bg-indigo-50 border-l-4 border-indigo-400 text-indigo-700 rounded-sm">
         <p class="text-sm">

@@ -444,5 +444,8 @@
     "This piggy bank is already connected to this vault.": "Bu kumbara zaten bu kasaya bağlı.",
     "vault_cant_connect_status": "Kumbaranın durumu :status iken onu bir kasaya bağlayamazsın",
     "piggy banks": "kumbara",
-    "app_name": "Akluma, Online Kumbara"
+    "app_name": "Akluma, Online Kumbara",
+    "default_meta_description": "Akluma'nın online kumbaralarıyla hedeflerine ulaşmak için para biriktir. Birikimini takip et ve finansal hedeflerini gerçekleştir.",
+    "welcome_page_title": "Para Biriktir ve Hedeflerini Gerçekleştir",
+    "welcome_meta_description": "Akluma'nın online kumbaralarıyla hede hedeflerine ulaşmak için para biriktir. Birikimini takip et ve finansal hedeflerini gerçekleştir."
 }
