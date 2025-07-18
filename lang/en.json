@@ -177,5 +177,8 @@
     "vault_definition": "You can create a vault and connect several of your piggy banks to it. This way, you can track the total savings of all of them in one place.",
     "connect_piggy_bank" : "Connect a few piggy banks to this vault to track savings all in one place.",
     "vault_cant_connect_status": "You cannot connect your piggy bank to a vault when its status is :status",
-    "app_name": "Akluma, Online Piggy Bank"
+    "app_name": "Akluma, Online Piggy Bank",
+    "default_meta_description": "Save money for your goals with Akluma's digital piggy banks. Track savings, set targets, and achieve your financial goals.",
+    "welcome_page_title": "Save Money & Reach Your Goals",
+    "welcome_meta_description": "Create digital piggy banks to save for your dreams. Set savings goals, track progress, and achieve financial success with Akluma's online savings tool."
 }

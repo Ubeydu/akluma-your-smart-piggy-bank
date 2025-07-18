@@ -1,3 +1,5 @@
+@section('title', __('Dashboard') . ' - ' . __('app_name'))
+
 @php use App\Helpers\MoneyFormatHelper; @endphp
 <x-app-layout>
     <x-slot name="header">
