@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Handle www to non-www redirect FIRST before any other middleware
+        $middleware->prepend(\App\Http\Middleware\RedirectWww::class);
+
         // The LanguageSwitcher middleware was previously used to set the locale from the session.
         // However, the application now uses SetLocaleFromUrl, which reads the locale from the URL segment (e.g., /en, /fr).
         // This middleware is no longer needed globally and has been disabled to avoid conflicts.
@@ -23,8 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
         // $middleware->web(append: LanguageSwitcher::class);
         $middleware->append(RouteTrackingMiddleware::class);
         $middleware->web(append: CurrencySwitcher::class);
-
-
 
         $middleware->alias([
             'conditional.layout' => ConditionalLayoutMiddleware::class,
