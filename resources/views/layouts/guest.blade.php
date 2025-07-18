@@ -13,6 +13,10 @@
             @endif
         </title>
 
+        @if(Str::startsWith(Route::currentRouteName(), ['localized.password.request', 'localized.password.reset', 'localized.verification.notice', 'localized.password.confirm']))
+            <meta name="robots" content="noindex, nofollow">
+        @endif
+
         <meta name="description" content="@yield('meta_description', __('default_meta_description'))">
 
         <!-- Open Graph Meta Tags -->
