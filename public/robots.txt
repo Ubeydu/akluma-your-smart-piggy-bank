@@ -3,5 +3,7 @@ Disallow: /api/
 Disallow: /*/api/
 Disallow: /fr/create-piggy-bank/api/
 Disallow: /en/create-piggy-bank/api/
+Disallow: /language/
+Disallow: /currency/switch/
 
 Sitemap: https://akluma.com/sitemap.xml
