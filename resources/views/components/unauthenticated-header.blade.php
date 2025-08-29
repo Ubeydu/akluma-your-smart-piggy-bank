@@ -119,6 +119,11 @@
                     </x-responsive-nav-link>
                 @endif
             @endauth
+
+            <!-- Language Switch -->
+            <div class="custom-language-dropdown">
+                <x-language-dropdown />
+            </div>
         </div>
     </div>
 </header>
