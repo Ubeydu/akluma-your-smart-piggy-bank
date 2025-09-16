@@ -54,6 +54,10 @@
             <!-- Desktop navigation -->
             @if (Route::has('login'))
                 <div class="hidden sm:flex items-center space-x-4">
+                    <a href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.welcome') }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
+                        {{ __('Welcome') }}
+                    </a>
+
                     <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
                         {{ __('Create New Piggy Bank') }}
                     </a>
@@ -115,6 +119,11 @@
                     </x-responsive-nav-link>
                 @endif
             @endauth
+
+            <!-- Language Switch -->
+            <div class="custom-language-dropdown">
+                <x-language-dropdown />
+            </div>
         </div>
     </div>
 </header>
