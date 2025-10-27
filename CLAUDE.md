@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ IMPORTANT: Code Formatting
+
+**DO NOT run `./vendor/bin/pint` without arguments!** This will reformat the entire codebase and create unnecessary changes.
+
+Instead, use one of these approaches:
+- `./vendor/bin/pint path/to/specific/file.php` - Format a specific file
+- `./vendor/bin/pint --dirty` - Format only files with uncommitted changes
+- Skip Pint entirely during implementation and let the user run it when they're ready
+
 ## Commands
 
 **Development:**

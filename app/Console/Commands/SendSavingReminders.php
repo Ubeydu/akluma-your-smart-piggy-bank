@@ -47,6 +47,10 @@ class SendSavingReminders extends Command
         // Find pending scheduled savings for today
         $scheduledSavings = ScheduledSaving::whereDate('saving_date', $today)
             ->where('status', 'pending')
+            ->where(function ($query) {
+                $query->whereNull('archived')
+                    ->orWhere('archived', false);
+            })
             ->whereHas('piggyBank', function ($query) {
                 $query->where('status', 'active');
             })
