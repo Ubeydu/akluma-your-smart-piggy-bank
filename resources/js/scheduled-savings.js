@@ -228,13 +228,24 @@ async function handleCheckboxChange(checkbox) {
             showFlashMessage(window.piggyBankTranslations['goal_completed'] || 'Congratulations! You have successfully completed your savings goal.');
         }
 
-        try {
-            reloadFinancialSummary(piggyBankId);
-            reloadSchedulePartial(piggyBankId);
-
-        } catch (err) {
-            console.error('Error reloading financial summary:', err);
+        // Add cute scale-down + fade animation to show item is moving
+        const row = checkbox.closest('tr');
+        if (row) {
+            row.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease';
+            row.style.transform = 'scale(0.9)';
+            row.style.opacity = '0.3';
         }
+
+        // Wait for animation to complete, then reload
+        setTimeout(() => {
+            try {
+                reloadFinancialSummary(piggyBankId);
+                reloadSchedulePartial(piggyBankId);
+
+            } catch (err) {
+                console.error('Error reloading financial summary:', err);
+            }
+        }, 400);
 
     } catch (error) {
         console.error('Error:', error);
@@ -978,11 +989,12 @@ function showFlashMessage(message, type = 'success') {
     flashMessageContainer.style.transform = "translateX(-50%)";
     flashMessageContainer.style.width = "calc(min(384px, 90vw))";
     flashMessageContainer.style.zIndex = "50";
+    flashMessageContainer.style.paddingRight = "3rem"; // Make room for close button
 
     flashMessageContainer.innerHTML = `
         <strong class="font-bold">${c.label}</strong>
         <span class="block sm:inline">${message}</span>
-        <button class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.remove();">
+        <button class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer text-2xl leading-none" onclick="this.parentElement.remove();">
             &times;
         </button>
     `;
@@ -994,7 +1006,7 @@ function showFlashMessage(message, type = 'success') {
             flashMessageContainer.style.opacity = "0";
             setTimeout(() => flashMessageContainer.remove(), 500);
         }
-    }, 5000);
+    }, 8000);
 }
 
 

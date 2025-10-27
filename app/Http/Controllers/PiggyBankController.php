@@ -116,8 +116,17 @@ class PiggyBankController extends Controller
                 session()->flash('warning', __('edit_cancelled_message'));
             }
 
+            // Paginate the scheduled savings with correct path
+            // Sort: pending items first (actionable), then saved items (history), chronologically within each group
+            $scheduledSavings = $piggyBank->scheduledSavings()
+                ->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
+                ->orderBy('saving_date', 'asc')
+                ->paginate(50)
+                ->setPath(localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id]));
+
             return view('piggy-banks.show', [
                 'piggyBank' => $piggyBank,
+                'scheduledSavings' => $scheduledSavings,
             ]);
         } catch (\Exception $e) {
             // \Log::error('❌ Error in PiggyBankController::show', [

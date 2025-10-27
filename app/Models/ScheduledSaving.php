@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $archived
  * @property int $recalculation_version
  * @property Carbon $saving_date
+ * @property Carbon|null $last_modified_at
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property-read PiggyBank $piggyBank
@@ -43,6 +44,7 @@ class ScheduledSaving extends Model
         'saving_date' => 'date',
         'amount' => 'decimal:2',
         'archived' => 'boolean',
+        'last_modified_at' => 'datetime',
     ];
 
     public function piggyBank(): BelongsTo
