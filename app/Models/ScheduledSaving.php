@@ -12,7 +12,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $saving_number
  * @property float $amount
  * @property string $status
+ * @property bool $archived
+ * @property int $recalculation_version
  * @property Carbon $saving_date
+ * @property Carbon|null $last_modified_at
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property-read PiggyBank $piggyBank
@@ -20,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ScheduledSaving extends Model
 {
     public const STATUS_SAVED = 'saved';
+
     public const STATUS_PENDING = 'pending';
 
     protected $fillable = [
@@ -27,7 +31,9 @@ class ScheduledSaving extends Model
         'saving_number',
         'amount',
         'status',
-        'saving_date'
+        'saving_date',
+        'archived',
+        'recalculation_version',
     ];
 
     protected $attributes = [
@@ -37,10 +43,23 @@ class ScheduledSaving extends Model
     protected $casts = [
         'saving_date' => 'date',
         'amount' => 'decimal:2',
+        'archived' => 'boolean',
+        'last_modified_at' => 'datetime',
     ];
 
     public function piggyBank(): BelongsTo
     {
         return $this->belongsTo(PiggyBank::class);
+    }
+
+    /**
+     * Scope to only include non-archived scheduled savings
+     */
+    public function scopeActive($query): void
+    {
+        $query->where(function ($q) {
+            $q->whereNull('archived')
+                ->orWhere('archived', false);
+        });
     }
 }

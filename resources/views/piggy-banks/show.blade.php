@@ -207,14 +207,8 @@
                             @include('partials.piggy-bank-financial-summary', ['piggyBank' => $piggyBank])
 
                             <!-- Additional Information -->
-                            <div class="space-y-4">
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('piggy_bank_ID') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ $piggyBank->id }}</p>
-                                </div>
-
-
-
+                            <div class="space-y-4" x-data="{ showMoreInfo: false }">
+                                <!-- Always Visible: Current Status -->
                                 <div x-data="{
                                     showConfirmCancel: false,
                                     statusChangeAction: '',
@@ -287,43 +281,73 @@
                                     </div>
                                 </div>
 
-
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Saving Frequency') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ __(strtolower($piggyBank->selected_frequency)) }}</p>
+                                <!-- Show More/Hide Details Toggle Button -->
+                                <div class="pt-2">
+                                    <button
+                                        type="button"
+                                        @click="showMoreInfo = !showMoreInfo"
+                                        class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-white text-gray-700 hover:bg-gray-100 hover:text-gray-800 border border-gray-200 shadow-xs transition-colors duration-200 cursor-pointer"
+                                    >
+                                        <span x-text="showMoreInfo ? '{{ __('Hide Details') }}' : '{{ __('Show More') }}'"></span>
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             class="h-4 w-4 ml-2 transition-transform"
+                                             :class="{ 'rotate-180': showMoreInfo }"
+                                             fill="none"
+                                             viewBox="0 0 24 24"
+                                             stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
                                 </div>
 
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Product Link') }}</h3>
-                                    @if($piggyBank->link)
-                                        <a href="{{ $piggyBank->link }}" target="_blank"
-                                           class="mt-1 text-base text-blue-600 hover:text-blue-800 break-all">
-                                            {{ $piggyBank->link }}
-                                        </a>
-                                    @else
-                                        <p class="mt-1 text-base text-gray-900">-</p>
-                                    @endif
+                                <!-- Collapsible Details Section -->
+                                <div x-show="showMoreInfo"
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 transform scale-95"
+                                     x-transition:enter-end="opacity-100 transform scale-100"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-100 transform scale-100"
+                                     x-transition:leave-end="opacity-0 transform scale-95"
+                                     class="space-y-4 pt-2 border-t border-gray-200">
+                                    <div>
+                                        <h3 class="text-sm font-medium text-gray-500">{{ __('piggy_bank_ID') }}</h3>
+                                        <p class="mt-1 text-base text-gray-900">{{ $piggyBank->id }}</p>
+                                    </div>
+
+                                    <div>
+                                        <h3 class="text-sm font-medium text-gray-500">{{ __('Saving Frequency') }}</h3>
+                                        <p class="mt-1 text-base text-gray-900">{{ __(strtolower($piggyBank->selected_frequency)) }}</p>
+                                    </div>
+
+                                    <div>
+                                        <h3 class="text-sm font-medium text-gray-500">{{ __('Product Link') }}</h3>
+                                        @if($piggyBank->link)
+                                            <a href="{{ $piggyBank->link }}" target="_blank"
+                                               class="mt-1 text-base text-blue-600 hover:text-blue-800 break-all">
+                                                {{ $piggyBank->link }}
+                                            </a>
+                                        @else
+                                            <p class="mt-1 text-base text-gray-900">-</p>
+                                        @endif
+                                    </div>
+
+                                    <div>
+                                        <h3 class="text-sm font-medium text-gray-500">{{ __('created_at') }}</h3>
+                                        <p class="mt-1 text-base text-gray-900">
+                                            {{ $piggyBank->created_at?->translatedFormat('d F Y H:i:s') ?? '-' }}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <h3 class="text-sm font-medium text-gray-500">{{ __('updated_at') }}</h3>
+                                        <p class="mt-1 text-base text-gray-900">
+                                            {{ $piggyBank->updated_at?->translatedFormat('d F Y H:i:s') ?? '-' }}
+                                        </p>
+                                    </div>
                                 </div>
-
-
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('created_at') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">
-                                        {{ $piggyBank->created_at?->translatedFormat('d F Y H:i:s') ?? '-' }}
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <h3 class="text-sm font-medium text-gray-500">{{ __('updated_at') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">
-                                        {{ $piggyBank->updated_at?->translatedFormat('d F Y H:i:s') ?? '-' }}
-                                    </p>
-                                </div>
-
 
                             </div>
                         </div>
-
 
                         @if(app()->environment('local'))
                             <div class="bg-yellow-50 p-4 rounded-lg mb-4 border border-yellow-200">
@@ -444,6 +468,104 @@
                             </div>
                         </div>
 
+                        <!-- Recalculate Schedule Section -->
+                        <div class="mb-6 bg-orange-50 p-4 rounded-lg border-l-4 border-orange-400 {{ in_array($piggyBank->status, ['done', 'cancelled', 'paused']) ? 'opacity-50' : '' }}" x-data="{ showConfirmRecalculate: false }">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+                                <div class="flex items-center">
+                                    <svg class="h-6 w-6 min-w-[1.5rem] text-orange-400 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                                    </svg>
+                                    <h3 class="text-lg font-medium text-orange-800 leading-snug">
+                                        {{ __('Recalculate Saving Schedule') }}
+                                    </h3>
+                                </div>
+                                <button
+                                    type="button"
+                                    id="toggle-recalculate"
+                                    class="w-full sm:w-auto mt-3 sm:mt-0 inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-white text-gray-700 border border-gray-200 shadow-xs transition-colors duration-200 {{ in_array($piggyBank->status, ['done', 'cancelled', 'paused']) ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-gray-100 hover:text-gray-800' }}"
+                                    {{ in_array($piggyBank->status, ['done', 'cancelled', 'paused']) ? 'disabled' : '' }}
+                                    onclick="const c=document.getElementById('recalculate-collapsible'); const t=document.getElementById('toggle-recalculate-text'); c.classList.toggle('hidden'); t.innerText = c.classList.contains('hidden') ? '{{ __('Show Form') }}' : '{{ __('Hide Form') }}';"
+                                >
+                                    <span id="toggle-recalculate-text">{{ $errors->has('new_periodic_amount') ? __('Hide Form') : __('Show Form') }}</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div id="recalculate-collapsible" class="{{ $errors->has('new_periodic_amount') ? '' : 'hidden' }} mt-4">
+                                <p class="text-sm text-orange-800 mb-4">
+                                    {{ __('Change your periodic saving amount. All pending scheduled savings will be recalculated with the new amount.') }}
+                                    <strong>{{ __('Your completed savings will remain unchanged.') }}</strong>
+                                </p>
+
+                                <form method="POST"
+                                      id="recalculate-schedule-form"
+                                      action="{{ localizedRoute('localized.piggy-banks.recalculate-schedule', ['piggy_id' => $piggyBank->id]) }}"
+                                      class="flex flex-col md:flex-row md:items-start gap-4"
+                                      x-ref="recalculateForm">
+                                    @csrf
+
+                                    <div class="flex-1">
+                                        <x-input-label for="new_periodic_amount" :value="__('New Periodic Saving Amount')" />
+                                        <x-text-input
+                                            id="new_periodic_amount"
+                                            name="new_periodic_amount"
+                                            type="text"
+                                            inputmode="numeric"
+                                            pattern="[1-9][0-9]*"
+                                            class="mt-1 block w-full {{ in_array($piggyBank->status, ['done', 'cancelled', 'paused']) ? 'cursor-not-allowed' : '' }}"
+                                            :disabled="in_array($piggyBank->status, ['done', 'cancelled', 'paused'])"
+                                            required
+                                            autocomplete="off"
+                                            placeholder="{{ __('Enter whole number only (no decimals)') }}"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^0+/, '');"
+                                        />
+                                        <x-input-error :messages="$errors->get('new_periodic_amount')" class="mt-2" />
+                                    </div>
+
+                                    <div class="md:mt-6">
+                                        <button
+                                            type="button"
+                                            @click.prevent="showConfirmRecalculate = true"
+                                            class="w-full md:w-auto inline-flex items-center justify-center px-6 py-2.5 text-white font-medium rounded-md shadow-xs transition-colors duration-200 {{ in_array($piggyBank->status, ['done', 'cancelled', 'paused']) ? 'bg-orange-300 cursor-not-allowed' : 'bg-orange-500 hover:bg-orange-600 cursor-pointer' }}"
+                                            {{ in_array($piggyBank->status, ['done', 'cancelled', 'paused']) ? 'disabled' : '' }}
+                                        >
+                                            <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                                            </svg>
+                                            {{ __('Recalculate Schedule') }}
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <template x-if="showConfirmRecalculate">
+                                    <x-confirmation-dialog show="showConfirmRecalculate">
+                                        <x-slot:title>
+                                            {{ __('Are you sure you want to recalculate your saving schedule? All pending scheduled savings will be replaced with new ones based on the amount you entered.') }}
+                                        </x-slot>
+
+                                        <x-slot:actions>
+                                            <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
+                                                <x-danger-button
+                                                    @click="$refs.recalculateForm.submit(); showConfirmRecalculate = false;"
+                                                    class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                                >
+                                                    {{ __('Yes, proceed') }}
+                                                </x-danger-button>
+
+                                                <x-secondary-button
+                                                    @click="showConfirmRecalculate = false"
+                                                    class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                                >
+                                                    {{ __('No, cancel') }}
+                                                </x-secondary-button>
+                                            </div>
+                                        </x-slot:actions>
+                                    </x-confirmation-dialog>
+                                </template>
+                            </div>
+                        </div>
 
                         <!-- Savings Schedule -->
                         @include('partials.schedule')
