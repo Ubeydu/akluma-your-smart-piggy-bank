@@ -76,13 +76,23 @@
         <div class="grid grid-cols-2 gap-4">
             <!-- Left Column -->
             <div>
-                <!-- Planned -->
+                <!-- Original Goal -->
                 <div class="mb-1">
-                    <span class="text-xs text-gray-500 block">{{ __('Planned Final Total') }}</span>
+                    <span class="text-xs text-gray-500 block">{{ __('Original Goal') }}</span>
                     <span class="text-sm font-semibold text-gray-900">
                         {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->final_total, $piggyBank->currency) }}
                     </span>
                 </div>
+
+                <!-- Current Projected Total (if different from original and not done/cancelled) -->
+                @if($piggyBank->uptodate_final_total && $piggyBank->uptodate_final_total != $piggyBank->final_total && !in_array($piggyBank->status, ['done', 'cancelled']))
+                <div class="mb-1">
+                    <span class="text-xs text-gray-500 block">{{ __('Current Projected') }}</span>
+                    <span class="text-sm font-semibold text-indigo-700">
+                        {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->uptodate_final_total, $piggyBank->currency) }}
+                    </span>
+                </div>
+                @endif
 
                 <!-- Actual (live) -->
                 <div class="mb-3">
@@ -119,13 +129,20 @@
                     <span class="text-sm font-semibold text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->remaining_amount, $piggyBank->currency) }}</span>
                 </div>
 
+                @php
+                    $showActualCompletionDate = $piggyBank->status === 'done'
+                        && $piggyBank->actual_completed_at
+                        && $piggyBank->actual_completed_at->format('Y-m-d') !== optional($piggyBank->scheduledSavings()->orderByDesc('saving_number')->first()->saving_date)->format('Y-m-d');
+                @endphp
+
+                @if(!$showActualCompletionDate)
                 <div class="mb-3">
                     <span class="text-xs text-gray-500 block">{{ __('saving_goal_reach_date') }}</span>
                     <span class="text-sm font-semibold text-gray-900">{{ $piggyBank->scheduledSavings()->orderByDesc('saving_number')->first()->saving_date->translatedFormat('d F Y') }}</span>
                 </div>
+                @endif
 
-                @if($piggyBank->status === 'done' && $piggyBank->actual_completed_at
-                    && $piggyBank->actual_completed_at->format('Y-m-d') !== optional($piggyBank->scheduledSavings()->orderByDesc('saving_number')->first()->saving_date)->format('Y-m-d'))
+                @if($showActualCompletionDate)
                     <div class="mb-3">
                         <span class="text-xs text-green-700 block">{{ __('actual_completed_at_label') }}</span>
                         <span class="text-sm font-semibold text-green-700">{{ $piggyBank->actual_completed_at->translatedFormat('d F Y') }}</span>

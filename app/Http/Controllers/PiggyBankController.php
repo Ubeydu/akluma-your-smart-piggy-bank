@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RecalculateScheduleRequest;
 use App\Models\PiggyBank;
+use App\Services\ScheduleRecalculationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use InvalidArgumentException;
 
 class PiggyBankController extends Controller
 {
@@ -117,8 +120,9 @@ class PiggyBankController extends Controller
             }
 
             // Paginate the scheduled savings with correct path
-            // Sort: pending items first (actionable), then saved items (history), chronologically within each group
+            // Filter out archived items, then sort: pending items first (actionable), then saved items (history), chronologically within each group
             $scheduledSavings = $piggyBank->scheduledSavings()
+                ->active()
                 ->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
                 ->orderBy('saving_date', 'asc')
                 ->paginate(50)
@@ -223,6 +227,9 @@ class PiggyBankController extends Controller
         // Fetch fresh balance/remaining values
         $piggyBank->refresh();
 
+        // Update remaining_amount in database after transaction
+        $piggyBank->updateRemainingAmount();
+
         // Apply the new done/active logic: only mark as done if remaining amount is zero or less
         $remainingZeroOrLess = $piggyBank->remaining_amount <= 0;
 
@@ -278,5 +285,48 @@ class PiggyBankController extends Controller
 
         // Optional: fallback to redirect/show page if not AJAX
         return redirect()->route('localized.piggy-banks.show', ['piggy_id' => $piggy_id]);
+    }
+
+    /**
+     * Recalculate the saving schedule with a new periodic amount
+     */
+    public function recalculateSchedule(RecalculateScheduleRequest $request, $piggy_id)
+    {
+        $piggyBank = PiggyBank::findOrFail($piggy_id);
+
+        if (! Gate::allows('update', $piggyBank)) {
+            abort(403);
+        }
+
+        $validated = $request->validated();
+        $newPeriodicAmount = (float) $validated['new_periodic_amount'];
+
+        try {
+            $service = app(ScheduleRecalculationService::class);
+            $service->recalculateSchedule($piggyBank, $newPeriodicAmount);
+
+            return redirect(localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id]))
+                ->with('success', __('Your saving schedule has been recalculated successfully!'));
+
+        } catch (InvalidArgumentException $e) {
+            // Service validation errors (user-friendly)
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['new_periodic_amount' => $e->getMessage()]);
+
+        } catch (\Exception $e) {
+            // Unexpected errors
+            \Log::error('Schedule recalculation failed', [
+                'piggy_bank_id' => $piggyBank->id,
+                'amount' => $newPeriodicAmount,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['new_periodic_amount' => __('An error occurred while recalculating your schedule. Please try again.')]);
+        }
     }
 }

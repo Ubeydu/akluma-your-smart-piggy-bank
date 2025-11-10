@@ -18,7 +18,42 @@
         </div>
     @endif
 
-    <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Saving Schedule') }}</h2>
+    @php
+        // Calculate schedule statistics for active (non-archived) scheduled savings only
+        $totalScheduledCount = $piggyBank->scheduledSavings()
+            ->where('archived', false)
+            ->count();
+
+        $savedCount = $piggyBank->scheduledSavings()
+            ->where('archived', false)
+            ->where('status', 'saved')
+            ->count();
+
+        $pendingCount = $piggyBank->scheduledSavings()
+            ->where('archived', false)
+            ->where('status', 'pending')
+            ->count();
+    @endphp
+
+    <div class="mb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <h2 class="text-lg font-medium text-gray-900">{{ __('Saving Schedule') }}</h2>
+            <div class="flex gap-2 text-xs">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-800">
+                    <span class="font-semibold">{{ __('Total') }}:</span>
+                    <span class="ml-1">{{ $totalScheduledCount }}</span>
+                </span>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-green-100 text-green-800">
+                    <span class="font-semibold">{{ __('Saved') }}:</span>
+                    <span class="ml-1">{{ $savedCount }}</span>
+                </span>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-800">
+                    <span class="font-semibold">{{ __('Pending') }}:</span>
+                    <span class="ml-1">{{ $pendingCount }}</span>
+                </span>
+            </div>
+        </div>
+    </div>
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200 {{ in_array($piggyBank->status, ['paused', 'cancelled', 'done']) ? 'opacity-50' : '' }}">
             <thead class="bg-gray-50">
