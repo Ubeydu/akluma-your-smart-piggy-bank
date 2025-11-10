@@ -64,20 +64,41 @@ class ScheduleRecalculationService
             // 5. Generate and save new schedule
             $newSchedule = $this->generateNewSchedule($piggyBank, $newPeriodicAmount, $newVersion);
 
+            // Calculate the total of the new schedule
+            $newScheduleTotal = $newSchedule->sum('amount');
+            $remainingAmount = $piggyBank->remaining_amount;
+
             Log::info('Schedule recalculation: created new schedule', [
                 'piggy_bank_id' => $piggyBank->id,
                 'new_items_count' => $newSchedule->count(),
+                'new_schedule_total' => $newScheduleTotal,
+                'remaining_amount' => $remainingAmount,
                 'new_version' => $newVersion,
             ]);
 
-            // 6. Update uptodate_final_total to reflect the new schedule
-            $piggyBank->uptodate_final_total = $piggyBank->calculateUptodateFinalTotal();
-            $piggyBank->save();
+            // 6. Update uptodate_final_total ONLY if the goal changed
+            // (new schedule total > remaining amount due to rounding)
+            if ($newScheduleTotal > $remainingAmount) {
+                // Goal changed: set uptodate_final_total to reflect the new goal
+                $piggyBank->uptodate_final_total = $piggyBank->calculateUptodateFinalTotal();
 
-            Log::info('Schedule recalculation: updated uptodate_final_total', [
-                'piggy_bank_id' => $piggyBank->id,
-                'uptodate_final_total' => $piggyBank->uptodate_final_total,
-            ]);
+                Log::info('Schedule recalculation: goal changed, updated uptodate_final_total', [
+                    'piggy_bank_id' => $piggyBank->id,
+                    'old_remaining' => $remainingAmount,
+                    'new_schedule_total' => $newScheduleTotal,
+                    'new_uptodate_final_total' => $piggyBank->uptodate_final_total,
+                ]);
+            } else {
+                // Goal didn't change: keep uptodate_final_total as NULL
+                $piggyBank->uptodate_final_total = null;
+
+                Log::info('Schedule recalculation: goal unchanged, uptodate_final_total set to NULL', [
+                    'piggy_bank_id' => $piggyBank->id,
+                    'remaining_amount' => $remainingAmount,
+                    'new_schedule_total' => $newScheduleTotal,
+                ]);
+            }
+            $piggyBank->save();
 
             // 7. Update remaining_amount in database after schedule recalculation
             $piggyBank->updateRemainingAmount();
