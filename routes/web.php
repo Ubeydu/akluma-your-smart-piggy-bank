@@ -89,6 +89,11 @@ Route::localizedPost('piggy-banks/{piggy_id}/add-remove-money', [PiggyBankContro
     ->middleware(['auth', 'verified'])
     ->where('piggy_id', '[0-9]+');
 
+Route::localizedPost('piggy-banks/{piggy_id}/recalculate-schedule', [PiggyBankController::class, 'recalculateSchedule'])
+    ->name('localized.piggy-banks.recalculate-schedule')
+    ->middleware(['auth', 'verified'])
+    ->where('piggy_id', '[0-9]+');
+
 // Vault routes
 Route::localizedGet('vaults', [VaultController::class, 'index'])
     ->name('localized.vaults.index')

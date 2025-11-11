@@ -60,6 +60,8 @@ class PiggyBank extends Model
         'preview_description',
         'preview_url',
         'vault_id',
+        'uptodate_final_total',
+        'remaining_amount',
     ];
 
     protected $attributes = [
@@ -85,8 +87,16 @@ class PiggyBank extends Model
     /**
      * Eloquent accessor for the "remaining_amount" attribute.
      *
-     * Returns the planned goal (final_total) minus the actual total saved (sum of all transactions).
-     * This value tells you how much more needs to be saved to reach the goal, in real time.
+     * HYBRID APPROACH (Phase 1 of migration):
+     * - If DB column has a value, use it (preferred)
+     * - Otherwise, calculate on-the-fly (fallback for safety during migration)
+     *
+     * Returns how much more needs to be saved to reach the current goal.
+     * Uses uptodate_final_total if set (after recalculation), otherwise falls back to final_total.
+     * Both represent the COMPLETE goal (starting_amount + scheduled savings).
+     *
+     * Formula: Goal - Actual Saved
+     * Negative value means user exceeded their goal.
      *
      * ⚠️ This method is called automatically by Laravel/Eloquent
      * when you access $piggyBank->remaining_amount.
@@ -96,16 +106,25 @@ class PiggyBank extends Model
     public function getRemainingAmountAttribute(): float
     {
         try {
-            // Calculate remaining amount as planned final total minus actual total saved
-            return $this->final_total - $this->actual_final_total_saved;
+            // PHASE 1: Prefer DB column if it exists and has a value
+            if (isset($this->attributes['remaining_amount']) && $this->attributes['remaining_amount'] !== null) {
+                return (float) $this->attributes['remaining_amount'];
+            }
+
+            // FALLBACK: Calculate on-the-fly (for safety during migration or if column not yet populated)
+            $projectedTotal = $this->uptodate_final_total ?? $this->final_total;
+
+            return $projectedTotal - $this->actual_final_total_saved;
         } catch (\Throwable $e) {
             Log::error('Invalid money calculation in piggy bank', [
                 'piggy_bank_id' => $this->id,
                 'total_savings' => $this->total_savings,
                 'actual_final_total_saved' => $this->actual_final_total_saved,
+                'uptodate_final_total' => $this->uptodate_final_total,
                 'currency' => $this->currency,
                 'error' => $e->getMessage(),
             ]);
+
             return 0.0;
         }
     }
@@ -144,6 +163,66 @@ class PiggyBank extends Model
         return $this->transactions()->sum('amount');
     }
 
+    /**
+     * Get the net manual money (additions minus withdrawals)
+     *
+     * Returns the total amount of money manually added or removed.
+     * Positive = net additions, Negative = net withdrawals
+     *
+     * @noinspection PhpUnused
+     */
+    public function getManualMoneyNetAttribute(): float
+    {
+        return $this->transactions()
+            ->whereIn('type', ['manual_add', 'manual_withdraw'])
+            ->sum('amount');
+    }
+
+    /**
+     * Calculate the up-to-date projected final total
+     *
+     * This represents the COMPLETE total money user will have when done.
+     * Formula: starting_amount + sum of all active scheduled savings (saved + pending, excluding archived)
+     *
+     * This value changes when:
+     * - Schedule is recalculated (new amounts)
+     *
+     * This value does NOT change when:
+     * - User marks savings as saved/pending (total scheduled amount stays same)
+     * - User manually adds/withdraws money (schedule target doesn't change)
+     * - User pauses/resumes (dates change, amounts don't)
+     */
+    public function calculateUptodateFinalTotal(): float
+    {
+        // The complete total money user will have when done includes:
+        // 1. Starting amount (initial deposit)
+        // 2. All active scheduled savings (both saved and pending, excluding archived)
+        // 3. Manual money added/withdrawn outside the schedule
+        return ($this->starting_amount ?? 0)
+            + $this->scheduledSavings()
+                ->where('archived', false)
+                ->sum('amount')
+            + $this->manual_money_net;
+    }
+
+    /**
+     * Update the remaining_amount column in the database
+     *
+     * Call this method after any financial change:
+     * - Transaction created/deleted
+     * - Schedule recalculated
+     * - Initial piggy bank creation
+     *
+     * This ensures the DB column stays in sync with the calculated value.
+     */
+    public function updateRemainingAmount(): void
+    {
+        $projectedTotal = $this->uptodate_final_total ?? $this->final_total;
+        $actualTotal = $this->transactions()->sum('amount');
+        $remainingAmount = $projectedTotal - $actualTotal;
+
+        $this->update(['remaining_amount' => $remainingAmount]);
+    }
 
     public static function getStatusOptions(): array
     {

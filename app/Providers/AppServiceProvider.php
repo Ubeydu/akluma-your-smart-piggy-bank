@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\PiggyBank;
+use App\Models\ScheduledSaving;
+use App\Observers\ScheduledSavingObserver;
 use App\Policies\PiggyBankPolicy;
 use App\Services\LinkPreviewService;
 use Carbon\Carbon;
@@ -36,6 +38,9 @@ class AppServiceProvider extends ServiceProvider
         //        // 🔧 System boot log for debugging
         //        \Log::emergency('VERIFY EMAIL DEBUG: Boot method executed');
         //        \Log::emergency('VERIFY EMAIL DEBUG: APP ENV = ' . app()->environment());
+
+        // 👀 Register model observers
+        ScheduledSaving::observe(ScheduledSavingObserver::class);
 
         // 🔐 Authorization policies
         Gate::policy(PiggyBank::class, PiggyBankPolicy::class);

@@ -95,6 +95,9 @@ class ScheduledSavingController extends Controller
                 // Update scheduled saving status
                 $periodicSaving->update(['status' => $validatedData['status']]);
 
+                // Update remaining_amount in database after transaction
+                $piggyBank->updateRemainingAmount();
+
                 // Automatically update piggy bank status if needed
                 if (! in_array($piggyBank->status, ['paused', 'cancelled'])) {
                     // Only mark as done if remaining amount is zero or less
@@ -169,9 +172,10 @@ class ScheduledSavingController extends Controller
             // Update status back to active
             $piggyBank->update(['status' => 'active']);
 
-            // Get all pending savings sorted by saving_number
+            // Get all active (non-archived) pending savings sorted by saving_number
             $pendingSavings = ScheduledSaving::where('piggy_bank_id', $piggyBank->id)
                 ->where('status', 'pending')
+                ->active()
                 ->orderBy('saving_number', 'asc')
                 ->get();
 
@@ -279,18 +283,27 @@ class ScheduledSavingController extends Controller
 
     public function getSchedulePartial(Request $request, $piggy_id)
     {
-//        \Log::info('Schedule partial request', [
-//            'piggy_id' => $piggy_id,
-//            'is_ajax' => $request->ajax(),
-//            'is_xhr' => $request->header('X-Requested-With') === 'XMLHttpRequest',
-//            'auth_check' => auth()->check(),
-//            'auth_id' => auth()->id(),
-//            'session_id' => session()->getId(),
-//        ]);
+        //        \Log::info('Schedule partial request', [
+        //            'piggy_id' => $piggy_id,
+        //            'is_ajax' => $request->ajax(),
+        //            'is_xhr' => $request->header('X-Requested-With') === 'XMLHttpRequest',
+        //            'auth_check' => auth()->check(),
+        //            'auth_id' => auth()->id(),
+        //            'session_id' => session()->getId(),
+        //        ]);
 
         // Existing code to fetch and return the partial view
         $piggyBank = PiggyBank::findOrFail($piggy_id);
 
-        return view('partials.schedule', compact('piggyBank'));
+        // Paginate the scheduled savings with correct path
+        // Filter out archived items, then sort: pending items first (actionable), then saved items (history), chronologically within each group
+        $scheduledSavings = $piggyBank->scheduledSavings()
+            ->active()
+            ->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
+            ->orderBy('saving_date', 'asc')
+            ->paginate(50)
+            ->setPath(localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id]));
+
+        return view('partials.schedule', compact('piggyBank', 'scheduledSavings'));
     }
 }

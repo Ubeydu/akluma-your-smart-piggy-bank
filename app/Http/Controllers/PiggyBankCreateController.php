@@ -762,6 +762,9 @@ class PiggyBankCreateController extends Controller
                 $scheduledSaving->save();
             }
 
+            // Set initial remaining_amount in database
+            $piggyBank->updateRemainingAmount();
+
             DB::commit();
 
             $request->session()->forget([
@@ -999,6 +1002,9 @@ class PiggyBankCreateController extends Controller
                 $scheduledSaving->saving_date = $payment['date'];
                 $scheduledSaving->save();
             }
+
+            // Set initial remaining_amount in database
+            $piggyBank->updateRemainingAmount();
 
             DB::commit();
 
