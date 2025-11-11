@@ -208,5 +208,11 @@
   "New periodic amount must be greater than 0": "New periodic amount must be greater than 0",
   "No pending scheduled savings to recalculate": "No pending scheduled savings to recalculate",
   "New periodic amount must be less than remaining amount": "New periodic amount must be less than remaining amount",
-  "Your saving schedule has been recalculated successfully!": "Your saving schedule has been recalculated successfully!"
+  "Your saving schedule has been recalculated successfully!": "Your saving schedule has been recalculated successfully!",
+  "Original Goal": "Original Goal",
+  "Updated Goal": "Updated Goal",
+  "Current Projected Total": "Current Projected Total",
+  "Current Projected": "Current Projected",
+  "more than original": "more than original",
+  "less than original": "less than original"
 }
