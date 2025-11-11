@@ -113,6 +113,7 @@ class PiggyBank extends Model
 
             // FALLBACK: Calculate on-the-fly (for safety during migration or if column not yet populated)
             $projectedTotal = $this->uptodate_final_total ?? $this->final_total;
+
             return $projectedTotal - $this->actual_final_total_saved;
         } catch (\Throwable $e) {
             Log::error('Invalid money calculation in piggy bank', [
@@ -123,6 +124,7 @@ class PiggyBank extends Model
                 'currency' => $this->currency,
                 'error' => $e->getMessage(),
             ]);
+
             return 0.0;
         }
     }
@@ -192,11 +194,15 @@ class PiggyBank extends Model
      */
     public function calculateUptodateFinalTotal(): float
     {
-        // Sum ALL active scheduled savings (both saved and pending)
-        // PLUS starting_amount to get the complete total
-        return ($this->starting_amount ?? 0) + $this->scheduledSavings()
-            ->where('archived', false)
-            ->sum('amount');
+        // The complete total money user will have when done includes:
+        // 1. Starting amount (initial deposit)
+        // 2. All active scheduled savings (both saved and pending, excluding archived)
+        // 3. Manual money added/withdrawn outside the schedule
+        return ($this->starting_amount ?? 0)
+            + $this->scheduledSavings()
+                ->where('archived', false)
+                ->sum('amount')
+            + $this->manual_money_net;
     }
 
     /**

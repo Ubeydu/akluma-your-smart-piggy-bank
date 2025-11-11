@@ -11,9 +11,15 @@
         </div>
 
         <!-- Always Visible: Current Projected Total (conditional) -->
-        @if($piggyBank->uptodate_final_total && $piggyBank->uptodate_final_total != $piggyBank->final_total && !in_array($piggyBank->status, ['done', 'cancelled']))
+        @if($piggyBank->uptodate_final_total && $piggyBank->uptodate_final_total != $piggyBank->final_total)
         <div>
-            <h3 class="text-sm font-medium text-gray-500">{{ __('Current Projected Total') }}</h3>
+            <h3 class="text-sm font-medium text-gray-500">
+                @if(in_array($piggyBank->status, ['done', 'cancelled']))
+                    {{ __('Updated Goal') }}
+                @else
+                    {{ __('Current Projected Total') }}
+                @endif
+            </h3>
             <p class="mt-1 text-base text-indigo-700 font-semibold">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->uptodate_final_total, $piggyBank->currency) }}</p>
             @php
                 $difference = $piggyBank->uptodate_final_total - $piggyBank->final_total;
