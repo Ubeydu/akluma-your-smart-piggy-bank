@@ -10,10 +10,13 @@ Allow authenticated users to save their piggy bank creation progress as a draft 
 **Key Decisions:**
 - ✅ Separate `piggy_bank_drafts` table (not a status on piggy_banks)
 - ✅ Dedicated draft list page at `/{locale}/draft-piggy-banks`
+- ✅ Draft detail/show page at `/{locale}/draft-piggy-banks/{draft}` (read-only view)
 - ✅ Multiple drafts allowed per user
-- ✅ Resume drafts jumps directly to summary page
+- ✅ Click draft card → view details (consistent with piggy bank pattern)
+- ✅ Resume from detail page → restores session and jumps to summary page
+- ✅ Warn user before resuming if active creation session exists
 - ✅ Drafts persist indefinitely (no expiration)
-- ✅ Users can delete drafts
+- ✅ Users can delete drafts from detail page
 - ✅ Save ALL data including calculated values and payment schedule
 - ✅ "Save as Draft" button appears next to "Create New Piggy Bank" button
 
@@ -46,14 +49,49 @@ Clear session data
 Redirect to draft list page with success message
 ```
 
+### Data Flow for Viewing Draft
+
+```
+User on Draft List Page
+    ↓
+Clicks on draft card
+    ↓
+Redirects to draft detail page (read-only view)
+    ↓
+Shows all draft information:
+  - Product details (name, price, link, image)
+  - Savings plan (strategy, frequency, target date)
+  - Financial summary (target, extra, total)
+  - Payment schedule table
+    ↓
+User can:
+  - Resume draft (restore session & go to summary)
+  - Delete draft
+  - Go back to list
+```
+
 ### Data Flow for Resuming Draft
 
 ```
-User clicks "Resume" on draft
+User clicks "Resume" on draft detail page
+    ↓
+Check if active creation session exists
+    ↓
+If session exists → Show warning dialog:
+  "You're currently creating a piggy bank.
+   Resuming this draft will discard your current progress."
+
+  Buttons:
+  - "Resume This Draft" → Continue with resume
+  - "Cancel" → Stay on detail page
+    ↓
+If no session OR user confirms → Proceed with resume:
     ↓
 Controller loads draft from database
     ↓
 Deserialize JSON data back to Money objects
+    ↓
+Clear any existing session data
     ↓
 Restore ALL session keys:
   - pick_date_step1
@@ -86,9 +124,9 @@ Schema::create('piggy_bank_drafts', function (Blueprint $table) {
     $table->string('name'); // Piggy bank name for display in list
     $table->string('currency', 3); // ISO currency code
 
-    // Strategy context
-    $table->enum('strategy', ['pick-date', 'enter-saving-amount']);
-    $table->enum('frequency', ['days', 'weeks', 'months', 'years']);
+    // Strategy context - using varchar to match piggy_banks table
+    $table->string('strategy'); // 'pick-date' or 'enter-saving-amount'
+    $table->string('frequency'); // 'days', 'weeks', 'months', 'years'
 
     // All creation data stored as JSON
     $table->json('step1_data'); // Product info, price, starting_amount, preview
@@ -96,8 +134,8 @@ Schema::create('piggy_bank_drafts', function (Blueprint $table) {
     $table->json('payment_schedule'); // Generated schedule
 
     // Summary for quick display in list
-    $table->decimal('price', 15, 2); // For sorting/filtering
-    $table->string('preview_image')->nullable(); // For thumbnail display
+    $table->decimal('price', 12, 2); // Match piggy_banks table precision
+    $table->string('preview_image')->default('images/piggy_banks/default_piggy_bank.png');
 
     $table->timestamps();
 
@@ -229,11 +267,25 @@ class PiggyBankDraft extends Model
     }
 
     /**
-     * Scope: Only drafts for authenticated user
+     * Scope: Drafts for authenticated user
+     * Returns drafts where:
+     * - user_id matches (authenticated user's drafts), OR
+     * - user_id is null AND email matches (guest drafts from Issue #234)
      */
-    public function scopeForUser($query, int $userId)
+    public function scopeForUser($query, int $userId, ?string $email = null)
     {
-        return $query->where('user_id', $userId);
+        return $query->where(function ($q) use ($userId, $email) {
+            // Get drafts created by authenticated user
+            $q->where('user_id', $userId);
+
+            // Also get guest drafts with matching email (Issue #234)
+            if ($email) {
+                $q->orWhere(function ($subQ) use ($email) {
+                    $subQ->whereNull('user_id')
+                        ->where('email', $email);
+                });
+            }
+        });
     }
 }
 ```
@@ -262,10 +314,15 @@ class PiggyBankDraftController extends Controller
     /**
      * Display list of user's drafts
      * Route: GET /{locale}/draft-piggy-banks
+     *
+     * Note: For Issue #274, we only pass user_id (authenticated users only).
+     * For Issue #234, we'll also pass email to include guest drafts.
      */
     public function index()
     {
-        $drafts = PiggyBankDraft::forUser(Auth::id())
+        // Issue #274: Only authenticated user's drafts
+        // Issue #234: Add Auth::user()->email to also fetch guest drafts
+        $drafts = PiggyBankDraft::forUser(Auth::id(), Auth::user()->email)
             ->orderBy('created_at', 'desc')
             ->paginate(12);
 
@@ -341,15 +398,61 @@ class PiggyBankDraftController extends Controller
     }
 
     /**
+     * Show draft details (read-only view)
+     * Route: GET /{locale}/draft-piggy-banks/{draft}
+     */
+    public function show(PiggyBankDraft $draft)
+    {
+        // Authorization check
+        if (! Gate::allows('view', $draft)) {
+            abort(403);
+        }
+
+        // Deserialize data for display
+        $currency = $draft->currency;
+        $step1Data = PiggyBankDraft::deserializeToSession($draft->step1_data, $currency);
+        $step3Data = PiggyBankDraft::deserializeToSession($draft->step3_data, $currency);
+        $paymentSchedule = PiggyBankDraft::deserializeToSession($draft->payment_schedule, $currency);
+
+        // Prepare data for view (similar to summary pages)
+        $summary = [
+            'pick_date_step1' => $step1Data,
+            $draft->strategy === 'pick-date' ? 'pick_date_step3' : 'enter_saving_amount_step3' => $step3Data,
+        ];
+
+        // Check if user has active creation session
+        $hasActiveSession = session()->has('chosen_strategy')
+            || session()->has('pick_date_step1')
+            || session()->has('enter_saving_amount_step3');
+
+        return view('draft-piggy-banks.show', compact(
+            'draft',
+            'summary',
+            'paymentSchedule',
+            'hasActiveSession'
+        ));
+    }
+
+    /**
      * Resume a draft (restore session and redirect to summary)
      * Route: POST /{locale}/draft-piggy-banks/{draft}/resume
      */
     public function resume(Request $request, PiggyBankDraft $draft)
     {
         // Authorization check
-        if ($draft->user_id !== Auth::id()) {
+        if (! Gate::allows('update', $draft)) {
             abort(403);
         }
+
+        // Clear any existing session data first
+        $request->session()->forget([
+            'pick_date_step1',
+            'pick_date_step3',
+            'enter_saving_amount_step3',
+            'chosen_strategy',
+            'payment_schedule',
+            'final_payment_date',
+        ]);
 
         // Deserialize data back to session format
         $currency = $draft->currency;
@@ -364,14 +467,14 @@ class PiggyBankDraftController extends Controller
 
         if ($draft->strategy === 'pick-date') {
             $request->session()->put('pick_date_step3', $step3Data);
-            $summaryRoute = 'create-piggy-bank.pick-date.show-summary';
+            $summaryRoute = 'localized.create-piggy-bank.pick-date.show-summary';
         } else {
             $request->session()->put('enter_saving_amount_step3', $step3Data);
-            $summaryRoute = 'create-piggy-bank.enter-saving-amount.show-summary';
+            $summaryRoute = 'localized.create-piggy-bank.enter-saving-amount.show-summary';
         }
 
         // Redirect to appropriate summary page
-        return redirect()->route($summaryRoute);
+        return redirect(localizedRoute($summaryRoute));
     }
 
     /**
@@ -381,14 +484,13 @@ class PiggyBankDraftController extends Controller
     public function destroy(PiggyBankDraft $draft)
     {
         // Authorization check
-        if ($draft->user_id !== Auth::id()) {
+        if (! Gate::allows('delete', $draft)) {
             abort(403);
         }
 
         $draft->delete();
 
-        return redirect()
-            ->route('draft-piggy-banks.index')
+        return redirect(localizedRoute('localized.draft-piggy-banks.index'))
             ->with('success', __('Draft deleted successfully!'));
     }
 }
@@ -456,18 +558,31 @@ When resuming from draft, we don't want to recalculate or regenerate anything - 
 Add these routes inside the `auth` middleware group:
 
 ```php
+use App\Http\Controllers\PiggyBankDraftController;
+
 // Draft Piggy Banks Management
-Route::get(RouteSlugHelper::get('draft-piggy-banks'), [PiggyBankDraftController::class, 'index'])
-    ->name('draft-piggy-banks.index');
+Route::localizedGet('draft-piggy-banks', [PiggyBankDraftController::class, 'index'])
+    ->name('localized.draft-piggy-banks.index')
+    ->middleware(['auth', 'verified']);
 
-Route::post(RouteSlugHelper::get('draft-piggy-banks') . '/store', [PiggyBankDraftController::class, 'store'])
-    ->name('draft-piggy-banks.store');
+Route::localizedGet('draft-piggy-banks/{draft}', [PiggyBankDraftController::class, 'show'])
+    ->name('localized.draft-piggy-banks.show')
+    ->middleware(['auth', 'verified'])
+    ->where('draft', '[0-9]+');
 
-Route::post(RouteSlugHelper::get('draft-piggy-banks') . '/{draft}/resume', [PiggyBankDraftController::class, 'resume'])
-    ->name('draft-piggy-banks.resume');
+Route::localizedPost('draft-piggy-banks/store', [PiggyBankDraftController::class, 'store'])
+    ->name('localized.draft-piggy-banks.store')
+    ->middleware(['auth', 'verified']);
 
-Route::delete(RouteSlugHelper::get('draft-piggy-banks') . '/{draft}', [PiggyBankDraftController::class, 'destroy'])
-    ->name('draft-piggy-banks.destroy');
+Route::localizedPost('draft-piggy-banks/{draft}/resume', [PiggyBankDraftController::class, 'resume'])
+    ->name('localized.draft-piggy-banks.resume')
+    ->middleware(['auth', 'verified'])
+    ->where('draft', '[0-9]+');
+
+Route::localizedDelete('draft-piggy-banks/{draft}', [PiggyBankDraftController::class, 'destroy'])
+    ->name('localized.draft-piggy-banks.destroy')
+    ->middleware(['auth', 'verified'])
+    ->where('draft', '[0-9]+');
 ```
 
 ### Add Route Slugs
@@ -505,27 +620,47 @@ use App\Models\User;
 class PiggyBankDraftPolicy
 {
     /**
-     * Determine if the user can view the draft
+     * Determine whether the user can view any models.
      */
-    public function view(User $user, PiggyBankDraft $draft): bool
+    public function viewAny(User $user): bool
     {
-        return $user->id === $draft->user_id;
+        return true; // Any authenticated user can view their own drafts list
     }
 
     /**
-     * Determine if the user can update/resume the draft
+     * Determine whether the user can view the model.
+     * Allows access if:
+     * - Draft belongs to user (user_id match), OR
+     * - Draft is a guest draft (user_id null) with matching email (Issue #234)
      */
-    public function update(User $user, PiggyBankDraft $draft): bool
+    public function view(User $user, PiggyBankDraft $piggyBankDraft): bool
     {
-        return $user->id === $draft->user_id;
+        return $user->id === $piggyBankDraft->user_id
+            || ($piggyBankDraft->user_id === null && $user->email === $piggyBankDraft->email);
     }
 
     /**
-     * Determine if the user can delete the draft
+     * Determine whether the user can update the model.
+     * Allows access if:
+     * - Draft belongs to user (user_id match), OR
+     * - Draft is a guest draft (user_id null) with matching email (Issue #234)
      */
-    public function delete(User $user, PiggyBankDraft $draft): bool
+    public function update(User $user, PiggyBankDraft $piggyBankDraft): bool
     {
-        return $user->id === $draft->user_id;
+        return $user->id === $piggyBankDraft->user_id
+            || ($piggyBankDraft->user_id === null && $user->email === $piggyBankDraft->email);
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     * Allows access if:
+     * - Draft belongs to user (user_id match), OR
+     * - Draft is a guest draft (user_id null) with matching email (Issue #234)
+     */
+    public function delete(User $user, PiggyBankDraft $piggyBankDraft): bool
+    {
+        return $user->id === $piggyBankDraft->user_id
+            || ($piggyBankDraft->user_id === null && $user->email === $piggyBankDraft->email);
     }
 }
 ```
@@ -616,108 +751,390 @@ Apply same button structure change as above, using appropriate route:
 
 **File:** `resources/views/draft-piggy-banks/index.blade.php`
 
+**Design Note:** Following the piggy bank index pattern - cards are clickable links that navigate to detail page.
+
 ```blade
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {{-- Page Header --}}
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
+    <x-slot name="header">
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-900 leading-tight">
                 {{ __('My Draft Piggy Banks') }}
-            </h1>
-
-            <a href="{{ localizedRoute('create-piggy-bank.step-1') }}" class="btn-primary">
-                {{ __('Create New Piggy Bank') }}
+            </h2>
+            <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
+               class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
+                <span class="hidden sm:inline">{{ __('Create New Piggy Bank') }}</span>
+                <span class="sm:hidden">{{ __('Create') }}</span>
             </a>
         </div>
+    </x-slot>
 
-        {{-- Empty State --}}
-        @if($drafts->isEmpty())
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
-                <div class="text-gray-400 dark:text-gray-600 mb-4">
-                    <svg class="mx-auto h-24 w-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+    <div class="py-4 px-4">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xs rounded-lg">
+                <div class="py-4 px-4">
+                    <div class="mt-4">
+                        {{-- Empty State --}}
+                        @if($drafts->isEmpty())
+                            <x-empty-state
+                                :title="__('draft.empty_state.title')"
+                                :message="__('draft.empty_state.message')"
+                                :buttonText="__('draft.empty_state.button_text')"
+                                buttonLink="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
+                            />
+                        @else
+                            {{-- Draft Cards Grid --}}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                @foreach($drafts as $draft)
+                                    <x-draft-card :draft="$draft" />
+                                @endforeach
+                            </div>
+
+                            {{-- Pagination --}}
+                            @if($drafts->hasPages())
+                                <div class="mt-6">
+                                    {{ $drafts->links() }}
+                                </div>
+                            @endif
+                        @endif
+                    </div>
                 </div>
-                <h3 class="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
-                    {{ __('No drafts yet') }}
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400">
-                    {{ __('When you save a piggy bank as draft, it will appear here.') }}
-                </p>
             </div>
-        @endif
+        </div>
+    </div>
+</x-app-layout>
+```
 
-        {{-- Draft Cards Grid --}}
-        @if($drafts->isNotEmpty())
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($drafts as $draft)
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow">
-                        {{-- Draft Image --}}
-                        <div class="aspect-video bg-gray-200 dark:bg-gray-700 rounded-t-lg overflow-hidden">
-                            <img src="{{ $draft->preview_image }}"
-                                 alt="{{ $draft->name }}"
-                                 class="w-full h-full object-cover">
+### 3. Create Draft Card Component
+
+**File:** `resources/views/components/draft-card.blade.php`
+
+**Design Note:** Simpler than piggy-bank-card. Entire card is a clickable link to detail page.
+
+```blade
+@props(['draft'])
+
+<a href="{{ localizedRoute('localized.draft-piggy-banks.show', ['draft' => $draft->id]) }}"
+   class="block text-current hover:no-underline">
+    <div class="p-5 border rounded-lg shadow-md bg-white hover:bg-gray-50 transition-all duration-300">
+
+        {{-- Header Section --}}
+        <div class="flex items-start mb-4">
+            {{-- Preview Image --}}
+            <div class="mr-4 w-16 h-16 shrink-0">
+                <img src="{{ asset($draft->preview_image) }}"
+                     alt="{{ $draft->name }}"
+                     class="w-full h-full object-cover rounded-lg shadow-xs">
+            </div>
+
+            {{-- Title and Strategy Badge --}}
+            <div class="flex-1">
+                <h3 class="text-lg font-bold text-gray-900 mb-1 truncate">{{ $draft->name }}</h3>
+                <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    {{ __('draft.strategy.' . $draft->strategy) }}
+                </span>
+            </div>
+        </div>
+
+        {{-- Info Grid --}}
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <span class="text-xs text-gray-500 block">{{ __('price') }}</span>
+                <span class="text-sm font-semibold text-gray-900">
+                    {{ \App\Helpers\MoneyFormatHelper::format($draft->price, $draft->currency) }}
+                </span>
+            </div>
+
+            <div>
+                <span class="text-xs text-gray-500 block">{{ __('Saving Frequency') }}</span>
+                <span class="text-sm font-semibold text-gray-900">
+                    {{ ucfirst(__(strtolower($draft->frequency))) }}
+                </span>
+            </div>
+
+            @if(isset($draft->step1_data['starting_amount']) && $draft->step1_data['starting_amount'])
+                <div>
+                    <span class="text-xs text-gray-500 block">{{ __('starting_amount') }}</span>
+                    <span class="text-sm font-semibold text-gray-900">
+                        @php
+                            $startingAmount = $draft->step1_data['starting_amount'];
+                            if (is_array($startingAmount) && isset($startingAmount['amount'])) {
+                                echo \App\Helpers\MoneyFormatHelper::format(
+                                    $startingAmount['amount'],
+                                    $draft->currency
+                                );
+                            }
+                        @endphp
+                    </span>
+                </div>
+            @endif
+
+            <div>
+                <span class="text-xs text-gray-500 block">{{ __('created_at') }}</span>
+                <span class="text-sm font-semibold text-gray-900">
+                    {{ $draft->created_at->diffForHumans() }}
+                </span>
+            </div>
+        </div>
+    </div>
+</a>
+```
+
+### 4. Create Draft Detail Page
+
+**File:** `resources/views/draft-piggy-banks/show.blade.php`
+
+**Design Note:** Uses summary page structure as reference. Includes warning dialog if active session exists.
+
+```blade
+@php use Brick\Money\Money; @endphp
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-900 leading-tight">
+            {{ __('Draft Details') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-4 px-4">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xs rounded-lg">
+                <div class="py-6 px-8">
+
+                    {{-- Draft Status Badge --}}
+                    <div class="mb-4">
+                        <span class="inline-flex px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                            {{ __('Draft') }} • {{ __('Saved') }} {{ $draft->created_at->diffForHumans() }}
+                        </span>
+                    </div>
+
+                    <h1 class="text-2xl font-semibold mb-6">{{ $summary['pick_date_step1']['name'] }}</h1>
+
+                    {{-- Product Information Section --}}
+                    <div class="mb-8">
+                        <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Product Details') }}</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Product Name') }}</h3>
+                                    <p class="mt-1 text-base text-gray-900">{{ $summary['pick_date_step1']['name'] }}</p>
+                                </div>
+
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Product Price') }}</h3>
+                                    <p class="mt-1 text-base text-gray-900">
+                                        {{ isset($summary['pick_date_step1']['price']) ? $summary['pick_date_step1']['price']->formatTo(App::getLocale()) : '-' }}
+                                    </p>
+                                </div>
+
+                                @if(isset($summary['pick_date_step1']['starting_amount']) && $summary['pick_date_step1']['starting_amount'])
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500">{{ __('Starting Amount') }}</h3>
+                                    <p class="mt-1 text-base text-gray-900">
+                                        {{ $summary['pick_date_step1']['starting_amount']->formatTo(App::getLocale()) }}
+                                    </p>
+                                </div>
+                                @endif
+                            </div>
+
+                            <div class="w-48 mx-auto mt-1">
+                                <div class="aspect-square h-32 md:aspect-auto md:h-32 relative overflow-hidden rounded-lg shadow-xs bg-gray-50 mx-auto">
+                                    <div class="relative w-full h-full">
+                                        <img
+                                            src="{{ $summary['pick_date_step1']['preview']['image'] ?? asset('images/default_piggy_bank.png') }}"
+                                            alt="{{ $summary['pick_date_step1']['name'] }}"
+                                            class="absolute inset-0 w-full h-full object-contain"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        {{-- Draft Info --}}
-                        <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 truncate">
-                                {{ $draft->name }}
-                            </h3>
+                        {{-- Product Link and Details (outside grid) --}}
+                        <div class="space-y-4 mt-6">
+                            @if(isset($summary['pick_date_step1']['link']))
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">{{ __('Product Link') }}</h3>
+                                <a href="{{ $summary['pick_date_step1']['link'] }}"
+                                   target="_blank"
+                                   class="mt-1 text-base text-blue-600 hover:text-blue-800 break-all">
+                                    {{ $summary['pick_date_step1']['link'] }}
+                                </a>
+                            </div>
+                            @endif
 
-                            <div class="space-y-2 mb-4 text-sm text-gray-600 dark:text-gray-400">
-                                <p>
-                                    <span class="font-medium">{{ __('Price') }}:</span>
-                                    {{ $draft->formatted_price }}
-                                </p>
-                                <p>
-                                    <span class="font-medium">{{ __('Strategy') }}:</span>
-                                    {{ __($draft->strategy) }}
-                                </p>
-                                <p>
-                                    <span class="font-medium">{{ __('Frequency') }}:</span>
-                                    {{ __($draft->frequency) }}
-                                </p>
-                                <p class="text-xs text-gray-500">
-                                    {{ __('Saved') }}: {{ $draft->created_at->diffForHumans() }}
+                            @if(isset($summary['pick_date_step1']['details']))
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">{{ __('Details') }}</h3>
+                                <p class="mt-1 text-base text-gray-900">{{ $summary['pick_date_step1']['details'] }}</p>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Savings Plan Section --}}
+                    <div class="mb-8">
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">{{ __('Saving Frequency') }}</h3>
+                                <p class="mt-1 text-base text-gray-900">
+                                    {{ ucfirst(__(strtolower($draft->frequency))) }}
                                 </p>
                             </div>
 
-                            {{-- Action Buttons --}}
-                            <div class="flex gap-2">
-                                {{-- Resume Button --}}
-                                <form method="POST"
-                                      action="{{ localizedRoute('draft-piggy-banks.resume', ['draft' => $draft->id]) }}"
-                                      class="flex-1">
-                                    @csrf
-                                    <button type="submit" class="btn-primary w-full">
-                                        {{ __('Resume') }}
-                                    </button>
-                                </form>
-
-                                {{-- Delete Button --}}
-                                <form method="POST"
-                                      action="{{ localizedRoute('draft-piggy-banks.destroy', ['draft' => $draft->id]) }}"
-                                      onsubmit="return confirm('{{ __('Are you sure you want to delete this draft?') }}')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn-danger">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </form>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">{{ __('Strategy') }}</h3>
+                                <p class="mt-1 text-base text-gray-900">
+                                    {{ __('draft.strategy.' . $draft->strategy) }}
+                                </p>
                             </div>
                         </div>
                     </div>
-                @endforeach
-            </div>
 
-            {{-- Pagination --}}
-            <div class="mt-8">
-                {{ $drafts->links() }}
+                    {{-- Payment Schedule Section --}}
+                    @if(isset($paymentSchedule) && count($paymentSchedule) > 0)
+                        <div class="mb-8">
+                            <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Saving Schedule') }}</h2>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                            {{ __('Saving #') }}
+                                        </th>
+                                        <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                            {{ __('Date') }}
+                                        </th>
+                                        <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                            {{ __('Amount') }}
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($paymentSchedule as $payment)
+                                        <tr>
+                                            <td class="px-2 py-4 text-sm font-medium text-gray-900">
+                                                {{ $payment['payment_number'] ?? '-' }}
+                                            </td>
+                                            <td class="px-2 py-4 text-sm text-gray-500">
+                                                {{ $payment['formatted_date'] ?? '-' }}
+                                            </td>
+                                            <td class="px-2 py-4 text-sm text-gray-900">
+                                                {{ $payment['amount']->formatTo(App::getLocale()) ?? '-' }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Action Buttons --}}
+                    <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-between sm:space-y-0 mt-8">
+
+                        {{-- Back to List --}}
+                        <a href="{{ localizedRoute('localized.draft-piggy-banks.index') }}"
+                           class="w-[200px] sm:w-auto text-center">
+                            <x-secondary-button type="button" class="w-full justify-center">
+                                {{ __('Back to Drafts') }}
+                            </x-secondary-button>
+                        </a>
+
+                        {{-- Resume and Delete --}}
+                        <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
+
+                            {{-- Delete with confirmation --}}
+                            <div x-data="{ showConfirmDelete: false }">
+                                <x-danger-button
+                                    @click="showConfirmDelete = true"
+                                    class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                >
+                                    {{ __('Delete Draft') }}
+                                </x-danger-button>
+
+                                <x-confirmation-dialog>
+                                    <x-slot:title>
+                                        {{ __('Are you sure you want to delete this draft?') }}
+                                    </x-slot>
+
+                                    <x-slot:actions>
+                                        <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
+                                            <form action="{{ localizedRoute('localized.draft-piggy-banks.destroy', ['draft' => $draft->id]) }}"
+                                                  method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                                    {{ __('Yes, delete') }}
+                                                </x-danger-button>
+                                            </form>
+
+                                            <x-secondary-button
+                                                @click="showConfirmDelete = false"
+                                                class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                            >
+                                                {{ __('Cancel') }}
+                                            </x-secondary-button>
+                                        </div>
+                                    </x-slot:actions>
+                                </x-confirmation-dialog>
+                            </div>
+
+                            {{-- Resume with session warning if needed --}}
+                            <div x-data="{ showSessionWarning: {{ $hasActiveSession ? 'true' : 'false' }} }">
+                                @if($hasActiveSession)
+                                    {{-- Show warning button if active session --}}
+                                    <x-primary-button
+                                        @click="showSessionWarning = true"
+                                        class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                    >
+                                        {{ __('Resume Draft') }}
+                                    </x-primary-button>
+
+                                    <x-confirmation-dialog>
+                                        <x-slot:title>
+                                            {{ __('draft.session_warning.title') }}
+                                        </x-slot>
+
+                                        <x-slot:content>
+                                            <p class="text-sm text-gray-600">
+                                                {{ __('draft.session_warning.message') }}
+                                            </p>
+                                        </x-slot:content>
+
+                                        <x-slot:actions>
+                                            <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
+                                                <form action="{{ localizedRoute('localized.draft-piggy-banks.resume', ['draft' => $draft->id]) }}"
+                                                      method="POST">
+                                                    @csrf
+                                                    <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                                        {{ __('draft.session_warning.resume_button') }}
+                                                    </x-primary-button>
+                                                </form>
+
+                                                <x-secondary-button
+                                                    @click="showSessionWarning = false"
+                                                    class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                                >
+                                                    {{ __('Cancel') }}
+                                                </x-secondary-button>
+                                            </div>
+                                        </x-slot:actions>
+                                    </x-confirmation-dialog>
+                                @else
+                                    {{-- No active session, resume directly --}}
+                                    <form action="{{ localizedRoute('localized.draft-piggy-banks.resume', ['draft' => $draft->id]) }}"
+                                          method="POST">
+                                        @csrf
+                                        <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                            {{ __('Resume Draft') }}
+                                        </x-primary-button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        @endif
+        </div>
     </div>
 </x-app-layout>
 ```
@@ -749,18 +1166,28 @@ Add link to draft piggy banks in the navigation menu:
 {
     "Save as Draft": "Save as Draft",
     "My Draft Piggy Banks": "My Draft Piggy Banks",
-    "No drafts yet": "No drafts yet",
-    "When you save a piggy bank as draft, it will appear here.": "When you save a piggy bank as draft, it will appear here.",
-    "Resume": "Resume",
+    "Draft": "Draft",
+    "Draft Details": "Draft Details",
+    "Back to Drafts": "Back to Drafts",
+    "Resume Draft": "Resume Draft",
+    "Delete Draft": "Delete Draft",
+    "Yes, delete": "Yes, delete",
+    "Saving Frequency": "Saving Frequency",
+    "Strategy": "Strategy",
     "Draft saved successfully!": "Draft saved successfully!",
     "Draft deleted successfully!": "Draft deleted successfully!",
     "Are you sure you want to delete this draft?": "Are you sure you want to delete this draft?",
     "No piggy bank creation in progress.": "No piggy bank creation in progress.",
     "Missing required data to save draft.": "Missing required data to save draft.",
-    "My Drafts": "My Drafts",
-    "Saved": "Saved",
-    "pick-date": "Pick Date",
-    "enter-saving-amount": "Enter Saving Amount"
+    "Missing frequency data. Please start over.": "Missing frequency data. Please start over.",
+    "draft.empty_state.title": "No Drafts Yet",
+    "draft.empty_state.message": "You haven't saved any drafts. Start creating a piggy bank to save a draft.",
+    "draft.empty_state.button_text": "Create Your Piggy Bank",
+    "draft.strategy.pick-date": "Pick Date Strategy",
+    "draft.strategy.enter-saving-amount": "Enter Amount Strategy",
+    "draft.session_warning.title": "Unsaved Progress",
+    "draft.session_warning.message": "You're currently creating a piggy bank. Resuming this draft will discard your current progress.",
+    "draft.session_warning.resume_button": "Resume This Draft"
 }
 ```
 
@@ -769,18 +1196,28 @@ Add link to draft piggy banks in the navigation menu:
 {
     "Save as Draft": "Taslak Olarak Kaydet",
     "My Draft Piggy Banks": "Taslak Kumbaralarım",
-    "No drafts yet": "Henüz taslak yok",
-    "When you save a piggy bank as draft, it will appear here.": "Bir kumbarayı taslak olarak kaydettiğinizde burada görünecektir.",
-    "Resume": "Devam Et",
+    "Draft": "Taslak",
+    "Draft Details": "Taslak Detayları",
+    "Back to Drafts": "Taslak Listesine Dön",
+    "Resume Draft": "Taslağa Devam Et",
+    "Delete Draft": "Taslağı Sil",
+    "Yes, delete": "Evet, sil",
+    "Saving Frequency": "Birikim Sıklığı",
+    "Strategy": "Strateji",
     "Draft saved successfully!": "Taslak başarıyla kaydedildi!",
     "Draft deleted successfully!": "Taslak başarıyla silindi!",
     "Are you sure you want to delete this draft?": "Bu taslağı silmek istediğinizden emin misiniz?",
     "No piggy bank creation in progress.": "Devam eden kumbara oluşturma işlemi yok.",
     "Missing required data to save draft.": "Taslak kaydetmek için gerekli veriler eksik.",
-    "My Drafts": "Taslaklarım",
-    "Saved": "Kaydedildi",
-    "pick-date": "Tarih Seç",
-    "enter-saving-amount": "Birikim Tutarı Gir"
+    "Missing frequency data. Please start over.": "Sıklık verisi eksik. Lütfen baştan başlayın.",
+    "draft.empty_state.title": "Henüz Taslak Yok",
+    "draft.empty_state.message": "Henüz hiç taslak kaydetmediniz. Taslak kaydetmek için kumbara oluşturmaya başlayın.",
+    "draft.empty_state.button_text": "Kumbaranı Oluştur",
+    "draft.strategy.pick-date": "Tarih Seçme Stratejisi",
+    "draft.strategy.enter-saving-amount": "Tutar Girme Stratejisi",
+    "draft.session_warning.title": "Kaydedilmemiş İlerleme",
+    "draft.session_warning.message": "Şu anda bir kumbara oluşturuyorsunuz. Bu taslağa devam ederseniz mevcut ilerlemeniz kaybolacak.",
+    "draft.session_warning.resume_button": "Bu Taslağa Devam Et"
 }
 ```
 
@@ -789,18 +1226,28 @@ Add link to draft piggy banks in the navigation menu:
 {
     "Save as Draft": "Enregistrer comme brouillon",
     "My Draft Piggy Banks": "Mes tirelires brouillons",
-    "No drafts yet": "Pas encore de brouillons",
-    "When you save a piggy bank as draft, it will appear here.": "Lorsque vous enregistrez une tirelire comme brouillon, elle apparaîtra ici.",
-    "Resume": "Reprendre",
+    "Draft": "Brouillon",
+    "Draft Details": "Détails du brouillon",
+    "Back to Drafts": "Retour aux brouillons",
+    "Resume Draft": "Reprendre le brouillon",
+    "Delete Draft": "Supprimer le brouillon",
+    "Yes, delete": "Oui, supprimer",
+    "Saving Frequency": "Fréquence d'épargne",
+    "Strategy": "Stratégie",
     "Draft saved successfully!": "Brouillon enregistré avec succès!",
     "Draft deleted successfully!": "Brouillon supprimé avec succès!",
     "Are you sure you want to delete this draft?": "Êtes-vous sûr de vouloir supprimer ce brouillon?",
     "No piggy bank creation in progress.": "Aucune création de tirelire en cours.",
     "Missing required data to save draft.": "Données requises manquantes pour enregistrer le brouillon.",
-    "My Drafts": "Mes brouillons",
-    "Saved": "Enregistré",
-    "pick-date": "Choisir la date",
-    "enter-saving-amount": "Entrer le montant d'épargne"
+    "Missing frequency data. Please start over.": "Données de fréquence manquantes. Veuillez recommencer.",
+    "draft.empty_state.title": "Aucun brouillon pour le moment",
+    "draft.empty_state.message": "Vous n'avez enregistré aucun brouillon. Commencez à créer une tirelire pour enregistrer un brouillon.",
+    "draft.empty_state.button_text": "Créer votre tirelire",
+    "draft.strategy.pick-date": "Stratégie de choix de date",
+    "draft.strategy.enter-saving-amount": "Stratégie de saisie de montant",
+    "draft.session_warning.title": "Progression non enregistrée",
+    "draft.session_warning.message": "Vous êtes en train de créer une tirelire. Reprendre ce brouillon supprimera votre progression actuelle.",
+    "draft.session_warning.resume_button": "Reprendre ce brouillon"
 }
 ```
 
@@ -923,19 +1370,22 @@ it('serializes and deserializes Money objects correctly');
 
 ## Future Considerations (Issue #234)
 
-This implementation sets up the foundation for Issue #234 (guest user drafts):
+This implementation is **already future-proofed** for Issue #234 (guest user drafts):
 
-**What's Already Prepared:**
-- `user_id` is nullable in schema
-- `email` column exists for guest identification
-- Separate table keeps concerns isolated
-- Same serialization logic can be reused
+**What's Already Built (Issue #234 Ready):**
+- ✅ `user_id` is nullable in schema
+- ✅ `email` column exists for guest identification
+- ✅ Separate table keeps concerns isolated
+- ✅ Same serialization logic works for guest and auth users
+- ✅ **Policy checks both `user_id` match AND email-based guest drafts**
+- ✅ **Model scope retrieves both user drafts AND email-matched guest drafts**
+- ✅ **Controller already passes email to scope for future guest draft retrieval**
 
 **What Will Need to be Added for #234:**
-- Guest user flow to capture email before saving draft
-- Draft association logic when guest registers
-- Migration to link existing email-based drafts to new users
-- UI changes to show guest drafts after registration
+- Guest user flow to capture email before saving draft on summary page
+- UI change: Redirect guest to registration after saving (not to draft list)
+- Success message for guest: "Draft saved! Register to view your drafts."
+- Optional: Migration/command to link existing email-based drafts when guest registers (auto-update `user_id`)
 
 ---
 

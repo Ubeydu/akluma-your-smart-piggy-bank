@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PiggyBankController;
 use App\Http\Controllers\PiggyBankCreateController;
+use App\Http\Controllers\PiggyBankDraftController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduledSavingController;
 use App\Http\Controllers\UserPreferencesController;
@@ -93,6 +94,30 @@ Route::localizedPost('piggy-banks/{piggy_id}/recalculate-schedule', [PiggyBankCo
     ->name('localized.piggy-banks.recalculate-schedule')
     ->middleware(['auth', 'verified'])
     ->where('piggy_id', '[0-9]+');
+
+// Draft Piggy Banks routes
+Route::localizedGet('draft-piggy-banks', [PiggyBankDraftController::class, 'index'])
+    ->name('localized.draft-piggy-banks.index')
+    ->middleware(['auth', 'verified']);
+
+Route::localizedGet('draft-piggy-banks/{draft}', [PiggyBankDraftController::class, 'show'])
+    ->name('localized.draft-piggy-banks.show')
+    ->middleware(['auth', 'verified'])
+    ->where('draft', '[0-9]+');
+
+Route::localizedPost('draft-piggy-banks/store', [PiggyBankDraftController::class, 'store'])
+    ->name('localized.draft-piggy-banks.store')
+    ->middleware(['auth', 'verified']);
+
+Route::localizedPost('draft-piggy-banks/{draft}/resume', [PiggyBankDraftController::class, 'resume'])
+    ->name('localized.draft-piggy-banks.resume')
+    ->middleware(['auth', 'verified'])
+    ->where('draft', '[0-9]+');
+
+Route::localizedDelete('draft-piggy-banks/{draft}', [PiggyBankDraftController::class, 'destroy'])
+    ->name('localized.draft-piggy-banks.destroy')
+    ->middleware(['auth', 'verified'])
+    ->where('draft', '[0-9]+');
 
 // Vault routes
 Route::localizedGet('vaults', [VaultController::class, 'index'])
@@ -216,15 +241,12 @@ Route::localizedPost('create-piggy-bank/cancel', [PiggyBankCreateController::cla
 Route::localizedPost('create-piggy-bank/clear', function () {
     try {
         session()->forget([
-            'pick_date_step1.name',
-            'pick_date_step1.price',
-            'pick_date_step1.link',
-            'pick_date_step1.details',
-            'pick_date_step1.starting_amount',
-            'pick_date_step1.preview',
-            'pick_date_step1.currency',
-            'pick_date_step3.date',
-            'pick_date_step3.calculations',
+            'pick_date_step1',
+            'chosen_strategy',
+            'pick_date_step3',
+            'enter_saving_amount_step3',
+            'payment_schedule',
+            'final_payment_date',
         ]);
         session()->flash('success', __('You cleared the form.'));
     } catch (Exception) {

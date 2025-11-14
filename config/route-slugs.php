@@ -26,6 +26,12 @@ return [
             'fr' => 'mes-tirelires',
         ],
 
+        'draft-piggy-banks' => [
+            'en' => 'draft-piggy-banks',
+            'tr' => 'taslak-kumbaralar',
+            'fr' => 'tirelires-brouillons',
+        ],
+
         'vaults' => [
             'en' => 'vaults',
             'tr' => 'kasalar',

@@ -31,6 +31,9 @@ This directory contains technical documentation, implementation guides, and trou
 ## Troubleshooting
 
 - [pagination-in-ajax-loaded-partials.md](dev-notes/troubleshooting/pagination-in-ajax-loaded-partials.md) - Solution for fixing pagination links breaking after AJAX reloads using setPath() method
+- [localized-route-redirect-pattern.md](dev-notes/troubleshooting/localized-route-redirect-pattern.md) - Correct pattern for using localizedRoute() helper with redirects to avoid IDE warnings
+- [authorization-pattern.md](dev-notes/troubleshooting/authorization-pattern.md) - Correct authorization pattern using Gate::allows() with abort(403) instead of $this->authorize()
+- [confirmation-dialog-alpine-variable.md](dev-notes/troubleshooting/confirmation-dialog-alpine-variable.md) - Fix for Alpine.js "showConfirmCancel is not defined" error when using confirmation dialog component with custom variable names
 
 ## Flow Documentation
 

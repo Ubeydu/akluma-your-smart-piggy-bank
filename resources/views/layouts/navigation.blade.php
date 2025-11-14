@@ -34,6 +34,10 @@
                                     :active="request()->routeIs('localized.vaults.*')">
                             {{ __('My Vaults') }}
                         </x-nav-link>
+                        <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.draft-piggy-banks.index') }}"
+                                    :active="request()->routeIs('localized.draft-piggy-banks.*')">
+                            {{ __('My Drafts') }}
+                        </x-nav-link>
                     @endauth
 
                         <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.create-piggy-bank.step-1') }}"
@@ -144,6 +148,10 @@
                 <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.vaults.index') }}"
                                        :active="request()->routeIs('localized.vaults.*')">
                     {{ __('My Vaults') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.draft-piggy-banks.index') }}"
+                                       :active="request()->routeIs('localized.draft-piggy-banks.*')">
+                    {{ __('My Drafts') }}
                 </x-responsive-nav-link>
             @endauth
 
