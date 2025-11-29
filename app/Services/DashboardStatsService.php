@@ -58,7 +58,7 @@ class DashboardStatsService
         foreach ($piggyBanks as $piggyBank) {
             $currency = $piggyBank->currency;
             $totalSaved = $piggyBank->actual_final_total_saved;
-            $totalGoal = $piggyBank->final_total;
+            $totalGoal = $piggyBank->uptodate_final_total ?? $piggyBank->final_total;
 
             if (! isset($currencyData[$currency])) {
                 $currencyData[$currency] = ['saved' => 0, 'goal' => 0];

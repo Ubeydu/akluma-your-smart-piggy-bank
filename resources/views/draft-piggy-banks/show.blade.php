@@ -129,6 +129,13 @@
                         </div>
                     </div>
 
+                    {{-- Date Message (early completion notice) --}}
+                    @if(isset($dateMessage) && $dateMessage)
+                        <div class="mb-8 bg-blue-50 border-l-4 border-blue-400 p-4">
+                            <p class="text-blue-700">{{ $dateMessage }}</p>
+                        </div>
+                    @endif
+
                     {{-- Financial Summary Section --}}
                     <div class="mb-8">
                         <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Financial Summary') }}</h2>
@@ -209,7 +216,7 @@
                                                 {{ $payment['payment_number'] ?? '-' }}
                                             </td>
                                             <td class="px-2 py-4 text-sm text-gray-500">
-                                                {{ $payment['formatted_date'] ?? '-' }}
+                                                {{ \Carbon\Carbon::parse($payment['date'])->translatedFormat('d F Y') }}
                                             </td>
                                             <td class="px-2 py-4 text-sm text-gray-900">
                                                 {{ $payment['amount']->formatTo(App::getLocale()) ?? '-' }}

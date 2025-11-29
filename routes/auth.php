@@ -88,6 +88,18 @@ Route::get('login', function () {
     return redirect("/$locale/login");
 })->name('login');
 
+// Non-localized verification notice redirect for middleware
+Route::get('email/verify', function () {
+    $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
+
+    $availableLocales = array_keys(config('app.available_languages', []));
+    if (! in_array($locale, $availableLocales)) {
+        $locale = 'en';
+    }
+
+    return redirect("/$locale");
+})->middleware('auth')->name('verification.notice');
+
 Route::prefix('{locale}')
     ->middleware('locale')
     ->where(['locale' => '[a-z]{2}'])

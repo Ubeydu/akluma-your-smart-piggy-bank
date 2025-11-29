@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\PiggyBankDraft;
 use Brick\Money\Money;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -57,7 +59,7 @@ class PiggyBankDraftController extends Controller
         } else {
             // Enter Saving Amount strategy
             $startingAmount = $step1Data['starting_amount'] ?? null;
-            if ($startingAmount && !$startingAmount->isZero()) {
+            if ($startingAmount && ! $startingAmount->isZero()) {
                 $price = $step1Data['price'];
                 $targetAmount = $price->minus($startingAmount);
             } else {
@@ -87,6 +89,38 @@ class PiggyBankDraftController extends Controller
             $plannedFinalTotal = $totalSavings;
         }
 
+        // Calculate date message for early completion
+        $dateMessage = null;
+
+        if (! empty($paymentSchedule)) {
+            // Get target date based on strategy
+            if ($draft->strategy === 'pick-date') {
+                $targetDate = $step3Data['date'];
+                if (! $targetDate instanceof Carbon) {
+                    $targetDate = Carbon::parse($targetDate);
+                }
+            } else {
+                $targetDateString = $step3Data['target_dates'][$selectedFrequency]['target_date'] ?? null;
+                $targetDate = $targetDateString ? Carbon::parse($targetDateString) : null;
+            }
+
+            // Get final payment date from schedule
+            $lastPayment = end($paymentSchedule);
+            $finalPaymentDate = Carbon::parse($lastPayment['date']);
+
+            // Compare and generate message if completing early
+            if ($targetDate && $finalPaymentDate->lt($targetDate)) {
+                $localizedDate = $finalPaymentDate
+                    ->copy()
+                    ->setTimezone(config('app.timezone'))
+                    ->locale(App::getLocale());
+
+                $dateMessage = __('Good news! You will reach your saving goal earlier than planned, on :date', [
+                    'date' => $localizedDate->isoFormat('LL'),
+                ]);
+            }
+        }
+
         // Check if user has active creation session
         $hasActiveSession = session()->has('chosen_strategy')
             || session()->has('pick_date_step1')
@@ -100,7 +134,8 @@ class PiggyBankDraftController extends Controller
             'targetAmount',
             'extraSavings',
             'totalSavings',
-            'plannedFinalTotal'
+            'plannedFinalTotal',
+            'dateMessage'
         ));
     }
 
