@@ -256,27 +256,67 @@
                             </x-confirmation-dialog>
                         </div>
 
-                        <!-- Previous and Create buttons  -->
+                        <!-- Previous, Save as Draft, and Create buttons  -->
                         <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
                             <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ localizedRoute('localized.create-piggy-bank.enter-saving-amount.step-3') }}'">
                                 {{ __('Previous') }}
                             </x-secondary-button>
 
-
-
                             @auth
-                                <form method="POST" action="{{ localizedRoute('localized.create-piggy-bank.enter-saving-amount.store') }}">
-                                    @csrf
-                                    @if($activePiggyBanksCount >= $maxActivePiggyBanks)
-                                        <x-primary-button type="button" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start opacity-50 cursor-not-allowed">
+                                @if(auth()->user()->hasVerifiedEmail())
+                                    <!-- Save as Draft Button -->
+                                    <form method="POST" action="{{ localizedRoute('localized.draft-piggy-banks.store') }}">
+                                        @csrf
+                                        <x-secondary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                            {{ __('Save as Draft') }}
+                                        </x-secondary-button>
+                                    </form>
+
+                                    <!-- Create Button -->
+                                    <form method="POST" action="{{ localizedRoute('localized.create-piggy-bank.enter-saving-amount.store') }}">
+                                        @csrf
+                                        @if($activePiggyBanksCount >= $maxActivePiggyBanks)
+                                            <x-primary-button type="button" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start opacity-50 cursor-not-allowed">
+                                                {{ __('Create New Piggy Bank') }}
+                                            </x-primary-button>
+                                        @else
+                                            <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                                {{ __('Create New Piggy Bank') }}
+                                            </x-primary-button>
+                                        @endif
+                                    </form>
+                                @else
+                                    <!-- Email not verified - disabled buttons with tooltips -->
+                                    <div x-data="{ showTooltip: false }" class="relative">
+                                        <x-secondary-button
+                                            type="button"
+                                            disabled
+                                            @mouseenter="showTooltip = true"
+                                            @mouseleave="showTooltip = false"
+                                            class="w-[200px] sm:w-auto justify-center sm:justify-start opacity-50 !cursor-not-allowed pointer-events-auto"
+                                        >
+                                            {{ __('Save as Draft') }}
+                                        </x-secondary-button>
+                                        <div x-show="showTooltip" x-cloak class="absolute z-10 px-3 py-2 text-sm bg-gray-900 text-white rounded-lg shadow-lg -translate-x-1/2 left-1/2 bottom-full mb-2 whitespace-nowrap">
+                                            {{ __('Please verify your email to use this feature') }}
+                                        </div>
+                                    </div>
+
+                                    <div x-data="{ showTooltip: false }" class="relative">
+                                        <x-secondary-button
+                                            type="button"
+                                            disabled
+                                            @mouseenter="showTooltip = true"
+                                            @mouseleave="showTooltip = false"
+                                            class="w-[200px] sm:w-auto justify-center sm:justify-start opacity-50 !cursor-not-allowed pointer-events-auto"
+                                        >
                                             {{ __('Create New Piggy Bank') }}
-                                        </x-primary-button>
-                                    @else
-                                        <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
-                                            {{ __('Create New Piggy Bank') }}
-                                        </x-primary-button>
-                                    @endif
-                                </form>
+                                        </x-secondary-button>
+                                        <div x-show="showTooltip" x-cloak class="absolute z-10 px-3 py-2 text-sm bg-gray-900 text-white rounded-lg shadow-lg -translate-x-1/2 left-1/2 bottom-full mb-2 whitespace-nowrap">
+                                            {{ __('Please verify your email to use this feature') }}
+                                        </div>
+                                    </div>
+                                @endif
                             @else
                                 <div>
                                     <x-secondary-button
@@ -292,12 +332,26 @@
                     </div>
 
 
-                    <!-- Error message outside of button layout -->
+                    <!-- Maximum piggy banks limit warning -->
                     @auth
                         @if($activePiggyBanksCount >= $maxActivePiggyBanks)
-                            <a href="{{ localizedRoute('localized.piggy-banks.index') }}" class="block text-sm mt-4 text-center sm:text-left" style="color: #ef4444;" onmouseover="this.style.color='#1e3a8a'; this.style.textDecoration='underline';" onmouseout="this.style.color='#ef4444'; this.style.textDecoration='none';">
-                                {{ __('You have reached the maximum limit of :limit active or paused piggy banks. Please complete or cancel some existing piggy banks before creating a new one.', ['limit' => $maxActivePiggyBanks]) }}
-                            </a>
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400 mt-6">
+                                <div class="flex items-start">
+                                    <div class="shrink-0">
+                                        <svg class="h-6 w-6 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3 flex-1">
+                                        <p class="text-sm text-blue-800">
+                                            {{ __("You've reached the maximum limit of :limit active or paused piggy banks. To create this piggy bank, you can either save it as a draft using the 'Save as Draft' button above, or ", ['limit' => $maxActivePiggyBanks]) }}
+                                            <a href="{{ localizedRoute('localized.piggy-banks.index') }}" class="font-medium underline hover:text-blue-900">
+                                                {{ __('cancel some of your active or paused piggy banks') }}
+                                            </a>.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         @endif
                     @endauth
 

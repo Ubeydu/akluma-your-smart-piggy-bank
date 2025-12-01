@@ -163,7 +163,9 @@ class LinkPreviewService
 
             // Check if content type indicates an image
             $contentType = strtolower($contentType[0]); // Get first content type if multiple
-            return str_contains($contentType, 'image/');
+
+            // Accept both image/* and application/octet-stream (many CDNs return this for images)
+            return str_contains($contentType, 'image/') || str_contains($contentType, 'application/octet-stream');
 
         } catch (\Exception $e) {
             // Log the error but don't throw it

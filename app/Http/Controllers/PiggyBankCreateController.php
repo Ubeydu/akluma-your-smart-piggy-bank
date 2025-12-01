@@ -247,6 +247,11 @@ class PiggyBankCreateController extends Controller
                 ];
             }
 
+            // Ensure we have a valid image URL, fallback to default if not
+            if (empty($preview['image'])) {
+                $preview['image'] = '/images/default_piggy_bank.png';
+            }
+
             // Ensure the image URL is an absolute URL, not a relative path
             if ($preview['image'] && ! filter_var($preview['image'], FILTER_VALIDATE_URL)) {
                 $preview['image'] = url($preview['image']);
@@ -881,7 +886,11 @@ class PiggyBankCreateController extends Controller
         $startingAmount = $summary['pick_date_step1']['starting_amount'] ?? null;
         $totalSavingsData = $summary['enter_saving_amount_step3']['target_dates'][$selectedFrequency]['total_amount']['amount'] ?? null;
         $totalSavingsAmount = null;
-        if ($totalSavingsData && is_array($totalSavingsData)) {
+
+        // Handle both Money object and array formats
+        if ($totalSavingsData instanceof Money) {
+            $totalSavingsAmount = $totalSavingsData;
+        } elseif ($totalSavingsData && is_array($totalSavingsData)) {
             $totalSavingsAmount = Money::of($totalSavingsData['amount'], $totalSavingsData['currency']);
         }
 
@@ -956,9 +965,13 @@ class PiggyBankCreateController extends Controller
                 : $step1Data['price'];
             $piggyBank->target_amount = $targetAmountForDB->getAmount()->toFloat();
 
-            // Reconstruct Money objects from serialized arrays
+            // Reconstruct Money objects from serialized arrays (or use existing Money objects from resumed drafts)
             $totalAmountData = $targetDateData['total_amount']['amount'];
-            $totalAmountMoney = Money::of($totalAmountData['amount'], $totalAmountData['currency']);
+            if ($totalAmountData instanceof Money) {
+                $totalAmountMoney = $totalAmountData;
+            } else {
+                $totalAmountMoney = Money::of($totalAmountData['amount'], $totalAmountData['currency']);
+            }
             $piggyBank->total_savings = $totalAmountMoney->getAmount()->toFloat();
 
             // Calculate extra savings
@@ -1084,7 +1097,7 @@ class PiggyBankCreateController extends Controller
             $request->session()->forget('chosen_strategy');
 
             // Clear strategy-specific data
-            $request->session()->forget(['pick_date_step3', 'enter_saving_step3']);
+            $request->session()->forget(['pick_date_step3', 'enter_saving_amount_step3']);
 
             // Check if user is authenticated
             if (auth()->check()) {
