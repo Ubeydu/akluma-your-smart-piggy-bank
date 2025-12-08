@@ -254,9 +254,19 @@ class ScheduledSavingController extends Controller
 
                 // \Log::info("Working date calculated for saving #{$saving->saving_number}: {$workingDate}");
 
-                // Update with the new date
-                $saving->update(['saving_date' => $workingDate]);
-                // \Log::info("Saved new date: {$workingDate}");
+                // Update date and reset notification tracking so reminders are sent for the new date
+                $saving->saving_date = $workingDate;
+                $saving->notification_statuses = null;
+                $saving->notification_attempts = null;
+                $saving->save();
+                // \Log::info("Saving #{$saving->saving_number} updated", [
+                //     'old_date' => $saving->saving_date->format('Y-m-d'),
+                //     'new_date' => $workingDate->format('Y-m-d'),
+                //     'old_notification_statuses' => $saving->notification_statuses,
+                //     'old_notification_attempts' => $saving->notification_attempts,
+                //     'new_notification_statuses' => null,
+                //     'new_notification_attempts' => null,
+                // ]);
             }
 
             $scheduleUpdated = true;
