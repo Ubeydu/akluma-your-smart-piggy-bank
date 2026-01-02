@@ -119,6 +119,13 @@ Route::localizedDelete('draft-piggy-banks/{draft}', [PiggyBankDraftController::c
     ->middleware(['auth', 'verified'])
     ->where('draft', '[0-9]+');
 
+// Guest Draft Piggy Banks routes (no auth required)
+Route::localizedPost('draft-piggy-banks/guest-store', [PiggyBankDraftController::class, 'guestStore'])
+    ->name('localized.draft-piggy-banks.guest-store');
+
+Route::localizedGet('draft-piggy-banks/saved', [PiggyBankDraftController::class, 'guestSaved'])
+    ->name('localized.draft-piggy-banks.guest-saved');
+
 // Vault routes
 Route::localizedGet('vaults', [VaultController::class, 'index'])
     ->name('localized.vaults.index')

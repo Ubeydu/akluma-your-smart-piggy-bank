@@ -191,6 +191,18 @@ return [
             'fr' => 'enregistrer',
         ],
 
+        'guest-store' => [
+            'en' => 'guest-store',
+            'tr' => 'misafir-kaydet',
+            'fr' => 'enregistrer-invite',
+        ],
+
+        'saved' => [
+            'en' => 'saved',
+            'tr' => 'kaydedildi',
+            'fr' => 'enregistre',
+        ],
+
         'pause' => [
             'en' => 'pause',
             'tr' => 'duraklat',

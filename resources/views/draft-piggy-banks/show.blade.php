@@ -17,7 +17,7 @@
                     {{-- Draft Status Badge --}}
                     <div class="mb-4">
                         <span class="inline-flex px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                            {{ __('Draft') }} • {{ __('Saved') }} {{ $draft->created_at->diffForHumans() }}
+                            {{ __('Draft') }} • {{ __('draft.saved_ago', ['time' => $draft->created_at->diffForHumans()]) }}
                         </span>
                     </div>
 
