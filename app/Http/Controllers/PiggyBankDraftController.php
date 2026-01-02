@@ -333,7 +333,7 @@ class PiggyBankDraftController extends Controller
 
         // If no flash data, redirect to home
         if (! $draftInfo) {
-            return redirect(localizedRoute('localized.welcome'));
+            return redirect(route('localized.welcome', ['locale' => app()->getLocale()]));
         }
 
         return view('draft-piggy-banks.guest-saved', [

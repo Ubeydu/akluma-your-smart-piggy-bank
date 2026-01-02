@@ -1106,7 +1106,7 @@ class PiggyBankCreateController extends Controller
                     ->with('warning', __('You cancelled creating your piggy bank.'));
             } else {
                 // If not authenticated, redirect to welcome page
-                return redirect(localizedRoute('localized.welcome'))
+                return redirect(route('localized.welcome', ['locale' => app()->getLocale()]))
                     ->with('warning', __('You cancelled creating your piggy bank.'));
             }
 
