@@ -288,6 +288,26 @@ class PiggyBankDraftController extends Controller
             'final_payment_date',
         ]);
 
+        // Calculate target date based on strategy
+        $targetDate = null;
+        if ($strategy === 'pick-date') {
+            $targetDate = $step3Data['date'] ?? null;
+        } else {
+            $targetDate = $step3Data['target_dates'][$frequency]['target_date'] ?? null;
+        }
+
+        // Extract starting amount if exists
+        $startingAmount = null;
+        if (isset($step1Data['starting_amount']) && $step1Data['starting_amount']) {
+            $startingAmountValue = $step1Data['starting_amount'];
+            // Handle Money object
+            if ($startingAmountValue instanceof \Brick\Money\Money) {
+                $startingAmount = $startingAmountValue->getAmount()->toFloat();
+            } elseif (is_numeric($startingAmountValue)) {
+                $startingAmount = (float) $startingAmountValue;
+            }
+        }
+
         // Redirect to success page with draft info
         return redirect(localizedRoute('localized.draft-piggy-banks.guest-saved'))
             ->with('guest_draft_saved', [
@@ -295,6 +315,10 @@ class PiggyBankDraftController extends Controller
                 'price' => $draft->price,
                 'currency' => $draft->currency,
                 'preview_image' => $draft->preview_image,
+                'strategy' => $strategy,
+                'frequency' => $frequency,
+                'target_date' => $targetDate,
+                'starting_amount' => $startingAmount,
             ]);
     }
 
@@ -309,7 +333,7 @@ class PiggyBankDraftController extends Controller
 
         // If no flash data, redirect to home
         if (! $draftInfo) {
-            return redirect(localizedRoute('localized.home'));
+            return redirect(localizedRoute('localized.welcome'));
         }
 
         return view('draft-piggy-banks.guest-saved', [

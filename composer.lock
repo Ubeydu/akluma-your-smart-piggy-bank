@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b0205da7bc828cee1b4b59137f60dee8",
+    "content-hash": "4e5fe387c669824f2b8a0d5d65614bd3",
     "packages": [
         {
             "name": "archtechx/enums",
@@ -8055,6 +8055,59 @@
             "time": "2024-11-12T16:29:46+00:00"
         },
         {
+            "name": "devdojo/refine",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thedevdojo/refine.git",
+                "reference": "8cb30b7374587d068ab274fd5a9fdf93a58b74fa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thedevdojo/refine/zipball/8cb30b7374587d068ab274fd5a9fdf93a58b74fa",
+                "reference": "8cb30b7374587d068ab274fd5a9fdf93a58b74fa",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^10.0|^11.0|^12.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0|^9.0",
+                "phpunit/phpunit": "^10.5"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "DevDojo\\Refine\\RefineServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DevDojo\\Refine\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "DevDojo",
+                    "email": "hello@devdojo.com"
+                }
+            ],
+            "description": "A developer-only Chrome extension and Laravel package for live-editing Blade templates directly in the browser",
+            "support": {
+                "issues": "https://github.com/thedevdojo/refine/issues",
+                "source": "https://github.com/thedevdojo/refine/tree/main"
+            },
+            "time": "2025-12-14T15:54:14+00:00"
+        },
+        {
             "name": "fakerphp/faker",
             "version": "v1.24.1",
             "source": {
@@ -11552,7 +11605,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "devdojo/refine": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

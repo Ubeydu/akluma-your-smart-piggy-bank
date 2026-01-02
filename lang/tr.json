@@ -485,6 +485,11 @@
   "Draft saved successfully!": "Taslak başarıyla kaydedildi!",
   "Draft deleted successfully!": "Taslak başarıyla silindi!",
   "Save as Draft": "Taslak Olarak Kaydet",
+  "Draft Saved": "Taslak Kaydedildi",
+  "Your draft has been saved!": "Taslağınız kaydedildi!",
+  "Register or login to view and manage your saved drafts.": "Kayıtlı taslaklarınızı görüntülemek ve yönetmek için kayıt olun veya giriş yapın.",
+  "Enter your email": "E-posta adresinizi girin",
+  "guest.step1.draft_info_banner": "Kayıt olmaya hazır değil misin? Sorun değil. Bu formun son adımında sadece e-postanı girerek taslağını kaydet. Böylece taslak kumbaran kaybolmaz — daha sonra kayıt olduğunda hesabında seni bekliyor olur.",
   "My Draft Piggy Banks": "Taslak Kumbaralarım",
   "My Drafts": "Taslaklarım",
   "Draft": "Taslak",
@@ -505,5 +510,6 @@
   "draft.session_warning.message": "Şu anda bir kumbara oluşturuyorsunuz. Bu taslağa devam ederseniz mevcut ilerlemeniz kaybolacak.",
   "draft.session_warning.resume_button": "Bu Taslağa Devam Et",
   "You've reached the maximum limit of :limit active or paused piggy banks. To create this piggy bank, you can either save it as a draft using the 'Save as Draft' button above, or ": "Maksimum :limit aktif veya duraklatılmış kumbara limitine ulaştınız. Bu kumbarayı oluşturmak için ya yukarıdaki 'Taslak Olarak Kaydet' butonunu kullanarak taslak olarak kaydedebilir ya da ",
-  "cancel some of your active or paused piggy banks": "aktif veya duraklatılmış kumbaralarınızdan bazılarını iptal edebilirsiniz"
+  "cancel some of your active or paused piggy banks": "aktif veya duraklatılmış kumbaralarınızdan bazılarını iptal edebilirsiniz",
+  "draft.saved_ago": ":time kaydedildi"
 }

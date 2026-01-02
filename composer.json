@@ -23,6 +23,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.5",
+        "devdojo/refine": "dev-main",
         "fakerphp/faker": "^1.23",
         "fly-apps/dockerfile-laravel": "^1.0",
         "laravel/boost": "^1.8",

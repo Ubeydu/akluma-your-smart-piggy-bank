@@ -327,7 +327,7 @@
                                             name="email"
                                             required
                                             placeholder="{{ __('Enter your email') }}"
-                                            class="w-full sm:w-64"
+                                            class="w-full sm:w-64 h-[34px] text-xs"
                                         />
                                         @error('email')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>

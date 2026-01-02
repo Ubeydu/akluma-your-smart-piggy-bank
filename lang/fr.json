@@ -483,6 +483,11 @@
   "Draft saved successfully!": "Brouillon enregistré avec succès !",
   "Draft deleted successfully!": "Brouillon supprimé avec succès !",
   "Save as Draft": "Enregistrer comme brouillon",
+  "Draft Saved": "Brouillon enregistré",
+  "Your draft has been saved!": "Votre brouillon a été enregistré !",
+  "Register or login to view and manage your saved drafts.": "Inscrivez-vous ou connectez-vous pour voir et gérer vos brouillons.",
+  "Enter your email": "Entrez votre e-mail",
+  "guest.step1.draft_info_banner": "Pas prêt à vous inscrire ? Pas de souci. Enregistrez votre brouillon à la dernière étape avec juste votre e-mail. Il ne sera pas perdu — quand vous créerez votre compte, il vous attendra.",
   "My Draft Piggy Banks": "Mes tirelires brouillons",
   "My Drafts": "Mes brouillons",
   "Draft": "Brouillon",
@@ -503,5 +508,6 @@
   "draft.session_warning.message": "Vous êtes en train de créer une tirelire. Reprendre ce brouillon supprimera votre progression actuelle.",
   "draft.session_warning.resume_button": "Reprendre ce brouillon",
   "You've reached the maximum limit of :limit active or paused piggy banks. To create this piggy bank, you can either save it as a draft using the 'Save as Draft' button above, or ": "Vous avez atteint la limite maximale de :limit tirelires actives ou en pause. Pour créer cette tirelire, vous pouvez soit l'enregistrer en tant que brouillon en utilisant le bouton 'Enregistrer comme brouillon' ci-dessus, soit ",
-  "cancel some of your active or paused piggy banks": "annuler certaines de vos tirelires actives ou en pause"
+  "cancel some of your active or paused piggy banks": "annuler certaines de vos tirelires actives ou en pause",
+  "draft.saved_ago": "Enregistré :time"
 }
