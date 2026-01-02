@@ -11,6 +11,12 @@
                 <div class="py-4 px-6">
                     <h1 class="text-lg font-semibold mb-8">{{ __('Step 1 of 3') }}</h1>
 
+                    @guest
+                        <div class="mb-6 w-full rounded-md bg-blue-50 p-4 text-sm text-blue-800 shadow-md border border-blue-200">
+                            {{ __('guest.step1.draft_info_banner') }}
+                        </div>
+                    @endguest
+
                     <form  id="mainForm" method="POST" action="{{ localizedRoute('localized.create-piggy-bank.step-2') }}">
                         @csrf
 

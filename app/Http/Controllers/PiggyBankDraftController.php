@@ -214,6 +214,134 @@ class PiggyBankDraftController extends Controller
     }
 
     /**
+     * Store a new draft from summary page for GUEST users
+     * POST /{locale}/draft-piggy-banks/guest-store
+     */
+    public function guestStore(Request $request)
+    {
+        // Validate email format only
+        $request->validate([
+            'email' => ['required', 'email:rfc,dns', 'max:255'],
+        ]);
+
+        // Check if there's a piggy bank creation in progress
+        $strategy = session('chosen_strategy');
+
+        if (! $strategy) {
+            return redirect(localizedRoute('localized.create-piggy-bank.step-1'))
+                ->with('error', __('No piggy bank creation in progress.'));
+        }
+
+        // Get session data
+        $step1Data = session('pick_date_step1');
+
+        if ($strategy === 'pick-date') {
+            $step3Data = session('pick_date_step3');
+        } else {
+            $step3Data = session('enter_saving_amount_step3');
+        }
+
+        $paymentSchedule = session('payment_schedule');
+
+        // Validate required data exists
+        if (! $step1Data || ! $step3Data || ! $paymentSchedule) {
+            return redirect(localizedRoute('localized.create-piggy-bank.step-1'))
+                ->with('error', __('Missing required data to save draft.'));
+        }
+
+        // Get frequency
+        $frequency = $step3Data['selected_frequency'] ?? null;
+
+        if (! $frequency) {
+            return redirect(localizedRoute('localized.create-piggy-bank.step-1'))
+                ->with('error', __('Missing frequency data. Please start over.'));
+        }
+
+        // Serialize data
+        $currency = $step1Data['currency'];
+        $serializedStep1 = PiggyBankDraft::serializeSessionData($step1Data, $currency);
+        $serializedStep3 = PiggyBankDraft::serializeSessionData($step3Data, $currency);
+        $serializedSchedule = PiggyBankDraft::serializeSessionData($paymentSchedule, $currency);
+
+        // Create draft with user_id = null and email
+        $draft = PiggyBankDraft::create([
+            'user_id' => null,
+            'email' => strtolower($request->input('email')),
+            'name' => $step1Data['name'],
+            'currency' => $currency,
+            'strategy' => $strategy,
+            'frequency' => $frequency,
+            'step1_data' => $serializedStep1,
+            'step3_data' => $serializedStep3,
+            'payment_schedule' => $serializedSchedule,
+            'price' => $step1Data['price']->getAmount()->toFloat(),
+            'preview_image' => $step1Data['preview']['image'] ?? 'images/piggy_banks/default_piggy_bank.png',
+        ]);
+
+        // Clear session data
+        $request->session()->forget([
+            'pick_date_step1',
+            'pick_date_step3',
+            'enter_saving_amount_step3',
+            'chosen_strategy',
+            'payment_schedule',
+            'final_payment_date',
+        ]);
+
+        // Calculate target date based on strategy
+        $targetDate = null;
+        if ($strategy === 'pick-date') {
+            $targetDate = $step3Data['date'] ?? null;
+        } else {
+            $targetDate = $step3Data['target_dates'][$frequency]['target_date'] ?? null;
+        }
+
+        // Extract starting amount if exists
+        $startingAmount = null;
+        if (isset($step1Data['starting_amount']) && $step1Data['starting_amount']) {
+            $startingAmountValue = $step1Data['starting_amount'];
+            // Handle Money object
+            if ($startingAmountValue instanceof \Brick\Money\Money) {
+                $startingAmount = $startingAmountValue->getAmount()->toFloat();
+            } elseif (is_numeric($startingAmountValue)) {
+                $startingAmount = (float) $startingAmountValue;
+            }
+        }
+
+        // Redirect to success page with draft info
+        return redirect(localizedRoute('localized.draft-piggy-banks.guest-saved'))
+            ->with('guest_draft_saved', [
+                'name' => $draft->name,
+                'price' => $draft->price,
+                'currency' => $draft->currency,
+                'preview_image' => $draft->preview_image,
+                'strategy' => $strategy,
+                'frequency' => $frequency,
+                'target_date' => $targetDate,
+                'starting_amount' => $startingAmount,
+            ]);
+    }
+
+    /**
+     * Display success page after guest saves a draft
+     * GET /{locale}/draft-piggy-banks/saved
+     */
+    public function guestSaved()
+    {
+        // Get draft info from flash data
+        $draftInfo = session('guest_draft_saved');
+
+        // If no flash data, redirect to home
+        if (! $draftInfo) {
+            return redirect(route('localized.welcome', ['locale' => app()->getLocale()]));
+        }
+
+        return view('draft-piggy-banks.guest-saved', [
+            'draftInfo' => $draftInfo,
+        ]);
+    }
+
+    /**
      * Resume a draft (restore session and redirect to summary)
      * POST /{locale}/draft-piggy-banks/{draft}/resume
      */

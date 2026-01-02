@@ -221,6 +221,11 @@
   "Draft saved successfully!": "Draft saved successfully!",
   "Draft deleted successfully!": "Draft deleted successfully!",
   "Save as Draft": "Save as Draft",
+  "Draft Saved": "Draft Saved",
+  "Your draft has been saved!": "Your draft has been saved!",
+  "Register or login to view and manage your saved drafts.": "Register or login to view and manage your saved drafts.",
+  "Enter your email": "Enter your email",
+  "guest.step1.draft_info_banner": "Not ready to register? That's okay. Save your draft on the last step with just your email. It won't be lost — when you sign up later, it'll be right there in your account.",
   "My Draft Piggy Banks": "My Draft Piggy Banks",
   "My Drafts": "My Drafts",
   "Draft": "Draft",
@@ -241,5 +246,6 @@
   "draft.session_warning.message": "You're currently creating a piggy bank. Resuming this draft will discard your current progress.",
   "draft.session_warning.resume_button": "Resume This Draft",
   "You've reached the maximum limit of :limit active or paused piggy banks. To create this piggy bank, you can either save it as a draft using the 'Save as Draft' button above, or ": "You've reached the maximum limit of :limit active or paused piggy banks. To create this piggy bank, you can either save it as a draft using the 'Save as Draft' button above, or ",
-  "cancel some of your active or paused piggy banks": "cancel some of your active or paused piggy banks"
+  "cancel some of your active or paused piggy banks": "cancel some of your active or paused piggy banks",
+  "draft.saved_ago": "Saved :time"
 }

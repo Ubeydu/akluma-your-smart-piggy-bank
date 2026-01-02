@@ -318,14 +318,25 @@
                                     </div>
                                 @endif
                             @else
-                                <div>
-                                    <x-secondary-button
-                                        type="button"
-                                        onclick="window.location='{{ localizedRoute('localized.register', ['intended' => url()->current()]) }}'"
-                                        class="w-[200px] sm:w-auto justify-center sm:justify-start">
-                                        {{ __('Register to Create') }}
-                                    </x-secondary-button>
-                                </div>
+                                {{-- Guest: Email input + Save as Draft --}}
+                                <form method="POST" action="{{ localizedRoute('localized.draft-piggy-banks.guest-store') }}" class="flex flex-col sm:flex-row items-center gap-4">
+                                    @csrf
+                                    <div class="w-full sm:w-auto">
+                                        <x-text-input
+                                            type="email"
+                                            name="email"
+                                            required
+                                            placeholder="{{ __('Enter your email') }}"
+                                            class="w-full sm:w-64 h-[34px] text-xs"
+                                        />
+                                        @error('email')
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center">
+                                        {{ __('Save as Draft') }}
+                                    </x-primary-button>
+                                </form>
                             @endauth
 
                         </div>
