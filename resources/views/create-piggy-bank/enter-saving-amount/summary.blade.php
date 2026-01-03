@@ -219,14 +219,24 @@
 
 
 
-                    <!-- Action Buttons -->
-                    <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-between sm:space-y-0 mt-8">
+                    {{-- Guest: Explanatory text - completely separate from buttons --}}
+                    @guest
+                        <p class="text-base text-gray-600 mt-8 mb-3 flex items-center gap-1.5">
+                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            {{ __('guest_draft_save_description') }}
+                        </p>
+                    @endguest
+
+                    <!-- Action Buttons - All in one row -->
+                    <div class="flex flex-col sm:flex-row sm:justify-between items-center gap-4 @auth mt-8 @endauth">
 
                         <!-- Cancel button with confirmation dialog -->
                         <div x-data="{ showConfirmCancel: false }">
                             <x-danger-button
                                 @click="showConfirmCancel = true"
-                                class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                class="w-[200px] sm:w-auto justify-center"
                             >
                                 {{ __('Cancel') }}
                             </x-danger-button>
@@ -240,14 +250,14 @@
                                     <div class="flex flex-col sm:flex-row items-center sm:items-stretch space-y-4 sm:space-y-0 sm:gap-3 sm:justify-end">
                                         <form action="{{ localizedRoute('localized.create-piggy-bank.cancel') }}" method="POST" class="block">
                                             @csrf
-                                            <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                            <x-danger-button type="submit" class="w-[200px] sm:w-auto justify-center">
                                                 {{ __('Yes, cancel') }}
                                             </x-danger-button>
                                         </form>
 
                                         <x-secondary-button
                                             @click="showConfirmCancel = false"
-                                            class="w-[200px] sm:w-auto justify-center sm:justify-start"
+                                            class="w-[200px] sm:w-auto justify-center"
                                         >
                                             {{ __('No, continue') }}
                                         </x-secondary-button>
@@ -256,9 +266,9 @@
                             </x-confirmation-dialog>
                         </div>
 
-                        <!-- Previous, Save as Draft, and Create buttons  -->
-                        <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-                            <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center sm:justify-start" onclick="window.location='{{ localizedRoute('localized.create-piggy-bank.enter-saving-amount.step-3') }}'">
+                        <!-- Right side buttons -->
+                        <div class="flex flex-col sm:flex-row items-center gap-3">
+                            <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center" onclick="window.location='{{ localizedRoute('localized.create-piggy-bank.enter-saving-amount.step-3') }}'">
                                 {{ __('Previous') }}
                             </x-secondary-button>
 
@@ -267,7 +277,7 @@
                                     <!-- Save as Draft Button -->
                                     <form method="POST" action="{{ localizedRoute('localized.draft-piggy-banks.store') }}">
                                         @csrf
-                                        <x-secondary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                        <x-secondary-button type="submit" class="w-[200px] sm:w-auto justify-center">
                                             {{ __('Save as Draft') }}
                                         </x-secondary-button>
                                     </form>
@@ -276,11 +286,11 @@
                                     <form method="POST" action="{{ localizedRoute('localized.create-piggy-bank.enter-saving-amount.store') }}">
                                         @csrf
                                         @if($activePiggyBanksCount >= $maxActivePiggyBanks)
-                                            <x-primary-button type="button" disabled class="w-[200px] sm:w-auto justify-center sm:justify-start opacity-50 cursor-not-allowed">
+                                            <x-primary-button type="button" disabled class="w-[200px] sm:w-auto justify-center opacity-50 cursor-not-allowed">
                                                 {{ __('Create New Piggy Bank') }}
                                             </x-primary-button>
                                         @else
-                                            <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center sm:justify-start">
+                                            <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center">
                                                 {{ __('Create New Piggy Bank') }}
                                             </x-primary-button>
                                         @endif
@@ -293,7 +303,7 @@
                                             disabled
                                             @mouseenter="showTooltip = true"
                                             @mouseleave="showTooltip = false"
-                                            class="w-[200px] sm:w-auto justify-center sm:justify-start opacity-50 !cursor-not-allowed pointer-events-auto"
+                                            class="w-[200px] sm:w-auto justify-center opacity-50 !cursor-not-allowed pointer-events-auto"
                                         >
                                             {{ __('Save as Draft') }}
                                         </x-secondary-button>
@@ -308,7 +318,7 @@
                                             disabled
                                             @mouseenter="showTooltip = true"
                                             @mouseleave="showTooltip = false"
-                                            class="w-[200px] sm:w-auto justify-center sm:justify-start opacity-50 !cursor-not-allowed pointer-events-auto"
+                                            class="w-[200px] sm:w-auto justify-center opacity-50 !cursor-not-allowed pointer-events-auto"
                                         >
                                             {{ __('Create New Piggy Bank') }}
                                         </x-secondary-button>
@@ -319,26 +329,23 @@
                                 @endif
                             @else
                                 {{-- Guest: Email input + Save as Draft --}}
-                                <form method="POST" action="{{ localizedRoute('localized.draft-piggy-banks.guest-store') }}" class="flex flex-col sm:flex-row items-center gap-4">
+                                <form method="POST" action="{{ localizedRoute('localized.draft-piggy-banks.guest-store') }}" class="flex flex-col sm:flex-row items-center gap-3">
                                     @csrf
-                                    <div class="w-full sm:w-auto">
-                                        <x-text-input
-                                            type="email"
-                                            name="email"
-                                            required
-                                            placeholder="{{ __('Enter your email') }}"
-                                            class="w-full sm:w-64 h-[34px] text-xs"
-                                        />
-                                        @error('email')
-                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                        @enderror
-                                    </div>
+                                    <x-text-input
+                                        type="email"
+                                        name="email"
+                                        required
+                                        placeholder="{{ __('Enter your email') }}"
+                                        class="w-full sm:w-64 h-[34px]"
+                                    />
+                                    @error('email')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    @enderror
                                     <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center">
                                         {{ __('Save as Draft') }}
                                     </x-primary-button>
                                 </form>
                             @endauth
-
                         </div>
                     </div>
 
