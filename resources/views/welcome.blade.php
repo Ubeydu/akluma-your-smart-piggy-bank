@@ -86,47 +86,7 @@
 
                         <div class="flex items-center justify-between py-10">
                             <div class="flex justify-start">
-                                <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     viewBox="0 0 512 512" class="w-full h-auto max-w-[40px] sm:max-w-[60px]" fill="currentColor"  xml:space="preserve">
-                    <style type="text/css">
-                        <![CDATA[[
-                        .st0{fill:#000000;}
-                        ]]>
-                    </style>
-                                    <g>
-                                        <path class="st0" d="M508.488,169.344c-6.422-14.469-20.484-23.844-35.766-23.844l-1.813,0.047l-10.344,0.547
-		                                        c-23.219-32.281-55.765-57.156-94.968-72.438c-25.625-10.031-54.203-16-84.938-17.719c-6.391-0.344-12.891-0.531-19.391-0.531
-		                                        c-4.672,0-9.438,0.094-14.281,0.266c-14.297,0.547-28.422,2.391-42,5.484c-2.172,0.5-4.375,1.031-6.563,1.594
-		                                        c-27.203-15.969-53.781-19.563-72.203-19.563c-1.531,0-3.016,0.031-4.438,0.063c-3.766,0.125-6.516,0.266-8.594,0.5
-		                                        c-4.188,0.438-7.844,1.563-10.953,3.188c-6.406,2.719-11.922,7.344-15.781,13.375c-5.672,9-7,19.781-3.766,29.688l12.109,37.109
-		                                        c-2.406,2.922-4.672,5.891-6.813,8.859c-9.641,13.563-16.359,26.063-22.266,37.094c-7.984,14.906-13.172,24.156-18.906,26.438
-		                                        l-0.5,0.188l-1.453,0.563l-3.219,1.219c-14.266,5.344-47.656,17.875-40.703,52.594l1.516,7.688
-		                                        c5.922,30.094,9.859,49.063,12.484,57l1.531,4.672c5.313,16.172,8.625,24.391,25.688,35.391c7.5,4.813,16.625,6.531,26.281,8.313
-		                                        c2.875,0.531,7.063,1.313,8.953,1.844c1.828,0.906,3.766,1.625,5.781,2.078c6.781,1.578,12.281,2.375,16.719,3.016
-		                                        c2.875,0.406,6.438,0.938,7.406,1.344c0.484,0.344,4.141,3.328,13.734,20.656l0.5,0.844c5.875,9.688,12.203,25.406,14.297,30.578
-		                                        c1.109,2.734,2.094,5.25,2.953,7.391c1.922,4.875,2.797,7.125,3.766,9.063c8.313,16.563,23.109,24.875,44.031,24.875h29.359
-		                                        c18.859,0,37.891-14,37.891-45.25v-5.875v-4.469h51.891v4.469v5.875c0,31.25,18.672,45.25,37.172,45.25h27.547
-		                                        c20.641,0,35.109-8.531,42.984-25.328c0.969-2.078,1.859-4.469,3.781-9.672c0.625-1.672,1.328-3.563,2.078-5.594
-		                                        c12.203-24.125,23.968-42.875,36.984-58.906c26.953-31.688,41.203-70.594,41.203-112.484c0-11.234-1.156-22.734-3.453-34.266
-		                                        c1.781-2.203,3.844-4.656,6.234-7.297C512.098,202.125,515.254,184.563,508.488,169.344z M480.848,197.719
-		                                        c-7.781,8.563-12.75,15.625-15.031,19.063c3.703,13.75,5.5,27.313,5.5,40.047c0,38.453-13.75,70.672-35.172,95.766
-		                                        c-17.14,21.094-30.187,43.906-40.843,65.094l0,0c-2.734,7.25-4.766,12.938-5.563,14.688c-2.75,5.875-6.891,10.281-19.297,10.281
-		                                        c-12.391,0-19.281,0-27.547,0c-8.25,0-11-8.813-11-19.094c0-1.594,0-3.594,0-5.875v-30.641H227.661v30.641c0,2.281,0,4.281,0,5.875
-		                                        c0,10.281-2.938,19.094-11.719,19.094c-8.813,0-16.172,0-29.359,0c-13.234,0-17.625-4.406-20.563-10.281
-		                                        c-0.859-1.75-3-7.438-5.922-14.688c-4.234-10.5-10.125-24.344-16.172-34.344c-22.188-40-26.547-31.25-54.875-37.781l-0.016-0.031
-		                                        c-6.313-3.625-26.594-4.781-32.703-8.719c-11.109-7.156-10.656-8.656-16.547-26.281c-3.109-9.375-10.609-48.688-13.188-61.625
-		                                        c-2.813-14.016,13.156-18.688,27.844-24.313l2.016-0.781c23.391-9.281,28.844-38.938,52.844-72.656
-		                                        c4.297-6.016,9.375-12,15.094-17.75l-16.828-51.5c-0.813-2.5-0.484-5.25,0.938-7.5c1.438-2.25,3.781-3.75,6.438-4.063
-		                                        c0,0-3.656-0.594,7.656-0.938c1.172-0.031,2.375-0.047,3.625-0.047c17.422,0,42.906,3.891,68.016,21.828
-		                                        c5.313-1.688,10.828-3.219,16.547-4.531c11.688-2.656,24.063-4.344,37.188-4.844c4.5-0.172,8.938-0.25,13.297-0.25
-		                                        c6.109,0,12.078,0.156,17.906,0.469c29.313,1.688,54.859,7.375,76.906,16c42.781,16.656,72.421,44.344,90.921,74.938
-		                                        c13.734-0.688,15.797-0.797,25.188-1.281h0.531C482.77,171.688,491.801,185.578,480.848,197.719z"/>
-                                        <path class="st0" d="M125.458,224.313c-10.781,0-19.516,8.719-19.516,19.516c0,10.766,8.734,19.516,19.516,19.516
-		                                        s19.516-8.75,19.516-19.516C144.973,233.031,136.239,224.313,125.458,224.313z"/>
-                                        <path class="st0" d="M248.942,106.547l-1.344,24.297c2.125,0.063,4.547,0.188,7.531,0.344c22.125,1.188,56.031,3.125,98.141,14.75
-		                                        l1.375-25.094c-43.672-11.094-75.781-12.688-98.188-13.938C253.598,106.75,251.098,106.656,248.942,106.547z"/>
-                                    </g>
-            </svg>
+                                <x-application-logo class="w-full h-auto max-w-[40px] sm:max-w-[60px] fill-current" />
                             </div>
 
                             <!-- Desktop navigation -->
@@ -253,6 +213,182 @@
                     </header>
                 </div>
             </div>
+
+            {{-- Hero Section --}}
+            <div class="w-full bg-gradient-to-br from-gray-50 to-white">
+                <div class="relative max-w-2xl px-6 lg:max-w-7xl mx-auto py-16 lg:py-24">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        {{-- Left: Text Content --}}
+                        <div class="order-2 lg:order-1">
+                            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                                {{ __('hero_headline') }}
+                            </h1>
+                            <p class="text-xl md:text-2xl text-gray-600 mb-8 max-w-lg">
+                                {{ __('hero_subheadline') }}
+                            </p>
+                            <div class="flex flex-col items-start gap-3">
+                                <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
+                                   class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                                    {{ __('hero_cta') }}
+                                    <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                </a>
+                                <span class="text-sm text-gray-500 font-bold">
+                                    {{ __('hero_cta_subtext') }}
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Right: Illustration --}}
+                        <div class="order-1 lg:order-2 flex justify-center lg:justify-end">
+                            <div class="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
+                                {{-- Decorative background circles --}}
+                                <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full opacity-60"></div>
+                                <div class="absolute inset-4 bg-gradient-to-br from-indigo-50 to-white rounded-full"></div>
+
+                                {{-- Piggy Bank SVG Placeholder --}}
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <svg class="w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 text-indigo-500" viewBox="0 0 512 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M508.488,169.344c-6.422-14.469-20.484-23.844-35.766-23.844l-1.813,0.047l-10.344,0.547
+                                            c-23.219-32.281-55.765-57.156-94.968-72.438c-25.625-10.031-54.203-16-84.938-17.719c-6.391-0.344-12.891-0.531-19.391-0.531
+                                            c-4.672,0-9.438,0.094-14.281,0.266c-14.297,0.547-28.422,2.391-42,5.484c-2.172,0.5-4.375,1.031-6.563,1.594
+                                            c-27.203-15.969-53.781-19.563-72.203-19.563c-1.531,0-3.016,0.031-4.438,0.063c-3.766,0.125-6.516,0.266-8.594,0.5
+                                            c-4.188,0.438-7.844,1.563-10.953,3.188c-6.406,2.719-11.922,7.344-15.781,13.375c-5.672,9-7,19.781-3.766,29.688l12.109,37.109
+                                            c-2.406,2.922-4.672,5.891-6.813,8.859c-9.641,13.563-16.359,26.063-22.266,37.094c-7.984,14.906-13.172,24.156-18.906,26.438
+                                            l-0.5,0.188l-1.453,0.563l-3.219,1.219c-14.266,5.344-47.656,17.875-40.703,52.594l1.516,7.688
+                                            c5.922,30.094,9.859,49.063,12.484,57l1.531,4.672c5.313,16.172,8.625,24.391,25.688,35.391c7.5,4.813,16.625,6.531,26.281,8.313
+                                            c2.875,0.531,7.063,1.313,8.953,1.844c1.828,0.906,3.766,1.625,5.781,2.078c6.781,1.578,12.281,2.375,16.719,3.016
+                                            c2.875,0.406,6.438,0.938,7.406,1.344c0.484,0.344,4.141,3.328,13.734,20.656l0.5,0.844c5.875,9.688,12.203,25.406,14.297,30.578
+                                            c1.109,2.734,2.094,5.25,2.953,7.391c1.922,4.875,2.797,7.125,3.766,9.063c8.313,16.563,23.109,24.875,44.031,24.875h29.359
+                                            c18.859,0,37.891-14,37.891-45.25v-5.875v-4.469h51.891v4.469v5.875c0,31.25,18.672,45.25,37.172,45.25h27.547
+                                            c20.641,0,35.109-8.531,42.984-25.328c0.969-2.078,1.859-4.469,3.781-9.672c0.625-1.672,1.328-3.563,2.078-5.594
+                                            c12.203-24.125,23.968-42.875,36.984-58.906c26.953-31.688,41.203-70.594,41.203-112.484c0-11.234-1.156-22.734-3.453-34.266
+                                            c1.781-2.203,3.844-4.656,6.234-7.297C512.098,202.125,515.254,184.563,508.488,169.344z M480.848,197.719
+                                            c-7.781,8.563-12.75,15.625-15.031,19.063c3.703,13.75,5.5,27.313,5.5,40.047c0,38.453-13.75,70.672-35.172,95.766
+                                            c-17.14,21.094-30.187,43.906-40.843,65.094l0,0c-2.734,7.25-4.766,12.938-5.563,14.688c-2.75,5.875-6.891,10.281-19.297,10.281
+                                            c-12.391,0-19.281,0-27.547,0c-8.25,0-11-8.813-11-19.094c0-1.594,0-3.594,0-5.875v-30.641H227.661v30.641c0,2.281,0,4.281,0,5.875
+                                            c0,10.281-2.938,19.094-11.719,19.094c-8.813,0-16.172,0-29.359,0c-13.234,0-17.625-4.406-20.563-10.281
+                                            c-0.859-1.75-3-7.438-5.922-14.688c-4.234-10.5-10.125-24.344-16.172-34.344c-22.188-40-26.547-31.25-54.875-37.781l-0.016-0.031
+                                            c-6.313-3.625-26.594-4.781-32.703-8.719c-11.109-7.156-10.656-8.656-16.547-26.281c-3.109-9.375-10.609-48.688-13.188-61.625
+                                            c-2.813-14.016,13.156-18.688,27.844-24.313l2.016-0.781c23.391-9.281,28.844-38.938,52.844-72.656
+                                            c4.297-6.016,9.375-12,15.094-17.75l-16.828-51.5c-0.813-2.5-0.484-5.25,0.938-7.5c1.438-2.25,3.781-3.75,6.438-4.063
+                                            c0,0-3.656-0.594,7.656-0.938c1.172-0.031,2.375-0.047,3.625-0.047c17.422,0,42.906,3.891,68.016,21.828
+                                            c5.313-1.688,10.828-3.219,16.547-4.531c11.688-2.656,24.063-4.344,37.188-4.844c4.5-0.172,8.938-0.25,13.297-0.25
+                                            c6.109,0,12.078,0.156,17.906,0.469c29.313,1.688,54.859,7.375,76.906,16c42.781,16.656,72.421,44.344,90.921,74.938
+                                            c13.734-0.688,15.797-0.797,25.188-1.281h0.531C482.77,171.688,491.801,185.578,480.848,197.719z"/>
+                                        <circle cx="125.458" cy="243.829" r="19.516"/>
+                                        <path d="M248.942,106.547l-1.344,24.297c2.125,0.063,4.547,0.188,7.531,0.344c22.125,1.188,56.031,3.125,98.141,14.75
+                                            l1.375-25.094c-43.672-11.094-75.781-12.688-98.188-13.938C253.598,106.75,251.098,106.656,248.942,106.547z"/>
+                                    </svg>
+                                </div>
+
+                                {{-- Floating coin decorations --}}
+                                <div class="absolute top-4 right-8 w-8 h-8 bg-yellow-400 rounded-full shadow-lg animate-bounce" style="animation-delay: 0.2s;"></div>
+                                <div class="absolute bottom-12 left-4 w-6 h-6 bg-yellow-300 rounded-full shadow-md animate-bounce" style="animation-delay: 0.5s;"></div>
+                                <div class="absolute top-1/3 left-0 w-5 h-5 bg-yellow-500 rounded-full shadow animate-bounce" style="animation-delay: 0.8s;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Use Cases Section --}}
+            <section class="w-full bg-white py-16 lg:py-24">
+                <div class="max-w-2xl px-6 lg:max-w-7xl mx-auto">
+                    {{-- Section Heading --}}
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                            {{ __('use_cases_heading') }}
+                        </h2>
+                    </div>
+
+                    {{-- Cards Container: Horizontal scroll on mobile, 2x3 grid on desktop --}}
+                    <div class="flex overflow-x-auto pb-4 gap-4 snap-x snap-mandatory lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:pb-0 scrollbar-hide">
+
+                        {{-- Card: Travel/Vacation --}}
+                        <article class="flex-shrink-0 w-72 snap-start lg:w-auto bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ __('use_case_vacation_title') }}</h3>
+                            <p class="text-gray-600 text-base font-bold">{{ __('use_case_vacation_desc') }}</p>
+                        </article>
+
+                        {{-- Card: Tech/Gadgets --}}
+                        <article class="flex-shrink-0 w-72 snap-start lg:w-auto bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ __('use_case_gadgets_title') }}</h3>
+                            <p class="text-gray-600 text-base font-bold">{{ __('use_case_gadgets_desc') }}</p>
+                        </article>
+
+                        {{-- Card: Life Events/Milestones --}}
+                        <article class="flex-shrink-0 w-72 snap-start lg:w-auto bg-gradient-to-br from-rose-50 to-orange-50 rounded-xl p-6 border border-rose-100">
+                            <div class="w-12 h-12 bg-rose-100 rounded-lg flex items-center justify-center mb-4">
+                                <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ __('use_case_milestones_title') }}</h3>
+                            <p class="text-gray-600 text-base font-bold">{{ __('use_case_milestones_desc') }}</p>
+                        </article>
+
+                        {{-- Card: Security/Emergency Fund --}}
+                        <article class="flex-shrink-0 w-72 snap-start lg:w-auto bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-100">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ __('use_case_emergency_title') }}</h3>
+                            <p class="text-gray-600 text-base font-bold">{{ __('use_case_emergency_desc') }}</p>
+                        </article>
+
+                        {{-- Card: Education/Learning --}}
+                        <article class="flex-shrink-0 w-72 snap-start lg:w-auto bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-6 border border-amber-100">
+                            <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
+                                <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ __('use_case_learning_title') }}</h3>
+                            <p class="text-gray-600 text-base font-bold">{{ __('use_case_learning_desc') }}</p>
+                        </article>
+
+                        {{-- Card: Home & Living --}}
+                        <article class="flex-shrink-0 w-72 snap-start lg:w-auto bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl p-6 border border-teal-100">
+                            <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4">
+                                <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ __('use_case_home_title') }}</h3>
+                            <p class="text-gray-600 text-base font-bold">{{ __('use_case_home_desc') }}</p>
+                        </article>
+                    </div>
+
+                    {{-- CTA Button --}}
+                    <div class="text-center mt-12">
+                        <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
+                           class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                            {{ __('hero_cta') }}
+                            <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </a>
+                        <p class="text-sm text-gray-500 mt-3 font-bold">
+                            {{ __('hero_cta_subtext') }}
+                        </p>
+                    </div>
+                </div>
+            </section>
+
             <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl mx-auto">
 
 
@@ -275,25 +411,13 @@
 
 
 
-                        <!-- How Akluma Works Section - Add this after your tagline section -->
-                        <div class="py-16 relative overflow-hidden">
-                            <!-- Fun background pattern -->
-                            <div class="absolute inset-0 opacity-5">
-                                <div class="absolute -top-10 -right-10 w-40 h-40 bg-yellow-400 rounded-full"></div>
-                                <div class="absolute top-40 -left-20 w-60 h-60 bg-indigo-400 rounded-full"></div>
-                                <div class="absolute bottom-10 right-20 w-40 h-40 bg-green-400 rounded-full"></div>
-                            </div>
-
-
-
-
-                                                        <!-- Section heading with animation -->
-                            <div class="text-center mb-16 relative group">
-                                <h2 class="text-3xl md:text-4xl font-bold mb-4 inline-block relative">
-                                    {{ __('How Akluma, Your Online Piggy Bank Helps You Save') }}
-                                    <span class="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-indigo-500 to-green-400 transform scale-x-0 transition-transform duration-700 group-hover:scale-x-100 animate-[width-grow_0.7s_ease-in-out_forwards]"></span>
+                        {{-- How It Works Section --}}
+                        <div class="py-16 lg:py-24 relative overflow-hidden bg-white -mx-6 px-6 lg:-mx-[calc((100vw-80rem)/2+1.5rem)] lg:px-[calc((100vw-80rem)/2+1.5rem)]">
+                            {{-- Section Heading --}}
+                            <div class="text-center mb-12">
+                                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                                    {{ __('how_it_works_heading') }}
                                 </h2>
-                                <p class="text-lg text-gray-600 max-w-2xl mx-auto">{{ __('Four simple steps to reach your savings goals') }}</p>
                             </div>
 
                             <!-- Steps container -->
@@ -324,7 +448,7 @@
 
                                             <!-- Content -->
                                             <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Set Your Goal') }}</h3>
-                                            <p class="text-gray-600 text-center text-sm">{{ __('Enter details of your saving goal') }}</p>
+                                            <p class="text-gray-600 text-center text-base">{{ __('Enter details of your saving goal') }}</p>
 
                                             <!-- Hidden extra content that shows on hover -->
                                             <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
@@ -355,7 +479,7 @@
 
                                             <!-- Content -->
                                             <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Choose Strategy') }}</h3>
-                                            <p class="text-gray-600 text-center text-sm">{{ __('Pick a date or define how much you can save') }}</p>
+                                            <p class="text-gray-600 text-center text-base">{{ __('Pick a date or define how much you can save') }}</p>
 
                                             <!-- Hidden extra content that shows on hover -->
                                             <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
@@ -390,7 +514,7 @@
 
                                             <!-- Content -->
                                             <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Save Regularly') }}</h3>
-                                            <p class="text-gray-600 text-center text-sm">{{ __('Track your progress with reminders and feedback') }}</p>
+                                            <p class="text-gray-600 text-center text-base">{{ __('Track your progress with reminders and feedback') }}</p>
 
                                             <!-- Hidden extra content that shows on hover -->
                                             <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
@@ -426,7 +550,7 @@
 
                                             <!-- Content -->
                                             <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Celebrate Success') }}</h3>
-                                            <p class="text-gray-600 text-center text-sm">{{ __('Buy your dream item and enjoy your achievement') }}</p>
+                                            <p class="text-gray-600 text-center text-base">{{ __('Buy your dream item and enjoy your achievement') }}</p>
 
                                             <!-- Hidden extra content that shows on hover -->
                                             <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
@@ -437,40 +561,150 @@
                                 </div>
                             </div>
 
-                            <!-- Call to action button -->
-                            <div class="text-center mt-16">
-                                <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}" class="inline-block px-6 py-3 md:px-7 md:py-3.5 bg-linear-to-r from-indigo-500 to-purple-600 text-white font-bold text-sm md:text-base rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-                                    {{ __('Create New Piggy Bank') }}
-                                    <span class="ml-2 inline-block">→</span>
+                            {{-- CTA Button --}}
+                            <div class="text-center mt-12">
+                                <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
+                                   class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                                    {{ __('hero_cta') }}
+                                    <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
                                 </a>
+                                <p class="text-sm text-gray-500 mt-3">
+                                    {{ __('hero_cta_subtext') }}
+                                </p>
                             </div>
 
                         </div>
 
+                        {{-- Why Akluma Section --}}
+                        <section class="py-16 lg:py-24 bg-gradient-to-br from-gray-50 to-white -mx-6 px-6 lg:-mx-[calc((100vw-80rem)/2+1.5rem)] lg:px-[calc((100vw-80rem)/2+1.5rem)]">
+                            <div class="max-w-3xl mx-auto">
+                                {{-- Section Heading --}}
+                                <div class="text-center mb-12">
+                                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                                        {{ __('why_akluma_heading') }}
+                                    </h2>
+                                </div>
+
+                                {{-- Features List --}}
+                                <div class="space-y-8">
+                                    {{-- Feature: Email Reminders --}}
+                                    <div class="flex items-start gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ __('feature_reminders_title') }}</h3>
+                                            <p class="text-base text-gray-600 font-bold">{{ __('feature_reminders_desc') }}</p>
+                                        </div>
+                                    </div>
+
+                                    {{-- Feature: Progress Tracking --}}
+                                    <div class="flex items-start gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ __('feature_progress_title') }}</h3>
+                                            <p class="text-base text-gray-600 font-bold">{{ __('feature_progress_desc') }}</p>
+                                        </div>
+                                    </div>
+
+                                    {{-- Feature: Flexible Strategies --}}
+                                    <div class="flex items-start gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ __('feature_flexible_title') }}</h3>
+                                            <p class="text-base text-gray-600 font-bold">{{ __('feature_flexible_desc') }}</p>
+                                        </div>
+                                    </div>
+
+                                    {{-- Feature: Multiple Currencies --}}
+                                    <div class="flex items-start gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ __('feature_currency_title') }}</h3>
+                                            <p class="text-base text-gray-600 font-bold">{{ __('feature_currency_desc') }}</p>
+                                        </div>
+                                    </div>
+
+                                    {{-- Feature: Free to Use --}}
+                                    <div class="flex items-start gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ __('feature_free_title') }}</h3>
+                                            <p class="text-base text-gray-600 font-bold">{{ __('feature_free_desc') }}</p>
+                                        </div>
+                                    </div>
+
+                                    {{-- Feature: Privacy --}}
+                                    <div class="flex items-start gap-4">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-rose-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ __('feature_privacy_title') }}</h3>
+                                            <p class="text-base text-gray-600 font-bold">{{ __('feature_privacy_desc') }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
                     </main>
-                    <footer class="py-16 text-center text-sm text-black/50">
-                        @if(config('app.env') !== 'production')
-                            Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
-                            <br/>
-                        @endif
-                        <span>
-                            {{ __('Made with passion by') }}
-                            <a
-                                href="https://www.linkedin.com/in/ubeydullah-kele%C5%9F-2221a915/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="text-blue-500 hover:underline"
-                            >
-                                Ubeydullah Keleş
+                    <footer class="py-16 bg-gray-50 -mx-6 px-6 lg:-mx-[calc((100vw-80rem)/2+1.5rem)] lg:px-[calc((100vw-80rem)/2+1.5rem)]">
+                        <div class="max-w-2xl mx-auto text-center">
+                            {{-- Logo (piggy bank) --}}
+                            <div class="flex justify-center mb-4">
+                                <x-application-logo class="w-12 h-12 text-gray-400 fill-current" />
+                            </div>
+
+                            {{-- Brand Name --}}
+                            <h3 class="text-xl font-bold text-gray-900 mb-6">{{ __('app_name') }}</h3>
+
+                            {{-- Contact Email --}}
+                            <a href="mailto:contact@akluma.com" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-700 font-medium">
+                                contact@akluma.com
                             </a>
-                        </span>
 
-                        <div class="mt-2">
-                            <a href="{{ localizedRoute('localized.terms') }}" class="hover:underline">{{ __('terms.title') }}</a>
-                            &nbsp;|&nbsp;
-                            <a href="{{ localizedRoute('localized.privacy') }}" class="hover:underline">{{ __('privacy.title') }}</a>
+                            {{-- Links --}}
+                            <div class="mt-6 flex justify-center gap-4 text-sm">
+                                <a href="{{ localizedRoute('localized.terms') }}" class="text-gray-500 hover:text-gray-700">{{ __('terms.title') }}</a>
+                                <span class="text-gray-300">•</span>
+                                <a href="{{ localizedRoute('localized.privacy') }}" class="text-gray-500 hover:text-gray-700">{{ __('privacy.title') }}</a>
+                            </div>
+
+                            {{-- Copyright --}}
+                            <p class="mt-6 text-sm text-gray-400">
+                                © {{ date('Y') }} {{ __('app_name') }}. {{ __('All rights reserved.') }}
+                            </p>
+
+                            {{-- Dev info (non-production only) --}}
+                            @if(config('app.env') !== 'production')
+                                <p class="mt-2 text-xs text-gray-300">
+                                    Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+                                </p>
+                            @endif
                         </div>
-
                     </footer>
                 </div>
             </div>
