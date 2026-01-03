@@ -1,5 +1,6 @@
+@php use Brick\Money\Money; @endphp
 <x-app-layout>
-{{--    @if(request()->has('debug')) @dump(session()->all()) @endif--}}
+    {{--    @if(request()->has('debug')) @dump(session()->all()) @endif--}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-900 leading-tight">
             {{ __('Create New Piggy Bank') }}
@@ -76,20 +77,18 @@
 
                     <!-- Savings Plan Section -->
                     <div class="mb-8">
-{{--                        <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Savings Plan') }}</h2>--}}
+                        {{--                        <h2 class="text-lg font-medium text-gray-900 mb-4">{{ __('Savings Plan') }}</h2>--}}
                         <div class="space-y-4">
-                            <div>
-                                <h3 class="text-sm font-medium text-gray-500">{{ __('Target Date') }}</h3>
-                                <p class="mt-1 text-base text-gray-900">{{ $summary['pick_date_step3']['date'] instanceof Carbon\Carbon
-    ? $summary['pick_date_step3']['date']->copy()->setTimezone(config('app.timezone'))->locale(App::getLocale())->isoFormat('LL')
-    : Carbon\Carbon::parse($summary['pick_date_step3']['date'])->utc()->setTimezone(config('app.timezone'))->locale(App::getLocale())->isoFormat('LL') }}</p>
-                            </div>
-
                             <div>
                                 <h3 class="text-sm font-medium text-gray-500">{{ __('Saving Frequency') }}</h3>
                                 <p class="mt-1 text-base text-gray-900">
-                                    {{ ucfirst(__(strtolower($summary['pick_date_step3']['selected_frequency']))) }}
+                                    {{ ucfirst(__(strtolower($summary['enter_saving_amount_step3']['selected_frequency']))) }}
                                 </p>
+                            </div>
+
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">{{ __('Target Date') }}</h3>
+                                <p class="mt-1 text-base text-gray-900">{{ $summary['enter_saving_amount_step3']['target_dates'][$summary['enter_saving_amount_step3']['selected_frequency']]['target_date'] }}</p>
                             </div>
 
                             @if($dateMessage)
@@ -98,18 +97,12 @@
                                 </div>
                             @endif
 
-                            @if(isset($summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['message']))
+                            @if(isset($summary['enter_saving_amount_step3']['target_dates'][$summary['enter_saving_amount_step3']['selected_frequency']]['message']))
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-500">{{ __('Additional Information') }}</h3>
-                                    <p class="mt-1 text-base text-gray-900">{{ $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['message'] }}</p>
+                                    <p class="mt-1 text-base text-gray-900">{{ $summary['enter_saving_amount_step3']['target_dates'][$summary['enter_saving_amount_step3']['selected_frequency']]['message'] }}</p>
                                 </div>
                             @endif
-
-
-
-
-
-
                         </div>
                     </div>
 
@@ -122,8 +115,16 @@
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <h3 class="text-sm font-medium text-gray-500">{{ __('Target Amount') }}</h3>
                                 <p class="mt-1 text-lg font-semibold text-gray-900">
-                                    {{ isset($summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['target_amount']['amount']) ?
-                                    $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['target_amount']['amount']->formatTo(App::getLocale()) : '-' }}
+                                    @php
+                                        $startingAmount = session('pick_date_step1.starting_amount');
+                                        if ($startingAmount && !$startingAmount->isZero()) {
+                                            $price = session('pick_date_step1.price');
+                                            $targetAmount = $price->minus($startingAmount);
+                                        } else {
+                                            $targetAmount = session('pick_date_step1.price');
+                                        }
+                                    @endphp
+                                    {{ $targetAmount ? $targetAmount->formatTo(App::getLocale()) : '-' }}
                                 </p>
                             </div>
 
@@ -132,30 +133,29 @@
                                     {{ __('Extra Savings') }}
                                     <span x-data="{ showTooltip: false }" class="relative cursor-help">
                                         <svg @mouseenter="showTooltip = true"
-                                            @mouseleave="showTooltip = false"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke-width="2"
-                                            stroke="currentColor"
-                                            class="w-4 h-4 text-gray-500 hover:text-gray-800 transition-colors duration-200">
+                                             @mouseleave="showTooltip = false"
+                                             xmlns="http://www.w3.org/2000/svg"
+                                             fill="none"
+                                             viewBox="0 0 24 24"
+                                             stroke-width="2"
+                                             stroke="currentColor"
+                                             class="w-4 h-4 text-gray-500 hover:text-gray-800 transition-colors duration-200">
                                         <path stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                              stroke-linejoin="round"
+                                              d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                                         </svg>
 
                                     <div x-show="showTooltip"
-                                        x-cloak
-                                        class="absolute z-10 w-64 px-4 py-2 mt-2 text-sm bg-gray-900 text-white rounded-lg shadow-lg -translate-x-1/2 left-1/2"
-                                        role="tooltip">
-                                            {{ __('Extra Savings Tooltip Info') }}
+                                         x-cloak
+                                         class="absolute z-10 w-64 px-4 py-2 mt-2 text-sm bg-gray-900 text-white rounded-lg shadow-lg -translate-x-1/2 left-1/2"
+                                         role="tooltip">
+                                            {{ __('Extra Savings Tooltip Info For Enter Saving Amount Strategy') }}
                                     </div>
                                     </span>
                                 </h3>
-                                    <p class="mt-1 text-lg font-semibold text-gray-900">
-                                            {{ isset($summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['extra_savings']['amount']) ?
-                                                $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['extra_savings']['amount']->formatTo(App::getLocale()) : '-' }}
-                                    </p>
+                                <p class="mt-1 text-lg font-semibold text-gray-900">
+                                    {{ $extraSavings ? $extraSavings->formatTo(App::getLocale()) : '-' }}
+                                </p>
                             </div>
 
 
@@ -163,8 +163,7 @@
                             <div class="bg-gray-50 rounded-lg p-4">
                                 <h3 class="text-sm font-medium text-gray-500">{{ __('Total Savings') }}</h3>
                                 <p class="mt-1 text-lg font-semibold text-gray-900">
-                                  {{ isset($summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['total_savings']['amount']) ?
-                                  $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['total_savings']['amount']->formatTo(App::getLocale()) : '-' }}
+                                    {{ $summary['enter_saving_amount_step3']['target_dates'][$summary['enter_saving_amount_step3']['selected_frequency']]['total_amount']['formatted_value'] ?? '-' }}
                                 </p>
                             </div>
 
@@ -214,23 +213,7 @@
                     <div class="bg-gray-100 rounded-lg p-4 border-2 border-gray-800 shadow-md">
                         <h3 class="text-sm font-medium text-gray-500">{{ __('Planned Final Total') }}</h3>
                         <p class="mt-1 text-xl font-bold text-gray-900">
-                            @php
-                                $startingAmount = $summary['pick_date_step1']['starting_amount'] ?? null;
-                                $totalSavings = $summary['pick_date_step3']['calculations'][$summary['pick_date_step3']['selected_frequency']]['total_savings']['amount'] ?? null;
-
-                                // If both amounts exist, add them. If only one exists, use that.
-                                if ($startingAmount && $totalSavings) {
-                                    $finalTotal = $startingAmount->plus($totalSavings);
-                                } elseif ($startingAmount) {
-                                    $finalTotal = $startingAmount;
-                                } elseif ($totalSavings) {
-                                    $finalTotal = $totalSavings;
-                                } else {
-                                    $finalTotal = null;
-                                }
-                            @endphp
-
-                            {{ $finalTotal ? $finalTotal->formatTo(App::getLocale()) : '-' }}
+                            {{ $plannedFinalTotal ? $plannedFinalTotal->formatTo(App::getLocale()) : '-' }}
                         </p>
                     </div>
 
@@ -238,7 +221,7 @@
 
                     {{-- Guest: Explanatory text - completely separate from buttons --}}
                     @guest
-                        <p class="text-base text-gray-600 mt-8 mb-3 flex items-center gap-1.5">
+                        <p class="text-sm text-gray-600 mt-8 mb-3 flex items-center gap-1.5">
                             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                             </svg>
@@ -246,7 +229,7 @@
                         </p>
                     @endguest
 
-                    <!-- Action Buttons -->
+                    <!-- Action Buttons - All in one row -->
                     <div class="flex flex-col sm:flex-row sm:justify-between items-center gap-4 @auth mt-8 @endauth">
 
                         <!-- Cancel button with confirmation dialog -->
@@ -283,9 +266,9 @@
                             </x-confirmation-dialog>
                         </div>
 
-                        <!-- Right side: Previous + action buttons -->
+                        <!-- Right side buttons -->
                         <div class="flex flex-col sm:flex-row items-center gap-3">
-                            <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center" onclick="window.location='{{ localizedRoute('localized.create-piggy-bank.pick-date.step-3') }}'">
+                            <x-secondary-button type="button" class="w-[200px] sm:w-auto justify-center" onclick="window.location='{{ localizedRoute('localized.create-piggy-bank.enter-saving-amount.step-3') }}'">
                                 {{ __('Previous') }}
                             </x-secondary-button>
 
@@ -300,7 +283,7 @@
                                     </form>
 
                                     <!-- Create Button -->
-                                    <form method="POST" action="{{ localizedRoute('localized.create-piggy-bank.pick-date.store') }}">
+                                    <form method="POST" action="{{ localizedRoute('localized.create-piggy-bank.enter-saving-amount.store') }}">
                                         @csrf
                                         @if($activePiggyBanksCount >= $maxActivePiggyBanks)
                                             <x-primary-button type="button" disabled class="w-[200px] sm:w-auto justify-center opacity-50 cursor-not-allowed">
