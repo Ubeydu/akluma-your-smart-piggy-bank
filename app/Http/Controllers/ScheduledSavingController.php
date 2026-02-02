@@ -94,7 +94,8 @@ class ScheduledSavingController extends Controller
                     ]);
 
                     // Store saved_amount only if different from scheduled amount
-                    if ($amount != $periodicSaving->amount) {
+                    // Use epsilon comparison to handle floating point precision
+                    if (abs($amount - $periodicSaving->amount) > 0.001) {
                         $updateData['saved_amount'] = $amount;
                     }
                 } elseif ($validatedData['status'] === 'pending' && $periodicSaving->status === 'saved') {
