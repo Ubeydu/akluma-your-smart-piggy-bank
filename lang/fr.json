@@ -39,6 +39,8 @@
   "Already registered?": "Déjà inscrit·e ?",
   "Are you sure you want to delete your account?": "Êtes-vous sûr·e de vouloir supprimer votre compte ?",
   "Cancel": "Annuler",
+  "Mark as Saved": "Marquer comme économisé",
+  "How much did you save?": "Combien avez-vous économisé ?",
   "Click here to re-send the verification email.": "Cliquez ici pour renvoyer l'e-mail de vérification.",
   "Confirm": "Confirmer",
   "Confirm Password": "Confirmer le mot de passe",
@@ -542,5 +544,9 @@
   "draft.session_warning.resume_button": "Reprendre ce brouillon",
   "You've reached the maximum limit of :limit active or paused piggy banks. To create this piggy bank, you can either save it as a draft using the 'Save as Draft' button above, or ": "Vous avez atteint la limite maximale de :limit tirelires actives ou en pause. Pour créer cette tirelire, vous pouvez soit l'enregistrer en tant que brouillon en utilisant le bouton 'Enregistrer comme brouillon' ci-dessus, soit ",
   "cancel some of your active or paused piggy banks": "annuler certaines de vos tirelires actives ou en pause",
-  "draft.saved_ago": "Enregistré :time"
+  "draft.saved_ago": "Enregistré :time",
+  "Save Amount": "Montant à épargner",
+  "Whole numbers only": "Nombres entiers uniquement",
+  "invalid_amount_decimal": "Veuillez entrer un montant valide (minimum 0.01)",
+  "invalid_amount_integer": "Veuillez entrer un nombre entier valide (minimum 1)"
 }

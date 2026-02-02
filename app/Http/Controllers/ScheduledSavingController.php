@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CurrencyHelper;
 use App\Models\PiggyBank;
 use App\Models\ScheduledSaving;
 use Illuminate\Http\Request;
@@ -57,10 +58,19 @@ class ScheduledSavingController extends Controller
         //            'request_data' => $request->all()
         //        ]);
 
+        // First, get the piggy bank to check currency
+        $piggyBank = PiggyBank::findOrFail($request->input('piggy_bank_id'));
+
+        // Currency-aware amount validation
+        $hasDecimals = CurrencyHelper::hasDecimalPlaces($piggyBank->currency);
+        $amountRules = $hasDecimals
+            ? 'required|numeric|min:0.01'
+            : 'required|integer|min:1';
+
         $validatedData = $request->validate([
             'piggy_bank_id' => 'required|exists:piggy_banks,id',
             'status' => ['required', Rule::in(['saved', 'pending'])],
-            'amount' => 'required|numeric|min:0',
+            'amount' => $amountRules,
         ]);
 
         try {
@@ -71,7 +81,8 @@ class ScheduledSavingController extends Controller
 
                 $amount = $validatedData['amount'];
 
-                // Instead of directly adjusting balance, insert a transaction row
+                $updateData = ['status' => $validatedData['status']];
+
                 if ($validatedData['status'] === 'saved' && $periodicSaving->status === 'pending') {
                     // Marked as saved: add positive transaction
                     $piggyBank->transactions()->create([
@@ -79,21 +90,33 @@ class ScheduledSavingController extends Controller
                         'type' => 'scheduled_add',
                         'amount' => $amount,
                         'note' => 'Scheduled saving marked as saved',
-                        'scheduled_for' => $periodicSaving->saving_date, // optional
+                        'scheduled_for' => $periodicSaving->saving_date,
                     ]);
+
+                    // Store saved_amount only if different from scheduled amount
+                    // Use epsilon comparison to handle floating point precision
+                    if (abs($amount - $periodicSaving->amount) > 0.001) {
+                        $updateData['saved_amount'] = $amount;
+                    }
                 } elseif ($validatedData['status'] === 'pending' && $periodicSaving->status === 'saved') {
                     // Unmarked (was saved, now pending): add negative transaction
+                    // Use saved_amount for correct reversal (handles custom amounts)
+                    $amountToReverse = $periodicSaving->saved_amount ?? $amount;
+
                     $piggyBank->transactions()->create([
                         'user_id' => $piggyBank->user_id,
                         'type' => 'scheduled_add',
-                        'amount' => -1 * $amount,
+                        'amount' => -1 * $amountToReverse,
                         'note' => 'Scheduled saving unmarked as saved',
-                        'scheduled_for' => $periodicSaving->saving_date, // optional
+                        'scheduled_for' => $periodicSaving->saving_date,
                     ]);
+
+                    // Clear the saved amount
+                    $updateData['saved_amount'] = null;
                 }
 
-                // Update scheduled saving status
-                $periodicSaving->update(['status' => $validatedData['status']]);
+                // Update scheduled saving
+                $periodicSaving->update($updateData);
 
                 // Update remaining_amount in database after transaction
                 $piggyBank->updateRemainingAmount();

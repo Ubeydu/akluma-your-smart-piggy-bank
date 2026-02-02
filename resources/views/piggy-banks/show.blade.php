@@ -693,6 +693,8 @@
             saving_marked_as_saved: "{{ __('You successfully marked your saving as saved.') }}",
             saving_marked_as_unsaved: "{{ __('You successfully marked your scheduled saving as pending.') }}",
             error: "{{ __('error') }}",
+            invalid_amount_decimal: "{{ __('invalid_amount_decimal') }}",
+            invalid_amount_integer: "{{ __('invalid_amount_integer') }}",
         };
     </script>
 

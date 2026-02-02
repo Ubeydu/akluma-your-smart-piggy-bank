@@ -104,8 +104,39 @@ function buildRouteUrl(routeName, params = {}) {
 async function handleCheckboxChange(checkbox) {
     const savingId = checkbox.dataset.savingId;
     const piggyBankId = checkbox.dataset.piggyBankId;
-    const amount = parseFloat(checkbox.dataset.amount);
     const newStatus = checkbox.checked ? 'saved' : 'pending';
+
+    if (checkbox.checked) {
+        // Saving: show confirmation dialog instead of saving directly
+        checkbox.checked = false; // Reset until confirmed
+
+        const scheduledAmount = parseFloat(checkbox.dataset.scheduledAmount);
+        const currencyHasDecimals = checkbox.dataset.currencyHasDecimals === '1';
+
+        // Dispatch event to open the save dialog
+        window.dispatchEvent(new CustomEvent('open-save-dialog', {
+            detail: {
+                savingId,
+                piggyBankId,
+                scheduledAmount,
+                currencyHasDecimals
+            }
+        }));
+        return;
+    }
+
+    // Undoing: proceed with immediate API call
+    const amount = parseFloat(checkbox.dataset.amount);
+    await performScheduledSave(checkbox, savingId, piggyBankId, 'pending', amount);
+}
+
+// Perform the actual save API call
+// checkbox can be null when called from modal - will be found by savingId
+async function performScheduledSave(checkbox, savingId, piggyBankId, newStatus, amount) {
+    // Find checkbox if not provided (when called from modal)
+    if (!checkbox) {
+        checkbox = document.querySelector(`.scheduled-saving-checkbox[data-saving-id="${savingId}"]`);
+    }
 
     try {
         const locale = getCurrentLocale();
@@ -253,6 +284,9 @@ async function handleCheckboxChange(checkbox) {
         alert('Failed to update saving status. Please try again.');
     }
 }
+
+// Expose globally for Alpine component access
+window.performScheduledSave = performScheduledSave;
 
 document.addEventListener('DOMContentLoaded', function () {
     // Force cache refresh indicator
@@ -612,7 +646,7 @@ async function updateSchedule(piggyBankId, statusData) {
 
 // Helper function to reinitialize checkboxes
 function reinitializeCheckboxes() {
-    const newCheckboxes = document.querySelectorAll('input[data-saving-id]');
+    const newCheckboxes = document.querySelectorAll('.scheduled-saving-checkbox');
     const container = document.querySelector('[data-piggy-bank-status]');
 
     if (container) {
@@ -936,7 +970,7 @@ function reloadSchedulePartial(piggyBankId) {
 }
 
 function attachCheckboxListeners() {
-    const checkboxes = document.querySelectorAll('input[data-saving-id]');
+    const checkboxes = document.querySelectorAll('.scheduled-saving-checkbox');
 
     // Check if piggy bank is done and disable checkboxes accordingly
     const statusSelect = document.querySelector('select[id^="piggy-bank-status-"]');
@@ -953,6 +987,7 @@ function attachCheckboxListeners() {
             await handleCheckboxChange(this);
         });
     });
+
 }
 
 
@@ -1009,5 +1044,5 @@ function showFlashMessage(message, type = 'success') {
     }, 8000);
 }
 
-
-
+// Expose globally for Alpine component access
+window.showFlashMessage = showFlashMessage;
