@@ -101,6 +101,9 @@
             </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
+            @php
+                $currencyHasDecimals = \App\Helpers\CurrencyHelper::hasDecimalPlaces($piggyBank->currency);
+            @endphp
             @foreach(($scheduledSavings ?? $piggyBank->scheduledSavings()->paginate(50)->setPath(localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id]))) as $saving)
                 <tr class="{{ $saving->status === 'saved' ? 'bg-green-50' : 'bg-orange-50' }}">
                     <td class="pl-4 pr-1 py-4 whitespace-normal text-sm text-gray-900">
@@ -110,7 +113,9 @@
                                {{ in_array($piggyBank->status, ['paused', 'cancelled', 'done']) ? 'disabled' : '' }}
                                data-saving-id="{{ $saving->id }}"
                                data-piggy-bank-id="{{ $piggyBank->id }}"
-                               data-amount="{{ $saving->amount }}">
+                               data-amount="{{ $saving->saved_amount ?? $saving->amount }}"
+                               data-scheduled-amount="{{ $saving->amount }}"
+                               data-currency-has-decimals="{{ $currencyHasDecimals ? '1' : '0' }}">
                     </td>
                     <td class="px-1 py-4 whitespace-normal text-sm font-medium text-gray-900">
                         {{ $saving->saving_number }}
@@ -119,7 +124,11 @@
                         {{ $saving->saving_date->translatedFormat('d F Y') }}
                     </td>
                     <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ \App\Helpers\MoneyFormatHelper::format($saving->amount, $piggyBank->currency) }}
+                        @if($saving->status === 'saved')
+                            {{ \App\Helpers\MoneyFormatHelper::format($saving->saved_amount ?? $saving->amount, $piggyBank->currency) }}
+                        @else
+                            {{ \App\Helpers\MoneyFormatHelper::format($saving->amount, $piggyBank->currency) }}
+                        @endif
                     </td>
                     <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
                         {{ __(strtolower($saving->status)) }}
@@ -136,6 +145,102 @@
 
     <div class="mt-4">
         {{ ($scheduledSavings ?? $piggyBank->scheduledSavings()->paginate(50)->setPath(localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id])))->links() }}
+    </div>
+
+    <!-- Save Amount Confirmation Dialog -->
+    <div x-data="{
+        showDialog: false,
+        savingId: null,
+        piggyBankId: null,
+        amount: '',
+        currencyHasDecimals: true,
+
+        openDialog(detail) {
+            this.savingId = detail.savingId;
+            this.piggyBankId = detail.piggyBankId;
+            this.currencyHasDecimals = detail.currencyHasDecimals;
+            this.amount = this.currencyHasDecimals
+                ? detail.scheduledAmount
+                : Math.floor(detail.scheduledAmount);
+            this.showDialog = true;
+
+            this.$nextTick(() => {
+                const input = document.getElementById('save-amount-input');
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            });
+        },
+
+        cancelSave() {
+            this.showDialog = false;
+        },
+
+        async confirmSave() {
+            const amount = parseFloat(this.amount);
+            const minAmount = this.currencyHasDecimals ? 0.01 : 1;
+
+            if (isNaN(amount) || amount < minAmount) {
+                const errorMsg = this.currencyHasDecimals
+                    ? (window.piggyBankTranslations?.invalid_amount_decimal || 'Please enter a valid amount (minimum 0.01)')
+                    : (window.piggyBankTranslations?.invalid_amount_integer || 'Please enter a valid whole number (minimum 1)');
+                showFlashMessage(errorMsg, 'error');
+                return;
+            }
+
+            if (!this.currencyHasDecimals && !Number.isInteger(amount)) {
+                showFlashMessage(window.piggyBankTranslations?.invalid_amount_integer || 'Please enter a valid whole number (minimum 1)', 'error');
+                return;
+            }
+
+            this.showDialog = false;
+            await performScheduledSave(null, this.savingId, this.piggyBankId, 'saved', amount);
+        }
+    }" @open-save-dialog.window="openDialog($event.detail)">
+        <x-confirmation-dialog show="showDialog">
+            <x-slot:title>
+                <span class="flex items-center gap-2">
+                    <span class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </span>
+                    <span class="font-semibold text-gray-900">{{ __('Mark as Saved') }}</span>
+                </span>
+            </x-slot:title>
+            <x-slot:content>
+                <label for="save-amount-input" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ __('How much did you save?') }}
+                </label>
+                <div class="flex">
+                    <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-600 text-sm font-medium">
+                        {{ $piggyBank->currency }}
+                    </span>
+                    <input type="number"
+                           id="save-amount-input"
+                           x-model="amount"
+                           :min="currencyHasDecimals ? '0.01' : '1'"
+                           :step="currencyHasDecimals ? '0.01' : '1'"
+                           class="flex-1 px-3 py-2 text-lg border border-gray-300 rounded-r-md shadow-sm focus:ring-green-500 focus:border-green-500"
+                           @keydown.enter.prevent="confirmSave()"
+                           @keypress="if (!currencyHasDecimals && (event.key === '.' || event.key === ',')) event.preventDefault()"
+                           @paste="if (!currencyHasDecimals) { const text = event.clipboardData.getData('text'); if (!/^\d+$/.test(text)) event.preventDefault(); }">
+                </div>
+            </x-slot:content>
+            <x-slot:actions>
+                <div class="flex justify-end gap-3">
+                    <x-secondary-button @click="cancelSave()">
+                        {{ __('Cancel') }}
+                    </x-secondary-button>
+                    <button type="button"
+                            @click="confirmSave()"
+                            class="cursor-pointer inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        {{ __('Save') }}
+                    </button>
+                </div>
+            </x-slot:actions>
+        </x-confirmation-dialog>
     </div>
 
 </div>
