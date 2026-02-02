@@ -106,51 +106,36 @@ async function handleCheckboxChange(checkbox) {
     const piggyBankId = checkbox.dataset.piggyBankId;
     const newStatus = checkbox.checked ? 'saved' : 'pending';
 
-    // DEBUG - remove after fixing
-    const inputField = document.querySelector(`.save-amount-input[data-saving-id="${savingId}"]`);
-    console.log('DEBUG handleCheckboxChange:', {
-        savingId,
-        piggyBankId,
-        newStatus,
-        checkboxChecked: checkbox.checked,
-        inputFieldFound: !!inputField,
-        inputFieldValue: inputField ? inputField.value : 'N/A',
-        dataAmount: checkbox.dataset.amount
-    });
-
-    let amount;
-
     if (checkbox.checked) {
-        // Saving: read amount from input field
-        const inputField = document.querySelector(`.save-amount-input[data-saving-id="${savingId}"]`);
-        if (inputField) {
-            const currencyHasDecimals = inputField.dataset.currencyHasDecimals === '1';
-            amount = parseFloat(inputField.value);
+        // Saving: show confirmation dialog instead of saving directly
+        checkbox.checked = false; // Reset until confirmed
 
-            // Currency-aware validation
-            const minAmount = currencyHasDecimals ? 0.01 : 1;
-            if (isNaN(amount) || amount < minAmount) {
-                const errorMsg = currencyHasDecimals
-                    ? (window.piggyBankTranslations['invalid_amount_decimal'] || 'Please enter a valid amount (minimum 0.01)')
-                    : (window.piggyBankTranslations['invalid_amount_integer'] || 'Please enter a valid whole number (minimum 1)');
-                showFlashMessage(errorMsg, 'error');
-                checkbox.checked = false;
-                return;
-            }
+        const scheduledAmount = parseFloat(checkbox.dataset.scheduledAmount);
+        const currencyHasDecimals = checkbox.dataset.currencyHasDecimals === '1';
 
-            // For non-decimal currencies, ensure it's a whole number
-            if (!currencyHasDecimals && !Number.isInteger(amount)) {
-                showFlashMessage(window.piggyBankTranslations['invalid_amount_integer'] || 'Please enter a valid whole number (minimum 1)', 'error');
-                checkbox.checked = false;
-                return;
+        // Dispatch event to open the save dialog
+        window.dispatchEvent(new CustomEvent('open-save-dialog', {
+            detail: {
+                savingId,
+                piggyBankId,
+                scheduledAmount,
+                currencyHasDecimals
             }
-        } else {
-            // Fallback: use data-amount (shouldn't happen for pending items)
-            amount = parseFloat(checkbox.dataset.amount);
-        }
-    } else {
-        // Undoing: use saved_amount from data-amount attribute
-        amount = parseFloat(checkbox.dataset.amount);
+        }));
+        return;
+    }
+
+    // Undoing: proceed with immediate API call
+    const amount = parseFloat(checkbox.dataset.amount);
+    await performScheduledSave(checkbox, savingId, piggyBankId, 'pending', amount);
+}
+
+// Perform the actual save API call
+// checkbox can be null when called from modal - will be found by savingId
+async function performScheduledSave(checkbox, savingId, piggyBankId, newStatus, amount) {
+    // Find checkbox if not provided (when called from modal)
+    if (!checkbox) {
+        checkbox = document.querySelector(`.scheduled-saving-checkbox[data-saving-id="${savingId}"]`);
     }
 
     try {
@@ -299,6 +284,9 @@ async function handleCheckboxChange(checkbox) {
         alert('Failed to update saving status. Please try again.');
     }
 }
+
+// Expose globally for Alpine component access
+window.performScheduledSave = performScheduledSave;
 
 document.addEventListener('DOMContentLoaded', function () {
     // Force cache refresh indicator
@@ -1000,36 +988,6 @@ function attachCheckboxListeners() {
         });
     });
 
-    // Also attach input restrictions for non-decimal currencies
-    attachInputRestrictions();
-}
-
-function attachInputRestrictions() {
-    document.querySelectorAll('.save-amount-input').forEach(function(input) {
-        if (input.dataset.currencyHasDecimals === '0') {
-            // Prevent typing non-numeric characters (blocks . and ,)
-            input.addEventListener('keypress', function(e) {
-                const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'];
-
-                if (allowedKeys.includes(e.key)) {
-                    return; // Allow navigation keys
-                }
-
-                // Block if not a digit (0-9)
-                if (!/^[0-9]$/.test(e.key)) {
-                    e.preventDefault();
-                }
-            });
-
-            // Block paste of non-integer values
-            input.addEventListener('paste', function(e) {
-                const pastedData = e.clipboardData.getData('text');
-                if (!/^\d+$/.test(pastedData)) {
-                    e.preventDefault();
-                }
-            });
-        }
-    });
 }
 
 
@@ -1086,5 +1044,5 @@ function showFlashMessage(message, type = 'success') {
     }, 8000);
 }
 
-
-
+// Expose globally for Alpine component access
+window.showFlashMessage = showFlashMessage;
