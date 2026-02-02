@@ -71,6 +71,9 @@
                     {{ __('Amount') }}
                 </th>
                 <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
+                    {{ __('Save Amount') }}
+                </th>
+                <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
                     {{ __('Status') }}
                 </th>
                 <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">
@@ -110,7 +113,7 @@
                                {{ in_array($piggyBank->status, ['paused', 'cancelled', 'done']) ? 'disabled' : '' }}
                                data-saving-id="{{ $saving->id }}"
                                data-piggy-bank-id="{{ $piggyBank->id }}"
-                               data-amount="{{ $saving->amount }}">
+                               data-amount="{{ $saving->saved_amount ?? $saving->amount }}">
                     </td>
                     <td class="px-1 py-4 whitespace-normal text-sm font-medium text-gray-900">
                         {{ $saving->saving_number }}
@@ -120,6 +123,25 @@
                     </td>
                     <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
                         {{ \App\Helpers\MoneyFormatHelper::format($saving->amount, $piggyBank->currency) }}
+                    </td>
+                    @php
+                        $currencyHasDecimals = \App\Helpers\CurrencyHelper::hasDecimalPlaces($piggyBank->currency);
+                    @endphp
+                    <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
+                        @if($saving->status === 'pending' && !in_array($piggyBank->status, ['paused', 'cancelled', 'done']))
+                            <input type="number"
+                                   class="save-amount-input w-20 px-2 py-1 border border-gray-300 rounded-sm text-sm focus:ring-blue-500 focus:border-blue-500"
+                                   data-saving-id="{{ $saving->id }}"
+                                   data-currency-has-decimals="{{ $currencyHasDecimals ? '1' : '0' }}"
+                                   value="{{ $currencyHasDecimals ? $saving->amount : (int) $saving->amount }}"
+                                   min="{{ $currencyHasDecimals ? '0.01' : '1' }}"
+                                   step="{{ $currencyHasDecimals ? '0.01' : '1' }}"
+                                   placeholder="{{ $currencyHasDecimals ? '' : __('Whole numbers only') }}">
+                        @elseif($saving->status === 'saved')
+                            {{ \App\Helpers\MoneyFormatHelper::format($saving->saved_amount ?? $saving->amount, $piggyBank->currency) }}
+                        @else
+                            <span class="text-gray-400">-</span>
+                        @endif
                     </td>
                     <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
                         {{ __(strtolower($saving->status)) }}

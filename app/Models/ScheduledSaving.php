@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $piggy_bank_id
  * @property int $saving_number
  * @property float $amount
+ * @property float|null $saved_amount
  * @property string $status
  * @property bool $archived
  * @property int $recalculation_version
@@ -30,6 +31,7 @@ class ScheduledSaving extends Model
         'piggy_bank_id',
         'saving_number',
         'amount',
+        'saved_amount',
         'status',
         'saving_date',
         'archived',
@@ -43,6 +45,7 @@ class ScheduledSaving extends Model
     protected $casts = [
         'saving_date' => 'date',
         'amount' => 'decimal:2',
+        'saved_amount' => 'decimal:2',
         'archived' => 'boolean',
         'last_modified_at' => 'datetime',
     ];

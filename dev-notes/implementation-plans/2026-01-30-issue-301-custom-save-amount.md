@@ -11,8 +11,10 @@ Allow users to save a custom amount (different from scheduled) when marking a sc
 
 - **Keep existing checkbox** - less disruptive than replacing with button
 - **Add `saved_amount` column** - tracks actual saved amount (separate from scheduled `amount`)
-- **No decimals** - integers only, minimum 1
+- **Currency-aware decimals** - currencies with `decimal_places: 2` (USD, EUR, etc.) allow decimals; currencies with `decimal_places: 0` (XOF, XAF) require integers
+- **Minimum amount** - 0.01 for decimal currencies, 1 for non-decimal currencies
 - **Recalculation compatible** - no changes needed to recalculation service
+- **Use existing helper** - `CurrencyHelper::hasDecimalPlaces()` for currency checks
 
 ## Data Model
 
@@ -171,10 +173,22 @@ $validatedData = $request->validate([
 
 **After:**
 ```php
+use App\Helpers\CurrencyHelper;
+
+// First validate piggy_bank_id to get the piggy bank
+$piggyBankId = $request->input('piggy_bank_id');
+$piggyBank = PiggyBank::findOrFail($piggyBankId);
+
+// Currency-aware amount validation
+$hasDecimals = CurrencyHelper::hasDecimalPlaces($piggyBank->currency);
+$amountRules = $hasDecimals
+    ? 'required|numeric|min:0.01'
+    : 'required|integer|min:1';
+
 $validatedData = $request->validate([
     'piggy_bank_id' => 'required|exists:piggy_banks,id',
     'status' => ['required', Rule::in(['saved', 'pending'])],
-    'amount' => 'required|integer|min:1',
+    'amount' => $amountRules,
 ]);
 ```
 
@@ -293,15 +307,21 @@ if ($validatedData['status'] === 'saved' && $periodicSaving->status === 'pending
 
 **Add after the Amount td:**
 ```html
+@php
+    $currencyHasDecimals = \App\Helpers\CurrencyHelper::hasDecimalPlaces($piggyBank->currency);
+@endphp
+
 <td class="px-2 py-4 whitespace-nowrap text-sm text-gray-900">
     @if($saving->status === 'pending' && !in_array($piggyBank->status, ['paused', 'cancelled', 'done']))
         {{-- Editable input for pending items --}}
         <input type="number"
                class="save-amount-input w-20 px-2 py-1 border border-gray-300 rounded-sm text-sm focus:ring-blue-500 focus:border-blue-500"
                data-saving-id="{{ $saving->id }}"
-               value="{{ (int) $saving->amount }}"
-               min="1"
-               step="1">
+               data-currency-has-decimals="{{ $currencyHasDecimals ? '1' : '0' }}"
+               value="{{ $currencyHasDecimals ? $saving->amount : (int) $saving->amount }}"
+               min="{{ $currencyHasDecimals ? '0.01' : '1' }}"
+               step="{{ $currencyHasDecimals ? '0.01' : '1' }}"
+               placeholder="{{ $currencyHasDecimals ? '' : __('Whole numbers only') }}">
     @elseif($saving->status === 'saved')
         {{-- Display saved amount for saved items --}}
         {{ \App\Helpers\MoneyFormatHelper::format($saving->saved_amount ?? $saving->amount, $piggyBank->currency) }}
@@ -345,23 +365,88 @@ async function handleCheckboxChange(checkbox) {
         // Saving: read amount from input field
         const inputField = document.querySelector(`.save-amount-input[data-saving-id="${savingId}"]`);
         if (inputField) {
-            amount = parseInt(inputField.value, 10);
+            const currencyHasDecimals = inputField.dataset.currencyHasDecimals === '1';
+            amount = parseFloat(inputField.value);
 
-            // Validation: must be integer >= 1
-            if (isNaN(amount) || amount < 1) {
-                showFlashMessage(window.piggyBankTranslations['invalid_amount'] || 'Please enter a valid amount (minimum 1)', 'error');
+            // Currency-aware validation
+            const minAmount = currencyHasDecimals ? 0.01 : 1;
+            if (isNaN(amount) || amount < minAmount) {
+                const errorMsg = currencyHasDecimals
+                    ? (window.piggyBankTranslations['invalid_amount_decimal'] || 'Please enter a valid amount (minimum 0.01)')
+                    : (window.piggyBankTranslations['invalid_amount_integer'] || 'Please enter a valid whole number (minimum 1)');
+                showFlashMessage(errorMsg, 'error');
+                checkbox.checked = false;
+                return;
+            }
+
+            // For non-decimal currencies, ensure it's a whole number
+            if (!currencyHasDecimals && !Number.isInteger(amount)) {
+                showFlashMessage(window.piggyBankTranslations['invalid_amount_integer'] || 'Please enter a valid whole number (minimum 1)', 'error');
                 checkbox.checked = false;
                 return;
             }
         } else {
             // Fallback: use data-amount (shouldn't happen for pending items)
-            amount = parseInt(checkbox.dataset.amount, 10);
+            amount = parseFloat(checkbox.dataset.amount);
         }
     } else {
         // Undoing: use saved_amount from data-amount attribute
-        amount = parseInt(checkbox.dataset.amount, 10);
+        amount = parseFloat(checkbox.dataset.amount);
     }
     // ... rest of function unchanged
+```
+
+### Change 2: Prevent non-numeric input for non-decimal currencies
+
+**Add this function and call it in `DOMContentLoaded` and after `attachCheckboxListeners()`:**
+
+```javascript
+function attachInputRestrictions() {
+    document.querySelectorAll('.save-amount-input').forEach(function(input) {
+        if (input.dataset.currencyHasDecimals === '0') {
+            // Prevent typing non-numeric characters (blocks . and ,)
+            input.addEventListener('keypress', function(e) {
+                const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'];
+
+                if (allowedKeys.includes(e.key)) {
+                    return; // Allow navigation keys
+                }
+
+                // Block if not a digit (0-9)
+                if (!/^[0-9]$/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+
+            // Block paste of non-integer values
+            input.addEventListener('paste', function(e) {
+                const pastedData = e.clipboardData.getData('text');
+                if (!/^\d+$/.test(pastedData)) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+}
+```
+
+**Call it in two places:**
+
+1. In `DOMContentLoaded`:
+```javascript
+document.addEventListener('DOMContentLoaded', function () {
+    // ... existing code ...
+    attachInputRestrictions();
+});
+```
+
+2. After schedule partial reload (in `reloadSchedulePartial` success handler):
+```javascript
+.then(html => {
+    // ... existing code ...
+    attachCheckboxListeners();
+    attachInputRestrictions();  // ADD THIS
+})
 ```
 
 **Verification:**
@@ -369,6 +454,8 @@ async function handleCheckboxChange(checkbox) {
 2. Test saving with default amount
 3. Test saving with modified amount
 4. Test undo functionality
+5. Test XOF currency: verify cannot type "." or ","
+6. Test USD currency: verify can type "." for decimals
 
 ---
 
@@ -379,7 +466,9 @@ async function handleCheckboxChange(checkbox) {
 **Add:**
 ```json
 "Save Amount": "Save Amount",
-"invalid_amount": "Please enter a valid amount (minimum 1)"
+"Whole numbers only": "Whole numbers only",
+"invalid_amount_decimal": "Please enter a valid amount (minimum 0.01)",
+"invalid_amount_integer": "Please enter a valid whole number (minimum 1)"
 ```
 
 ### File: `lang/tr.json`
@@ -387,7 +476,9 @@ async function handleCheckboxChange(checkbox) {
 **Add:**
 ```json
 "Save Amount": "Kaydedilecek Tutar",
-"invalid_amount": "Lütfen geçerli bir tutar girin (minimum 1)"
+"Whole numbers only": "Sadece tam sayılar",
+"invalid_amount_decimal": "Lütfen geçerli bir tutar girin (minimum 0.01)",
+"invalid_amount_integer": "Lütfen geçerli bir tam sayı girin (minimum 1)"
 ```
 
 ### File: `lang/fr.json`
@@ -395,7 +486,9 @@ async function handleCheckboxChange(checkbox) {
 **Add:**
 ```json
 "Save Amount": "Montant à épargner",
-"invalid_amount": "Veuillez entrer un montant valide (minimum 1)"
+"Whole numbers only": "Nombres entiers uniquement",
+"invalid_amount_decimal": "Veuillez entrer un montant valide (minimum 0.01)",
+"invalid_amount_integer": "Veuillez entrer un nombre entier valide (minimum 1)"
 ```
 
 **Verification:** Switch language, verify translations appear.
@@ -495,6 +588,68 @@ it('rejects negative amount', function () {
     $response->assertUnprocessable();
 });
 
+it('allows decimal amount for USD currency', function () {
+    $response = $this->actingAs($this->user)
+        ->patchJson("/{$this->user->language}/scheduled-savings/{$this->scheduledSaving->id}", [
+            'piggy_bank_id' => $this->piggyBank->id,
+            'status' => 'saved',
+            'amount' => 50.75,
+        ]);
+
+    $response->assertOk();
+
+    $this->scheduledSaving->refresh();
+    expect((float) $this->scheduledSaving->saved_amount)->toBe(50.75);
+});
+
+it('rejects decimal amount for XOF currency', function () {
+    // Create piggy bank with XOF currency (no decimals)
+    $xofPiggyBank = PiggyBank::factory()->create([
+        'user_id' => $this->user->id,
+        'status' => 'active',
+        'currency' => 'XOF',
+    ]);
+    $xofScheduledSaving = ScheduledSaving::factory()->create([
+        'piggy_bank_id' => $xofPiggyBank->id,
+        'amount' => 1000,
+        'status' => 'pending',
+    ]);
+
+    $response = $this->actingAs($this->user)
+        ->patchJson("/{$this->user->language}/scheduled-savings/{$xofScheduledSaving->id}", [
+            'piggy_bank_id' => $xofPiggyBank->id,
+            'status' => 'saved',
+            'amount' => 1000.50, // Decimal not allowed for XOF
+        ]);
+
+    $response->assertUnprocessable();
+});
+
+it('allows integer amount for XOF currency', function () {
+    $xofPiggyBank = PiggyBank::factory()->create([
+        'user_id' => $this->user->id,
+        'status' => 'active',
+        'currency' => 'XOF',
+    ]);
+    $xofScheduledSaving = ScheduledSaving::factory()->create([
+        'piggy_bank_id' => $xofPiggyBank->id,
+        'amount' => 1000,
+        'status' => 'pending',
+    ]);
+
+    $response = $this->actingAs($this->user)
+        ->patchJson("/{$this->user->language}/scheduled-savings/{$xofScheduledSaving->id}", [
+            'piggy_bank_id' => $xofPiggyBank->id,
+            'status' => 'saved',
+            'amount' => 1500,
+        ]);
+
+    $response->assertOk();
+
+    $xofScheduledSaving->refresh();
+    expect((int) $xofScheduledSaving->saved_amount)->toBe(1500);
+});
+
 it('correctly undoes custom saved amount', function () {
     // First save with custom amount
     $this->scheduledSaving->update([
@@ -552,13 +707,22 @@ it('clears saved_amount on undo', function () {
 
 After all phases complete:
 
+### Basic Functionality
 - [ ] Save with exact scheduled amount - verify saved_amount matches
 - [ ] Save with higher amount ($150 when scheduled $100) - verify both columns
 - [ ] Save with lower amount ($50 when scheduled $100) - verify both columns
 - [ ] Try saving 0 - should show validation error
 - [ ] Try saving negative - should show validation error
 - [ ] Undo a custom saved amount - balance should be correct
-- [ ] Test with XOF currency (0 decimal places) - input should work
+
+### Currency-Specific Testing (Decimals)
+- [ ] USD piggy bank: save $50.75 - should work
+- [ ] USD piggy bank: input shows step="0.01" and min="0.01"
+- [ ] XOF piggy bank: save 1000 (integer) - should work
+- [ ] XOF piggy bank: save 1000.50 (decimal) - should show validation error
+- [ ] XOF piggy bank: input shows step="1" and min="1"
+
+### Edge Cases
 - [ ] Test on paused piggy bank - input should be disabled/hidden
 - [ ] Test on cancelled piggy bank - input should be disabled/hidden
 - [ ] Test on done piggy bank - input should be disabled/hidden

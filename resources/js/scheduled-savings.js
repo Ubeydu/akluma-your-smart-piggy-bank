@@ -104,8 +104,42 @@ function buildRouteUrl(routeName, params = {}) {
 async function handleCheckboxChange(checkbox) {
     const savingId = checkbox.dataset.savingId;
     const piggyBankId = checkbox.dataset.piggyBankId;
-    const amount = parseFloat(checkbox.dataset.amount);
     const newStatus = checkbox.checked ? 'saved' : 'pending';
+
+    let amount;
+
+    if (checkbox.checked) {
+        // Saving: read amount from input field
+        const inputField = document.querySelector(`.save-amount-input[data-saving-id="${savingId}"]`);
+        if (inputField) {
+            const currencyHasDecimals = inputField.dataset.currencyHasDecimals === '1';
+            amount = parseFloat(inputField.value);
+
+            // Currency-aware validation
+            const minAmount = currencyHasDecimals ? 0.01 : 1;
+            if (isNaN(amount) || amount < minAmount) {
+                const errorMsg = currencyHasDecimals
+                    ? (window.piggyBankTranslations['invalid_amount_decimal'] || 'Please enter a valid amount (minimum 0.01)')
+                    : (window.piggyBankTranslations['invalid_amount_integer'] || 'Please enter a valid whole number (minimum 1)');
+                showFlashMessage(errorMsg, 'error');
+                checkbox.checked = false;
+                return;
+            }
+
+            // For non-decimal currencies, ensure it's a whole number
+            if (!currencyHasDecimals && !Number.isInteger(amount)) {
+                showFlashMessage(window.piggyBankTranslations['invalid_amount_integer'] || 'Please enter a valid whole number (minimum 1)', 'error');
+                checkbox.checked = false;
+                return;
+            }
+        } else {
+            // Fallback: use data-amount (shouldn't happen for pending items)
+            amount = parseFloat(checkbox.dataset.amount);
+        }
+    } else {
+        // Undoing: use saved_amount from data-amount attribute
+        amount = parseFloat(checkbox.dataset.amount);
+    }
 
     try {
         const locale = getCurrentLocale();
@@ -952,6 +986,37 @@ function attachCheckboxListeners() {
         checkbox.addEventListener('change', async function () {
             await handleCheckboxChange(this);
         });
+    });
+
+    // Also attach input restrictions for non-decimal currencies
+    attachInputRestrictions();
+}
+
+function attachInputRestrictions() {
+    document.querySelectorAll('.save-amount-input').forEach(function(input) {
+        if (input.dataset.currencyHasDecimals === '0') {
+            // Prevent typing non-numeric characters (blocks . and ,)
+            input.addEventListener('keypress', function(e) {
+                const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'];
+
+                if (allowedKeys.includes(e.key)) {
+                    return; // Allow navigation keys
+                }
+
+                // Block if not a digit (0-9)
+                if (!/^[0-9]$/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+
+            // Block paste of non-integer values
+            input.addEventListener('paste', function(e) {
+                const pastedData = e.clipboardData.getData('text');
+                if (!/^\d+$/.test(pastedData)) {
+                    e.preventDefault();
+                }
+            });
+        }
     });
 }
 
