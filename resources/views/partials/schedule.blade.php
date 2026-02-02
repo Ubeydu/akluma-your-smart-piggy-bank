@@ -136,7 +136,7 @@
                                    value="{{ $currencyHasDecimals ? $saving->amount : (int) $saving->amount }}"
                                    min="{{ $currencyHasDecimals ? '0.01' : '1' }}"
                                    step="{{ $currencyHasDecimals ? '0.01' : '1' }}"
-                                   placeholder="{{ $currencyHasDecimals ? '' : __('Whole numbers only') }}">
+                                   >
                         @elseif($saving->status === 'saved')
                             {{ \App\Helpers\MoneyFormatHelper::format($saving->saved_amount ?? $saving->amount, $piggyBank->currency) }}
                         @else

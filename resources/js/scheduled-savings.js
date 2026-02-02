@@ -106,6 +106,18 @@ async function handleCheckboxChange(checkbox) {
     const piggyBankId = checkbox.dataset.piggyBankId;
     const newStatus = checkbox.checked ? 'saved' : 'pending';
 
+    // DEBUG - remove after fixing
+    const inputField = document.querySelector(`.save-amount-input[data-saving-id="${savingId}"]`);
+    console.log('DEBUG handleCheckboxChange:', {
+        savingId,
+        piggyBankId,
+        newStatus,
+        checkboxChecked: checkbox.checked,
+        inputFieldFound: !!inputField,
+        inputFieldValue: inputField ? inputField.value : 'N/A',
+        dataAmount: checkbox.dataset.amount
+    });
+
     let amount;
 
     if (checkbox.checked) {
@@ -646,7 +658,7 @@ async function updateSchedule(piggyBankId, statusData) {
 
 // Helper function to reinitialize checkboxes
 function reinitializeCheckboxes() {
-    const newCheckboxes = document.querySelectorAll('input[data-saving-id]');
+    const newCheckboxes = document.querySelectorAll('.scheduled-saving-checkbox');
     const container = document.querySelector('[data-piggy-bank-status]');
 
     if (container) {
@@ -970,7 +982,7 @@ function reloadSchedulePartial(piggyBankId) {
 }
 
 function attachCheckboxListeners() {
-    const checkboxes = document.querySelectorAll('input[data-saving-id]');
+    const checkboxes = document.querySelectorAll('.scheduled-saving-checkbox');
 
     // Check if piggy bank is done and disable checkboxes accordingly
     const statusSelect = document.querySelector('select[id^="piggy-bank-status-"]');

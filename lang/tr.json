@@ -544,5 +544,9 @@
   "draft.session_warning.resume_button": "Bu Taslağa Devam Et",
   "You've reached the maximum limit of :limit active or paused piggy banks. To create this piggy bank, you can either save it as a draft using the 'Save as Draft' button above, or ": "Maksimum :limit aktif veya duraklatılmış kumbara limitine ulaştınız. Bu kumbarayı oluşturmak için ya yukarıdaki 'Taslak Olarak Kaydet' butonunu kullanarak taslak olarak kaydedebilir ya da ",
   "cancel some of your active or paused piggy banks": "aktif veya duraklatılmış kumbaralarınızdan bazılarını iptal edebilirsiniz",
-  "draft.saved_ago": ":time kaydedildi"
+  "draft.saved_ago": ":time kaydedildi",
+  "Save Amount": "Kaydedilecek Tutar",
+  "Whole numbers only": "Sadece tam sayılar",
+  "invalid_amount_decimal": "Lütfen geçerli bir tutar girin (minimum 0.01)",
+  "invalid_amount_integer": "Lütfen geçerli bir tam sayı girin (minimum 1)"
 }
