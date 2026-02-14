@@ -273,7 +273,6 @@
                             </x-secondary-button>
 
                             @auth
-                                @if(auth()->user()->hasVerifiedEmail())
                                     <!-- Save as Draft Button -->
                                     <form method="POST" action="{{ localizedRoute('localized.draft-piggy-banks.store') }}">
                                         @csrf
@@ -295,38 +294,6 @@
                                             </x-primary-button>
                                         @endif
                                     </form>
-                                @else
-                                    <!-- Email not verified - disabled buttons with tooltips -->
-                                    <div x-data="{ showTooltip: false }" class="relative">
-                                        <x-secondary-button
-                                            type="button"
-                                            disabled
-                                            @mouseenter="showTooltip = true"
-                                            @mouseleave="showTooltip = false"
-                                            class="w-[200px] sm:w-auto justify-center opacity-50 !cursor-not-allowed pointer-events-auto"
-                                        >
-                                            {{ __('Save as Draft') }}
-                                        </x-secondary-button>
-                                        <div x-show="showTooltip" x-cloak class="absolute z-10 px-3 py-2 text-sm bg-gray-900 text-white rounded-lg shadow-lg -translate-x-1/2 left-1/2 bottom-full mb-2 whitespace-nowrap">
-                                            {{ __('Please verify your email to use this feature') }}
-                                        </div>
-                                    </div>
-
-                                    <div x-data="{ showTooltip: false }" class="relative">
-                                        <x-secondary-button
-                                            type="button"
-                                            disabled
-                                            @mouseenter="showTooltip = true"
-                                            @mouseleave="showTooltip = false"
-                                            class="w-[200px] sm:w-auto justify-center opacity-50 !cursor-not-allowed pointer-events-auto"
-                                        >
-                                            {{ __('Create New Piggy Bank') }}
-                                        </x-secondary-button>
-                                        <div x-show="showTooltip" x-cloak class="absolute z-10 px-3 py-2 text-sm bg-gray-900 text-white rounded-lg shadow-lg -translate-x-1/2 left-1/2 bottom-full mb-2 whitespace-nowrap">
-                                            {{ __('Please verify your email to use this feature') }}
-                                        </div>
-                                    </div>
-                                @endif
                             @else
                                 {{-- Guest: Email input + Save as Draft --}}
                                 <form method="POST" action="{{ localizedRoute('localized.draft-piggy-banks.guest-store') }}" class="flex flex-col sm:flex-row items-center gap-3">

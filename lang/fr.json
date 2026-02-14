@@ -550,5 +550,7 @@
   "invalid_amount_decimal": "Veuillez entrer un montant valide (minimum 0.01)",
   "invalid_amount_integer": "Veuillez entrer un nombre entier valide (minimum 1)",
   "Verify your email to make sure your savings reminders reach you.": "Vérifiez votre e-mail pour vous assurer que vos rappels d'épargne vous parviennent.",
-  "Verify now": "Vérifier maintenant"
+  "Verify now": "Vérifier maintenant",
+  "Return to home page": "Retour à la page d'accueil",
+  "This verification link will expire in :days days.": "Ce lien de vérification expirera dans :days jours."
 }

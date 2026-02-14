@@ -9,23 +9,29 @@
         </div>
     @endif
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('localized.verification.send.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}">
-            @csrf
+    <div class="mt-4 flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+            <form method="POST" action="{{ route('localized.verification.send.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}">
+                @csrf
 
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
-            </div>
-        </form>
+                <div>
+                    <x-primary-button>
+                        {{ __('Resend Verification Email') }}
+                    </x-primary-button>
+                </div>
+            </form>
 
-        <form method="POST" action="{{ route('localized.logout.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}">
-            @csrf
+            <form method="POST" action="{{ route('localized.logout.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}">
+                @csrf
 
-            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
-                {{ __('Log Out') }}
-            </button>
-        </form>
+                <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
+                    {{ __('Log Out') }}
+                </button>
+            </form>
+        </div>
+
+        <a href="{{ localizedRoute('localized.dashboard') }}" class="text-sm text-gray-600 hover:text-gray-900 underline">
+            {{ __('Return to home page') }}
+        </a>
     </div>
 </x-guest-layout>
