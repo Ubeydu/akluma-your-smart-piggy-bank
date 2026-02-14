@@ -47,3 +47,76 @@ test('email is not verified with invalid hash', function () {
 
     expect($user->fresh()->hasVerifiedEmail())->toBeFalse();
 });
+
+test('verify email screen shows wrong email link', function () {
+    $user = User::factory()->unverified()->create();
+
+    $response = $this->actingAs($user)->get('/en/verify-email');
+
+    $response->assertSuccessful();
+    $response->assertSee('Wrong email?', false);
+});
+
+test('unverified user can update email and resend verification', function () {
+    $user = User::factory()->unverified()->create(['email' => 'old@example.com']);
+
+    $response = $this->actingAs($user)->patch('/en/email/update-unverified', [
+        'email' => 'new@example.com',
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('status', 'verification-link-sent');
+
+    $user->refresh();
+    expect($user->email)->toBe('new@example.com');
+    expect($user->email_verified_at)->toBeNull();
+});
+
+test('update email requires valid email format', function () {
+    $user = User::factory()->unverified()->create();
+
+    $response = $this->actingAs($user)->patch('/en/email/update-unverified', [
+        'email' => 'not-an-email',
+    ]);
+
+    $response->assertSessionHasErrors('email');
+});
+
+test('update email rejects email without valid domain', function () {
+    $user = User::factory()->unverified()->create();
+
+    $response = $this->actingAs($user)->patch('/en/email/update-unverified', [
+        'email' => 'user@gmail',
+    ]);
+
+    $response->assertSessionHasErrors('email');
+});
+
+test('update email rejects already taken email', function () {
+    User::factory()->create(['email' => 'taken@example.com']);
+    $user = User::factory()->unverified()->create();
+
+    $response = $this->actingAs($user)->patch('/en/email/update-unverified', [
+        'email' => 'taken@example.com',
+    ]);
+
+    $response->assertSessionHasErrors('email');
+});
+
+test('verified user cannot update email via verification endpoint', function () {
+    $user = User::factory()->create(); // verified by default
+
+    $response = $this->actingAs($user)->patch('/en/email/update-unverified', [
+        'email' => 'new@example.com',
+    ]);
+
+    $response->assertForbidden();
+});
+
+test('guest cannot update email via verification endpoint', function () {
+    $response = $this->patch('/en/email/update-unverified', [
+        'email' => 'new@example.com',
+    ]);
+
+    $response->assertRedirect();
+});

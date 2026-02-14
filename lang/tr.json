@@ -560,5 +560,8 @@
   "Don't see it? Check your spam or junk folder.": "Göremiyor musun? Spam veya gereksiz posta klasörünü kontrol et.",
   "don't see it? Check your spam or junk folder.": "göremiyor musun? Spam veya gereksiz posta klasörünü kontrol et.",
   "A new verification link has been sent to your email address.": "E-posta adresinize yeni bir doğrulama bağlantısı gönderildi.",
-  "Still having trouble? Contact us at :email": "Hâlâ sorun mu yaşıyorsun? Bize :email adresinden ulaş."
+  "Still having trouble? Contact us at :email": "Hâlâ sorun mu yaşıyorsun? Bize :email adresinden ulaş.",
+  "Wrong email?": "Yanlış e-posta mı?",
+  "New email address": "Yeni e-posta adresi",
+  "Update & Resend": "Güncelle ve Tekrar Gönder"
 }

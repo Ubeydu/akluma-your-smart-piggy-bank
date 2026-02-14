@@ -60,6 +60,10 @@ Route::localizedPost('email/verification-notification', [EmailVerificationNotifi
     ->middleware(['auth', 'throttle:6,1'])
     ->name('localized.verification.send');
 
+Route::localizedPatch('email/update-unverified', [EmailVerificationNotificationController::class, 'updateEmail'])
+    ->middleware(['auth'])
+    ->name('localized.verification.update-email');
+
 Route::localizedPost('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware(['auth'])
     ->name('localized.logout');
@@ -117,8 +121,6 @@ Route::prefix('{locale}')
             //
             //    Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-
         });
-
 
     });
