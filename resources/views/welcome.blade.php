@@ -214,6 +214,24 @@
                 </div>
             </div>
 
+            @auth
+                @if (!auth()->user()->hasVerifiedEmail())
+                    <div class="w-full">
+                        <div class="max-w-2xl px-6 lg:max-w-7xl mx-auto pt-4">
+                            <div class="w-full rounded-md bg-yellow-100 p-4 text-sm text-yellow-800 shadow-md border border-yellow-300">
+                                {{ __('Please verify your email address to unlock all features.') }}
+                                <a
+                                    href="{{ localizedRoute('localized.verification.notice') }}"
+                                    class="underline font-medium hover:text-yellow-900 ml-1"
+                                >
+                                    {{ __('Resend Verification Email') }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @endauth
+
             {{-- Hero Section --}}
             <div class="w-full bg-gradient-to-br from-gray-50 to-white">
                 <div class="relative max-w-2xl px-6 lg:max-w-7xl mx-auto py-16 lg:py-24">
@@ -394,22 +412,6 @@
 
 
                     <main class="min-h-[50vh] text-6xl font-bold">
-
-                        @auth
-                            @if (!auth()->user()->hasVerifiedEmail())
-                                <div class="mb-6 w-full rounded-md bg-yellow-100 p-4 text-sm text-yellow-800 shadow-md border border-yellow-300">
-                                    {{ __('Please verify your email address to unlock all features.') }}
-                                    <a
-                                        href="{{ localizedRoute('localized.verification.notice') }}"
-                                        class="underline font-medium hover:text-yellow-900 ml-1"
-                                    >
-                                        {{ __('Resend Verification Email') }}
-                                    </a>
-                                </div>
-                            @endif
-                        @endauth
-
-
 
                         {{-- How It Works Section --}}
                         <div class="py-16 lg:py-24 relative overflow-hidden bg-white -mx-6 px-6 lg:-mx-[calc((100vw-80rem)/2+1.5rem)] lg:px-[calc((100vw-80rem)/2+1.5rem)]">
