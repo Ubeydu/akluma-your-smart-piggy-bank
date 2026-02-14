@@ -39,84 +39,84 @@ Route::get('/sitemap.xml', function () {
 
 Route::localizedGet('dashboard', [DashboardController::class, 'index'])
     ->name('localized.dashboard')
-    ->middleware(['locale', 'auth', 'verified']);
+    ->middleware(['locale', 'auth']);
 
 Route::localizedGet('piggy-banks', [PiggyBankController::class, 'index'])
     ->name('localized.piggy-banks.index')
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth']);
 
 Route::localizedGet('piggy-banks/{piggy_id}', [PiggyBankController::class, 'show'])
     ->name('localized.piggy-banks.show')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
 Route::localizedPut('piggy-banks/{piggy_id}', [PiggyBankController::class, 'update'])
     ->name('localized.piggy-banks.update')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
 Route::localizedGet('piggy-banks/{piggy_id}/financial-summary', [PiggyBankController::class, 'getFinancialSummary'])
     ->name('localized.piggy-banks.financial-summary')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
 Route::localizedPatch('piggy-banks/{piggy_id}/pause', [ScheduledSavingController::class, 'pausePiggyBank'])
     ->name('localized.piggy-banks.pause')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
 Route::localizedPatch('piggy-banks/{piggy_id}/resume', [ScheduledSavingController::class, 'resumePiggyBank'])
     ->name('localized.piggy-banks.resume')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
 Route::localizedPatch('piggy-banks/{piggy_id}/update-status-cancelled', [PiggyBankController::class, 'updateStatusToCancelled'])
     ->name('localized.piggy-banks.update-status-cancelled')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
 Route::localizedGet('piggy-banks/{piggy_id}/schedule', [ScheduledSavingController::class, 'getSchedulePartial'])
     ->name('localized.piggy-banks.schedule')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
 Route::localizedPost('piggy-banks/{piggy_id}/cancel', [PiggyBankController::class, 'cancel'])
     ->name('localized.piggy-banks.cancel')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
 Route::localizedPost('piggy-banks/{piggy_id}/add-remove-money', [PiggyBankController::class, 'addOrRemoveMoney'])
     ->name('localized.piggy-banks.add-remove-money')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
 Route::localizedPost('piggy-banks/{piggy_id}/recalculate-schedule', [PiggyBankController::class, 'recalculateSchedule'])
     ->name('localized.piggy-banks.recalculate-schedule')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
 // Draft Piggy Banks routes
 Route::localizedGet('draft-piggy-banks', [PiggyBankDraftController::class, 'index'])
     ->name('localized.draft-piggy-banks.index')
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth']);
 
 Route::localizedGet('draft-piggy-banks/{draft}', [PiggyBankDraftController::class, 'show'])
     ->name('localized.draft-piggy-banks.show')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('draft', '[0-9]+');
 
 Route::localizedPost('draft-piggy-banks/store', [PiggyBankDraftController::class, 'store'])
     ->name('localized.draft-piggy-banks.store')
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth']);
 
 Route::localizedPost('draft-piggy-banks/{draft}/resume', [PiggyBankDraftController::class, 'resume'])
     ->name('localized.draft-piggy-banks.resume')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('draft', '[0-9]+');
 
 Route::localizedDelete('draft-piggy-banks/{draft}', [PiggyBankDraftController::class, 'destroy'])
     ->name('localized.draft-piggy-banks.destroy')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('draft', '[0-9]+');
 
 // Guest Draft Piggy Banks routes (no auth required)
@@ -129,49 +129,49 @@ Route::localizedGet('draft-piggy-banks/saved', [PiggyBankDraftController::class,
 // Vault routes
 Route::localizedGet('vaults', [VaultController::class, 'index'])
     ->name('localized.vaults.index')
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth']);
 
 Route::localizedGet('vaults/{vault_id}', [VaultController::class, 'show'])
     ->name('localized.vaults.show')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('vault_id', '[0-9]+');
 
 Route::localizedGet('vaults/create', [VaultController::class, 'create'])
     ->name('localized.vaults.create')
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth']);
 
 Route::localizedPost('vaults', [VaultController::class, 'store'])
     ->name('localized.vaults.store')
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth']);
 
 Route::localizedGet('vaults/{vault_id}/edit', [VaultController::class, 'edit'])
     ->name('localized.vaults.edit')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('vault_id', '[0-9]+');
 
 Route::localizedPut('vaults/{vault_id}', [VaultController::class, 'update'])
     ->name('localized.vaults.update')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('vault_id', '[0-9]+');
 
 Route::localizedDelete('vaults/{vault_id}', [VaultController::class, 'destroy'])
     ->name('localized.vaults.destroy')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('vault_id', '[0-9]+');
 
 Route::localizedGet('vaults/{vault_id}/cancel', [VaultController::class, 'cancel'])
     ->name('localized.vaults.cancel')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('vault_id', '[0-9]+');
 
 Route::localizedPost('vaults/{vault_id}/connect-piggy-bank', [VaultController::class, 'connectPiggyBank'])
     ->name('localized.vaults.connect-piggy-bank')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('vault_id', '[0-9]+');
 
 Route::localizedDelete('vaults/{vault_id}/disconnect-piggy-bank', [VaultController::class, 'disconnectPiggyBank'])
     ->name('localized.vaults.disconnect-piggy-bank')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('vault_id', '[0-9]+');
 
 // Test routes for development
@@ -183,7 +183,7 @@ Route::localizedPost('test-date/{piggy_id}', function ($piggy_id, Request $reque
     return back()->with('success', 'Test date set to: '.$request->test_date);
 })
     ->name('localized.test.set-date')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
 Route::localizedPost('test-date/{piggy_id}/clear', function () {
@@ -192,20 +192,20 @@ Route::localizedPost('test-date/{piggy_id}/clear', function () {
     return back()->with('success', 'Test date cleared');
 })
     ->name('localized.test.clear-date')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
 Route::localizedGet('profile', [ProfileController::class, 'edit'])
     ->name('localized.profile.edit')
-    ->middleware(['locale', 'auth', 'verified']);
+    ->middleware(['locale', 'auth']);
 
 Route::localizedPatch('profile', [ProfileController::class, 'update'])
     ->name('localized.profile.update')
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth']);
 
 Route::localizedDelete('profile', [ProfileController::class, 'destroy'])
     ->name('localized.profile.destroy')
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth']);
 
 // Terms and Privacy routes (converted to localized macros)
 Route::localizedGet('terms-of-service', function () {
@@ -291,7 +291,7 @@ Route::localizedPost('create-piggy-bank/pick-date/show-summary', [PiggyBankCreat
 
 Route::localizedPost('create-piggy-bank/pick-date/store', [PiggyBankCreateController::class, 'storePiggyBank'])
     ->name('localized.create-piggy-bank.pick-date.store')
-    ->middleware(['conditional.layout', 'auth', 'verified']);
+    ->middleware(['conditional.layout', 'auth']);
 
 Route::localizedGet('create-piggy-bank/enter-saving-amount/show-summary', [PiggyBankCreateController::class, 'showEnterSavingAmountSummary'])
     ->name('localized.create-piggy-bank.enter-saving-amount.show-summary')
@@ -303,7 +303,7 @@ Route::localizedPost('create-piggy-bank/enter-saving-amount/show-summary', [Pigg
 
 Route::localizedPost('create-piggy-bank/enter-saving-amount/store', [PiggyBankCreateController::class, 'storeEnterSavingAmountPiggyBank'])
     ->name('localized.create-piggy-bank.enter-saving-amount.store')
-    ->middleware(['auth', 'conditional.layout', 'verified']);
+    ->middleware(['auth', 'conditional.layout']);
 
 Route::localizedPost('create-piggy-bank/enter-saving-amount/process-step-3', [PiggyBankCreateController::class, 'processEnterSavingAmountStep3'])
     ->name('localized.create-piggy-bank.enter-saving-amount.process-step-3')
@@ -342,7 +342,7 @@ Route::post('create-piggy-bank/pick-date/show-summary', [PiggyBankCreateControll
     ->name('create-piggy-bank.pick-date.show-summary');
 
 Route::post('create-piggy-bank/pick-date/store', [PiggyBankCreateController::class, 'storePiggyBank'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth'])
     ->name('create-piggy-bank.pick-date.store');
 
 // Localized route group
@@ -351,21 +351,20 @@ Route::prefix('{locale}')
     ->where(['locale' => '[a-z]{2}'])
     ->group(function () {
 
-        Route::middleware(['auth', 'verified'])->group(function () {
+        Route::middleware(['auth'])->group(function () {
 
             Route::patch('preferences/update',
                 [App\Http\Controllers\UserPreferencesController::class, 'updatePreferences'])
                 ->name('localized.preferences.update');
 
             Route::patch('scheduled-savings/{periodicSaving}', [ScheduledSavingController::class, 'update'])
-                ->middleware(['auth', 'verified'])
                 ->name('localized.scheduled-savings.update');
 
         });
 
         Route::post('update-timezone', [UserPreferencesController::class, 'updateTimezone'])
             ->name('localized.update-timezone')
-            ->middleware(['auth', 'verified']);
+            ->middleware(['auth']);
 
         Route::get('format-date', function (Request $request) {
             $date = $request->query('date');

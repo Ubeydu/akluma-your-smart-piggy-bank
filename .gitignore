@@ -31,7 +31,4 @@ storage/framework/views/*.php
 !storage/framework/views/
 !storage/framework/views/.gitkeep
 
-dev-notes/fly-notes.txt
-dev-notes/prod-deploy-log.txt
-dev-notes/actual-deployment-steps-followed-flyio.md
-dev-notes/prod-db-access.md
+/dev-notes/

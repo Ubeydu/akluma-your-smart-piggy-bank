@@ -104,6 +104,21 @@
 
             @endif
 
+            {{-- Email verification banner for unverified users --}}
+            @auth
+                @if (!auth()->user()->hasVerifiedEmail())
+                    <div class="w-full bg-amber-50 border-b border-amber-200">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between text-sm text-amber-800">
+                            <span>{{ __('Verify your email to make sure your savings reminders reach you.') }}</span>
+                            <a href="{{ localizedRoute('localized.verification.notice') }}"
+                               class="shrink-0 ml-4 font-medium underline hover:text-amber-900">
+                                {{ __('Verify now') }}
+                            </a>
+                        </div>
+                    </div>
+                @endif
+            @endauth
+
             <!-- Page Heading -->
             @isset($header)
                 <header class="bg-white shadow-sm">

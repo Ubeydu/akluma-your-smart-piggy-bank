@@ -218,13 +218,13 @@
                 @if (!auth()->user()->hasVerifiedEmail())
                     <div class="w-full">
                         <div class="max-w-2xl px-6 lg:max-w-7xl mx-auto pt-4">
-                            <div class="w-full rounded-md bg-yellow-100 p-4 text-sm text-yellow-800 shadow-md border border-yellow-300">
-                                {{ __('Please verify your email address to unlock all features.') }}
+                            <div class="w-full rounded-md bg-amber-50 p-4 text-sm text-amber-800 shadow-md border border-amber-200 flex items-center justify-between">
+                                <span>{{ __('Verify your email to make sure your savings reminders reach you.') }}</span>
                                 <a
                                     href="{{ localizedRoute('localized.verification.notice') }}"
-                                    class="underline font-medium hover:text-yellow-900 ml-1"
+                                    class="shrink-0 ml-4 underline font-medium hover:text-amber-900"
                                 >
-                                    {{ __('Resend Verification Email') }}
+                                    {{ __('Verify now') }}
                                 </a>
                             </div>
                         </div>
