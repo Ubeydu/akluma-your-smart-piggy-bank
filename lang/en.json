@@ -287,5 +287,7 @@
   "Save Amount": "Save Amount",
   "Whole numbers only": "Whole numbers only",
   "invalid_amount_decimal": "Please enter a valid amount (minimum 0.01)",
-  "invalid_amount_integer": "Please enter a valid whole number (minimum 1)"
+  "invalid_amount_integer": "Please enter a valid whole number (minimum 1)",
+  "Verify your email to make sure your savings reminders reach you.": "Verify your email to make sure your savings reminders reach you.",
+  "Verify now": "Verify now"
 }
