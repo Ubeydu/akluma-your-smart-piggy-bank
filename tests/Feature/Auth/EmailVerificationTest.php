@@ -161,3 +161,22 @@ test('resend verification email is available again after cooldown expires', func
     $response = $this->actingAs($user)->post('/en/email/verification-notification');
     $response->assertSessionHas('status', 'verification-link-sent');
 });
+
+test('update email shares cooldown with resend button', function () {
+    $user = User::factory()->unverified()->create(['email' => 'old@example.com']);
+
+    // Resend triggers cooldown
+    $this->actingAs($user)->post('/en/email/verification-notification');
+
+    // Update email should be blocked by the same cooldown
+    $response = $this->actingAs($user)->patch('/en/email/update-unverified', [
+        'email' => 'new@example.com',
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('cooldown');
+    $response->assertSessionMissing('status');
+
+    // Email should NOT have changed
+    expect($user->fresh()->email)->toBe('old@example.com');
+});

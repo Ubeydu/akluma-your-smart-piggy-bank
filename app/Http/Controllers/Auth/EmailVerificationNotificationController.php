@@ -49,6 +49,13 @@ class EmailVerificationNotificationController extends Controller
     public function updateEmail(UpdateUnverifiedEmailRequest $request): RedirectResponse
     {
         $user = $request->user();
+        $throttleKey = 'verify-email:'.$user->id;
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 1)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            return back()->with('cooldown', $seconds);
+        }
 
         DB::transaction(function () use ($user, $request): void {
             $user->email = $request->validated('email');
@@ -58,6 +65,11 @@ class EmailVerificationNotificationController extends Controller
             $user->sendEmailVerificationNotification();
         });
 
-        return back()->with('status', 'verification-link-sent');
+        RateLimiter::hit($throttleKey, self::RESEND_COOLDOWN_SECONDS);
+
+        return back()->with([
+            'status' => 'verification-link-sent',
+            'cooldown' => self::RESEND_COOLDOWN_SECONDS,
+        ]);
     }
 }

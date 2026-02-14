@@ -56,7 +56,7 @@
                 <form method="POST" action="{{ route('localized.verification.update-email.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}">
                     @csrf
                     @method('PATCH')
-                    <div class="flex gap-2">
+                    <div class="flex flex-col sm:flex-row gap-2">
                         <x-text-input
                             id="email"
                             name="email"
@@ -64,10 +64,10 @@
                             x-model="newEmail"
                             required
                             autofocus
-                            class="flex-1 text-sm"
+                            class="w-full sm:flex-1 text-sm"
                             placeholder="{{ __('New email address') }}"
                         />
-                        <x-primary-button class="shrink-0 text-sm" x-bind:disabled="!emailValid" x-bind:class="{ 'opacity-50 cursor-not-allowed': !emailValid }">
+                        <x-primary-button class="w-full sm:w-auto justify-center shrink-0 text-sm" x-bind:disabled="!emailValid" x-bind:class="{ 'opacity-50 cursor-not-allowed': !emailValid }">
                             {{ __('Update & Resend') }}
                         </x-primary-button>
                     </div>
