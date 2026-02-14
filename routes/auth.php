@@ -57,7 +57,7 @@ Route::localizedGet('verify-email-with-params', VerifyEmailController::class)
     ->name('localized.verification.verify');
 
 Route::localizedPost('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-    ->middleware(['auth', 'throttle:6,1'])
+    ->middleware(['auth'])
     ->name('localized.verification.send');
 
 Route::localizedPatch('email/update-unverified', [EmailVerificationNotificationController::class, 'updateEmail'])

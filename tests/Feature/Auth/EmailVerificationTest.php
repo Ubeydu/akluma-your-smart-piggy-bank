@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 
 test('email verification screen can be rendered', function () {
@@ -119,4 +120,44 @@ test('guest cannot update email via verification endpoint', function () {
     ]);
 
     $response->assertRedirect();
+});
+
+test('resend verification email returns cooldown on success', function () {
+    $user = User::factory()->unverified()->create();
+
+    $response = $this->actingAs($user)->post('/en/email/verification-notification');
+
+    $response->assertRedirect();
+    $response->assertSessionHas('status', 'verification-link-sent');
+    $response->assertSessionHas('cooldown', 120);
+});
+
+test('resend verification email is rate limited to one attempt per two minutes', function () {
+    $user = User::factory()->unverified()->create();
+
+    // First attempt should succeed
+    $response = $this->actingAs($user)->post('/en/email/verification-notification');
+    $response->assertSessionHas('status', 'verification-link-sent');
+
+    // Second attempt should be rate limited
+    $response = $this->actingAs($user)->post('/en/email/verification-notification');
+    $response->assertRedirect();
+    $response->assertSessionHas('cooldown');
+    $response->assertSessionMissing('status');
+
+    expect(session('cooldown'))->toBeGreaterThan(0)->toBeLessThanOrEqual(120);
+});
+
+test('resend verification email is available again after cooldown expires', function () {
+    $user = User::factory()->unverified()->create();
+
+    // First attempt
+    $this->actingAs($user)->post('/en/email/verification-notification');
+
+    // Clear the rate limiter to simulate time passing
+    RateLimiter::clear('verify-email:'.$user->id);
+
+    // Should succeed again
+    $response = $this->actingAs($user)->post('/en/email/verification-notification');
+    $response->assertSessionHas('status', 'verification-link-sent');
 });

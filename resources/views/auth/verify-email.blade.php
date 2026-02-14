@@ -2,6 +2,26 @@
     <div x-data="{
         editingEmail: {{ $errors->has('email') ? 'true' : 'false' }},
         newEmail: '{{ old('email', auth()->user()->email) }}',
+        cooldown: {{ (int) session('cooldown', 0) }},
+        init() {
+            if (this.cooldown > 0) {
+                this.startTimer();
+            }
+        },
+        startTimer() {
+            const interval = setInterval(() => {
+                this.cooldown--;
+                if (this.cooldown <= 0) {
+                    this.cooldown = 0;
+                    clearInterval(interval);
+                }
+            }, 1000);
+        },
+        get cooldownDisplay() {
+            const m = Math.floor(this.cooldown / 60);
+            const s = this.cooldown % 60;
+            return m + ':' + String(s).padStart(2, '0');
+        },
         get emailValid() {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.newEmail);
         }
@@ -70,8 +90,13 @@
         <div class="text-center text-sm text-gray-600">
             <form method="POST" action="{{ route('localized.verification.send.' . app()->getLocale(), ['locale' => app()->getLocale()]) }}" class="mb-4">
                 @csrf
-                <x-primary-button class="w-full justify-center">
-                    {{ __('Resend Verification Email') }}
+                <x-primary-button
+                    class="w-full justify-center"
+                    x-bind:disabled="cooldown > 0"
+                    x-bind:class="{ 'opacity-50 cursor-not-allowed': cooldown > 0 }"
+                >
+                    <span x-show="cooldown <= 0">{{ __('Resend Verification Email') }}</span>
+                    <span x-show="cooldown > 0" x-cloak>{{ __('Resend available in') }} <span x-text="cooldownDisplay"></span></span>
                 </x-primary-button>
             </form>
 
