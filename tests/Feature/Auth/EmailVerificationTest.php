@@ -11,6 +11,9 @@ test('email verification screen can be rendered', function () {
     $response = $this->actingAs($user)->get('/en/verify-email');
 
     $response->assertStatus(200);
+    $response->assertSee($user->email);
+    $response->assertSee('Check your spam or junk folder', false);
+    $response->assertSee('contact@akluma.com');
 });
 
 test('email can be verified', function () {

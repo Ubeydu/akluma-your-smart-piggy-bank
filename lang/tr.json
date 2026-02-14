@@ -554,5 +554,11 @@
   "Verify your email to make sure your savings reminders reach you.": "Birikim hatırlatmalarının sana ulaştığından emin olmak için e-postanı doğrula.",
   "Verify now": "Şimdi doğrula",
   "Return to home page": "Ana sayfaya dön",
-  "This verification link will expire in :days days.": "Bu doğrulama bağlantısının süresi :days gün içinde dolacaktır."
+  "This verification link will expire in :days days.": "Bu doğrulama bağlantısının süresi :days gün içinde dolacaktır.",
+  "Check your email": "E-postanı kontrol et",
+  "We sent a verification link to": "Doğrulama bağlantısı gönderildi:",
+  "Don't see it? Check your spam or junk folder.": "Göremiyor musun? Spam veya gereksiz posta klasörünü kontrol et.",
+  "don't see it? Check your spam or junk folder.": "göremiyor musun? Spam veya gereksiz posta klasörünü kontrol et.",
+  "A new verification link has been sent to your email address.": "E-posta adresinize yeni bir doğrulama bağlantısı gönderildi.",
+  "Still having trouble? Contact us at :email": "Hâlâ sorun mu yaşıyorsun? Bize :email adresinden ulaş."
 }
