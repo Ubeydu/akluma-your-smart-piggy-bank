@@ -550,5 +550,9 @@
   "Save Amount": "Kaydedilecek Tutar",
   "Whole numbers only": "Sadece tam sayılar",
   "invalid_amount_decimal": "Lütfen geçerli bir tutar girin (minimum 0.01)",
-  "invalid_amount_integer": "Lütfen geçerli bir tam sayı girin (minimum 1)"
+  "invalid_amount_integer": "Lütfen geçerli bir tam sayı girin (minimum 1)",
+  "Verify your email to make sure your savings reminders reach you.": "Birikim hatırlatmalarının sana ulaştığından emin olmak için e-postanı doğrula.",
+  "Verify now": "Şimdi doğrula",
+  "Return to home page": "Ana sayfaya dön",
+  "This verification link will expire in :days days.": "Bu doğrulama bağlantısının süresi :days gün içinde dolacaktır."
 }

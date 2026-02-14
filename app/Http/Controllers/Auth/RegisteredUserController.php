@@ -58,6 +58,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(RouteHelper::localizedRoute('localized.verification.notice'));
+        return redirect(RouteHelper::localizedRoute('localized.dashboard'));
     }
 }
