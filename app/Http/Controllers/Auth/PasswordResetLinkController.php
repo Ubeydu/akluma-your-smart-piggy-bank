@@ -6,11 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class PasswordResetLinkController extends Controller
 {
+    /**
+     * Cooldown period in seconds between password reset emails.
+     */
+    private const RESET_COOLDOWN_SECONDS = 120;
+
     /**
      * Display the password reset link request view.
      */
@@ -30,16 +37,34 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
+        $throttleKey = 'password-reset:'.Str::lower($request->string('email'));
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 1)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            return back()
+                ->withInput($request->only('email'))
+                ->with('cooldown', $seconds);
+        }
+
+        RateLimiter::hit($throttleKey, self::RESET_COOLDOWN_SECONDS);
+
         $status = Password::sendResetLink(
             $request->only('email')
         );
 
+        if ($status == Password::RESET_THROTTLED) {
+            return back()
+                ->withInput($request->only('email'))
+                ->with('cooldown', self::RESET_COOLDOWN_SECONDS);
+        }
+
         return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+            ? back()->withInput($request->only('email'))->with([
+                'status' => __($status),
+                'cooldown' => self::RESET_COOLDOWN_SECONDS,
+            ])
+            : back()->withInput($request->only('email'))
+                ->withErrors(['email' => __($status)]);
     }
 }
