@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\UpdateUnverifiedEmailRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 
 class EmailVerificationNotificationController extends Controller
@@ -33,9 +33,19 @@ class EmailVerificationNotificationController extends Controller
             return back()->with('cooldown', $seconds);
         }
 
-        RateLimiter::hit($throttleKey, self::RESEND_COOLDOWN_SECONDS);
+        try {
+            $request->user()->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            Log::error('Failed to send verification email', [
+                'user_id' => $request->user()->id,
+                'email' => $request->user()->email,
+                'error' => $e->getMessage(),
+            ]);
 
-        $request->user()->sendEmailVerificationNotification();
+            return back()->with('email-error', __('We couldn\'t send the verification email right now. Please try again in a few minutes.'));
+        }
+
+        RateLimiter::hit($throttleKey, self::RESEND_COOLDOWN_SECONDS);
 
         return back()->with([
             'status' => 'verification-link-sent',
@@ -57,13 +67,21 @@ class EmailVerificationNotificationController extends Controller
             return back()->with('cooldown', $seconds);
         }
 
-        DB::transaction(function () use ($user, $request): void {
-            $user->email = $request->validated('email');
-            $user->email_verified_at = null;
-            $user->save();
+        $user->email = $request->validated('email');
+        $user->email_verified_at = null;
+        $user->save();
 
+        try {
             $user->sendEmailVerificationNotification();
-        });
+        } catch (\Throwable $e) {
+            Log::error('Failed to send verification email after email update', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('email-error', __('Your email was updated, but we couldn\'t send the verification email right now. Please try resending in a few minutes.'));
+        }
 
         RateLimiter::hit($throttleKey, self::RESEND_COOLDOWN_SECONDS);
 

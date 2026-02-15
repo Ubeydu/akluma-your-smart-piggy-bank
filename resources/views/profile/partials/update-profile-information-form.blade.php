@@ -33,18 +33,55 @@
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div>
+                <div x-data="{
+                    cooldown: {{ (int) session('cooldown', 0) }},
+                    init() {
+                        if (this.cooldown > 0) {
+                            this.startTimer();
+                        }
+                    },
+                    startTimer() {
+                        const interval = setInterval(() => {
+                            this.cooldown--;
+                            if (this.cooldown <= 0) {
+                                this.cooldown = 0;
+                                clearInterval(interval);
+                            }
+                        }, 1000);
+                    },
+                    get cooldownDisplay() {
+                        const m = Math.floor(this.cooldown / 60);
+                        const s = this.cooldown % 60;
+                        return m + ':' + String(s).padStart(2, '0');
+                    }
+                }">
                     <p class="text-sm mt-2 text-gray-900">
                         {{ __('Your email address is unverified.') }}
 
-                        <button form="send-verification" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <button
+                            form="send-verification"
+                            class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
+                            x-bind:disabled="cooldown > 0"
+                            x-bind:class="{ 'opacity-50 cursor-not-allowed no-underline': cooldown > 0 }"
+                            x-show="cooldown <= 0"
+                        >
                             {{ __('Click here to re-send the verification email.') }}
                         </button>
+                    </p>
+
+                    <p x-show="cooldown > 0" x-cloak class="mt-2 text-sm text-gray-500">
+                        {{ __('Resend available in') }} <span x-text="cooldownDisplay"></span>
                     </p>
 
                     @if (session('status') === 'verification-link-sent')
                         <p class="mt-2 font-medium text-sm text-green-600">
                             {{ __('A new verification link has been sent to your email address.') }}
+                        </p>
+                    @endif
+
+                    @if (session('email-error'))
+                        <p class="mt-2 font-medium text-sm text-red-600">
+                            {{ session('email-error') }}
                         </p>
                     @endif
                 </div>

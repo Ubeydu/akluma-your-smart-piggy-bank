@@ -564,5 +564,7 @@
   "Wrong email?": "Yanlış e-posta mı?",
   "New email address": "Yeni e-posta adresi",
   "Update & Resend": "Güncelle ve Tekrar Gönder",
-  "Resend available in": "Tekrar gönderme şu süre sonra aktif:"
+  "Resend available in": "Tekrar gönderme şu süre sonra aktif:",
+  "We couldn't send the verification email right now. Please try again in a few minutes.": "Doğrulama e-postasını şu anda gönderemedik. Lütfen birkaç dakika içinde tekrar deneyin.",
+  "Your email was updated, but we couldn't send the verification email right now. Please try resending in a few minutes.": "E-posta adresiniz güncellendi, ancak doğrulama e-postasını şu anda gönderemedik. Lütfen birkaç dakika içinde tekrar göndermeyi deneyin."
 }

@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div x-data="{
         editingEmail: {{ $errors->has('email') ? 'true' : 'false' }},
-        newEmail: '{{ old('email', auth()->user()->email) }}',
+        newEmail: {{ Js::from(old('email', auth()->user()->email)) }},
         cooldown: {{ (int) session('cooldown', 0) }},
         init() {
             if (this.cooldown > 0) {
@@ -83,6 +83,13 @@
         @if (session('status') == 'verification-link-sent')
             <div class="mb-6 rounded-md bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700 text-center">
                 {{ __('A new verification link has been sent to your email address.') }}
+            </div>
+        @endif
+
+        {{-- Error message --}}
+        @if (session('email-error'))
+            <div class="mb-6 rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 text-center">
+                {{ session('email-error') }}
             </div>
         @endif
 

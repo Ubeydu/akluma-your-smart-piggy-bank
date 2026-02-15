@@ -562,5 +562,7 @@
   "Wrong email?": "Mauvais e-mail ?",
   "New email address": "Nouvelle adresse e-mail",
   "Update & Resend": "Modifier et Renvoyer",
-  "Resend available in": "Renvoi disponible dans"
+  "Resend available in": "Renvoi disponible dans",
+  "We couldn't send the verification email right now. Please try again in a few minutes.": "Nous n'avons pas pu envoyer l'e-mail de vérification pour le moment. Veuillez réessayer dans quelques minutes.",
+  "Your email was updated, but we couldn't send the verification email right now. Please try resending in a few minutes.": "Votre e-mail a été mis à jour, mais nous n'avons pas pu envoyer l'e-mail de vérification pour le moment. Veuillez réessayer dans quelques minutes."
 }
