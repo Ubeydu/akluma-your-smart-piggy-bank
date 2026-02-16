@@ -4,6 +4,39 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    @if (session('error'))
+        <div class="mb-4 rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <!-- Google Sign-In -->
+    <a href="{{ route('auth.google.redirect', ['timezone' => '', 'language' => session('locale', app()->getLocale())]) }}"
+       id="google-login-btn"
+       class="flex items-center justify-center w-full gap-3 px-4 py-2.5 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors cursor-pointer">
+        <x-google-icon />
+        <span class="text-sm font-medium text-gray-700">{{ __('Sign in with Google') }}</span>
+    </a>
+
+    <script>
+        document.getElementById('google-login-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const lang = '{{ session('locale', app()->getLocale()) }}';
+            window.location.href = '{{ route('auth.google.redirect') }}' + '?timezone=' + encodeURIComponent(tz) + '&language=' + encodeURIComponent(lang);
+        });
+    </script>
+
+    <!-- Separator -->
+    <div class="relative my-6">
+        <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+            <span class="bg-white px-4 text-gray-500">{{ __('Or sign in with email') }}</span>
+        </div>
+    </div>
+
     <form method="POST" action="{{ localizedRoute('localized.login.store') }}">
         @csrf
 
