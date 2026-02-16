@@ -44,6 +44,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'google_id',
     ];
 
     /**
@@ -60,6 +61,14 @@ class User extends Authenticatable implements MustVerifyEmail
             'accepted_terms_at' => 'datetime',
             'accepted_privacy_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Determine if the user has set a password (not a Google-only user).
+     */
+    public function hasPassword(): bool
+    {
+        return $this->password !== null;
     }
 
     public function piggyBanks(): HasMany
