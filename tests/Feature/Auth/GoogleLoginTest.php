@@ -105,6 +105,25 @@ test('google callback handles failure gracefully', function () {
     $this->assertGuest();
 });
 
+test('google callback rejects incomplete user data', function () {
+    $googleUser = new SocialiteUser;
+    $googleUser->id = null;
+    $googleUser->name = 'No ID User';
+    $googleUser->email = 'noid@example.com';
+    $googleUser->map(['id' => null, 'name' => 'No ID User', 'email' => 'noid@example.com']);
+
+    $provider = $this->mock(\Laravel\Socialite\Contracts\Provider::class);
+    $provider->shouldReceive('user')->andReturn($googleUser);
+    Socialite::shouldReceive('driver')->with('google')->andReturn($provider);
+
+    $response = $this->get(route('auth.google.callback'));
+
+    $response->assertRedirect();
+    $response->assertSessionHas('error');
+    $this->assertGuest();
+    $this->assertDatabaseMissing('users', ['email' => 'noid@example.com']);
+});
+
 test('google callback auto-verifies email for new users', function () {
     $googleUser = new SocialiteUser;
     $googleUser->id = '555555555';

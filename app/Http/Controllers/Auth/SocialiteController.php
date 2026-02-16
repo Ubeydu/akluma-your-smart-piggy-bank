@@ -65,11 +65,6 @@ class SocialiteController extends Controller
             $user->google_id = $googleUser->getId();
         }
 
-        if ($user->email !== $googleUser->getEmail()) {
-            $user->email = $googleUser->getEmail();
-            $user->email_verified_at = now();
-        }
-
         if (! $user->hasVerifiedEmail()) {
             $user->email_verified_at = now();
         }

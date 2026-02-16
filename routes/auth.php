@@ -82,11 +82,11 @@ Route::localizedPut('password', [PasswordController::class, 'update'])
 
 // Google OAuth routes (non-localized — Google needs fixed callback URLs)
 Route::get('auth/google/redirect', [App\Http\Controllers\Auth\SocialiteController::class, 'redirect'])
-    ->middleware(['guest'])
+    ->middleware(['guest', 'throttle:10,1'])
     ->name('auth.google.redirect');
 
 Route::get('auth/google/callback', [App\Http\Controllers\Auth\SocialiteController::class, 'callback'])
-    ->middleware(['guest'])
+    ->middleware(['guest', 'throttle:10,1'])
     ->name('auth.google.callback');
 
 // Non-localized login redirect for middleware
