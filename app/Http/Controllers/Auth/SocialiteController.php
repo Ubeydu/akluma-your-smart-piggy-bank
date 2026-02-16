@@ -46,7 +46,8 @@ class SocialiteController extends Controller
                 ->with('error', __('Google sign-in failed. Please try again.'));
         }
 
-        $existingUser = User::where('email', $googleUser->getEmail())->first();
+        $existingUser = User::where('google_id', $googleUser->getId())->first()
+            ?? User::where('email', $googleUser->getEmail())->first();
 
         if ($existingUser) {
             return $this->handleExistingUser($existingUser, $googleUser);
@@ -62,6 +63,11 @@ class SocialiteController extends Controller
     {
         if (! $user->google_id) {
             $user->google_id = $googleUser->getId();
+        }
+
+        if ($user->email !== $googleUser->getEmail()) {
+            $user->email = $googleUser->getEmail();
+            $user->email_verified_at = now();
         }
 
         if (! $user->hasVerifiedEmail()) {
