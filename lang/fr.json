@@ -552,5 +552,17 @@
   "Verify your email to make sure your savings reminders reach you.": "Vérifiez votre e-mail pour vous assurer que vos rappels d'épargne vous parviennent.",
   "Verify now": "Vérifier maintenant",
   "Return to home page": "Retour à la page d'accueil",
-  "This verification link will expire in :days days.": "Ce lien de vérification expirera dans :days jours."
+  "This verification link will expire in :days days.": "Ce lien de vérification expirera dans :days jours.",
+  "Check your email": "Vérifiez votre e-mail",
+  "We sent a verification link to": "Nous avons envoyé un lien de vérification à",
+  "Don't see it? Check your spam or junk folder.": "Vous ne le voyez pas ? Vérifiez votre dossier spam ou courrier indésirable.",
+  "don't see it? Check your spam or junk folder.": "vous ne le voyez pas ? Vérifiez votre dossier spam ou courrier indésirable.",
+  "A new verification link has been sent to your email address.": "Un nouveau lien de vérification a été envoyé à votre adresse e-mail.",
+  "Still having trouble? Contact us at :email": "Vous avez encore des problèmes ? Contactez-nous à :email",
+  "Wrong email?": "Mauvais e-mail ?",
+  "New email address": "Nouvelle adresse e-mail",
+  "Update & Resend": "Modifier et Renvoyer",
+  "Resend available in": "Renvoi disponible dans",
+  "We couldn't send the verification email right now. Please try again in a few minutes.": "Nous n'avons pas pu envoyer l'e-mail de vérification pour le moment. Veuillez réessayer dans quelques minutes.",
+  "Your email was updated, but we couldn't send the verification email right now. Please try resending in a few minutes.": "Votre e-mail a été mis à jour, mais nous n'avons pas pu envoyer l'e-mail de vérification pour le moment. Veuillez réessayer dans quelques minutes."
 }

@@ -117,6 +117,12 @@ return [
             'fr' => 'email/notification-verification',
         ],
 
+        'email/update-unverified' => [
+            'en' => 'email/update-unverified',
+            'tr' => 'email/dogrulanmamis-guncelle',
+            'fr' => 'email/mettre-a-jour-non-verifie',
+        ],
+
         'confirm-password' => [
             'en' => 'confirm-password',
             'tr' => 'sifre-onayla',

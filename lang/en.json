@@ -291,5 +291,11 @@
   "Verify your email to make sure your savings reminders reach you.": "Verify your email to make sure your savings reminders reach you.",
   "Verify now": "Verify now",
   "Return to home page": "Return to home page",
-  "This verification link will expire in :days days.": "This verification link will expire in :days days."
+  "This verification link will expire in :days days.": "This verification link will expire in :days days.",
+  "Check your email": "Check your email",
+  "We sent a verification link to": "We sent a verification link to",
+  "Don't see it? Check your spam or junk folder.": "Don't see it? Check your spam or junk folder.",
+  "don't see it? Check your spam or junk folder.": "don't see it? Check your spam or junk folder.",
+  "A new verification link has been sent to your email address.": "A new verification link has been sent to your email address.",
+  "Still having trouble? Contact us at :email": "Still having trouble? Contact us at :email"
 }
