@@ -80,6 +80,15 @@ Route::localizedPut('password', [PasswordController::class, 'update'])
     ->middleware(['auth'])
     ->name('localized.password.update');
 
+// Google OAuth routes (non-localized — Google needs fixed callback URLs)
+Route::get('auth/google/redirect', [App\Http\Controllers\Auth\SocialiteController::class, 'redirect'])
+    ->middleware(['guest'])
+    ->name('auth.google.redirect');
+
+Route::get('auth/google/callback', [App\Http\Controllers\Auth\SocialiteController::class, 'callback'])
+    ->middleware(['guest'])
+    ->name('auth.google.callback');
+
 // Non-localized login redirect for middleware
 Route::get('login', function () {
     $locale = Auth::check() ? Auth::user()->language : (session('locale') ?? 'en');
@@ -122,5 +131,4 @@ Route::prefix('{locale}')
             //    Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
         });
-
     });
