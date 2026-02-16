@@ -81,7 +81,7 @@ class SocialiteController extends Controller
      */
     private function handleNewUser(\Laravel\Socialite\Two\User $googleUser): RedirectResponse
     {
-        $locale = session('google_language', session('locale', app()->getLocale()));
+        $locale = session('google_language', session('locale', app()->getLocale())) ?: 'en';
         $timezone = session('google_timezone', 'UTC');
 
         $user = User::forceCreate([
