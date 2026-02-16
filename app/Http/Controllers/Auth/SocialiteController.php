@@ -85,7 +85,7 @@ class SocialiteController extends Controller
         $timezone = session('google_timezone', 'UTC');
 
         $user = User::forceCreate([
-            'name' => $googleUser->getName(),
+            'name' => $googleUser->getName() ?: explode('@', $googleUser->getEmail())[0],
             'email' => $googleUser->getEmail(),
             'password' => null,
             'google_id' => $googleUser->getId(),
