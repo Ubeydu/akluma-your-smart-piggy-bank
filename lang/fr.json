@@ -574,5 +574,6 @@
   "You can set a password anytime using the \"Forgot your password?\" link on the login page.": "Vous pouvez définir un mot de passe à tout moment en utilisant le lien « Mot de passe oublié ? » sur la page de connexion.",
   "Once your account is deleted, all of its resources and data will be permanently deleted. Please type DELETE to confirm.": "Une fois votre compte supprimé, toutes ses ressources et données seront définitivement supprimées. Veuillez taper DELETE pour confirmer.",
   "Type DELETE to confirm": "Tapez DELETE pour confirmer",
-  "Please type DELETE to confirm.": "Veuillez taper DELETE pour confirmer."
+  "Please type DELETE to confirm.": "Veuillez taper DELETE pour confirmer.",
+  "account_suspended_message": "Votre compte a été suspendu. Veuillez nous contacter à contact@akluma.com."
 }

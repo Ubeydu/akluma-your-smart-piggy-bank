@@ -2,6 +2,8 @@
 
 use App\Http\Middleware\ConditionalLayoutMiddleware;
 use App\Http\Middleware\CurrencySwitcher;
+use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\EnsureUserIsNotSuspended;
 use App\Http\Middleware\LocalizedAuthenticateMiddleware;
 use App\Http\Middleware\RouteTrackingMiddleware;
 use App\Http\Middleware\SetLocaleFromUrl;
@@ -27,10 +29,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(RouteTrackingMiddleware::class);
         $middleware->web(append: CurrencySwitcher::class);
 
+        $middleware->web(append: EnsureUserIsNotSuspended::class);
+
         $middleware->alias([
             'conditional.layout' => ConditionalLayoutMiddleware::class,
             'locale' => SetLocaleFromUrl::class,
             'localized.auth' => LocalizedAuthenticateMiddleware::class,
+            'ensure.admin' => EnsureUserIsAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
