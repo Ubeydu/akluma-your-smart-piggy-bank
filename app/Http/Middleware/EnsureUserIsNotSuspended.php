@@ -21,7 +21,7 @@ class EnsureUserIsNotSuspended
 
             app()->setLocale($language);
 
-            return redirect()->route('login')->withErrors([
+            return redirect("/{$language}/login")->withErrors([
                 'email' => __('account_suspended_message'),
             ]);
         }
