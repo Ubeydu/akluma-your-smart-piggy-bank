@@ -297,5 +297,6 @@
   "Don't see it? Check your spam or junk folder.": "Don't see it? Check your spam or junk folder.",
   "don't see it? Check your spam or junk folder.": "don't see it? Check your spam or junk folder.",
   "A new verification link has been sent to your email address.": "A new verification link has been sent to your email address.",
-  "Still having trouble? Contact us at :email": "Still having trouble? Contact us at :email"
+  "Still having trouble? Contact us at :email": "Still having trouble? Contact us at :email",
+  "account_suspended_message": "Your account has been suspended. Please contact us at contact@akluma.com."
 }

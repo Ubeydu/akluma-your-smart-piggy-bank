@@ -576,5 +576,6 @@
   "You can set a password anytime using the \"Forgot your password?\" link on the login page.": "Giriş sayfasındaki \"Şifrenizi mi unuttunuz?\" bağlantısını kullanarak istediğiniz zaman bir şifre belirleyebilirsiniz.",
   "Once your account is deleted, all of its resources and data will be permanently deleted. Please type DELETE to confirm.": "Hesabınız silindiğinde, tüm kaynakları ve verileri kalıcı olarak silinecektir. Onaylamak için lütfen DELETE yazın.",
   "Type DELETE to confirm": "Onaylamak için DELETE yazın",
-  "Please type DELETE to confirm.": "Lütfen onaylamak için DELETE yazın."
+  "Please type DELETE to confirm.": "Lütfen onaylamak için DELETE yazın.",
+  "account_suspended_message": "Hesabınız askıya alınmıştır. Lütfen contact@akluma.com adresinden bizimle iletişime geçin."
 }
