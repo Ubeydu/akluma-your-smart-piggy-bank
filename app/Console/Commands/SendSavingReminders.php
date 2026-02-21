@@ -227,6 +227,13 @@ class SendSavingReminders extends Command
                     return;
                 }
 
+                // Skip if user is suspended
+                if ($user->isSuspended()) {
+                    $this->info("Skipping saving #{$lockedSaving->id}: user is suspended");
+
+                    return;
+                }
+
                 // Skip if already sent
                 $notificationStatuses = json_decode($lockedSaving->notification_statuses, true);
                 if (! is_array($notificationStatuses)) {
