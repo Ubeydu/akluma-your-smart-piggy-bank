@@ -91,7 +91,7 @@
                 @endif
 
                 <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
-                      onsubmit="return confirm('Permanently delete {{ addslashes($user->name) }}? This cannot be undone.')">
+                      onsubmit="return confirm('Permanently delete ' + @js($user->name) + '? This cannot be undone.')">
                     @csrf @method('DELETE')
                     <button type="submit"
                             class="cursor-pointer rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors">

@@ -30,7 +30,8 @@ class GrantAdminAccess extends Command
             return Command::SUCCESS;
         }
 
-        $user->update(['is_admin' => true]);
+        $user->is_admin = true;
+        $user->save();
 
         $this->info("Admin access granted to {$user->name} ({$email}).");
 

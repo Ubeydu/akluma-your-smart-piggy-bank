@@ -39,14 +39,20 @@ class UserController extends Controller
             return back()->with('error', 'You cannot suspend your own account.');
         }
 
-        $user->update(['suspended_at' => now()]);
+        $user->suspended_at = now();
+        $user->save();
 
         return back()->with('success', "User {$user->name} has been suspended.");
     }
 
-    public function unsuspend(User $user): RedirectResponse
+    public function unsuspend(Request $request, User $user): RedirectResponse
     {
-        $user->update(['suspended_at' => null]);
+        if ($user->is($request->user())) {
+            return back()->with('error', 'You cannot unsuspend your own account.');
+        }
+
+        $user->suspended_at = null;
+        $user->save();
 
         return back()->with('success', "User {$user->name} has been unsuspended.");
     }
