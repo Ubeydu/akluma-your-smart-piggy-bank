@@ -4,18 +4,19 @@
     <div class="space-y-4">
 
         {{-- Search --}}
-        <form method="GET" action="{{ route('admin.users.index') }}" class="flex gap-3">
+        <form method="GET" action="{{ route('admin.users.index') }}" class="flex gap-3"
+              x-data="{ search: '{{ request('search') }}' }"
+              x-ref="form">
             <input
                 type="text"
                 name="search"
+                x-model="search"
+                x-on:input.debounce.400ms="$refs.form.submit()"
+                x-init="$el.focus(); $el.setSelectionRange($el.value.length, $el.value.length);"
                 value="{{ request('search') }}"
                 placeholder="Search by name or email…"
                 class="w-80 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm shadow-xs focus:border-violet-500 focus:ring-violet-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500"
             >
-            <button type="submit"
-                    class="cursor-pointer rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 transition-colors">
-                Search
-            </button>
             @if(request('search'))
                 <a href="{{ route('admin.users.index') }}"
                    class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">
