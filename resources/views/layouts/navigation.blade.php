@@ -86,6 +86,12 @@
                         <!-- Currency switch -->
                         <x-currency-dropdown/>
 
+                        @if(auth()->user()?->isAdmin())
+                            <x-dropdown-link href="{{ route('admin.stats') }}">
+                                Admin Panel
+                            </x-dropdown-link>
+                        @endif
+
                         <!-- Get Help Link -->
                         <x-dropdown-link href="#" id="getHelpBtn">
                             {{ __('Get Help') }}
@@ -247,6 +253,12 @@
                     </x-slot>
                 </x-dropdown>
 
+
+                @if(auth()->user()?->isAdmin())
+                    <x-responsive-nav-link href="{{ route('admin.stats') }}">
+                        Admin Panel
+                    </x-responsive-nav-link>
+                @endif
 
                 <!-- Get Help Link (Mobile) -->
                 <x-responsive-nav-link href="#" id="getHelpBtnMobile">
