@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use App\Mail\SavingReminderMail;
-use App\Models\ScheduledSaving;
 use App\Models\PiggyBank;
+use App\Models\ScheduledSaving;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -59,7 +59,6 @@ class SendSavingReminderJob implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  \App\Models\ScheduledSaving  $saving
      * @return void
      */
     public function __construct(ScheduledSaving $saving)
@@ -83,12 +82,22 @@ class SendSavingReminderJob implements ShouldQueue
 
         // Log::info('📬 Reminder Job started for user ID ' . $this->userId . ' and saving ID ' . $this->saving->id);
 
-        if (!$user || !$piggyBank) {
-            Log::error("Could not find user or piggy bank for saving reminder", [
+        if (! $user || ! $piggyBank) {
+            Log::error('Could not find user or piggy bank for saving reminder', [
                 'saving_id' => $saving->id,
                 'user_id' => $this->userId,
-                'piggy_bank_id' => $this->piggyBankId
+                'piggy_bank_id' => $this->piggyBankId,
             ]);
+
+            return;
+        }
+
+        if ($user->isSuspended()) {
+            Log::info('Skipping saving reminder: user is suspended', [
+                'user_id' => $user->id,
+                'saving_id' => $saving->id,
+            ]);
+
             return;
         }
 
@@ -118,11 +127,11 @@ class SendSavingReminderJob implements ShouldQueue
 
         // Update notification status after successful send
         $notificationStatuses = json_decode($saving->notification_statuses, true);
-        if (!is_array($notificationStatuses)) {
+        if (! is_array($notificationStatuses)) {
             $notificationStatuses = [
                 'email' => ['sent' => false, 'sent_at' => null],
                 'sms' => ['sent' => false, 'sent_at' => null],
-                'push' => ['sent' => false, 'sent_at' => null]
+                'push' => ['sent' => false, 'sent_at' => null],
             ];
         }
 
@@ -132,11 +141,11 @@ class SendSavingReminderJob implements ShouldQueue
 
         // Update attempt count
         $notificationAttempts = json_decode($saving->notification_attempts, true);
-        if (!is_array($notificationAttempts)) {
+        if (! is_array($notificationAttempts)) {
             $notificationAttempts = [
                 'email' => 0,
                 'sms' => 0,
-                'push' => 0
+                'push' => 0,
             ];
         }
         $notificationAttempts['email'] += 1;
@@ -155,7 +164,6 @@ class SendSavingReminderJob implements ShouldQueue
     /**
      * Handle a job failure.
      *
-     * @param  \Throwable  $exception
      * @return void
      */
     public function failed(Throwable $exception)
@@ -169,11 +177,11 @@ class SendSavingReminderJob implements ShouldQueue
 
         // Only update attempt count in case of failure, don't mark as sent
         $notificationAttempts = json_decode($saving->notification_attempts, true);
-        if (!is_array($notificationAttempts)) {
+        if (! is_array($notificationAttempts)) {
             $notificationAttempts = [
                 'email' => 0,
                 'sms' => 0,
-                'push' => 0
+                'push' => 0,
             ];
         }
         $notificationAttempts['email'] += 1;
@@ -183,12 +191,12 @@ class SendSavingReminderJob implements ShouldQueue
 
         $saving->save();
 
-        Log::error("Failed to send saving reminder email", [
+        Log::error('Failed to send saving reminder email', [
             'saving_id' => $saving->id,
             'user_id' => $this->userId,
             'piggy_bank_id' => $this->piggyBankId,
             'exception' => $exception->getMessage(),
-            'attempt' => $notificationAttempts['email']
+            'attempt' => $notificationAttempts['email'],
         ]);
     }
 }

@@ -57,10 +57,22 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
+            'suspended_at' => 'datetime',
             'notification_preferences' => 'array',
             'accepted_terms_at' => 'datetime',
             'accepted_privacy_at' => 'datetime',
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->is_admin === true;
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->suspended_at !== null;
     }
 
     /**

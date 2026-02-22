@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Middleware\ConditionalLayoutMiddleware;
+use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CurrencySwitcher;
+use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\EnsureUserIsNotSuspended;
 use App\Http\Middleware\LocalizedAuthenticateMiddleware;
 use App\Http\Middleware\RouteTrackingMiddleware;
 use App\Http\Middleware\SetLocaleFromUrl;
@@ -14,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        then: function () {
+            Route::middleware('web')->group(base_path('routes/admin.php'));
+        },
     )
     ->withMiddleware(function (Middleware $middleware) {
         // Handle www to non-www redirect FIRST before any other middleware
@@ -27,10 +33,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(RouteTrackingMiddleware::class);
         $middleware->web(append: CurrencySwitcher::class);
 
+        $middleware->web(append: EnsureUserIsNotSuspended::class);
+
         $middleware->alias([
             'conditional.layout' => ConditionalLayoutMiddleware::class,
             'locale' => SetLocaleFromUrl::class,
             'localized.auth' => LocalizedAuthenticateMiddleware::class,
+            'ensure.admin' => EnsureUserIsAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
