@@ -16,7 +16,7 @@
                     {{ strtoupper(substr($user->name, 0, 1)) }}
                 </div>
                 <div>
-                    <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white flex flex-wrap items-center gap-2">
                         {{ $user->name }}
                         @if($user->isAdmin())
                             <span class="inline-flex items-center rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">Admin</span>
@@ -34,7 +34,7 @@
                 </div>
             </div>
 
-            <dl class="mt-6 grid grid-cols-2 gap-4 border-t border-gray-100 pt-6 dark:border-gray-800">
+            <dl class="mt-6 grid grid-cols-1 gap-4 border-t border-gray-100 pt-6 sm:grid-cols-2 dark:border-gray-800">
                 <div>
                     <dt class="text-xs font-medium uppercase text-gray-400">Joined</dt>
                     <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $user->created_at->format('M j, Y') }}</dd>

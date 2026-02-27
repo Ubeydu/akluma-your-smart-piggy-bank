@@ -3,6 +3,11 @@
 
     <div class="space-y-4">
 
+        {{-- User counts --}}
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+            {{ number_format($totalUsers) }} total · {{ number_format($activeUsers) }} active
+        </p>
+
         {{-- Search --}}
         <form method="GET" action="{{ route('admin.users.index') }}" class="flex gap-3"
               x-data="{ search: '{{ request('search') }}' }"
@@ -15,7 +20,7 @@
                 x-init="$el.focus(); $el.setSelectionRange($el.value.length, $el.value.length);"
                 value="{{ request('search') }}"
                 placeholder="Search by name or email…"
-                class="w-80 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm shadow-xs focus:border-violet-500 focus:ring-violet-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500"
+                class="w-full sm:w-80 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm shadow-xs focus:border-violet-500 focus:ring-violet-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500"
             >
             @if(request('search'))
                 <a href="{{ route('admin.users.index') }}"
@@ -26,7 +31,7 @@
         </form>
 
         {{-- Table --}}
-        <div class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+        <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
                 <thead class="bg-gray-50 dark:bg-gray-800/50">
                     <tr>
