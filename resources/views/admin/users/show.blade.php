@@ -53,11 +53,11 @@
                 </div>
                 <div>
                     <dt class="text-xs font-medium uppercase text-gray-400">Piggy Banks</dt>
-                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $user->piggy_banks_count }}</dd>
+                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $user->piggy_banks_count }} total · {{ $user->active_piggy_banks_count }} active</dd>
                 </div>
                 <div>
                     <dt class="text-xs font-medium uppercase text-gray-400">Vaults</dt>
-                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $user->vaults_count }}</dd>
+                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $user->vaults_count }} total · {{ $user->connected_piggy_banks_count }} active connected</dd>
                 </div>
                 @if($user->isSuspended())
                     <div class="col-span-2">

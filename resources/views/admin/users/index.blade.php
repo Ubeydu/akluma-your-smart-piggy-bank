@@ -33,13 +33,15 @@
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">User</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Joined</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Language</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Piggy Banks</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Status</th>
                         <th class="px-6 py-3"></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                     @forelse($users as $user)
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors cursor-pointer"
+                            onclick="window.location='{{ route('admin.users.show', $user) }}'">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="flex size-9 shrink-0 items-center justify-center rounded-full bg-violet-100 text-sm font-bold text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">
@@ -58,6 +60,15 @@
                                                 <x-google-icon class="size-3.5 shrink-0" title="Google sign-in" />
                                             @endif
                                         </p>
+                                        @if(!$user->google_id)
+                                            <p class="text-xs text-gray-400 dark:text-gray-500">
+                                                @if($user->email_verified_at)
+                                                    Verified: {{ $user->email_verified_at->format('M j, Y') }}
+                                                @else
+                                                    <span class="text-amber-500 dark:text-amber-400">Not verified</span>
+                                                @endif
+                                            </p>
+                                        @endif
                                     </div>
                                 </div>
                             </td>
@@ -66,6 +77,10 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 uppercase">
                                 {{ $user->language ?? '—' }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-gray-900 dark:text-white">{{ $user->piggy_banks_count }} total · {{ $user->active_piggy_banks_count }} active</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500">{{ $user->connected_piggy_banks_count }} active in {{ $user->vaults_count }} {{ Str::plural('vault', $user->vaults_count) }}</p>
                             </td>
                             <td class="px-6 py-4">
                                 @if($user->isSuspended())
@@ -87,7 +102,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
+                            <td colspan="6" class="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
                                 No users found.
                             </td>
                         </tr>
