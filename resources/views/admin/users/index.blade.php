@@ -5,7 +5,7 @@
 
         {{-- User counts --}}
         <p class="text-sm text-gray-500 dark:text-gray-400">
-            {{ number_format($totalUsers) }} total · {{ number_format($activeUsers) }} active
+            {{ number_format($totalUsers) }} {{ Str::plural('user', $totalUsers) }} · {{ number_format($activeUsers) }} active
         </p>
 
         {{-- Search --}}

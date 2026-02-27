@@ -29,10 +29,15 @@ class UserController extends Controller
             ->paginate(25)
             ->withQueryString();
 
-        $totalUsers = User::count();
-        $activeUsers = User::whereNull('suspended_at')->count();
+        $userCounts = User::query()->selectRaw(
+            'COUNT(*) as total, COUNT(CASE WHEN suspended_at IS NULL THEN 1 END) as active'
+        )->first();
 
-        return view('admin.users.index', compact('users', 'totalUsers', 'activeUsers'));
+        return view('admin.users.index', [
+            'users' => $users,
+            'totalUsers' => $userCounts->total,
+            'activeUsers' => $userCounts->active,
+        ]);
     }
 
     public function show(User $user): View
