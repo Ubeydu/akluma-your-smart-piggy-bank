@@ -157,7 +157,7 @@ test('user list shows email verification for non-google users', function () {
 });
 
 test('user list does not show email verification for google users', function () {
-    $admin = User::factory()->admin()->create();
+    $admin = User::factory()->admin()->create(['google_id' => '987654321']);
     User::factory()->create([
         'google_id' => '123456789',
         'email_verified_at' => now(),
