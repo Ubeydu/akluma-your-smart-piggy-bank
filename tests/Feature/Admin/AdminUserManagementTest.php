@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\PiggyBank;
 use App\Models\User;
+use App\Models\Vault;
 
 test('admin sees all users on the users page', function () {
     $admin = User::factory()->admin()->create();
@@ -100,4 +102,70 @@ test('regular user cannot delete another user', function () {
     $target = User::factory()->create();
 
     $this->actingAs($user)->delete("/admin/users/{$target->id}")->assertForbidden();
+});
+
+test('user list shows piggy bank and vault counts', function () {
+    $admin = User::factory()->admin()->create();
+    $user = User::factory()->create();
+    $vault = Vault::factory()->create(['user_id' => $user->id]);
+
+    PiggyBank::factory()->active()->create(['user_id' => $user->id]);
+    PiggyBank::factory()->active()->create(['user_id' => $user->id, 'vault_id' => $vault->id]);
+    PiggyBank::factory()->paused()->create(['user_id' => $user->id]);
+
+    $response = $this->actingAs($admin)->get('/admin/users');
+
+    $response->assertOk();
+    $response->assertSeeText('3 total');
+    $response->assertSeeText('2 active');
+    $response->assertSeeText('1 active in 1 vault');
+});
+
+test('user detail shows piggy bank and vault counts', function () {
+    $admin = User::factory()->admin()->create();
+    $user = User::factory()->create();
+    $vault = Vault::factory()->create(['user_id' => $user->id]);
+
+    PiggyBank::factory()->active()->create(['user_id' => $user->id]);
+    PiggyBank::factory()->active()->create(['user_id' => $user->id, 'vault_id' => $vault->id]);
+    PiggyBank::factory()->paused()->create(['user_id' => $user->id]);
+
+    $response = $this->actingAs($admin)->get("/admin/users/{$user->id}");
+
+    $response->assertOk();
+    $response->assertSeeText('3 total');
+    $response->assertSeeText('2 active');
+    $response->assertSeeText('1 active connected');
+});
+
+test('user list shows email verification for non-google users', function () {
+    $admin = User::factory()->admin()->create();
+    $verified = User::factory()->create([
+        'google_id' => null,
+        'email_verified_at' => now()->subDays(30),
+    ]);
+    $unverified = User::factory()->create([
+        'google_id' => null,
+        'email_verified_at' => null,
+    ]);
+
+    $response = $this->actingAs($admin)->get('/admin/users');
+
+    $response->assertOk();
+    $response->assertSeeText('Verified:');
+    $response->assertSeeText('Not verified');
+});
+
+test('user list does not show email verification for google users', function () {
+    $admin = User::factory()->admin()->create(['google_id' => '987654321']);
+    User::factory()->create([
+        'google_id' => '123456789',
+        'email_verified_at' => now(),
+    ]);
+
+    $response = $this->actingAs($admin)->get('/admin/users');
+
+    $response->assertOk();
+    $response->assertDontSeeText('Verified:');
+    $response->assertDontSeeText('Not verified');
 });

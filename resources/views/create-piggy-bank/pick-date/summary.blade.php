@@ -2,7 +2,7 @@
 {{--    @if(request()->has('debug')) @dump(session()->all()) @endif--}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-900 leading-tight">
-            {{ __('Create New Piggy Bank') }}
+            {{ __('Create Piggy Bank') }}
         </h2>
     </x-slot>
 
@@ -303,11 +303,11 @@
                                         @csrf
                                         @if($activePiggyBanksCount >= $maxActivePiggyBanks)
                                             <x-primary-button type="button" disabled class="w-[200px] sm:w-auto justify-center opacity-50 cursor-not-allowed">
-                                                {{ __('Create New Piggy Bank') }}
+                                                {{ __('Create Piggy Bank') }}
                                             </x-primary-button>
                                         @else
                                             <x-primary-button type="submit" class="w-[200px] sm:w-auto justify-center">
-                                                {{ __('Create New Piggy Bank') }}
+                                                {{ __('Create Piggy Bank') }}
                                             </x-primary-button>
                                         @endif
                                     </form>
