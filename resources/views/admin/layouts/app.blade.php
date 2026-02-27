@@ -9,23 +9,47 @@
 </head>
 <body class="h-full bg-gray-50 dark:bg-gray-950 font-sans antialiased">
 
-<div class="flex h-full min-h-screen">
+<div class="flex h-full min-h-screen" x-data="{ sidebarOpen: false }">
+
+    {{-- Mobile backdrop --}}
+    <div x-show="sidebarOpen"
+         x-transition:enter="transition-opacity duration-300 ease-out"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition-opacity duration-200 ease-in"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click="sidebarOpen = false"
+         class="fixed inset-0 z-40 bg-black/50 lg:hidden"
+         style="display: none;">
+    </div>
 
     {{-- Sidebar --}}
-    <aside class="flex w-64 shrink-0 flex-col bg-violet-700 bg-linear-to-b from-violet-600 via-purple-600 to-fuchsia-600 dark:from-violet-900 dark:via-purple-900 dark:to-fuchsia-900">
+    <aside x-data="{ ready: false }"
+           x-init="$nextTick(() => ready = true)"
+           class="fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col bg-violet-700 bg-linear-to-b from-violet-600 via-purple-600 to-fuchsia-600 dark:from-violet-900 dark:via-purple-900 dark:to-fuchsia-900 lg:static lg:translate-x-0 lg:shrink-0"
+           :class="[sidebarOpen ? 'translate-x-0' : '-translate-x-full', ready ? 'transition-transform duration-300 ease-in-out' : '']">
 
-        {{-- Logo --}}
-        <div class="flex h-16 items-center gap-3 px-6">
-            <x-application-logo class="h-8 w-8 shrink-0 text-white" />
-            <div>
-                <p class="text-sm font-bold text-white">Akluma</p>
-                <p class="text-xs font-medium text-white/70">Admin Panel</p>
+        {{-- Logo + mobile close --}}
+        <div class="flex h-16 items-center justify-between px-6">
+            <div class="flex items-center gap-3">
+                <x-application-logo class="h-8 w-8 shrink-0 text-white" />
+                <div>
+                    <p class="text-sm font-bold text-white">Akluma</p>
+                    <p class="text-xs font-medium text-white/70">Admin Panel</p>
+                </div>
             </div>
+            <button @click="sidebarOpen = false" class="cursor-pointer text-white/70 hover:text-white lg:hidden">
+                <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
 
         {{-- Nav --}}
         <nav class="flex-1 space-y-1 px-3 py-4">
             <a href="{{ route('admin.stats') }}"
+               @click="sidebarOpen = false"
                class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                       {{ request()->routeIs('admin.stats') ? 'bg-white/30 text-white font-semibold border-l-2 border-white' : 'text-purple-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="size-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,6 +60,7 @@
             </a>
 
             <a href="{{ route('admin.users.index') }}"
+               @click="sidebarOpen = false"
                class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
                       {{ request()->routeIs('admin.users.*') ? 'bg-white/30 text-white font-semibold border-l-2 border-white' : 'text-purple-100 hover:bg-white/10 hover:text-white' }}">
                 <svg class="size-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,8 +109,15 @@
     <div class="flex flex-1 flex-col overflow-hidden">
 
         {{-- Top bar --}}
-        <header class="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-6 dark:border-gray-800 dark:bg-gray-900">
-            <h1 class="text-lg font-semibold text-gray-900 dark:text-white">@yield('title', 'Admin Panel')</h1>
+        <header class="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6 dark:border-gray-800 dark:bg-gray-900">
+            <div class="flex items-center gap-3">
+                <button @click="sidebarOpen = true" class="cursor-pointer text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 lg:hidden">
+                    <svg class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+                <h1 class="text-lg font-semibold text-gray-900 dark:text-white">@yield('title', 'Admin Panel')</h1>
+            </div>
         </header>
 
         {{-- Flash messages --}}

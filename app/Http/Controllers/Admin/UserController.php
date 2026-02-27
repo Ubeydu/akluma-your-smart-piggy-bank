@@ -13,6 +13,12 @@ class UserController extends Controller
     public function index(Request $request): View
     {
         $users = User::query()
+            ->withCount([
+                'piggyBanks',
+                'piggyBanks as active_piggy_banks_count' => fn ($q) => $q->where('status', 'active'),
+                'vaults',
+                'piggyBanks as connected_piggy_banks_count' => fn ($q) => $q->whereNotNull('vault_id')->where('status', 'active'),
+            ])
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -23,12 +29,25 @@ class UserController extends Controller
             ->paginate(25)
             ->withQueryString();
 
-        return view('admin.users.index', compact('users'));
+        $userCounts = User::query()->selectRaw(
+            'COUNT(*) as total, COUNT(CASE WHEN suspended_at IS NULL THEN 1 END) as active'
+        )->first();
+
+        return view('admin.users.index', [
+            'users' => $users,
+            'totalUsers' => $userCounts->total,
+            'activeUsers' => $userCounts->active,
+        ]);
     }
 
     public function show(User $user): View
     {
-        $user->loadCount(['piggyBanks', 'vaults']);
+        $user->loadCount([
+            'piggyBanks',
+            'piggyBanks as active_piggy_banks_count' => fn ($q) => $q->where('status', 'active'),
+            'vaults',
+            'piggyBanks as connected_piggy_banks_count' => fn ($q) => $q->whereNotNull('vault_id')->where('status', 'active'),
+        ]);
 
         return view('admin.users.show', compact('user'));
     }

@@ -13,7 +13,7 @@ $currentPlaceholder = $placeholders[$language];
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-900 leading-tight">
-            {{ __('Create New Piggy Bank') }}
+            {{ __('Create Piggy Bank') }}
         </h2>
     </x-slot>
 
