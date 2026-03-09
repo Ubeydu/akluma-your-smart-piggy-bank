@@ -84,6 +84,31 @@ class PiggyBank extends Model
         return $this->type === 'classic';
     }
 
+    /**
+     * @param  array{name: string, currency: string, link: ?string, details: ?string}  $data
+     * @param  array{image: ?string, title: ?string, description: ?string, url: ?string}  $preview
+     */
+    public static function createClassic(int $userId, array $data, array $preview = []): self
+    {
+        return self::create([
+            'user_id' => $userId,
+            'type' => 'classic',
+            'name' => $data['name'],
+            'currency' => $data['currency'],
+            'link' => $data['link'] ?? null,
+            'details' => $data['details'] ?? null,
+            'price' => 0,
+            'target_amount' => 0,
+            'total_savings' => 0,
+            'final_total' => 0,
+            'remaining_amount' => 0,
+            'preview_image' => $preview['image'] ?? 'images/piggy_banks/default_piggy_bank.png',
+            'preview_title' => $preview['title'] ?? null,
+            'preview_description' => $preview['description'] ?? null,
+            'preview_url' => $preview['url'] ?? null,
+        ]);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

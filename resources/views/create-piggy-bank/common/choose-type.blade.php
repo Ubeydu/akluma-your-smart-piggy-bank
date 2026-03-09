@@ -9,8 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xs rounded-lg">
                 <div class="py-4 px-6">
-                    <h1 class="text-lg font-semibold mb-2">{{ __('What kind of piggy bank would you like?') }}</h1>
-                    <p class="text-gray-600 mb-6">{{ __('Choose how you want to save') }}</p>
+                    <h1 class="text-lg font-semibold mb-6">{{ __('What kind of piggy bank would you like?') }}</h1>
 
                     <div class="grid gap-6 mb-6">
                         {{-- Classic Piggy Bank --}}

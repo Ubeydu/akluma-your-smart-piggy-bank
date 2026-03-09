@@ -88,6 +88,97 @@ class PiggyBankCreateController extends Controller
     }
 
     /**
+     * Display the classic piggy bank creation form.
+     */
+    public function classicForm(Request $request)
+    {
+        $activePiggyBanksCount = 0;
+        $maxActivePiggyBanks = PiggyBank::MAX_ACTIVE_PIGGY_BANKS;
+
+        if (auth()->check()) {
+            $activePiggyBanksCount = PiggyBank::where('user_id', auth()->id())
+                ->where('status', 'active')
+                ->count();
+        }
+
+        return view('create-piggy-bank.classic.form', compact(
+            'activePiggyBanksCount',
+            'maxActivePiggyBanks',
+        ));
+    }
+
+    /**
+     * Store a new classic piggy bank.
+     */
+    public function storeClassicPiggyBank(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'currency' => 'required|string|size:3',
+            'link' => 'nullable|url|max:255',
+            'details' => 'nullable|string|max:5000',
+        ]);
+
+        $activePiggyBanksCount = PiggyBank::where('user_id', auth()->id())
+            ->where('status', 'active')
+            ->count();
+
+        if ($activePiggyBanksCount >= PiggyBank::MAX_ACTIVE_PIGGY_BANKS) {
+            return back()->with('error', __('max_piggy_banks_reached'));
+        }
+
+        $preview = $this->resolveLinkPreview($validated['link'] ?? null);
+        $piggyBank = PiggyBank::createClassic(auth()->id(), $validated, $preview);
+
+        $request->session()->forget('piggy_bank_type');
+
+        return redirect(localizedRoute('localized.piggy-banks.index', ['from_creation' => true]))
+            ->with('newPiggyBankId', $piggyBank->id)
+            ->with('newPiggyBankCreatedTime', time())
+            ->with('success', __('classic_piggy_bank_created_success'))
+            ->with('success_duration', 10000);
+    }
+
+    public function stashClassicData(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'currency' => 'required|string|size:3',
+            'link' => 'nullable|url|max:255',
+            'details' => 'nullable|string|max:5000',
+            'redirect_to' => 'required|in:login,register',
+        ]);
+
+        $request->session()->put('pending_classic_piggy_bank', [
+            'name' => $validated['name'],
+            'currency' => $validated['currency'],
+            'link' => $validated['link'] ?? null,
+            'details' => $validated['details'] ?? null,
+        ]);
+
+        $route = $validated['redirect_to'] === 'login'
+            ? 'localized.login'
+            : 'localized.register';
+
+        return redirect(localizedRoute($route));
+    }
+
+    private function resolveLinkPreview(?string $link): array
+    {
+        $preview = ['title' => null, 'description' => null, 'image' => null, 'url' => null];
+
+        if (! empty($link)) {
+            try {
+                $preview = $this->linkPreviewService->getPreviewData($link);
+            } catch (Exception $e) {
+                $preview['url'] = $link;
+            }
+        }
+
+        return $preview;
+    }
+
+    /**
      * Step 1: Display the initial form (Screen 1).
      */
     public function step1(Request $request)
