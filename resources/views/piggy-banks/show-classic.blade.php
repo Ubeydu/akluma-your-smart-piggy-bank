@@ -334,6 +334,10 @@
                             <div id="money-success" class="hidden mb-4 p-3 bg-green-100 border border-green-300 rounded-lg text-green-800 text-sm font-medium transition-all duration-300"></div>
                             <div id="money-error" class="hidden mb-4 p-3 bg-red-100 border border-red-300 rounded-lg text-red-800 text-sm font-medium"></div>
 
+                            @php
+                                $currencyHasDecimals = \App\Helpers\CurrencyHelper::hasDecimalPlaces($piggyBank->currency);
+                            @endphp
+
                             @if(!in_array($piggyBank->status, ['done', 'cancelled']))
                             <div class="flex gap-2 mb-4 p-1 bg-white rounded-lg border border-gray-200 inline-flex">
                                 <button type="button"
@@ -366,14 +370,15 @@
                                         id="money-amount"
                                         name="amount"
                                         type="text"
-                                        inputmode="decimal"
-                                        pattern="^\d{1,10}(\.\d{1,2})?$"
+                                        inputmode="{{ $currencyHasDecimals ? 'decimal' : 'numeric' }}"
+                                        pattern="{{ $currencyHasDecimals ? '^\d{1,10}(\.\d{1,2})?$' : '^\d{1,12}$' }}"
                                         maxlength="12"
                                         required
                                         autocomplete="off"
-                                        placeholder="0.00"
+                                        placeholder="{{ $currencyHasDecimals ? '0.00' : '0' }}"
                                         class="block w-full text-xl font-semibold rounded-lg border-gray-300 shadow-xs focus:border-green-500 focus:ring-green-500 py-3 px-4"
                                         {{ in_array($piggyBank->status, ['done', 'cancelled']) ? 'disabled' : '' }}
+                                        @if($currencyHasDecimals)
                                         oninput="
                                             let v = this.value.replace(/[^0-9.]/g, '');
                                             v = v.replace(/^0+(\d)/, '$1');
@@ -387,6 +392,13 @@
                                             }
                                             this.value = v;
                                         "
+                                        @else
+                                        oninput="
+                                            let v = this.value.replace(/[^0-9]/g, '');
+                                            v = v.replace(/^0+(\d)/, '$1');
+                                            this.value = v.slice(0, 12);
+                                        "
+                                        @endif
                                     />
                                 </div>
 
@@ -425,13 +437,8 @@
 
     <script>
         window.piggyBankTranslations = {
-            active: "{{ __('active') }}",
-            done: "{{ __('done') }}",
-            cancelled: "{{ __('cancelled') }}",
             confirm_done: "{{ __('Are you sure you want to mark this piggy bank as done?') }}",
             confirm_cancel: "{{ __('Are you sure you want to cancel this piggy bank?') }}",
-            piggy_bank_done: "{{ __('Piggy bank marked as done.') }}",
-            piggy_bank_cancelled: "{{ __('Piggy bank has been cancelled.') }}",
         };
     </script>
 

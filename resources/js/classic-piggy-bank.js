@@ -1,126 +1,99 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    const statusSelect = document.querySelector('[data-piggy-bank-id]');
-    if (!statusSelect) {
-        return;
-    }
-
-    const piggyBankId = statusSelect.dataset.piggyBankId;
-    const initialStatus = statusSelect.dataset.initialStatus;
     const currentLocale = window.location.pathname.split('/')[1];
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-    statusSelect.addEventListener('change', function () {
-        const newStatus = this.value;
+    // Status change handling (only present when piggy bank is active)
+    const statusSelect = document.querySelector('[data-piggy-bank-id]');
 
-        if (newStatus === initialStatus) {
-            return;
+    if (statusSelect) {
+        const piggyBankId = statusSelect.dataset.piggyBankId;
+        const initialStatus = statusSelect.dataset.initialStatus;
+
+        statusSelect.addEventListener('change', function () {
+            const newStatus = this.value;
+
+            if (newStatus === initialStatus) {
+                return;
+            }
+
+            let confirmMessage = '';
+            if (newStatus === 'done') {
+                confirmMessage = window.piggyBankTranslations.confirm_done;
+            } else if (newStatus === 'cancelled') {
+                confirmMessage = window.piggyBankTranslations.confirm_cancel;
+            }
+
+            this.value = initialStatus;
+
+            const dialogContainer = this.closest('[x-data]');
+            if (dialogContainer && dialogContainer._x_dataStack) {
+                const data = dialogContainer._x_dataStack[0];
+                data.showConfirmStatus = true;
+                data.statusChangeMessage = confirmMessage;
+                data.statusChangeAction = async function () {
+                    await executeStatusChange(newStatus);
+                };
+            }
+        });
+
+        async function executeStatusChange(newStatus) {
+            let endpoint;
+            if (newStatus === 'done') {
+                endpoint = getRoute('localized.piggy-banks.update-status-done');
+            } else if (newStatus === 'cancelled') {
+                endpoint = getRoute('localized.piggy-banks.update-status-cancelled');
+            }
+
+            if (!endpoint) {
+                return;
+            }
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to update status');
+                }
+
+                // Reload the page so the server re-renders the correct state
+                const showUrl = window.location.pathname;
+                window.location.href = showUrl + '?status_updated=' + encodeURIComponent(data.status);
+
+            } catch (error) {
+                alert('Failed to update piggy bank status.');
+                statusSelect.value = initialStatus;
+            }
         }
 
-        let confirmMessage = '';
-        if (newStatus === 'done') {
-            confirmMessage = window.piggyBankTranslations.confirm_done;
-        } else if (newStatus === 'cancelled') {
-            confirmMessage = window.piggyBankTranslations.confirm_cancel;
-        }
+        function getRoute(routeName) {
+            const localizedRouteName = `${routeName}.${currentLocale}`;
+            if (typeof Ziggy !== 'undefined' && Ziggy.routes[localizedRouteName]) {
+                const routeUri = Ziggy.routes[localizedRouteName].uri;
+                return '/' + routeUri
+                    .replace('{locale}', currentLocale)
+                    .replace('{piggy_id}', piggyBankId);
+            }
 
-        this.value = initialStatus;
-
-        const dialogContainer = this.closest('[x-data]');
-        if (dialogContainer && dialogContainer._x_dataStack) {
-            const data = dialogContainer._x_dataStack[0];
-            data.showConfirmStatus = true;
-            data.statusChangeMessage = confirmMessage;
-            data.statusChangeAction = async function () {
-                await executeStatusChange(newStatus);
+            const routeMap = {
+                'localized.piggy-banks.update-status-done': `/${currentLocale}/piggy-banks/${piggyBankId}/update-status-done`,
+                'localized.piggy-banks.update-status-cancelled': `/${currentLocale}/piggy-banks/${piggyBankId}/update-status-cancelled`,
             };
-        }
-    });
-
-    async function executeStatusChange(newStatus) {
-        let endpoint;
-        if (newStatus === 'done') {
-            endpoint = getRoute('localized.piggy-banks.update-status-done');
-        } else if (newStatus === 'cancelled') {
-            endpoint = getRoute('localized.piggy-banks.update-status-cancelled');
-        }
-
-        if (!endpoint) {
-            return;
-        }
-
-        try {
-            const response = await fetch(endpoint, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ status: newStatus })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Failed to update status');
-            }
-
-            updateStatusUI(data.status);
-            refreshFinancialSummary();
-
-            if (data.message) {
-                showFlashMessage(data.message);
-            }
-
-        } catch (error) {
-            alert('Failed to update piggy bank status.');
-            statusSelect.value = initialStatus;
+            return routeMap[routeName] || null;
         }
     }
 
-    function getRoute(routeName) {
-        const localizedRouteName = `${routeName}.${currentLocale}`;
-        if (typeof Ziggy !== 'undefined' && Ziggy.routes[localizedRouteName]) {
-            const routeUri = Ziggy.routes[localizedRouteName].uri;
-            return '/' + routeUri
-                .replace('{locale}', currentLocale)
-                .replace('{piggy_id}', piggyBankId);
-        }
-
-        const routeMap = {
-            'localized.piggy-banks.update-status-done': `/${currentLocale}/piggy-banks/${piggyBankId}/update-status-done`,
-            'localized.piggy-banks.update-status-cancelled': `/${currentLocale}/piggy-banks/${piggyBankId}/update-status-cancelled`,
-        };
-        return routeMap[routeName] || null;
-    }
-
-    function updateStatusUI(newStatus) {
-        const statusTextEl = document.getElementById(`status-text-${piggyBankId}`);
-        if (statusTextEl) {
-            const translated = window.piggyBankTranslations[newStatus] || newStatus;
-            statusTextEl.textContent = translated.charAt(0).toUpperCase() + translated.slice(1);
-        }
-
-        if (['done', 'cancelled'].includes(newStatus)) {
-            statusSelect.disabled = true;
-            statusSelect.classList.add('opacity-50', 'cursor-not-allowed');
-
-            const manualSection = document.getElementById('manual-money-section');
-            if (manualSection) {
-                manualSection.classList.add('opacity-50');
-                const toggleBtn = document.getElementById('toggle-manual-money');
-                if (toggleBtn) {
-                    toggleBtn.disabled = true;
-                }
-                const collapsible = document.getElementById('manual-money-collapsible');
-                if (collapsible) {
-                    collapsible.classList.add('hidden');
-                }
-            }
-        }
-    }
-
+    // Financial summary refresh (used by money form)
     function refreshFinancialSummary() {
         const container = document.getElementById('financial-summary-container');
         if (!container) {
@@ -143,23 +116,6 @@ document.addEventListener('DOMContentLoaded', function () {
             container.outerHTML = html;
         })
         .catch(() => {});
-    }
-
-    function showFlashMessage(message) {
-        const existing = document.querySelector('.classic-flash-message');
-        if (existing) {
-            existing.remove();
-        }
-
-        const flash = document.createElement('div');
-        flash.className = 'classic-flash-message fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-opacity duration-500';
-        flash.textContent = message;
-        document.body.appendChild(flash);
-
-        setTimeout(() => {
-            flash.classList.add('opacity-0');
-            setTimeout(() => flash.remove(), 500);
-        }, 5000);
     }
 
     // Money form AJAX submission

@@ -109,6 +109,29 @@ class PiggyBank extends Model
         ]);
     }
 
+    /**
+     * Create a classic piggy bank from session-stashed guest data, if present.
+     */
+    public static function createClassicFromSession(int $userId): ?self
+    {
+        if (! session()->has('pending_classic_piggy_bank')) {
+            return null;
+        }
+
+        $data = session()->pull('pending_classic_piggy_bank');
+        $preview = ['title' => null, 'description' => null, 'image' => null, 'url' => null];
+
+        if (! empty($data['link'])) {
+            try {
+                $preview = app(\App\Services\LinkPreviewService::class)->getPreviewData($data['link']);
+            } catch (\Exception $e) {
+                $preview['url'] = $data['link'];
+            }
+        }
+
+        return static::createClassic($userId, $data, $preview);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

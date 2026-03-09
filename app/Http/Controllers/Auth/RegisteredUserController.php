@@ -6,7 +6,6 @@ use App\Helpers\RouteHelper;
 use App\Http\Controllers\Controller;
 use App\Models\PiggyBank;
 use App\Models\User;
-use App\Services\LinkPreviewService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -69,20 +68,9 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        if (session()->has('pending_classic_piggy_bank')) {
-            $data = session()->pull('pending_classic_piggy_bank');
-            $preview = ['title' => null, 'description' => null, 'image' => null, 'url' => null];
+        $piggyBank = PiggyBank::createClassicFromSession($user->id);
 
-            if (! empty($data['link'])) {
-                try {
-                    $preview = app(LinkPreviewService::class)->getPreviewData($data['link']);
-                } catch (\Exception $e) {
-                    $preview['url'] = $data['link'];
-                }
-            }
-
-            $piggyBank = PiggyBank::createClassic($user->id, $data, $preview);
-
+        if ($piggyBank) {
             return redirect(RouteHelper::localizedRoute('localized.piggy-banks.index'))
                 ->with('newPiggyBankId', $piggyBank->id)
                 ->with('newPiggyBankCreatedTime', time())

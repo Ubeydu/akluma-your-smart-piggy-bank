@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Helpers\RouteHelper;
 use App\Http\Controllers\Controller;
+use App\Models\PiggyBank;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -73,7 +74,7 @@ class SocialiteController extends Controller
 
         Auth::login($user, remember: true);
 
-        return redirect(RouteHelper::localizedRoute('localized.dashboard'));
+        return $this->redirectAfterAuth($user);
     }
 
     /**
@@ -97,6 +98,21 @@ class SocialiteController extends Controller
         ]);
 
         Auth::login($user, remember: true);
+
+        return $this->redirectAfterAuth($user);
+    }
+
+    private function redirectAfterAuth(User $user): RedirectResponse
+    {
+        $piggyBank = PiggyBank::createClassicFromSession($user->id);
+
+        if ($piggyBank) {
+            return redirect(RouteHelper::localizedRoute('localized.piggy-banks.index'))
+                ->with('newPiggyBankId', $piggyBank->id)
+                ->with('newPiggyBankCreatedTime', time())
+                ->with('success', __('classic_piggy_bank_created_success'))
+                ->with('success_duration', 10000);
+        }
 
         return redirect(RouteHelper::localizedRoute('localized.dashboard'));
     }

@@ -119,6 +119,15 @@ class PiggyBankController extends Controller
                 session()->flash('warning', __('edit_cancelled_message'));
             }
 
+            if (request()->has('status_updated')) {
+                $updatedStatus = request('status_updated');
+                if ($updatedStatus === 'done') {
+                    session()->flash('success', __('Piggy bank marked as done.'));
+                } elseif ($updatedStatus === 'cancelled') {
+                    session()->flash('success', __('Piggy bank has been cancelled.'));
+                }
+            }
+
             if ($piggyBank->isClassic()) {
                 $manualTransactions = $piggyBank->transactions()
                     ->whereIn('type', ['manual_add', 'manual_withdraw'])
@@ -226,9 +235,16 @@ class PiggyBankController extends Controller
         }
 
         // Validation: Only allow positive amounts, and only allow add/remove types
+        $currencyHasDecimals = \App\Helpers\CurrencyHelper::hasDecimalPlaces($piggyBank->currency);
+
         $validated = $request->validate([
             'type' => ['required', 'in:manual_add,manual_withdraw'],
-            'amount' => ['required', 'numeric', 'min:0.01', 'regex:/^\d{1,10}(\.\d{1,2})?$/'],
+            'amount' => [
+                'required',
+                'numeric',
+                'min:' . ($currencyHasDecimals ? '0.01' : '1'),
+                'regex:' . ($currencyHasDecimals ? '/^\d{1,10}(\.\d{1,2})?$/' : '/^\d{1,12}$/'),
+            ],
             'note' => ['nullable', 'string', 'max:255'],
         ]);
 

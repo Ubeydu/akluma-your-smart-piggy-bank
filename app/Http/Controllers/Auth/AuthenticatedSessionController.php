@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\PiggyBank;
-use App\Services\LinkPreviewService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,20 +44,9 @@ class AuthenticatedSessionController extends Controller
         //            'session_id' => session()->getId(),
         //        ]);
 
-        if (session()->has('pending_classic_piggy_bank')) {
-            $data = session()->pull('pending_classic_piggy_bank');
-            $preview = ['title' => null, 'description' => null, 'image' => null, 'url' => null];
+        $piggyBank = PiggyBank::createClassicFromSession(auth()->id());
 
-            if (! empty($data['link'])) {
-                try {
-                    $preview = app(LinkPreviewService::class)->getPreviewData($data['link']);
-                } catch (\Exception $e) {
-                    $preview['url'] = $data['link'];
-                }
-            }
-
-            $piggyBank = PiggyBank::createClassic(auth()->id(), $data, $preview);
-
+        if ($piggyBank) {
             return redirect(localizedRoute('localized.piggy-banks.index'))
                 ->with('newPiggyBankId', $piggyBank->id)
                 ->with('newPiggyBankCreatedTime', time())
