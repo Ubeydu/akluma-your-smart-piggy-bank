@@ -578,5 +578,12 @@
   "Once your account is deleted, all of its resources and data will be permanently deleted. Please type DELETE to confirm.": "Hesabınız silindiğinde, tüm kaynakları ve verileri kalıcı olarak silinecektir. Onaylamak için lütfen DELETE yazın.",
   "Type DELETE to confirm": "Onaylamak için DELETE yazın",
   "Please type DELETE to confirm.": "Lütfen onaylamak için DELETE yazın.",
-  "account_suspended_message": "Hesabınız askıya alınmıştır. Lütfen contact@akluma.com adresinden bizimle iletişime geçin."
+  "account_suspended_message": "Hesabınız askıya alınmıştır. Lütfen contact@akluma.com adresinden bizimle iletişime geçin.",
+  "What kind of piggy bank would you like?": "Nasıl bir kumbara istersin?",
+  "Choose how you want to save": "Nasıl biriktirmek istediğini seç",
+  "Classic Piggy Bank": "Klasik Kumbara",
+  "classic_piggy_bank_choice_description": "Kendi hızında biriktir. Program yok, hedef yok, baskı yok. Tıpkı çocukluğundaki kumbara gibi — istediğin zaman para at.",
+  "Save with a Plan": "Planlı Biriktir",
+  "scheduled_piggy_bank_choice_description": "Bir birikim hedefi belirle ve bir programa göre biriktir. Ne kadar ve ne sıklıkta biriktireceğini seç, hedefe ulaşana kadar ilerlemeni takip et.",
+  "Remember my choice for next time": "Seçimimi bir dahaki sefere hatırla"
 }

@@ -36,6 +36,58 @@ class PiggyBankCreateController extends Controller
     }
 
     /**
+     * Gateway screen: choose between Classic and Scheduled piggy bank types.
+     */
+    public function chooseType(Request $request)
+    {
+        if (auth()->check() && auth()->user()->preferred_piggy_bank_type) {
+            $type = auth()->user()->preferred_piggy_bank_type;
+            $route = $type === 'classic'
+                ? 'localized.create-piggy-bank.classic'
+                : 'localized.create-piggy-bank.step-1';
+
+            return redirect(localizedRoute($route));
+        }
+
+        return view('create-piggy-bank.common.choose-type');
+    }
+
+    /**
+     * Store the type selection from the gateway screen.
+     */
+    public function storeTypeSelection(Request $request)
+    {
+        $validated = $request->validate([
+            'type' => 'required|in:scheduled,classic',
+            'remember_choice' => 'sometimes|boolean',
+        ]);
+
+        $request->session()->put('piggy_bank_type', $validated['type']);
+
+        if (auth()->check() && $request->boolean('remember_choice')) {
+            auth()->user()->update(['preferred_piggy_bank_type' => $validated['type']]);
+        }
+
+        if ($validated['type'] === 'classic') {
+            return redirect(localizedRoute('localized.create-piggy-bank.classic'));
+        }
+
+        return redirect(localizedRoute('localized.create-piggy-bank.step-1'));
+    }
+
+    /**
+     * Clear the saved type preference and show the choice screen again.
+     */
+    public function clearTypePreference(Request $request)
+    {
+        if (auth()->check()) {
+            auth()->user()->update(['preferred_piggy_bank_type' => null]);
+        }
+
+        return redirect(localizedRoute('localized.create-piggy-bank.choose-type'));
+    }
+
+    /**
      * Step 1: Display the initial form (Screen 1).
      */
     public function step1(Request $request)
@@ -1093,8 +1145,9 @@ class PiggyBankCreateController extends Controller
             // Clear common step data
             $request->session()->forget('pick_date_step1');
 
-            // Clear strategy selection
+            // Clear strategy and type selection
             $request->session()->forget('chosen_strategy');
+            $request->session()->forget('piggy_bank_type');
 
             // Clear strategy-specific data
             $request->session()->forget(['pick_date_step3', 'enter_saving_amount_step3']);

@@ -576,5 +576,12 @@
   "Once your account is deleted, all of its resources and data will be permanently deleted. Please type DELETE to confirm.": "Une fois votre compte supprimé, toutes ses ressources et données seront définitivement supprimées. Veuillez taper DELETE pour confirmer.",
   "Type DELETE to confirm": "Tapez DELETE pour confirmer",
   "Please type DELETE to confirm.": "Veuillez taper DELETE pour confirmer.",
-  "account_suspended_message": "Votre compte a été suspendu. Veuillez nous contacter à contact@akluma.com."
+  "account_suspended_message": "Votre compte a été suspendu. Veuillez nous contacter à contact@akluma.com.",
+  "What kind of piggy bank would you like?": "Quel type de tirelire souhaitez-vous ?",
+  "Choose how you want to save": "Choisissez comment vous voulez épargner",
+  "Classic Piggy Bank": "Tirelire Classique",
+  "classic_piggy_bank_choice_description": "Épargnez à votre rythme. Pas de programme, pas d'objectif, pas de pression. Comme la tirelire de votre enfance — déposez de l'argent quand vous voulez.",
+  "Save with a Plan": "Épargner avec un Plan",
+  "scheduled_piggy_bank_choice_description": "Fixez un objectif d'épargne et suivez un programme. Choisissez combien et à quelle fréquence épargner, et suivez vos progrès jusqu'à atteindre votre objectif.",
+  "Remember my choice for next time": "Se souvenir de mon choix pour la prochaine fois"
 }

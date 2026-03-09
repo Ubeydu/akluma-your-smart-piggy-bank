@@ -15,7 +15,7 @@
                         {{ __('Welcome') }}
                     </a>
 
-                    <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
+                    <a href="{{ localizedRoute('localized.create-piggy-bank.choose-type') }}" class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]">
                         {{ __('Create Piggy Bank') }}
                     </a>
 
@@ -59,7 +59,7 @@
             <x-responsive-nav-link :href="route('localized.welcome', ['locale' => app()->getLocale()])">
                 {{ __('Welcome') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="localizedRoute('localized.create-piggy-bank.step-1')" :active="request()->routeIs('create-piggy-bank.*')">
+            <x-responsive-nav-link :href="localizedRoute('localized.create-piggy-bank.choose-type')" :active="request()->routeIs('create-piggy-bank.*')">
                 {{ __('Create Piggy Bank') }}
             </x-responsive-nav-link>
             @auth
