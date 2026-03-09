@@ -93,4 +93,23 @@ class PiggyBankFactory extends Factory
             'status' => 'cancelled',
         ]);
     }
+
+    /**
+     * Indicate that the piggy bank is a classic (schedule-free) type.
+     */
+    public function classic(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => 'classic',
+            'chosen_strategy' => null,
+            'selected_frequency' => null,
+            'price' => 0,
+            'target_amount' => 0,
+            'total_savings' => 0,
+            'extra_savings' => null,
+            'final_total' => 0,
+            'remaining_amount' => 0,
+            'status' => 'active',
+        ]);
+    }
 }

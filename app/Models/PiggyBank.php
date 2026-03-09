@@ -31,6 +31,7 @@ use Log;
  * @property string|null $preview_url
  * @property float $final_total
  * @property-read float $remaining_amount
+ * @property string $type
  */
 class PiggyBank extends Model
 {
@@ -38,10 +39,13 @@ class PiggyBank extends Model
 
     public const STATUS_OPTIONS = ['active', 'paused', 'done', 'cancelled'];
 
+    public const CLASSIC_STATUS_OPTIONS = ['active', 'done', 'cancelled'];
+
     public const MAX_ACTIVE_PIGGY_BANKS = 10;
 
     protected $fillable = [
         'user_id',
+        'type',
         'name',
         'price',
         'starting_amount',
@@ -65,6 +69,7 @@ class PiggyBank extends Model
     ];
 
     protected $attributes = [
+        'type' => 'scheduled',
         'preview_image' => 'images/piggy_banks/default_piggy_bank.png',
         'currency' => 'TRY',
         'status' => 'active',
@@ -73,6 +78,11 @@ class PiggyBank extends Model
     protected $casts = [
         'actual_completed_at' => 'datetime',
     ];
+
+    public function isClassic(): bool
+    {
+        return $this->type === 'classic';
+    }
 
     public function user(): BelongsTo
     {
@@ -105,6 +115,10 @@ class PiggyBank extends Model
      */
     public function getRemainingAmountAttribute(): float
     {
+        if ($this->isClassic()) {
+            return 0.0;
+        }
+
         try {
             // PHASE 1: Prefer DB column if it exists and has a value
             if (isset($this->attributes['remaining_amount']) && $this->attributes['remaining_amount'] !== null) {
@@ -194,6 +208,10 @@ class PiggyBank extends Model
      */
     public function calculateUptodateFinalTotal(): float
     {
+        if ($this->isClassic()) {
+            return $this->actual_final_total_saved;
+        }
+
         // The complete total money user will have when done includes:
         // 1. Starting amount (initial deposit)
         // 2. All active scheduled savings (both saved and pending, excluding archived)
@@ -217,6 +235,10 @@ class PiggyBank extends Model
      */
     public function updateRemainingAmount(): void
     {
+        if ($this->isClassic()) {
+            return;
+        }
+
         $projectedTotal = $this->uptodate_final_total ?? $this->final_total;
         $actualTotal = $this->transactions()->sum('amount');
         $remainingAmount = $projectedTotal - $actualTotal;
