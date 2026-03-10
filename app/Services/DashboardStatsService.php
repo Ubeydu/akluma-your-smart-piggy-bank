@@ -9,9 +9,9 @@ class DashboardStatsService
 {
     public function calculateLeftToSave($userId): array
     {
-        // Get all active piggy banks for user
         $piggyBanks = PiggyBank::where('user_id', $userId)
             ->where('status', 'active')
+            ->where('type', '!=', 'classic')
             ->get();
 
         $currencyBreakdown = [];
@@ -42,15 +42,15 @@ class DashboardStatsService
 
         return [
             'amounts' => $currencyBreakdown,
-            'counts' => $currencyCounts
+            'counts' => $currencyCounts,
         ];
     }
 
     public function calculateProgressPercentages($userId): array
     {
-        // Get all active piggy banks for user
         $piggyBanks = PiggyBank::where('user_id', $userId)
             ->where('status', 'active')
+            ->where('type', '!=', 'classic')
             ->get();
 
         $currencyData = [];

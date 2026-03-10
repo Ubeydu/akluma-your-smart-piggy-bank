@@ -32,6 +32,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'timezone',
         'language',
         'currency',
+        'preferred_piggy_bank_type',
         'accepted_terms_at',
         'accepted_privacy_at',
     ];

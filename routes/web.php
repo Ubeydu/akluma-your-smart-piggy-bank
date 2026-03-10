@@ -75,6 +75,11 @@ Route::localizedPatch('piggy-banks/{piggy_id}/update-status-cancelled', [PiggyBa
     ->middleware(['auth'])
     ->where('piggy_id', '[0-9]+');
 
+Route::localizedPatch('piggy-banks/{piggy_id}/update-status-done', [PiggyBankController::class, 'updateStatusToDone'])
+    ->name('localized.piggy-banks.update-status-done')
+    ->middleware(['auth'])
+    ->where('piggy_id', '[0-9]+');
+
 Route::localizedGet('piggy-banks/{piggy_id}/schedule', [ScheduledSavingController::class, 'getSchedulePartial'])
     ->name('localized.piggy-banks.schedule')
     ->middleware(['auth'])
@@ -228,6 +233,33 @@ Route::get('{locale}', function () {
 
 // \Log::info('DEBUG: Available locales from config:', array_keys(config('app.available_languages', [])));
 // \Log::info('DEBUG: Current locale during route registration:', (array) app()->getLocale());
+
+// Choose piggy bank type (gateway screen)
+Route::localizedGet('create-piggy-bank/choose-type', [PiggyBankCreateController::class, 'chooseType'])
+    ->name('localized.create-piggy-bank.choose-type')
+    ->middleware(['conditional.layout']);
+
+Route::localizedPost('create-piggy-bank/choose-type', [PiggyBankCreateController::class, 'storeTypeSelection'])
+    ->name('localized.create-piggy-bank.store-type')
+    ->middleware(['conditional.layout']);
+
+// Classic piggy bank creation
+Route::localizedGet('create-piggy-bank/classic', [PiggyBankCreateController::class, 'classicForm'])
+    ->name('localized.create-piggy-bank.classic')
+    ->middleware(['conditional.layout']);
+
+Route::localizedPost('create-piggy-bank/classic/store', [PiggyBankCreateController::class, 'storeClassicPiggyBank'])
+    ->name('localized.create-piggy-bank.classic.store')
+    ->middleware(['auth', 'conditional.layout']);
+
+Route::localizedPost('create-piggy-bank/classic/stash', [PiggyBankCreateController::class, 'stashClassicData'])
+    ->name('localized.create-piggy-bank.classic.stash')
+    ->middleware(['conditional.layout']);
+
+// Clear piggy bank type preference ("remember my choice")
+Route::localizedGet('create-piggy-bank/clear-preference', [PiggyBankCreateController::class, 'clearTypePreference'])
+    ->name('localized.create-piggy-bank.clear-preference')
+    ->middleware(['auth']);
 
 Route::localizedGet('create-piggy-bank/step-1', [PiggyBankCreateController::class, 'step1'])
     ->name('localized.create-piggy-bank.step-1')

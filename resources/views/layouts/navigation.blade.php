@@ -40,7 +40,7 @@
                         </x-nav-link>
                     @endauth
 
-                        <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.create-piggy-bank.step-1') }}"
+                        <x-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.create-piggy-bank.choose-type') }}"
                                     :active="request()->routeIs('localized.create-piggy-bank.*')">
                         {{ __('Create Piggy Bank') }}
                         </x-nav-link>
@@ -161,7 +161,7 @@
                 </x-responsive-nav-link>
             @endauth
 
-                <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.create-piggy-bank.step-1') }}"
+                <x-responsive-nav-link href="{{ \App\Helpers\RouteHelper::localizedRoute('localized.create-piggy-bank.choose-type') }}"
                                        :active="request()->routeIs('localized.create-piggy-bank.*')">
                     {{ __('Create Piggy Bank') }}
                 </x-responsive-nav-link>

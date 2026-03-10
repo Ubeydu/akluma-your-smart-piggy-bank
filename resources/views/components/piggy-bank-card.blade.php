@@ -45,112 +45,131 @@
             </div>
         </div>
 
-        <!-- Progress Bar -->
-        <div class="w-full h-2.5 bg-gray-200 rounded-full mb-4 overflow-hidden">
-            @php
-                $finalTotal = $piggyBank->final_total ?? 0;
-                $remaining = $piggyBank->remaining_amount ?? 0;
-                if ($finalTotal > 0) {
-                    if ($remaining > 0) {
-                        $percent = round((1 - ($remaining / $finalTotal)) * 100);
-                    } else {
-                        $percent = 100;
-                    }
-                    $percent = max(0, min(100, $percent));
-                } else {
-                    $percent = 0;
-                }
+        @if($piggyBank->isClassic())
+            {{-- Classic piggy bank: colorful decorative bar --}}
+            <div class="w-full h-2.5 rounded-full mb-4 overflow-hidden bg-gradient-to-r from-pink-400 via-yellow-400 via-green-400 to-blue-400"></div>
 
-                // Consistent color mapping with the badge
-                $progressColors = [
-                    'active' => 'bg-green-500',
-                    'paused' => 'bg-yellow-500',
-                    'done' => 'bg-blue-500',
-                    'cancelled' => 'bg-red-500'
-                ];
-                $progressColor = $progressColors[$piggyBank->status] ?? 'bg-indigo-500';
-            @endphp
-            <div class="{{ $progressColor }} h-full rounded-full" style="width: {{ $percent }}%"></div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-            <!-- Left Column -->
-            <div>
-                <!-- Original Goal -->
-                <div class="mb-1">
-                    <span class="text-xs text-gray-500 block">{{ __('Original Goal') }}</span>
-                    <span class="text-sm font-semibold text-gray-900">
-                        {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->final_total, $piggyBank->currency) }}
-                    </span>
-                </div>
-
-                <!-- Current Projected Total (if different from original and not done/cancelled) -->
-                @if($piggyBank->uptodate_final_total && $piggyBank->uptodate_final_total != $piggyBank->final_total && !in_array($piggyBank->status, ['done', 'cancelled']))
-                <div class="mb-1">
-                    <span class="text-xs text-gray-500 block">{{ __('Current Projected') }}</span>
-                    <span class="text-sm font-semibold text-indigo-700">
-                        {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->uptodate_final_total, $piggyBank->currency) }}
-                    </span>
-                </div>
-                @endif
-
-                <!-- Actual (live) -->
-                <div class="mb-3">
-                    <span class="text-xs text-gray-500 block">{{ __('Total Money You Saved') }}</span>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <span class="text-xs text-gray-500 block">{{ __('Total Money Saved') }}</span>
                     <span class="text-sm font-semibold text-blue-900">
                         {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->actual_final_total_saved, $piggyBank->currency) }}
                     </span>
                 </div>
-
+                <div>
+                    <span class="text-xs text-gray-500 block">{{ __('created_at') }}</span>
+                    <span class="text-sm font-semibold text-gray-900">
+                        {{ $piggyBank->created_at->translatedFormat('d M Y') }}
+                    </span>
+                </div>
+            </div>
+        @else
+            {{-- Scheduled piggy bank: progress bar + full stats --}}
+            <!-- Progress Bar -->
+            <div class="w-full h-2.5 bg-gray-200 rounded-full mb-4 overflow-hidden">
                 @php
-                    $statusMessage = null;
-                    if ($piggyBank->status === 'done') {
-                        if ($piggyBank->actual_final_total_saved > $piggyBank->final_total) {
-                            $statusMessage = __('You saved more than your goal!');
-                        } elseif ($piggyBank->actual_final_total_saved < $piggyBank->final_total) {
-                            $statusMessage = __('You saved less than your goal.');
+                    $finalTotal = $piggyBank->final_total ?? 0;
+                    $remaining = $piggyBank->remaining_amount ?? 0;
+                    if ($finalTotal > 0) {
+                        if ($remaining > 0) {
+                            $percent = round((1 - ($remaining / $finalTotal)) * 100);
                         } else {
-                            $statusMessage = __('You reached your goal!');
+                            $percent = 100;
                         }
+                        $percent = max(0, min(100, $percent));
+                    } else {
+                        $percent = 0;
                     }
-                @endphp
-                @if($statusMessage)
-                    <div class="mb-1 text-xs text-indigo-700 font-semibold">
-                        {{ $statusMessage }}
-                    </div>
-                @endif
 
+                    $progressColors = [
+                        'active' => 'bg-green-500',
+                        'paused' => 'bg-yellow-500',
+                        'done' => 'bg-blue-500',
+                        'cancelled' => 'bg-red-500'
+                    ];
+                    $progressColor = $progressColors[$piggyBank->status] ?? 'bg-indigo-500';
+                @endphp
+                <div class="{{ $progressColor }} h-full rounded-full" style="width: {{ $percent }}%"></div>
             </div>
 
-            <!-- Right Column -->
-            <div>
-                <div class="mb-3">
-                    <span class="text-xs text-gray-500 block">{{ __('remaining_amount') }}</span>
-                    <span class="text-sm font-semibold text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->remaining_amount, $piggyBank->currency) }}</span>
-                </div>
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Left Column -->
+                <div>
+                    <div class="mb-1">
+                        <span class="text-xs text-gray-500 block">{{ __('Original Goal') }}</span>
+                        <span class="text-sm font-semibold text-gray-900">
+                            {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->final_total, $piggyBank->currency) }}
+                        </span>
+                    </div>
 
-                @php
-                    $showActualCompletionDate = $piggyBank->status === 'done'
-                        && $piggyBank->actual_completed_at
-                        && $piggyBank->actual_completed_at->format('Y-m-d') !== optional($piggyBank->scheduledSavings()->orderByDesc('saving_number')->first()->saving_date)->format('Y-m-d');
-                @endphp
+                    @if($piggyBank->uptodate_final_total && $piggyBank->uptodate_final_total != $piggyBank->final_total && !in_array($piggyBank->status, ['done', 'cancelled']))
+                    <div class="mb-1">
+                        <span class="text-xs text-gray-500 block">{{ __('Current Projected') }}</span>
+                        <span class="text-sm font-semibold text-indigo-700">
+                            {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->uptodate_final_total, $piggyBank->currency) }}
+                        </span>
+                    </div>
+                    @endif
 
-                @if(!$showActualCompletionDate)
-                <div class="mb-3">
-                    <span class="text-xs text-gray-500 block">{{ __('saving_goal_reach_date') }}</span>
-                    <span class="text-sm font-semibold text-gray-900">{{ $piggyBank->scheduledSavings()->orderByDesc('saving_number')->first()->saving_date->translatedFormat('d F Y') }}</span>
-                </div>
-                @endif
-
-                @if($showActualCompletionDate)
                     <div class="mb-3">
-                        <span class="text-xs text-green-700 block">{{ __('actual_completed_at_label') }}</span>
-                        <span class="text-sm font-semibold text-green-700">{{ $piggyBank->actual_completed_at->translatedFormat('d F Y') }}</span>
+                        <span class="text-xs text-gray-500 block">{{ __('Total Money You Saved') }}</span>
+                        <span class="text-sm font-semibold text-blue-900">
+                            {{ \App\Helpers\MoneyFormatHelper::format($piggyBank->actual_final_total_saved, $piggyBank->currency) }}
+                        </span>
                     </div>
-                @endif
 
+                    @php
+                        $statusMessage = null;
+                        if ($piggyBank->status === 'done') {
+                            if ($piggyBank->actual_final_total_saved > $piggyBank->final_total) {
+                                $statusMessage = __('You saved more than your goal!');
+                            } elseif ($piggyBank->actual_final_total_saved < $piggyBank->final_total) {
+                                $statusMessage = __('You saved less than your goal.');
+                            } else {
+                                $statusMessage = __('You reached your goal!');
+                            }
+                        }
+                    @endphp
+                    @if($statusMessage)
+                        <div class="mb-1 text-xs text-indigo-700 font-semibold">
+                            {{ $statusMessage }}
+                        </div>
+                    @endif
+
+                </div>
+
+                <!-- Right Column -->
+                <div>
+                    <div class="mb-3">
+                        <span class="text-xs text-gray-500 block">{{ __('remaining_amount') }}</span>
+                        <span class="text-sm font-semibold text-gray-900">{{ \App\Helpers\MoneyFormatHelper::format($piggyBank->remaining_amount, $piggyBank->currency) }}</span>
+                    </div>
+
+                    @php
+                        $lastSaving = $piggyBank->scheduledSavings()->orderByDesc('saving_number')->first();
+                        $showActualCompletionDate = $piggyBank->status === 'done'
+                            && $piggyBank->actual_completed_at
+                            && $lastSaving
+                            && $piggyBank->actual_completed_at->format('Y-m-d') !== $lastSaving->saving_date->format('Y-m-d');
+                    @endphp
+
+                    @if(!$showActualCompletionDate && $lastSaving)
+                    <div class="mb-3">
+                        <span class="text-xs text-gray-500 block">{{ __('saving_goal_reach_date') }}</span>
+                        <span class="text-sm font-semibold text-gray-900">{{ $lastSaving->saving_date->translatedFormat('d F Y') }}</span>
+                    </div>
+                    @endif
+
+                    @if($showActualCompletionDate)
+                        <div class="mb-3">
+                            <span class="text-xs text-green-700 block">{{ __('actual_completed_at_label') }}</span>
+                            <span class="text-sm font-semibold text-green-700">{{ $piggyBank->actual_completed_at->translatedFormat('d F Y') }}</span>
+                        </div>
+                    @endif
+
+                </div>
             </div>
-        </div>
+        @endif
     </div>
 </a>
 
