@@ -164,6 +164,10 @@ class ScheduledSavingController extends Controller
     {
         $piggyBank = PiggyBank::findOrFail($piggy_id);
 
+        if ($piggyBank->isClassic()) {
+            return response()->json(['error' => 'Classic piggy banks cannot be paused.'], 400);
+        }
+
         // Ensure we do not pause a completed or cancelled piggy bank
         if (in_array($piggyBank->status, ['done', 'cancelled'])) {
             return response()->json(['error' => 'Cannot pause a completed or cancelled piggy bank.'], 400);

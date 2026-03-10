@@ -421,6 +421,18 @@ it('prevents another user from changing status', function () {
         ->assertForbidden();
 });
 
+it('prevents pausing a classic piggy bank', function () {
+    app()->setLocale('en');
+    $user = User::factory()->create();
+    $piggyBank = PiggyBank::factory()->for($user)->classic()->create();
+
+    actingAs($user)
+        ->patchJson("/en/piggy-banks/$piggyBank->id/pause")
+        ->assertStatus(400);
+
+    expect($piggyBank->fresh()->status)->toBe('active');
+});
+
 // ──────────────────────────────────────────────────
 // Financial Summary Authorization
 // ──────────────────────────────────────────────────
