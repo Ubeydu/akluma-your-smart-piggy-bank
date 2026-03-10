@@ -114,13 +114,13 @@ class PiggyBankCreateController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'currency' => 'required|string|size:3',
+            'currency' => ['required', 'string', 'size:3', Rule::in(array_keys(config('app.currencies')))],
             'link' => 'nullable|url|max:255',
             'details' => 'nullable|string|max:5000',
         ]);
 
         $activePiggyBanksCount = PiggyBank::where('user_id', auth()->id())
-            ->where('status', 'active')
+            ->whereIn('status', ['active', 'paused'])
             ->count();
 
         if ($activePiggyBanksCount >= PiggyBank::MAX_ACTIVE_PIGGY_BANKS) {
@@ -143,7 +143,7 @@ class PiggyBankCreateController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'currency' => 'required|string|size:3',
+            'currency' => ['required', 'string', 'size:3', Rule::in(array_keys(config('app.currencies')))],
             'link' => 'nullable|url|max:255',
             'details' => 'nullable|string|max:5000',
             'redirect_to' => 'required|in:login,register',

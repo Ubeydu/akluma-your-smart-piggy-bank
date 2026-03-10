@@ -118,6 +118,16 @@ class PiggyBank extends Model
             return null;
         }
 
+        $activeCount = self::where('user_id', $userId)
+            ->whereIn('status', ['active', 'paused'])
+            ->count();
+
+        if ($activeCount >= self::MAX_ACTIVE_PIGGY_BANKS) {
+            session()->forget('pending_classic_piggy_bank');
+
+            return null;
+        }
+
         $data = session()->pull('pending_classic_piggy_bank');
         $preview = ['title' => null, 'description' => null, 'image' => null, 'url' => null];
 

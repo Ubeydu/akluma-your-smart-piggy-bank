@@ -6,6 +6,7 @@ use App\Http\Requests\RecalculateScheduleRequest;
 use App\Models\PiggyBank;
 use App\Services\ScheduleRecalculationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use InvalidArgumentException;
@@ -242,39 +243,50 @@ class PiggyBankController extends Controller
             'amount' => [
                 'required',
                 'numeric',
-                'min:' . ($currencyHasDecimals ? '0.01' : '1'),
-                'regex:' . ($currencyHasDecimals ? '/^\d{1,10}(\.\d{1,2})?$/' : '/^\d{1,12}$/'),
+                'min:'.($currencyHasDecimals ? '0.01' : '1'),
+                'regex:'.($currencyHasDecimals ? '/^\d{1,10}(\.\d{1,2})?$/' : '/^\d{1,12}$/'),
             ],
             'note' => ['nullable', 'string', 'max:255'],
         ]);
 
-        // Additional validation for withdrawals
-        if ($validated['type'] === 'manual_withdraw') {
-            if ($validated['amount'] > $piggyBank->actual_final_total_saved) {
-                if ($request->ajax()) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => __('You cannot withdraw more money than what is currently in your piggy bank.'),
-                    ], 422);
+        // Wrap balance check + transaction insert in a lock to prevent race conditions
+        $overdraftError = null;
+
+        DB::transaction(function () use ($piggyBank, $validated, &$overdraftError) {
+            $piggyBank = PiggyBank::where('id', $piggyBank->id)->lockForUpdate()->first();
+
+            if ($validated['type'] === 'manual_withdraw') {
+                if ($validated['amount'] > $piggyBank->actual_final_total_saved) {
+                    $overdraftError = __('You cannot withdraw more money than what is currently in your piggy bank.');
+
+                    return;
                 }
-
-                return back()->withErrors([
-                    'amount' => __('You cannot withdraw more money than what is currently in your piggy bank.'),
-                ])->withInput();
             }
+
+            $signedAmount = $validated['type'] === 'manual_add'
+                ? $validated['amount']
+                : -$validated['amount'];
+
+            $piggyBank->transactions()->create([
+                'user_id' => $piggyBank->user_id,
+                'type' => $validated['type'],
+                'amount' => $signedAmount,
+                'note' => $validated['note'] ?? null,
+            ]);
+        });
+
+        if ($overdraftError) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $overdraftError,
+                ], 422);
+            }
+
+            return back()->withErrors([
+                'amount' => $overdraftError,
+            ])->withInput();
         }
-
-        // Negative for withdraw, positive for add
-        $signedAmount = $validated['type'] === 'manual_add'
-            ? $validated['amount']
-            : -$validated['amount'];
-
-        $piggyBank->transactions()->create([
-            'user_id' => $piggyBank->user_id,
-            'type' => $validated['type'],
-            'amount' => $signedAmount,
-            'note' => $validated['note'] ?? null,
-        ]);
 
         $piggyBank->refresh();
 
@@ -325,6 +337,10 @@ class PiggyBankController extends Controller
     public function getFinancialSummary($piggy_id)
     {
         $piggyBank = \App\Models\PiggyBank::findOrFail($piggy_id);
+
+        if (! Gate::allows('update', $piggyBank)) {
+            abort(403);
+        }
 
         $view = $piggyBank->isClassic()
             ? 'partials.classic-piggy-bank-financial-summary'
