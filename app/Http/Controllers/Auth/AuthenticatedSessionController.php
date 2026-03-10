@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\PiggyBank;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,20 +44,17 @@ class AuthenticatedSessionController extends Controller
         //            'session_id' => session()->getId(),
         //        ]);
 
-        // Get the intended URL before we call redirect()->intended()
-        $intendedUrl = session('url.intended');
+        $piggyBank = PiggyBank::createClassicFromSession(auth()->id());
 
-        // Create the redirect response
-        $response = redirect()->intended(localizedRoute('localized.piggy-banks.index'));
+        if ($piggyBank) {
+            return redirect(localizedRoute('localized.piggy-banks.index'))
+                ->with('newPiggyBankId', $piggyBank->id)
+                ->with('newPiggyBankCreatedTime', time())
+                ->with('success', __('classic_piggy_bank_created_success'))
+                ->with('success_duration', 10000);
+        }
 
-        //        \Log::info('🔍 Login successful - Detailed redirect info', [
-        //            'intended_url_before_redirect' => $intendedUrl,
-        //            'intended_url_after_redirect' => session('url.intended'),
-        //            'redirect_to' => $response->getTargetUrl(),
-        //            'session_id' => session()->getId(),
-        //        ]);
-
-        return $response;
+        return redirect()->intended(localizedRoute('localized.piggy-banks.index'));
     }
 
     /**

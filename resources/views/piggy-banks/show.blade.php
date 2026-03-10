@@ -571,6 +571,9 @@
                         @include('partials.schedule')
 
                         <!-- Manual Add/Remove Money Section -->
+                        @php
+                            $currencyHasDecimals = \App\Helpers\CurrencyHelper::hasDecimalPlaces($piggyBank->currency);
+                        @endphp
                         <div id="manual-money-section" class="mb-6 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
                                 <div class="flex items-center">
@@ -607,12 +610,13 @@
                                             id="manual-amount"
                                             name="amount"
                                             type="text"
-                                            inputmode="decimal"
-                                            pattern="^\d{1,10}(\.\d{1,2})?$"
+                                            inputmode="{{ $currencyHasDecimals ? 'decimal' : 'numeric' }}"
+                                            pattern="{{ $currencyHasDecimals ? '^\d{1,10}(\.\d{1,2})?$' : '^\d{1,12}$' }}"
                                             maxlength="12"
                                             class="mt-1 block w-full"
                                             required
                                             autocomplete="off"
+                                            @if($currencyHasDecimals)
                                             oninput="
                                                 let v = this.value.replace(/[^0-9.]/g, '');
                                                 v = v.replace(/^0+(\d)/, '$1');
@@ -626,6 +630,13 @@
                                                 }
                                                 this.value = v;
                                             "
+                                            @else
+                                            oninput="
+                                                let v = this.value.replace(/[^0-9]/g, '');
+                                                v = v.replace(/^0+(\d)/, '$1');
+                                                this.value = v.slice(0, 12);
+                                            "
+                                            @endif
                                         />
                                         <x-input-error :messages="$errors->get('amount')" class="mt-2" />
                                     </div>

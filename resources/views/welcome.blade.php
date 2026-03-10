@@ -94,7 +94,7 @@
                                 <nav class="hidden flex-1 -mx-3 justify-end sm:flex">
 
                                     <a
-                                        href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
+                                        href="{{ localizedRoute('localized.create-piggy-bank.choose-type') }}"
                                     class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
                                     >
                                     {{ __('Create Piggy Bank') }}
@@ -171,7 +171,7 @@
                         <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
                             <div class="pt-2 pb-3 space-y-1">
 
-                                <x-responsive-nav-link href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
+                                <x-responsive-nav-link href="{{ localizedRoute('localized.create-piggy-bank.choose-type') }}"
                                                        :active="request()->routeIs('create-piggy-bank.*')">
                                     {{ __('Create Piggy Bank') }}
                                 </x-responsive-nav-link>
@@ -245,7 +245,7 @@
                                 {{ __('hero_subheadline') }}
                             </p>
                             <div class="flex flex-col items-start gap-3">
-                                <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
+                                <a href="{{ localizedRoute('localized.create-piggy-bank.choose-type') }}"
                                    class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
                                     {{ __('hero_cta') }}
                                     <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -393,7 +393,7 @@
 
                     {{-- CTA Button --}}
                     <div class="text-center mt-12">
-                        <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
+                        <a href="{{ localizedRoute('localized.create-piggy-bank.choose-type') }}"
                            class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
                             {{ __('hero_cta') }}
                             <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -565,7 +565,7 @@
 
                             {{-- CTA Button --}}
                             <div class="text-center mt-12">
-                                <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
+                                <a href="{{ localizedRoute('localized.create-piggy-bank.choose-type') }}"
                                    class="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
                                     {{ __('hero_cta') }}
                                     <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

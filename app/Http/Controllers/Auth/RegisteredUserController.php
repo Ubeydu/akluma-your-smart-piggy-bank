@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Helpers\RouteHelper;
 use App\Http\Controllers\Controller;
+use App\Models\PiggyBank;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -66,6 +67,16 @@ class RegisteredUserController extends Controller
         }
 
         Auth::login($user);
+
+        $piggyBank = PiggyBank::createClassicFromSession($user->id);
+
+        if ($piggyBank) {
+            return redirect(RouteHelper::localizedRoute('localized.piggy-banks.index'))
+                ->with('newPiggyBankId', $piggyBank->id)
+                ->with('newPiggyBankCreatedTime', time())
+                ->with('success', __('classic_piggy_bank_created_success'))
+                ->with('success_duration', 10000);
+        }
 
         return redirect(RouteHelper::localizedRoute('localized.dashboard'));
     }

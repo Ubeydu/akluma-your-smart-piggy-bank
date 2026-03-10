@@ -6,6 +6,7 @@ use App\Http\Requests\RecalculateScheduleRequest;
 use App\Models\PiggyBank;
 use App\Services\ScheduleRecalculationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use InvalidArgumentException;
@@ -119,8 +120,28 @@ class PiggyBankController extends Controller
                 session()->flash('warning', __('edit_cancelled_message'));
             }
 
-            // Paginate the scheduled savings with correct path
-            // Filter out archived items, then sort: pending items first (actionable), then saved items (history), chronologically within each group
+            if (request()->has('status_updated')) {
+                $updatedStatus = request('status_updated');
+                if ($updatedStatus === 'done') {
+                    session()->flash('success', __('Piggy bank marked as done.'));
+                } elseif ($updatedStatus === 'cancelled') {
+                    session()->flash('success', __('Piggy bank has been cancelled.'));
+                }
+            }
+
+            if ($piggyBank->isClassic()) {
+                $manualTransactions = $piggyBank->transactions()
+                    ->whereIn('type', ['manual_add', 'manual_withdraw'])
+                    ->orderByDesc('created_at')
+                    ->limit(20)
+                    ->get();
+
+                return view('piggy-banks.show-classic', [
+                    'piggyBank' => $piggyBank,
+                    'manualTransactions' => $manualTransactions,
+                ]);
+            }
+
             $scheduledSavings = $piggyBank->scheduledSavings()
                 ->active()
                 ->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
@@ -181,6 +202,31 @@ class PiggyBankController extends Controller
         ]);
     }
 
+    public function updateStatusToDone($piggy_id)
+    {
+        $piggyBank = PiggyBank::findOrFail($piggy_id);
+
+        if (! Gate::allows('update', $piggyBank)) {
+            abort(403);
+        }
+
+        if (in_array($piggyBank->status, ['done', 'cancelled'])) {
+            return response()->json([
+                'error' => 'Cannot mark a completed or cancelled piggy bank as done.',
+            ], 400);
+        }
+
+        $piggyBank->update([
+            'status' => 'done',
+            'actual_completed_at' => now(),
+        ]);
+
+        return response()->json([
+            'status' => 'done',
+            'message' => __('Piggy bank marked as done.'),
+        ]);
+    }
+
     public function addOrRemoveMoney(Request $request, $piggy_id)
     {
         $piggyBank = PiggyBank::findOrFail($piggy_id);
@@ -190,77 +236,100 @@ class PiggyBankController extends Controller
         }
 
         // Validation: Only allow positive amounts, and only allow add/remove types
+        $currencyHasDecimals = \App\Helpers\CurrencyHelper::hasDecimalPlaces($piggyBank->currency);
+
         $validated = $request->validate([
             'type' => ['required', 'in:manual_add,manual_withdraw'],
-            'amount' => ['required', 'numeric', 'min:0.01', 'regex:/^\d{1,10}(\.\d{1,2})?$/'],
+            'amount' => [
+                'required',
+                'numeric',
+                'min:'.($currencyHasDecimals ? '0.01' : '1'),
+                'regex:'.($currencyHasDecimals ? '/^\d{1,10}(\.\d{1,2})?$/' : '/^\d{1,12}$/'),
+            ],
             'note' => ['nullable', 'string', 'max:255'],
         ]);
 
-        // Additional validation for withdrawals
-        if ($validated['type'] === 'manual_withdraw') {
-            if ($validated['amount'] > $piggyBank->actual_final_total_saved) {
-                if ($request->ajax()) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => __('You cannot withdraw more money than what is currently in your piggy bank.'),
-                    ], 422);
-                }
+        // Wrap balance check + transaction insert in a lock to prevent race conditions
+        $overdraftError = null;
+        $signedAmount = 0;
 
-                return back()->withErrors([
-                    'amount' => __('You cannot withdraw more money than what is currently in your piggy bank.'),
-                ])->withInput();
+        DB::transaction(function () use ($piggyBank, $validated, &$overdraftError, &$signedAmount) {
+            $piggyBank = PiggyBank::where('id', $piggyBank->id)->lockForUpdate()->first();
+
+            if ($validated['type'] === 'manual_withdraw') {
+                if ($validated['amount'] > $piggyBank->actual_final_total_saved) {
+                    $overdraftError = __('You cannot withdraw more money than what is currently in your piggy bank.');
+
+                    return;
+                }
             }
+
+            $signedAmount = $validated['type'] === 'manual_add'
+                ? $validated['amount']
+                : -$validated['amount'];
+
+            $piggyBank->transactions()->create([
+                'user_id' => $piggyBank->user_id,
+                'type' => $validated['type'],
+                'amount' => $signedAmount,
+                'note' => $validated['note'] ?? null,
+            ]);
+        });
+
+        if ($overdraftError) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $overdraftError,
+                ], 422);
+            }
+
+            return back()->withErrors([
+                'amount' => $overdraftError,
+            ])->withInput();
         }
 
-        // Negative for withdraw, positive for add
-        $signedAmount = $validated['type'] === 'manual_add'
-            ? $validated['amount']
-            : -$validated['amount'];
-
-        $piggyBank->transactions()->create([
-            'user_id' => $piggyBank->user_id,
-            'type' => $validated['type'],
-            'amount' => $signedAmount,
-            'note' => $validated['note'] ?? null,
-        ]);
-
-        // Fetch fresh balance/remaining values
         $piggyBank->refresh();
 
-        // Update remaining_amount in database after transaction
-        $piggyBank->updateRemainingAmount();
+        $newStatus = $piggyBank->status;
 
-        // Apply the new done/active logic: only mark as done if remaining amount is zero or less
-        $remainingZeroOrLess = $piggyBank->remaining_amount <= 0;
+        if ($piggyBank->isClassic()) {
+            // Classic PBs have no target — never auto-change status
+            $successMessage = $signedAmount > 0
+                ? __('You successfully added money to your piggy bank')
+                : __('You successfully took out some money from your piggy bank');
+        } else {
+            $piggyBank->updateRemainingAmount();
 
-        $newStatus = $remainingZeroOrLess ? 'done' : 'active';
+            $remainingZeroOrLess = $piggyBank->remaining_amount <= 0;
+            $newStatus = $remainingZeroOrLess ? 'done' : 'active';
 
-        if ($piggyBank->status !== $newStatus) {
-            $update = ['status' => $newStatus];
-            if ($newStatus === 'done' && ! $piggyBank->actual_completed_at) {
-                $update['actual_completed_at'] = now();
+            if ($piggyBank->status !== $newStatus) {
+                $update = ['status' => $newStatus];
+                if ($newStatus === 'done' && ! $piggyBank->actual_completed_at) {
+                    $update['actual_completed_at'] = now();
+                }
+                $piggyBank->update($update);
             }
-            $piggyBank->update($update);
-            //            \Log::info('PiggyBank updated', $update + ['id' => $piggyBank->id]);
+
+            $successMessage = $newStatus === 'done'
+                ? __('You have successfully completed your savings goal.')
+                : ($signedAmount > 0
+                    ? __('You successfully added money to your piggy bank')
+                    : __('You successfully took out some money from your piggy bank'));
         }
 
         if ($request->ajax()) {
             return response()->json([
                 'status' => 'success',
-                'message' => $newStatus === 'done'
-                    ? __('You have successfully completed your savings goal.')
-                    : ($signedAmount > 0
-                        ? __('You successfully added money to your piggy bank')
-                        : __('You successfully took out some money from your piggy bank')),
+                'message' => $successMessage,
                 'piggy_bank_status' => $newStatus,
                 'translated_status' => __(strtolower($newStatus)),
             ]);
         }
 
         return redirect(localizedRoute('localized.piggy-banks.show', ['piggy_id' => $piggyBank->id]))
-            ->with('success', $newStatus === 'done'
-                ? __('You have successfully completed your savings goal.')
-                : __('Money successfully added or removed!'));
+            ->with('success', $successMessage);
     }
 
     /**
@@ -270,7 +339,23 @@ class PiggyBankController extends Controller
     {
         $piggyBank = \App\Models\PiggyBank::findOrFail($piggy_id);
 
-        return view('partials.piggy-bank-financial-summary', compact('piggyBank'))->render();
+        if (! Gate::allows('update', $piggyBank)) {
+            abort(403);
+        }
+
+        $view = $piggyBank->isClassic()
+            ? 'partials.classic-piggy-bank-financial-summary'
+            : 'partials.piggy-bank-financial-summary';
+
+        $manualTransactions = $piggyBank->isClassic()
+            ? $piggyBank->transactions()
+                ->whereIn('type', ['manual_add', 'manual_withdraw'])
+                ->orderByDesc('created_at')
+                ->limit(20)
+                ->get()
+            : collect();
+
+        return view($view, compact('piggyBank', 'manualTransactions'))->render();
     }
 
     public function getSchedulePartial(Request $request, $piggy_id)

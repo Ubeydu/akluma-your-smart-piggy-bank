@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-900 leading-tight">
                 {{ __('My Draft Piggy Banks') }}
             </h2>
-            <a href="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
+            <a href="{{ localizedRoute('localized.create-piggy-bank.choose-type') }}"
                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md">
                 <span class="hidden sm:inline">{{ __('Create Piggy Bank') }}</span>
                 <span class="sm:hidden">{{ __('Create') }}</span>
@@ -23,7 +23,7 @@
                                 :title="__('draft.empty_state.title')"
                                 :message="__('draft.empty_state.message')"
                                 :buttonText="__('draft.empty_state.button_text')"
-                                buttonLink="{{ localizedRoute('localized.create-piggy-bank.step-1') }}"
+                                buttonLink="{{ localizedRoute('localized.create-piggy-bank.choose-type') }}"
                             />
                         @else
                             {{-- Draft Cards Grid --}}

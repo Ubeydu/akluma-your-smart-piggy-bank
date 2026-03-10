@@ -227,6 +227,36 @@ return [
             'fr' => 'mettre-a-jour-statut-annule',
         ],
 
+        'update-status-done' => [
+            'en' => 'update-status-done',
+            'tr' => 'durumu-tamamlandi-olarak-guncelle',
+            'fr' => 'mettre-a-jour-statut-termine',
+        ],
+
+        'choose-type' => [
+            'en' => 'choose-type',
+            'tr' => 'tur-sec',
+            'fr' => 'choisir-type',
+        ],
+
+        'classic' => [
+            'en' => 'classic',
+            'tr' => 'klasik',
+            'fr' => 'classique',
+        ],
+
+        'stash' => [
+            'en' => 'stash',
+            'tr' => 'sakla',
+            'fr' => 'stocker',
+        ],
+
+        'clear-preference' => [
+            'en' => 'clear-preference',
+            'tr' => 'tercih-temizle',
+            'fr' => 'effacer-preference',
+        ],
+
         'test-date/{piggy_id}' => [
             'en' => 'test-date/{piggy_id}',
             'tr' => 'test-tarihi/{piggy_id}',

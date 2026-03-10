@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xs rounded-lg">
                 <div class="py-4 px-6">
-                    <h1 class="text-lg font-semibold mb-8">{{ __('Step 1 of 3') }}</h1>
+                    <h1 class="text-lg font-semibold mb-4">{{ __('Step 1 of 3') }}</h1>
 
                     @guest
                         <div class="mb-6 w-full rounded-md bg-blue-50 p-4 text-sm text-blue-800 shadow-md border border-blue-200">
@@ -445,6 +445,16 @@
                     </form>
 
 
+
+                    @auth
+                        <p class="text-sm text-gray-500 mt-6">
+                            {{ __('scheduled_switch_to_classic_hint') }}
+                            <a href="{{ localizedRoute('localized.create-piggy-bank.clear-preference') }}"
+                               class="text-indigo-600 hover:text-indigo-800 underline">
+                                {{ __('scheduled_switch_to_classic_link') }}
+                            </a>
+                        </p>
+                    @endauth
 
                     <!-- Action Buttons -->
                     <div class="flex flex-col items-center sm:items-start space-y-4 sm:flex-row sm:justify-between sm:space-y-0 mt-6">
