@@ -251,8 +251,9 @@ class PiggyBankController extends Controller
 
         // Wrap balance check + transaction insert in a lock to prevent race conditions
         $overdraftError = null;
+        $signedAmount = 0;
 
-        DB::transaction(function () use ($piggyBank, $validated, &$overdraftError) {
+        DB::transaction(function () use ($piggyBank, $validated, &$overdraftError, &$signedAmount) {
             $piggyBank = PiggyBank::where('id', $piggyBank->id)->lockForUpdate()->first();
 
             if ($validated['type'] === 'manual_withdraw') {
