@@ -1,42 +1,27 @@
 {!! '<?xml version="1.0" encoding="UTF-8"?>' !!}
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
     @php
         $locales = array_keys(config('app.available_languages', []));
+
+        $pages = [
+            'welcome'                    => null,
+            'localized.login'            => 'localized.login',
+            'localized.register'         => 'localized.register',
+            'localized.password.request' => 'localized.password.request',
+            'localized.terms'            => 'localized.terms',
+            'localized.privacy'          => 'localized.privacy',
+        ];
     @endphp
 
-    {{-- Welcome pages for each locale --}}
-    @foreach($locales as $locale)
+    @foreach($pages as $key => $routeName)
+        @foreach($locales as $locale)
         <url>
-            <loc>{{ url("/{$locale}") }}</loc>
-            <changefreq>weekly</changefreq>
-            <priority>1.0</priority>
+            <loc>{{ $key === 'welcome' ? url("/{$locale}") : localizedRoute($routeName, [], $locale) }}</loc>
+            @foreach($locales as $altLocale)
+            <xhtml:link rel="alternate" hreflang="{{ $altLocale }}" href="{{ $key === 'welcome' ? url("/{$altLocale}") : localizedRoute($routeName, [], $altLocale) }}" />
+            @endforeach
         </url>
-    @endforeach
-
-    {{-- Login pages --}}
-    @foreach($locales as $locale)
-        <url>
-            <loc>{{ url("/{$locale}/login") }}</loc>
-            <changefreq>monthly</changefreq>
-            <priority>0.8</priority>
-        </url>
-    @endforeach
-
-    {{-- Register pages --}}
-    @foreach($locales as $locale)
-        <url>
-            <loc>{{ url("/{$locale}/register") }}</loc>
-            <changefreq>monthly</changefreq>
-            <priority>0.8</priority>
-        </url>
-    @endforeach
-
-    {{-- Create piggy bank pages --}}
-    @foreach($locales as $locale)
-        <url>
-            <loc>{{ url("/{$locale}/create-piggy-bank/step-1") }}</loc>
-            <changefreq>monthly</changefreq>
-            <priority>0.9</priority>
-        </url>
+        @endforeach
     @endforeach
 </urlset>
