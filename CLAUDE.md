@@ -64,13 +64,15 @@ This application implements a custom localized routing system that automatically
 ### Savings & Piggy Bank System
 
 **Core Models:**
-- `PiggyBank` - Main savings goal entity
-- `ScheduledSaving` - Individual saving transactions/reminders
+- `PiggyBank` - Main savings goal entity (has a `type` column: `scheduled` or `classic`)
+- `ScheduledSaving` - Individual saving transactions/reminders (only for scheduled piggy banks)
 - `User` - Extended with timezone, language, currency preferences
 
-**Saving Strategies:**
-- Pick Date: Set target date, calculate required saving frequency
-- Enter Amount: Set saving amount, calculate completion timeline
+**Piggy Bank Types:**
+- Scheduled (default): Has a saving schedule with reminders
+  - Pick Date strategy: Set target date, calculate required saving frequency
+  - Enter Amount strategy: Set saving amount, calculate completion timeline
+- Classic: Simple piggy bank with no schedule — user manually adds/withdraws money
 
 **Pagination in Partials:**
 - When paginating data in partials loaded via AJAX, always use `setPath()` to ensure pagination links point to the correct parent page
