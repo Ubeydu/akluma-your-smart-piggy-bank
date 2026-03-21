@@ -15,10 +15,12 @@ Instead, use one of these approaches:
 
 **Development:**
 - `composer dev` - Start all development services (server, queue, logs, vite)
-- `./vendor/bin/sail up -d` - Start Docker environment
+- `./vendor/bin/sail up -d` - Start Docker environment (PHP, MySQL)
 - `./vendor/bin/sail artisan serve` - Start Laravel server
-- `npm run dev` - Start Vite development server
-- `npm run build` - Build assets for production
+- `npm run dev` - Start Vite development server (runs on host, not in Docker)
+- `npm run build` - Build assets for production (runs on host, not in Docker)
+
+**Important:** Never prefix Node/npm commands with `sail`. Node runs on the host because `node_modules/` contains platform-specific native binaries (Rollup, esbuild) that are incompatible across macOS and Linux.
 
 **Testing:**
 - `./vendor/bin/sail pest` - Run all tests using Pest
@@ -31,6 +33,10 @@ Instead, use one of these approaches:
 **Database:**
 - `./vendor/bin/sail artisan migrate` - Run migrations
 - `./vendor/bin/sail artisan migrate:fresh --seed` - Fresh migration with seeders
+
+## Project Structure Notes
+
+- `dev-notes/` is gitignored. It contains local development documentation, implementation plans, and troubleshooting guides. Changes to files in this directory will not appear in `git status` or diffs and cannot be committed.
 
 ## Architecture
 
