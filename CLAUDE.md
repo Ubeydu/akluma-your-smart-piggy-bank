@@ -15,10 +15,12 @@ Instead, use one of these approaches:
 
 **Development:**
 - `composer dev` - Start all development services (server, queue, logs, vite)
-- `./vendor/bin/sail up -d` - Start Docker environment
+- `./vendor/bin/sail up -d` - Start Docker environment (PHP, MySQL)
 - `./vendor/bin/sail artisan serve` - Start Laravel server
-- `npm run dev` - Start Vite development server
-- `npm run build` - Build assets for production
+- `npm run dev` - Start Vite development server (runs on host, not in Docker)
+- `npm run build` - Build assets for production (runs on host, not in Docker)
+
+**Important:** Never prefix Node/npm commands with `sail`. Node runs on the host because `node_modules/` contains platform-specific native binaries (Rollup, esbuild) that are incompatible across macOS and Linux.
 
 **Testing:**
 - `./vendor/bin/sail pest` - Run all tests using Pest
