@@ -34,6 +34,10 @@ Instead, use one of these approaches:
 - `./vendor/bin/sail artisan migrate` - Run migrations
 - `./vendor/bin/sail artisan migrate:fresh --seed` - Fresh migration with seeders
 
+## Project Structure Notes
+
+- `dev-notes/` is gitignored. It contains local development documentation, implementation plans, and troubleshooting guides. Changes to files in this directory will not appear in `git status` or diffs and cannot be committed.
+
 ## Architecture
 
 ### Localized Routing System
