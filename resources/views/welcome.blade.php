@@ -74,8 +74,6 @@
     </script>
 
 
-    @php error_reporting(E_ALL); ini_set('display_errors', 1); @endphp
-
     @include('components.flash-message')
 
     <div class="bg-gray-50 text-black/50">
@@ -413,153 +411,97 @@
 
                     <main class="min-h-[50vh] text-6xl font-bold">
 
-                        {{-- How It Works Section --}}
-                        <div class="py-16 lg:py-24 relative overflow-hidden bg-white -mx-6 px-6 lg:-mx-[calc((100vw-80rem)/2+1.5rem)] lg:px-[calc((100vw-80rem)/2+1.5rem)]">
+                        {{-- Two Ways to Save Section --}}
+                        <section class="py-16 lg:py-24 bg-white -mx-6 px-6 lg:-mx-[calc((100vw-80rem)/2+1.5rem)] lg:px-[calc((100vw-80rem)/2+1.5rem)]">
                             {{-- Section Heading --}}
                             <div class="text-center mb-12">
                                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                                    {{ __('how_it_works_heading') }}
+                                    {{ __('two_ways_heading') }}
                                 </h2>
                             </div>
 
-                            <!-- Steps container -->
-                            <div class="max-w-6xl mx-auto px-4">
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-                                    <!-- Connection lines (visible on desktop only) -->
-                                    <div class="hidden lg:block absolute top-1/2 left-0 w-full h-1 bg-gray-200 -translate-y-1/2 z-0"></div>
+                            {{-- Cards Container --}}
+                            <div class="max-w-5xl mx-auto">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
 
-                                    <!-- Step 1 -->
-                                    <div class="relative z-10 group">
-                                        <div class="bg-white rounded-lg shadow-lg p-6 transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-xl">
-                                            <!-- Icon container with animated background -->
-                                            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-yellow-100 flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-300">
-                                                <!-- Animated background -->
-                                                <div class="absolute inset-0 bg-linear-to-r from-yellow-200 to-yellow-400 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                                                <!-- Piggy Bank Icon -->
-                                                <svg class="w-12 h-12 text-yellow-600 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    {{-- Card 1: Save with a Plan (Scheduled) --}}
+                                    <div class="bg-indigo-50 rounded-xl p-12 border-2 border-indigo-200 flex flex-col">
+                                        <div class="flex items-center gap-4 mb-6">
+                                            <div class="w-14 h-14 shrink-0 bg-indigo-600 rounded-xl flex items-center justify-center shadow-md">
+                                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                 </svg>
-
-                                                <!-- Animated ring -->
-                                                <div class="absolute inset-0 border-4 border-yellow-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></div>
                                             </div>
-
-                                            <!-- Step number badge -->
-                                            <div class="absolute -top-4 -right-4 w-14 h-14 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg transform rotate-0 group-hover:rotate-12 transition-transform duration-300">1</div>
-
-                                            <!-- Content -->
-                                            <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Set Your Goal') }}</h3>
-                                            <p class="text-gray-600 text-center text-base">{{ __('Enter details of your saving goal') }}</p>
-
-                                            <!-- Hidden extra content that shows on hover -->
-                                            <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
-                                                <p class="text-yellow-600 text-sm italic text-center pt-2">{{ __('If you add product link, we may be able to fetch its photo') }}</p>
-                                            </div>
+                                            <h3 class="text-2xl font-bold text-gray-900">{{ __('two_ways_scheduled_title') }}</h3>
                                         </div>
+                                        <p class="text-gray-600 text-base mb-6">{{ __('two_ways_scheduled_desc') }}</p>
+                                        <ul class="space-y-4 mt-auto">
+                                            <li class="flex items-start gap-3">
+                                                <div class="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                                                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </div>
+                                                <span class="text-gray-700 text-base">{{ __('two_ways_scheduled_bullet_1') }}</span>
+                                            </li>
+                                            <li class="flex items-start gap-3">
+                                                <div class="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                                                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </div>
+                                                <span class="text-gray-700 text-base">{{ __('two_ways_scheduled_bullet_2') }}</span>
+                                            </li>
+                                            <li class="flex items-start gap-3">
+                                                <div class="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                                                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </div>
+                                                <span class="text-gray-700 text-base">{{ __('two_ways_scheduled_bullet_3') }}</span>
+                                            </li>
+                                        </ul>
                                     </div>
 
-                                    <!-- Step 2 -->
-                                    <div class="relative z-10 group">
-                                        <div class="bg-white rounded-lg shadow-lg p-6 transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-xl">
-                                            <!-- Icon container with animated background -->
-                                            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-indigo-100 flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-300">
-                                                <!-- Animated background -->
-                                                <div class="absolute inset-0 bg-linear-to-r from-indigo-200 to-indigo-400 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                                                <!-- Calendar/Strategy Icon -->
-                                                <svg class="w-12 h-12 text-indigo-600 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    {{-- Card 2: Save at Your Own Pace (Classic) --}}
+                                    <div class="bg-green-50 rounded-xl p-12 border-2 border-green-200 flex flex-col">
+                                        <div class="flex items-center gap-4 mb-6">
+                                            <div class="w-14 h-14 shrink-0 bg-green-600 rounded-xl flex items-center justify-center shadow-md">
+                                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                                 </svg>
-
-                                                <!-- Animated ring -->
-                                                <div class="absolute inset-0 border-4 border-indigo-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></div>
                                             </div>
-
-                                            <!-- Step number badge -->
-                                            <div class="absolute -top-4 -right-4 w-14 h-14 bg-indigo-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg transform rotate-0 group-hover:rotate-12 transition-transform duration-300">2</div>
-
-                                            <!-- Content -->
-                                            <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Choose Strategy') }}</h3>
-                                            <p class="text-gray-600 text-center text-base">{{ __('Pick a date or define how much you can save') }}</p>
-
-                                            <!-- Hidden extra content that shows on hover -->
-                                            <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
-                                                <p class="text-indigo-600 text-sm italic text-center pt-2">{{ __('We\'ll create a personalized saving plan for you') }}</p>
-                                            </div>
+                                            <h3 class="text-2xl font-bold text-gray-900">{{ __('two_ways_classic_title') }}</h3>
                                         </div>
+                                        <p class="text-gray-600 text-base mb-6">{{ __('two_ways_classic_desc') }}</p>
+                                        <ul class="space-y-4 mt-auto">
+                                            <li class="flex items-start gap-3">
+                                                <div class="w-6 h-6 rounded-full bg-green-600 flex items-center justify-center shrink-0 mt-0.5">
+                                                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </div>
+                                                <span class="text-gray-700 text-base">{{ __('two_ways_classic_bullet_1') }}</span>
+                                            </li>
+                                            <li class="flex items-start gap-3">
+                                                <div class="w-6 h-6 rounded-full bg-green-600 flex items-center justify-center shrink-0 mt-0.5">
+                                                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </div>
+                                                <span class="text-gray-700 text-base">{{ __('two_ways_classic_bullet_2') }}</span>
+                                            </li>
+                                            <li class="flex items-start gap-3">
+                                                <div class="w-6 h-6 rounded-full bg-green-600 flex items-center justify-center shrink-0 mt-0.5">
+                                                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </div>
+                                                <span class="text-gray-700 text-base">{{ __('two_ways_classic_bullet_3') }}</span>
+                                            </li>
+                                        </ul>
                                     </div>
 
-                                    <!-- Step 3 -->
-                                    <div class="relative z-10 group">
-                                        <div class="bg-white rounded-lg shadow-lg p-6 transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-xl">
-                                            <!-- Icon container with animated background -->
-                                            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-300">
-                                                <!-- Animated background -->
-                                                <div class="absolute inset-0 bg-linear-to-r from-green-200 to-green-400 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                                                <!-- Money/Savings Icon -->
-                                                <svg class="w-12 h-12 text-green-600 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-
-                                                <!-- Animated coins -->
-                                                <div class="absolute top-1/2 left-1/2 w-4 h-4 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-coin1"></div>
-                                                <div class="absolute top-1/2 left-1/2 w-3 h-3 bg-yellow-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-coin2"></div>
-
-                                                <!-- Animated ring -->
-                                                <div class="absolute inset-0 border-4 border-green-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></div>
-                                            </div>
-
-                                            <!-- Step number badge -->
-                                            <div class="absolute -top-4 -right-4 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg transform rotate-0 group-hover:rotate-12 transition-transform duration-300">3</div>
-
-                                            <!-- Content -->
-                                            <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Save Regularly') }}</h3>
-                                            <p class="text-gray-600 text-center text-base">{{ __('Track your progress with reminders and feedback') }}</p>
-
-                                            <!-- Hidden extra content that shows on hover -->
-                                            <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
-                                                <p class="text-green-600 text-sm italic text-center pt-2">{{ __('We\'ll help you stay consistent with friendly reminders') }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Step 4 -->
-                                    <div class="relative z-10 group">
-                                        <div class="bg-white rounded-lg shadow-lg p-6 transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-xl">
-                                            <!-- Icon container with animated background -->
-                                            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-purple-100 flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-300">
-                                                <!-- Animated background -->
-                                                <div class="absolute inset-0 bg-linear-to-r from-purple-200 to-purple-400 opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                                                <!-- Trophy/Achievement Icon -->
-                                                <svg class="w-12 h-12 text-purple-600 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                                                </svg>
-
-                                                <!-- Animated stars -->
-                                                <div class="absolute top-0 left-1/4 w-2 h-2 bg-yellow-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-star1"></div>
-                                                <div class="absolute bottom-1/4 right-0 w-2 h-2 bg-yellow-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-star2"></div>
-                                                <div class="absolute bottom-0 left-1/3 w-2 h-2 bg-yellow-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-star3"></div>
-
-                                                <!-- Animated ring -->
-                                                <div class="absolute inset-0 border-4 border-purple-300 rounded-full opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></div>
-                                            </div>
-
-                                            <!-- Step number badge -->
-                                            <div class="absolute -top-4 -right-4 w-14 h-14 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg transform rotate-0 group-hover:rotate-12 transition-transform duration-300">4</div>
-
-                                            <!-- Content -->
-                                            <h3 class="text-xl font-bold text-center mb-3 text-gray-800">{{ __('Celebrate Success') }}</h3>
-                                            <p class="text-gray-600 text-center text-base">{{ __('Buy your dream item and enjoy your achievement') }}</p>
-
-                                            <!-- Hidden extra content that shows on hover -->
-                                            <div class="max-h-0 overflow-hidden transition-all duration-500 group-hover:max-h-32 mt-2">
-                                                <p class="text-purple-600 text-sm italic text-center pt-2">{{ __('Your hard work paid off. Time to enjoy your reward') }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
@@ -572,12 +514,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                                     </svg>
                                 </a>
-                                <p class="text-sm text-gray-500 mt-3">
+                                <p class="text-sm text-gray-500 mt-3 font-bold">
                                     {{ __('hero_cta_subtext') }}
                                 </p>
                             </div>
 
-                        </div>
+                        </section>
 
                         {{-- Why Akluma Section --}}
                         <section class="py-16 lg:py-24 bg-gradient-to-br from-gray-50 to-white -mx-6 px-6 lg:-mx-[calc((100vw-80rem)/2+1.5rem)] lg:px-[calc((100vw-80rem)/2+1.5rem)]">
