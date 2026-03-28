@@ -96,6 +96,18 @@ This application implements a custom localized routing system that automatically
 - Localized email templates based on user language preference
 - Reminder scheduling based on user timezone
 
+### SEO & Multilingual Content Strategy
+
+**Transcreation, not translation** for SEO-critical content. Keyword research (see `dev-notes/keyword-research-2026-03-28.md`) showed that each locale's users search with fundamentally different concepts:
+- EN: "savings tracker" (5K/mo) — FR: "application budget" (500K/mo) — TR: "para biriktirme" (500/mo)
+- A direct translation would miss these keywords entirely
+
+**Rules for public-facing content:**
+- **SEO-critical strings** (page titles, H1s, meta descriptions, section headings, key body copy): write independently per locale targeting that locale's keywords. Do NOT translate from English.
+- **Non-SEO strings** (button labels, form text, error messages, UI chrome): normal translation is fine.
+- Translation keys in `lang/*.json` can and should have content that is NOT a literal translation when SEO is involved.
+- Full keyword data and the content plan are in `dev-notes/content-seo-action-plan.md` and `dev-notes/keyword-research-2026-03-28.md`.
+
 ### Multi-language Support
 
 **Locales:** English (en), Turkish (tr), French (fr)
