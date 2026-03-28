@@ -74,10 +74,6 @@
     </script>
 
 
-    @if(config('app.debug'))
-        @php error_reporting(E_ALL); ini_set('display_errors', 1); @endphp
-    @endif
-
     @include('components.flash-message')
 
     <div class="bg-gray-50 text-black/50">
