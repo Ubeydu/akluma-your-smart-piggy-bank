@@ -11,6 +11,7 @@
             'localized.password.request' => 'localized.password.request',
             'localized.terms'            => 'localized.terms',
             'localized.privacy'          => 'localized.privacy',
+            'localized.about'            => 'localized.about',
         ];
     @endphp
 

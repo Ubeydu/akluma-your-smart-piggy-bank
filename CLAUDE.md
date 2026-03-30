@@ -23,9 +23,10 @@ Instead, use one of these approaches:
 **Important:** Never prefix Node/npm commands with `sail`. Node runs on the host because `node_modules/` contains platform-specific native binaries (Rollup, esbuild) that are incompatible across macOS and Linux.
 
 **Testing:**
-- `./vendor/bin/sail pest` - Run all tests using Pest
+- `./vendor/bin/sail artisan test` - Run all tests
 - `./vendor/bin/sail pest tests/Feature` - Run feature tests only
 - `./vendor/bin/sail pest tests/Unit` - Run unit tests only
+- Full reference: `dev-notes/testing-reference.md` (conventions, inventory, known issues)
 
 **Code Quality:**
 - `./vendor/bin/pint` - Fix PHP code style using Laravel Pint

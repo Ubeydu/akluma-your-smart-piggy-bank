@@ -93,7 +93,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-200">
+        <div class="min-h-screen bg-gray-200 flex flex-col">
             @if(Auth::check() || !isset($useWelcomeLayout))
                 @include('layouts.navigation')
             @else
@@ -129,11 +129,13 @@
             @endif
 
             <!-- Page Content -->
-            <main>
+            <main class="grow">
                 {{ $slot }}
             </main>
 
             <x-flash-message />
+
+            <x-footer />
         </div>
     </body>
 
