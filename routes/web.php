@@ -223,6 +223,11 @@ Route::localizedGet('privacy-policy', function () {
 })
     ->name('localized.privacy');
 
+Route::localizedGet('about', function () {
+    return view('about');
+})
+    ->name('localized.about');
+
 // The welcome route - handled manually to avoid URI conflicts
 Route::get('{locale}', function () {
     return view('welcome');

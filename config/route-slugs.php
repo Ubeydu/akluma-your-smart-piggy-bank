@@ -62,6 +62,12 @@ return [
             'fr' => 'politique-confidentialite',
         ],
 
+        'about' => [
+            'en' => 'about',
+            'tr' => 'hakkinda',
+            'fr' => 'a-propos',
+        ],
+
         // Auth routes
         'login' => [
             'en' => 'login',

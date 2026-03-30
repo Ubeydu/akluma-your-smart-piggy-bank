@@ -98,6 +98,12 @@
                                     {{ __('Create Piggy Bank') }}
                                     </a>
 
+                                    <a
+                                        href="{{ localizedRoute('localized.about') }}"
+                                        class="rounded-md px-3 py-2 text-black/50 ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20]"
+                                    >
+                                        {{ __('about.heading') }}
+                                    </a>
 
                                     @auth
                                         <a
@@ -172,6 +178,9 @@
                                 <x-responsive-nav-link href="{{ localizedRoute('localized.create-piggy-bank.choose-type') }}"
                                                        :active="request()->routeIs('create-piggy-bank.*')">
                                     {{ __('Create Piggy Bank') }}
+                                </x-responsive-nav-link>
+                                <x-responsive-nav-link :href="localizedRoute('localized.about')">
+                                    {{ __('about.heading') }}
                                 </x-responsive-nav-link>
                                 @auth
                                     <x-responsive-nav-link :href="localizedRoute('localized.dashboard')"
@@ -615,41 +624,7 @@
                         </section>
 
                     </main>
-                    <footer class="py-16 bg-gray-50 -mx-6 px-6 lg:-mx-[calc((100vw-80rem)/2+1.5rem)] lg:px-[calc((100vw-80rem)/2+1.5rem)]">
-                        <div class="max-w-2xl mx-auto text-center">
-                            {{-- Logo (piggy bank) --}}
-                            <div class="flex justify-center mb-4">
-                                <x-application-logo class="w-12 h-12 text-gray-400 fill-current" />
-                            </div>
-
-                            {{-- Brand Name --}}
-                            <h3 class="text-xl font-bold text-gray-900 mb-6">{{ __('app_name') }}</h3>
-
-                            {{-- Contact Email --}}
-                            <a href="mailto:contact@akluma.com" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-700 font-medium">
-                                contact@akluma.com
-                            </a>
-
-                            {{-- Links --}}
-                            <div class="mt-6 flex justify-center gap-4 text-sm">
-                                <a href="{{ localizedRoute('localized.terms') }}" class="text-gray-500 hover:text-gray-700">{{ __('terms.title') }}</a>
-                                <span class="text-gray-300">•</span>
-                                <a href="{{ localizedRoute('localized.privacy') }}" class="text-gray-500 hover:text-gray-700">{{ __('privacy.title') }}</a>
-                            </div>
-
-                            {{-- Copyright --}}
-                            <p class="mt-6 text-sm text-gray-400">
-                                © {{ date('Y') }} {{ __('app_name') }}. {{ __('All rights reserved.') }}
-                            </p>
-
-                            {{-- Dev info (non-production only) --}}
-                            @if(config('app.env') !== 'production')
-                                <p class="mt-2 text-xs text-gray-300">
-                                    Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
-                                </p>
-                            @endif
-                        </div>
-                    </footer>
+                    <x-footer class="-mx-6 px-6 lg:-mx-[calc((100vw-80rem)/2+1.5rem)] lg:px-[calc((100vw-80rem)/2+1.5rem)]" />
                 </div>
             </div>
         </div>
