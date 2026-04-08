@@ -45,6 +45,11 @@
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}" />
         <meta name="apple-mobile-web-app-title" content="Akluma" />
         <link rel="manifest" href="{{ asset('site.webmanifest') }}" />
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js');
+            }
+        </script>
 
         <!-- Styles / Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
