@@ -604,16 +604,16 @@
                                       class="mt-3 flex flex-col md:flex-row md:items-end gap-4">
                                     @csrf
 
-                                    <div>
+                                    <div class="flex-1 min-w-0">
                                         <x-input-label for="manual-amount" :value="__('manual_amount_label')" />
-                                        <x-text-input
+                                        <input
                                             id="manual-amount"
                                             name="amount"
                                             type="text"
                                             inputmode="{{ $currencyHasDecimals ? 'decimal' : 'numeric' }}"
                                             pattern="{{ $currencyHasDecimals ? '^\d{1,10}(\.\d{1,2})?$' : '^\d{1,12}$' }}"
                                             maxlength="12"
-                                            class="mt-1 block w-full"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-xs"
                                             required
                                             autocomplete="off"
                                             @if($currencyHasDecimals)
@@ -641,7 +641,7 @@
                                         <x-input-error :messages="$errors->get('amount')" class="mt-2" />
                                     </div>
 
-                                    <div>
+                                    <div class="flex-1 min-w-0">
                                         <x-input-label for="manual-note" :value="__('manual_note_label')" />
                                         <x-text-input
                                             id="manual-note"

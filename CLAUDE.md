@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Working Style
+
+- **Never edit a file that hasn't been discussed in the current conversation.** Even with blanket Edit/Write permissions enabled, every file modification must be proposed and approved in chat first. No silent edits, no "while I'm here" changes.
+
 ## ⚠️ IMPORTANT: Code Formatting
 
 **DO NOT run `./vendor/bin/pint` without arguments!** This will reformat the entire codebase and create unnecessary changes.
@@ -34,6 +38,15 @@ Instead, use one of these approaches:
 **Database:**
 - `./vendor/bin/sail artisan migrate` - Run migrations
 - `./vendor/bin/sail artisan migrate:fresh --seed` - Fresh migration with seeders
+
+**Parallel Sessions:**
+- `./scripts/parallel-session.sh create <branch> [issue]` - Create a worktree with isolated Sail stack
+- `./scripts/parallel-session.sh destroy <branch>` - Tear down a worktree session
+- `./scripts/parallel-session.sh list` - Show active sessions with ports and status
+- Or use the slash command: `/worktree-akluma <issue-number>`
+- Each session gets unique ports (`:8081`/`:3307`/`:5174`, `:8082`/`:3308`/`:5175`, ...) and a Vite tmux session
+- Requires `tmux` (`brew install tmux`)
+- See `dev-notes/parallel-session-workflow.md` for full details
 
 ## Project Structure Notes
 

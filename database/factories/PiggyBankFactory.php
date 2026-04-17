@@ -30,8 +30,8 @@ class PiggyBankFactory extends Factory
             'name' => $this->faker->words(3, true),
             'price' => $this->faker->randomFloat(2, 50, 5000),
             'target_amount' => $this->faker->randomFloat(2, 1000, 10000),
-            'chosen_strategy' => $this->faker->randomElement(['weekly', 'monthly']), // adjust these values based on your actual strategies
-            'selected_frequency' => $this->faker->randomElement(['weekly', 'bi-weekly']), // adjust these values based on your actual frequencies
+            'chosen_strategy' => $this->faker->randomElement(['enter-saving-amount', 'pick-date']),
+            'selected_frequency' => $this->faker->randomElement(['weeks', 'months', 'days', 'years']),
             'starting_amount' => $this->faker->randomFloat(2, 0, 1000),
             'total_savings' => $this->faker->randomFloat(2, 1000, 10000),
             'extra_savings' => $this->faker->optional(0.3)->randomFloat(2, 0, 500),
@@ -43,6 +43,9 @@ class PiggyBankFactory extends Factory
             'preview_title' => $this->faker->optional()->sentence,
             'preview_description' => $this->faker->optional()->paragraph,
             'preview_url' => $this->faker->optional()->url,
+            'final_total' => 0,
+            'uptodate_final_total' => 0,
+            'remaining_amount' => 0,
         ];
     }
 
