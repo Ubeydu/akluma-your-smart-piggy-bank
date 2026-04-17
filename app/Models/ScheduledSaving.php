@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ScheduledSaving extends Model
 {
+    use HasFactory;
     public const STATUS_SAVED = 'saved';
 
     public const STATUS_PENDING = 'pending';
