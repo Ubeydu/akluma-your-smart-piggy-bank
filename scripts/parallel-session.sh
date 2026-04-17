@@ -187,7 +187,7 @@ cmd_create() {
             echo "Warning: Timed out after 90 seconds. You may need to seed manually."
             break
         fi
-        if (cd "$wt_dir" && docker compose exec -T mysql mysqladmin ping -p"$db_password" --silent &>/dev/null); then
+        if (cd "$wt_dir" && docker compose exec -T mysql mysql -u sail -p"$db_password" -e "SELECT 1" &>/dev/null); then
             break
         fi
         sleep 1
