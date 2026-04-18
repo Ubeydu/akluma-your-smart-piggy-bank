@@ -27,5 +27,8 @@
   ],
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
-  "display": "standalone"
+  "display": "standalone",
+  "orientation": "portrait",
+  "categories": ["finance"],
+  "lang": "en"
 }
