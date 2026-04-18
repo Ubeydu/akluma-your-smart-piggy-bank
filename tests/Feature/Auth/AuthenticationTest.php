@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 test('login screen can be rendered', function () {
     $response = $this->get('/login');
@@ -29,6 +30,31 @@ test('users can not authenticate with invalid password', function () {
     ]);
 
     $this->assertGuest();
+});
+
+it('sets remember me cookie when remember checkbox is checked', function () {
+    $user = User::factory()->create();
+
+    $response = $this->post('/en/login', [
+        'email' => $user->email,
+        'password' => 'password',
+        'remember' => '1',
+    ]);
+
+    $this->assertAuthenticated();
+    $response->assertCookie(Auth::guard()->getRecallerName());
+});
+
+it('does not set remember me cookie when remember checkbox is unchecked', function () {
+    $user = User::factory()->create();
+
+    $response = $this->post('/en/login', [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    $this->assertAuthenticated();
+    $response->assertCookieMissing(Auth::guard()->getRecallerName());
 });
 
 test('users can logout', function () {
