@@ -6,17 +6,32 @@
 
         <p class="mb-4">{{ __('terms.intro') }}</p>
 
+        <h2 class="font-semibold mt-6 mb-2">{{ __('terms.eligibility_title') }}</h2>
+        <p class="mb-4">{{ __('terms.eligibility_text') }}</p>
+
         <h2 class="font-semibold mt-6 mb-2">{{ __('terms.can_do_title') }}</h2>
         <p class="mb-4">{{ __('terms.can_do_text') }}</p>
 
         <h2 class="font-semibold mt-6 mb-2">{{ __('terms.cant_do_title') }}</h2>
-        <p class="mb-4">{{ __('terms.cant_do_text') }}</p>
+        <p class="mb-4">{!! nl2br(e(__('terms.cant_do_text'))) !!}</p>
+
+        <h2 class="font-semibold mt-6 mb-2">{{ __('terms.termination_title') }}</h2>
+        <p class="mb-4">{{ __('terms.termination_text') }}</p>
 
         <h2 class="font-semibold mt-6 mb-2">{{ __('terms.data_title') }}</h2>
-        <p class="mb-4">{{ __('terms.data_text') }}</p>
+        <p class="mb-4">{!! __('terms.data_text', ['url' => localizedRoute('localized.privacy')]) !!}</p>
+
+        <h2 class="font-semibold mt-6 mb-2">{{ __('terms.ip_title') }}</h2>
+        <p class="mb-4">{{ __('terms.ip_text') }}</p>
 
         <h2 class="font-semibold mt-6 mb-2">{{ __('terms.guarantee_title') }}</h2>
         <p class="mb-4">{{ __('terms.guarantee_text') }}</p>
+
+        <h2 class="font-semibold mt-6 mb-2">{{ __('terms.stores_title') }}</h2>
+        <p class="mb-4">{{ __('terms.stores_text') }}</p>
+
+        <h2 class="font-semibold mt-6 mb-2">{{ __('terms.governing_law_title') }}</h2>
+        <p class="mb-4">{{ __('terms.governing_law_text') }}</p>
 
         <h2 class="font-semibold mt-6 mb-2">{{ __('terms.changes_title') }}</h2>
         <p class="mb-4">{{ __('terms.changes_text') }}</p>

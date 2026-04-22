@@ -17,19 +17,22 @@
         <p class="mb-4">{{ __('privacy.cookies_text') }}</p>
 
         <h2 class="font-semibold mt-6 mb-2">{{ __('privacy.thirdparties_title') }}</h2>
-        <p class="mb-4">{{ __('privacy.thirdparties_text') }}</p>
+        <p class="mb-4">{!! nl2br(e(__('privacy.thirdparties_text'))) !!}</p>
 
         <h2 class="font-semibold mt-6 mb-2">{{ __('privacy.children_title') }}</h2>
         <p class="mb-4">{{ __('privacy.children_text') }}</p>
 
         <h2 class="font-semibold mt-6 mb-2">{{ __('privacy.storage_title') }}</h2>
-        <p class="mb-4">{{ __('privacy.storage_text') }}</p>
+        <p class="mb-4">{!! nl2br(e(__('privacy.storage_text'))) !!}</p>
 
         <h2 class="font-semibold mt-6 mb-2">{{ __('privacy.security_title') }}</h2>
         <p class="mb-4">{{ __('privacy.security_text') }}</p>
 
+        <h2 class="font-semibold mt-6 mb-2">{{ __('privacy.deletion_title') }}</h2>
+        <p class="mb-4">{!! nl2br(e(__('privacy.deletion_text'))) !!}</p>
+
         <h2 class="font-semibold mt-6 mb-2">{{ __('privacy.rights_title') }}</h2>
-        <p class="mb-4">{{ __('privacy.rights_text') }}</p>
+        <p class="mb-4">{!! nl2br(e(__('privacy.rights_text'))) !!}</p>
 
         <h2 class="font-semibold mt-6 mb-2">{{ __('privacy.changes_title') }}</h2>
         <p class="mb-4">{{ __('privacy.changes_text') }}</p>
