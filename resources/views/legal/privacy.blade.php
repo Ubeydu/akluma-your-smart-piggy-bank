@@ -28,7 +28,7 @@
         <h2 class="font-semibold mt-6 mb-2">{{ __('privacy.security_title') }}</h2>
         <p class="mb-4">{{ __('privacy.security_text') }}</p>
 
-        <h2 class="font-semibold mt-6 mb-2">{{ __('privacy.deletion_title') }}</h2>
+        <h2 id="account-deletion" class="font-semibold mt-6 mb-2">{{ __('privacy.deletion_title') }}</h2>
         <p class="mb-4">{!! nl2br(e(__('privacy.deletion_text'))) !!}</p>
 
         <h2 class="font-semibold mt-6 mb-2">{{ __('privacy.rights_title') }}</h2>
