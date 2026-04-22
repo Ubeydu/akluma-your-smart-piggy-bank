@@ -4,7 +4,8 @@
     "namespace": "android_app",
     "package_name": "com.akluma.app",
     "sha256_cert_fingerprints": [
-      "CA:0C:41:65:21:E8:B9:10:B9:C9:A8:C9:FC:49:D6:A5:89:2D:0E:52:25:51:65:CB:5D:E2:4C:AB:11:9D:31:1D"
+      "CA:0C:41:65:21:E8:B9:10:B9:C9:A8:C9:FC:49:D6:A5:89:2D:0E:52:25:51:65:CB:5D:E2:4C:AB:11:9D:31:1D",
+      "21:73:1F:28:89:CC:4B:EF:04:CE:06:F6:F2:EC:38:E8:15:A7:B5:8F:BC:8B:57:81:38:80:90:31:6B:D1:91:58"
     ]
   }
 }]
