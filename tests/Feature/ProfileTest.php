@@ -83,3 +83,23 @@ test('correct password must be provided to delete account', function () {
 
     $this->assertNotNull($user->fresh());
 });
+
+test('deleting account purges password reset tokens for that email', function () {
+    $user = User::factory()->create();
+
+    \Illuminate\Support\Facades\DB::table('password_reset_tokens')->insert([
+        'email' => $user->email,
+        'token' => 'fake-token-hash',
+        'created_at' => now(),
+    ]);
+
+    $this->actingAs($user)
+        ->delete('/en/profile', ['password' => 'password'])
+        ->assertSessionHasNoErrors();
+
+    expect(
+        \Illuminate\Support\Facades\DB::table('password_reset_tokens')
+            ->where('email', $user->email)
+            ->count()
+    )->toBe(0);
+});
