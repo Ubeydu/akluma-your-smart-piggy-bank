@@ -83,10 +83,12 @@
              x-transition:leave-end="opacity-0 transform scale-95"
              class="space-y-4 pt-2 border-t border-gray-200">
 
+            @env(['local', 'staging'])
             <div>
                 <h3 class="text-sm font-medium text-gray-500">{{ __('piggy_bank_ID') }}</h3>
                 <p class="mt-1 text-base text-gray-900">{{ $piggyBank->id }}</p>
             </div>
+            @endenv
 
             <div>
                 <h3 class="text-sm font-medium text-gray-500">{{ __('Product Link') }}</h3>
