@@ -19,9 +19,13 @@
                 <!-- Add truncate to the h3 to prevent overflow -->
                 <h3 class="text-lg font-bold text-gray-900 mb-0.5 truncate">{{ $piggyBank->name }}</h3>
                 <div class="flex items-center gap-1">
-                    <span class="text-sm text-gray-500">{{ __('piggy_bank_ID') }} {{ $piggyBank->id }}</span>
+                    @env(['local', 'staging'])
+                        <span class="text-sm text-gray-500">{{ __('piggy_bank_ID') }} {{ $piggyBank->id }}</span>
+                    @endenv
                     @if($piggyBank->vault_id)
-                        <span class="text-sm text-gray-500">•</span>
+                        @env(['local', 'staging'])
+                            <span class="text-sm text-gray-500">•</span>
+                        @endenv
                         <span class="text-sm text-gray-500">{{ __('Vault') }}: {{ Str::limit($piggyBank->vault->name, 15) }}</span>
                     @endif
                 </div>
