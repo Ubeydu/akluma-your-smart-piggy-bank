@@ -31,5 +31,6 @@ storage/framework/views/*.php
 !storage/framework/
 !storage/framework/views/
 !storage/framework/views/.gitkeep
+storage/framework/testing/
 
 /dev-notes/
