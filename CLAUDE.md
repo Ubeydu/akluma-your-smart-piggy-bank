@@ -6,6 +6,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Never edit a file that hasn't been discussed in the current conversation.** Even with blanket Edit/Write permissions enabled, every file modification must be proposed and approved in chat first. No silent edits, no "while I'm here" changes.
 
+## ⚠️ SECURITY ADVISORY (May 2026): laravel-lang supply-chain attack
+
+On May 22–23 2026, four `laravel-lang/*` packages were compromised on Packagist with 700+ malicious versions: `laravel-lang/lang`, `laravel-lang/http-statuses`, `laravel-lang/attributes`, `laravel-lang/actions`. The malware steals AWS creds, Git/CI tokens, SSH keys, `.env` contents, browser data, and password manager vaults, then deletes itself from disk.
+
+**This project uses `laravel-lang/lang` (direct dep) but is currently SAFE.** Locked to pre-compromise v15.22.5 at commit `48526c88`. Lockfile last touched 2026-03-21. No install during the attack window.
+
+**Rules until laravel-lang publishes an official security advisory + clean version range:**
+
+- ❌ DO NOT run `composer update` anywhere (dev machine, CI, Docker build). Re-resolving may pull a malicious version.
+- ❌ DO NOT bump any `laravel-lang/*` constraint in `composer.json`.
+- ✅ `composer install` is SAFE. It honors `composer.lock` and pulls the pinned commit SHA, not the latest published version.
+- ✅ Deploys are SAFE. `Dockerfile:61` runs `composer install --no-dev` (lockfile-respecting).
+
+**Before clearing this advisory:**
+1. Confirm laravel-lang has published a postmortem at https://github.com/Laravel-Lang/lang
+2. Verify your intended version range is explicitly marked clean
+3. Then delete this entire block and the matching auto-memory entry.
+
 ## ⚠️ IMPORTANT: Code Formatting
 
 **DO NOT run `./vendor/bin/pint` without arguments!** This will reformat the entire codebase and create unnecessary changes.
