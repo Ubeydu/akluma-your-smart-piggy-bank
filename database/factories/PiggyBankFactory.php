@@ -43,9 +43,9 @@ class PiggyBankFactory extends Factory
             'preview_title' => $this->faker->optional()->sentence,
             'preview_description' => $this->faker->optional()->paragraph,
             'preview_url' => $this->faker->optional()->url,
-            'final_total' => 0,
-            'uptodate_final_total' => 0,
-            'remaining_amount' => 0,
+            'final_total' => fn (array $attributes) => $attributes['starting_amount'] + $attributes['total_savings'],
+            'uptodate_final_total' => null,
+            'remaining_amount' => null,
         ];
     }
 
