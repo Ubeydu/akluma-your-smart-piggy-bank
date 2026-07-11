@@ -1,11 +1,11 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
+use App\Notifications\LocalizedResetPassword;
 use Illuminate\Support\Facades\Notification;
 
 test('reset password link screen can be rendered', function () {
-    $response = $this->get('/forgot-password');
+    $response = $this->get('/en/forgot-password');
 
     $response->assertStatus(200);
 });
@@ -15,9 +15,9 @@ test('reset password link can be requested', function () {
 
     $user = User::factory()->create();
 
-    $this->post('/forgot-password', ['email' => $user->email]);
+    $this->post('/en/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class);
+    Notification::assertSentTo($user, LocalizedResetPassword::class);
 });
 
 test('reset password screen can be rendered', function () {
@@ -25,10 +25,10 @@ test('reset password screen can be rendered', function () {
 
     $user = User::factory()->create();
 
-    $this->post('/forgot-password', ['email' => $user->email]);
+    $this->post('/en/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
-        $response = $this->get('/reset-password/'.$notification->token);
+    Notification::assertSentTo($user, LocalizedResetPassword::class, function ($notification) {
+        $response = $this->get('/en/reset-password/'.$notification->token);
 
         $response->assertStatus(200);
 
@@ -41,10 +41,10 @@ test('password can be reset with valid token', function () {
 
     $user = User::factory()->create();
 
-    $this->post('/forgot-password', ['email' => $user->email]);
+    $this->post('/en/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
-        $response = $this->post('/reset-password', [
+    Notification::assertSentTo($user, LocalizedResetPassword::class, function ($notification) use ($user) {
+        $response = $this->post('/en/reset-password', [
             'token' => $notification->token,
             'email' => $user->email,
             'password' => 'password',
@@ -53,7 +53,7 @@ test('password can be reset with valid token', function () {
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect(route('login'));
+            ->assertRedirect('/en/login');
 
         return true;
     });
