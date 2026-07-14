@@ -1,5 +1,5 @@
 {
-  "hero_headline": "The Saving App That Helps You Reach Any Goal",
+  "hero_headline": "The Savings Tracker That Helps You Reach Any Goal",
   "hero_subheadline": "Create a piggy bank, save with a plan or at your own pace, and watch your progress grow. Akluma keeps you on track with reminders so you never miss a saving day.",
   "hero_cta": "Try without registering!",
   "hero_cta_subtext": "100% free • No credit card required",
@@ -37,7 +37,7 @@
   "feature_currency_title": "Global Currency Support",
   "feature_currency_desc": "Save in USD, EUR, GBP, TRY, XOF, and XAF; works wherever you are",
   "feature_free_title": "Completely Free Right Now",
-  "feature_free_desc": "No subscriptions, no credit card; start tracking your savings today at no cost",
+  "feature_free_desc": "No subscriptions, no credit card; a free savings tracker online you can start using today",
   "feature_privacy_title": "Your Data Stays Private",
   "feature_privacy_desc": "We never sell your information; your saving goals are yours alone",
   "Already registered?": "Already registered?",
@@ -364,7 +364,7 @@
   "Piggy bank marked as done.": "Piggy bank marked as done.",
 
   "about.page_title": "About Akluma - Free Savings Tracker",
-  "about.meta_description": "Akluma is a free savings tracker app that helps you set goals, track progress, and save money with automatic reminders. Built by a solo developer who needed it himself.",
+  "about.meta_description": "Akluma is a free savings tracker that helps you set goals, track progress, and save money with automatic reminders. Built by a solo developer who needed it himself.",
   "about.heading": "About Akluma",
   "about.what_title": "What is Akluma?",
   "about.what_text_1": "Akluma is a free saving app built around one idea: pick a goal, make a plan, and stick to it. It's a savings tracker that shows you exactly how close you are to your target and sends you email reminders so you never forget a saving day.",
