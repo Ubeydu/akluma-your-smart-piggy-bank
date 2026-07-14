@@ -38,7 +38,7 @@ it('renders English meta tags', function () {
     $this->get('/en/about')
         ->assertOk()
         ->assertSee('About Akluma - Free Savings Tracker', false)
-        ->assertSee('free savings tracker app', false);
+        ->assertSee('free savings tracker', false);
 });
 
 it('renders Turkish meta tags', function () {
@@ -46,7 +46,7 @@ it('renders Turkish meta tags', function () {
 
     $this->get('/tr/hakkinda')
         ->assertOk()
-        ->assertSee('Ücretsiz Para Biriktirme Uygulaması', false)
+        ->assertSee('Ücretsiz Akıllı Kumbara', false)
         ->assertSee('para biriktirmenin kolay yolu', false);
 });
 
@@ -55,8 +55,8 @@ it('renders French meta tags', function () {
 
     $this->get('/fr/a-propos')
         ->assertOk()
-        ->assertSee('Application budget gratuite', false)
-        ->assertSee('application budget gratuite', false);
+        ->assertSee('Suivi d\'épargne en ligne gratuit')
+        ->assertSee('suivi d\'épargne en ligne gratuit');
 });
 
 // ──────────────────────────────────────────────────

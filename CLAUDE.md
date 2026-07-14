@@ -130,8 +130,9 @@ This application implements a custom localized routing system that automatically
 
 ### SEO & Multilingual Content Strategy
 
-**Transcreation, not translation** for SEO-critical content. Keyword research (see `dev-notes/keyword-research-2026-03-28.md`) showed that each locale's users search with fundamentally different concepts:
-- EN: "savings tracker" (5K/mo) — FR: "application budget" (500K/mo) — TR: "para biriktirme" (500/mo)
+**Transcreation, not translation** for SEO-critical content. Keyword research (see `dev-notes/keyword-research-2026-03-28.md`) showed that each locale's users search with fundamentally different concepts, and search intent analysis (#367, #389 — see `dev-notes/seo-search-intent-analysis-2026-04-18.md`) then corrected the targets to keywords a web app can actually rank for:
+- EN: "savings tracker" (5K/mo, + long-tail "savings tracker online") — FR: "suivi épargne en ligne" (primary) and "calculateur épargne" (secondary) — TR: no Google SEO target; natural copy only, discovery via Play Store listing (#369)
+- High-volume keywords like EN "saving apps" (50K/mo) and FR "application budget" (500K/mo) are mobile-app intent (app store listings dominate) — do NOT target them in titles/H1s
 - A direct translation would miss these keywords entirely
 
 **Rules for public-facing content:**

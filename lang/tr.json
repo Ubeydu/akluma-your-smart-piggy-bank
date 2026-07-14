@@ -502,7 +502,7 @@
   "This piggy bank is already connected to this vault.": "Bu kumbara zaten bu kasaya bağlı.",
   "vault_cant_connect_status": "Kumbaranın durumu :status iken onu bir kasaya bağlayamazsın",
   "piggy banks": "kumbara",
-  "app_name": "Akluma — Para Biriktirme Uygulaması",
+  "app_name": "Akluma — Akıllı Kumbara",
   "default_meta_description": "Para biriktirme aracı ile hedeflerine ulaş. Kumbara oluştur, planlı veya serbest biriktir ve ilerlemeni takip et.",
   "welcome_page_title": "Hedefini Belirle, Biriktirmeye Başla",
   "welcome_meta_description": "Para biriktirme aracı ile hedeflerine ulaş. Kumbara oluştur, planlı veya serbest biriktir ve ilerlemeni takip et.",
@@ -625,7 +625,7 @@
   "Are you sure you want to mark this piggy bank as done?": "Bu kumbarayı tamamlandı olarak işaretlemek istediğinden emin misin?",
   "Piggy bank marked as done.": "Kumbara tamamlandı olarak işaretlendi.",
 
-  "about.page_title": "Akluma Hakkında - Ücretsiz Para Biriktirme Uygulaması",
+  "about.page_title": "Akluma Hakkında - Ücretsiz Akıllı Kumbara",
   "about.meta_description": "Akluma, hedef belirleyerek para biriktirmenin kolay yolu. İlerlemenizi takip edin, hatırlatmalarla birikim gününüzü kaçırmayın. Tamamen ücretsiz.",
   "about.heading": "Akluma Hakkında",
   "about.what_title": "Akluma Nedir?",
