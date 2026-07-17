@@ -52,6 +52,11 @@ Akluma is a solo project right now, but contributions are welcome! If you're int
 
 Questions or ideas? Open an issue and let's talk.
 
+## Writing about Akluma
+
+- [The Savings Plan That Rewrites Itself](https://ubeyd.dev/the-savings-plan-that-rewrites-itself): an engineering deep-dive into how Akluma recalculates saving schedules without betraying the original plan
+- [I did keyword research for my savings app. Then I actually looked at the search results.](https://dev.to/ubeydullah/i-did-keyword-research-for-my-savings-app-then-i-actually-looked-at-the-search-results-ld6): the SEO story behind the product copy, from keyword research to SERP reality check to pivot
+
 ## License
 
 [MIT License](LICENSE)
